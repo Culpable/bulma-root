@@ -1,0 +1,414 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+<task>
+YOUR TASK is to create a glob pattern for the feature that we implemented in this chat.
+
+The goal is always to:
+- Capture **ALL** relevant files for your feature
+- Use the **MINIMUM** number of patterns
+- **AVOID** capturing unrelated files
+- Keep patterns **MAINTAINABLE** as code evolves
+
+Note: When someone references this guide, they want help creating glob patterns for their specific feature - not general advice about globs, but concrete patterns for their use case. 
+</task>
+
+Guide to creating glob patterns:
+<glob_patterns_guide>
+# Creating Glob Patterns for Features & Workflows
+
+## Purpose of This Guide
+
+**This guide helps you CREATE glob patterns to capture ALL files related to a specific feature, workflow, or area of code using the MINIMUM number of patterns while AVOIDING unrelated files.**
+
+When you need to target files for a feature (e.g., search functionality, authentication flow, payment processing), this guide shows you how to craft efficient glob patterns that:
+- ✅ Capture every relevant file for your feature
+- ✅ Use the fewest possible glob patterns
+- ✅ Avoid capturing unrelated files
+- ✅ Remain maintainable as the codebase evolves
+
+## Core Principle: Feature-Focused Pattern Creation
+
+**CRITICAL DISTINCTION**: Only target files that **ARE** the feature implementation, not files that just **USE** the feature.
+
+When creating glob patterns for a feature/workflow:
+1. **Identify files that ARE the feature** (core implementation, not integration)
+2. **Group files** by their location patterns
+3. **Choose the most efficient pattern** for each group
+4. **Verify no unrelated files** are captured
+
+### What TO Include vs What NOT to Include
+
+| ✅ **Include: Files that ARE the feature** | ❌ **Exclude: Files that just USE the feature** |
+|---------------------------------------------|--------------------------------------------------|
+| Feature-specific components/modules | Pages that integrate the feature |
+| Feature-specific APIs/routes | Generic layout files with feature integration |
+| Feature-specific types/schemas | Utility files with one feature-related function |
+| Feature-specific hooks/services | Config files that mention the feature |
+| Feature-specific tests | Generic components that include the feature |
+| | **Documentation files (documents/, guides/, learnings/)** |
+
+**🚨 CRITICAL**: **NEVER include the `documents/` folder or any documentation files** in glob patterns. Documentation files are meta-content about the codebase, not part of the actual feature implementation.
+
+### Examples of the Distinction
+
+**Example: Breadcrumb Navigation Feature**
+```bash
+# ✅ Include: Files that ARE breadcrumb implementation
+**/breadcrumbs.tsx              # Custom breadcrumb component
+
+# ❌ Exclude: Files that just USE breadcrumbs  
+# - dashboard.tsx (just includes <PageBreadcrumbs />)
+# - properties.tsx (just includes <PageBreadcrumbs />)
+# - app-layout.tsx (just imports breadcrumb component)
+# - breadcrumb.tsx (generic shadcn primitive, not our implementation)
+```
+
+**Example: Authentication Feature**
+```bash
+# ✅ Include: Files that ARE authentication implementation
+**/components/auth/**           # Login, register, forgot-password components
+**/hooks/use-auth.ts           # Authentication hook
+**/routes/auth.ts              # Auth API endpoints
+**/middleware/auth.ts          # Auth middleware
+**/types/auth.ts               # Auth-specific types
+
+# ❌ Exclude: Files that just USE authentication
+# - dashboard.tsx (just checks if user is authenticated)
+# - header.tsx (just shows login/logout buttons)
+# - protected-route.tsx (generic route wrapper)
+# - api-client.ts (just adds auth headers)
+```
+
+**Example: Search Feature**
+```bash
+# ✅ Include: Files that ARE search implementation
+**/components/search/**         # Search UI components
+**/hooks/use-search.ts         # Search hook
+**/lib/search-api.ts           # Search API methods
+**/types/search.ts             # Search-specific types
+
+# ❌ Exclude: Files that just USE search
+# - header.tsx (just includes search input)
+# - results-page.tsx (just displays search results)
+# - api-client.ts (just has one search method among many)
+```
+
+### Example: Creating Patterns for Search Feature
+
+**Step 1: Identify files that ARE the search feature (not files that just use it)**
+```
+✅ Files that ARE search implementation:
+client/src/components/search/search-overlay.tsx    # Search UI
+client/src/components/search/search-results.tsx    # Search UI
+client/src/components/search/search-result-item.tsx # Search UI
+client/src/hooks/use-search.ts                     # Search logic
+client/src/lib/search-api.ts                       # Search API methods
+shared/src/types/search.ts                         # Search types
+
+❌ Files that just USE search (exclude these):
+client/src/components/header.tsx                   # Just includes search input
+client/src/pages/results.tsx                       # Just displays search results
+client/src/lib/api-client.ts                       # Has many methods, only one for search
+server/src/routes.ts                               # Has many routes, only one for search
+```
+
+**Step 2: Create minimal glob patterns for implementation files only**
+```bash
+# All search UI components in one pattern
+**/components/search/**
+
+# Search-specific implementation files
+**/use-search.ts
+**/search-api.ts
+**/types/search.ts
+```
+
+**FINAL OUTPUT FORMAT**: The final output should be a comma-separated list of ONLY the relevant glob paths:
+```
+**/components/search/**,**/use-search.ts,**/search-api.ts,**/types/search.ts
+```
+
+**EXAMPLE OUTPUT FORMAT**:
+```
+globs: **/upload_database.html,**/form-updated-database-version.js,**/db_upload_router.py,**/db_confirmation_router.py,**/db_column_based_identifier.py,**/db_dataframe_utils.py,**/db_exceptions.py,**/standardise_pre_commit/**,trailtracker/database_uploading/**/*.py,**/worker.py,trailtracker/database_processing/**/*.py,trailtracker/templates/trailtracker_database/upload_database/**,**/trail_coverage_calculator.py
+```
+
+IMPORTANT:
+- You must include the above as the final output format IN A CODE BLOCK once you decide upon the relevant glob paths.
+- You must include the `globs: ` prefix in the code block.
+
+**Step 3: Verify patterns only capture feature implementation**
+- `**/components/search/**` captures search UI components only
+- Individual patterns target files that are primarily about search
+- Generic files with mixed purposes are excluded
+
+## Pattern Creation Strategy
+
+### Use Directory Globs When All Files Are Relevant
+
+**Preferred**: Use `**/directory/**` when all files in a directory serve the same purpose or belong to the same feature.
+
+```bash
+# Good - All files in the package are relevant to the feature
+**/trailtracker/missing_trail_analysis/**
+**/routes/authentication/**
+**/utils/**
+```
+
+**Avoid**: Listing individual files when the entire directory is relevant.
+
+```bash
+# Avoid - Too verbose when directory glob would work
+**/route_processing.py
+**/worker_processing.py
+**/analysis.py
+**/commission.py
+**/data_processing.py
+```
+
+### Avoiding Duplicates with Directory Globs
+
+**Critical**: When using directory globs, don't also list individual files that are already covered by the directory pattern.
+
+```bash
+# ❌ WRONG - Duplicates! search-overlay.tsx is already covered by **/components/search/**
+**/components/search/**
+**/search-overlay.tsx
+**/search-results.tsx
+**/search-result-item.tsx
+
+# ✅ CORRECT - Directory glob covers all search components, file globs only for scattered files
+**/components/search/**     # Covers: search-overlay.tsx, search-results.tsx, search-result-item.tsx
+**/use-search.ts            # In hooks/ directory (not covered above)
+**/header.tsx               # In components/layout/ directory (not covered above)
+**/routes.ts                # In server/ directory (not covered above)
+```
+
+**How to Check for Duplicates:**
+1. **List what the directory glob covers**: `**/components/search/**` covers all files in any `components/search/` directory
+2. **Only add file globs for files NOT in that directory**: Files in `hooks/`, `layout/`, `server/`, etc.
+3. **Verify no overlap**: Ensure no file-level glob targets a file already captured by directory globs
+
+### Use Specific File Globs for Scattered Files
+
+Use `**/<filename>` when targeting specific files that are scattered across different directories but serve a common feature.
+
+```bash
+# Good - Specific files across different directories for same feature
+**/db_missing_trail_analysis.py
+**/missing_trail_analysis.js
+**/missing_trail_confirmation.html
+**/worker.py
+```
+
+### Use Extension Wildcards for Related Files Across Types
+
+Use `**/<basename>.*` when targeting multiple files that share the same base name but have different file extensions, representing the same feature across different file types.
+
+```bash
+# Good - Captures all missing trail analysis files regardless of extension
+**/missing_trail_analysis.*
+
+# This pattern matches:
+# - missing_trail_analysis.html (template)
+# - missing_trail_analysis.js (JavaScript)  
+# - missing_trail_analysis.py (Python module)
+# - missing_trail_analysis.css (styles, if it exists)
+```
+
+**When to Use Extension Wildcards:**
+- Feature implemented across multiple file types (HTML, JS, CSS, Python)
+- Consistent naming convention followed (using underscores)
+- All files with that base name are relevant to the same feature
+
+**Avoid** when files have the same name but serve different purposes:
+```bash
+# Avoid - if utils.py and utils.js serve completely different functions
+**/utils.*
+```
+
+### Decision Matrix for Pattern Creation
+
+| Scenario | Pattern | Example |
+|----------|---------|---------|
+| **All files in directory relevant to feature** | `**/directory/**` | `**/processing/**` |
+| **Only some files in directory are for your feature** | `**/<filename>` | `**/upload_router.py` |
+| **Feature files scattered across directories** | `**/<filename>` | `**/worker.py` |
+| **Same feature across file types** | `**/<basename>.*` | `**/missing_trail_analysis.*` |
+| **Mixed relevance in directory** | `**/<filename>` | Individual file globs |
+
+## Practical Examples
+
+### Creating Patterns for Authentication Feature
+```bash
+# Step 1: Identify all auth files
+# - client/src/components/auth/login.tsx
+# - client/src/components/auth/register.tsx
+# - client/src/components/auth/forgot-password.tsx
+# - client/src/hooks/use-auth.ts
+# - server/src/routes/auth.ts
+# - server/src/middleware/auth.ts
+# - shared/src/types/auth.ts
+
+# Step 2: Create minimal patterns
+**/components/auth/**    # All auth UI components
+**/use-auth.ts          # Auth hook
+**/routes/auth.ts       # Auth API routes
+**/middleware/auth.ts   # Auth middleware
+**/types/auth.ts        # Auth types
+```
+
+### Creating Patterns for File Upload Workflow
+```bash
+# Step 1: Identify all upload-related files
+# - client/src/components/upload/file-dropzone.tsx
+# - client/src/components/upload/upload-progress.tsx
+# - client/src/hooks/use-upload.ts
+# - server/src/routes/upload.ts
+# - server/src/utils/file-processing.ts
+# - shared/src/types/upload.ts
+
+# Step 2: Create minimal patterns
+**/components/upload/**   # All upload UI components
+**/use-upload.ts         # Upload hook
+**/routes/upload.ts      # Upload endpoint
+**/file-processing.ts    # Processing utilities
+**/types/upload.ts       # Upload types
+```
+
+## Real-World Example: Creating Patterns for Search Functionality
+
+Here's a complete example showing how to create glob patterns for a search feature:
+
+### ✅ Correct Pattern Creation Process
+```bash
+# Search UI components (directory covers all 3 component files)
+**/components/search/**
+
+# Search-specific implementation files NOT covered by directory glob above
+**/use-search.ts            # Search hook in hooks/ directory
+**/search-api.ts           # Search API methods in lib/ directory
+**/types/search.ts         # Search types in shared/ directory
+```
+
+**What `**/components/search/**` covers:**
+- `client/src/components/search/search-overlay.tsx`
+- `client/src/components/search/search-results.tsx`
+- `client/src/components/search/search-result-item.tsx`
+
+**Why other files need separate globs:**
+- They're in different directories (`hooks/`, `lib/`, `shared/`)
+- Each file is primarily about search functionality
+- Generic files that just use search are excluded (header.tsx, api-client.ts, routes.ts)
+
+### ❌ Wrong Pattern Creation (with duplicates)
+```bash
+**/components/search/**
+**/search-overlay.tsx       # ❌ Duplicate! Already covered by directory glob
+**/search-results.tsx       # ❌ Duplicate! Already covered by directory glob  
+**/search-result-item.tsx   # ❌ Duplicate! Already covered by directory glob
+**/use-search.ts
+**/header.tsx
+```
+
+## Best Practices for Creating Feature Patterns
+
+1. **Start with feature analysis** - List all files involved in your feature/workflow
+2. **Prefer directory globs** when the entire directory serves your feature
+3. **Use file globs** for feature files scattered across the codebase
+4. **Use extension wildcards** when the same feature spans multiple file types with consistent naming
+5. **Check for duplicates** by listing what each directory glob covers before adding file globs
+6. **Test your patterns** - Verify they capture all intended files and no extras
+7. **Document your intent** - Add comments explaining what feature each pattern targets
+8. **Group related patterns** logically in your glob lists
+
+## Anti-Patterns to Avoid When Creating Patterns
+
+❌ **NEVER include documentation folders**
+```bash
+# ❌ NEVER include documentation - it's meta-content, not feature implementation
+documents/**
+**/guides/**
+**/learnings/**
+**/docs/**
+# Documentation files are about the codebase, not part of the actual feature
+```
+
+❌ **Don't use directory globs for mixed-purpose directories**
+```bash
+# Avoid - routes/database contains many unrelated files to your feature
+**/routes/database/**
+```
+
+❌ **Don't list individual files when directory glob captures your entire feature**
+```bash
+# Avoid - when all files in missing_trail_analysis/ are part of your feature
+**/route_processing.py
+**/worker_processing.py
+**/analysis.py
+# Better: **/missing_trail_analysis/**
+```
+
+❌ **Don't create duplicates with directory + file globs**
+```bash
+# Avoid - duplicates!
+**/components/search/**
+**/search-overlay.tsx  # Already covered by directory glob above
+```
+
+❌ **Don't use overly specific paths that break when structure changes**
+```bash
+# Avoid - too specific, breaks if structure changes
+**/trailtracker/routes/database/specific_file.py
+# Better: **/specific_file.py
+```
+
+❌ **Don't include files that aren't part of your feature**
+```bash
+# Avoid - including entire utils when only one function is for your feature
+**/utils/**
+# Better: Be specific or exclude it
+```
+
+❌ **Don't include files that just USE your feature**
+```bash
+# Avoid - including pages that just integrate the feature
+**/pages/**               # Pages just use breadcrumbs, they aren't breadcrumb implementation
+**/header.tsx             # Just includes search input, not search implementation  
+**/api-client.ts          # Has many methods, only one relates to your feature
+**/routes.ts              # Has many routes, only one relates to your feature
+# Better: Only include files that ARE the feature implementation
+**/breadcrumbs.tsx        # Custom breadcrumb component implementation
+**/components/search/**   # Search UI components
+**/use-search.ts          # Search-specific hook
+```
+
+## Summary
+
+This guide is about **CREATING glob patterns** that efficiently capture files that **ARE** your specific feature implementation (not files that just use it). The goal is always to:
+- Capture **ALL** files that ARE the feature implementation
+- Use the **MINIMUM** number of patterns
+- **AVOID** capturing files that just USE the feature
+- **NEVER** include documentation files (`documents/`, guides, learnings)
+- Keep patterns **MAINTAINABLE** as code evolves
+
+**Remember**: Only include files where the feature is the primary purpose, not files that just integrate or consume the feature. Documentation files are meta-content about the codebase and should never be included in feature glob patterns.
+
+When someone references this guide, they want help creating glob patterns for their specific feature - not general advice about globs, but concrete patterns for their use case. 
+</glob_patterns_guide>
+
+
+<task>
+YOUR TASK is to create a glob pattern for the feature that we implemented in this chat.
+
+The goal is always to:
+- Capture **ALL** relevant files for your feature
+- Use the **MINIMUM** number of patterns
+- **AVOID** capturing unrelated files
+- Keep patterns **MAINTAINABLE** as code evolves
+
+Note: When someone references this guide, they want help creating glob patterns for their specific feature - not general advice about globs, but concrete patterns for their use case. 
+</task>

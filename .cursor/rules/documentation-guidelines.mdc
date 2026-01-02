@@ -1,0 +1,9 @@
+---
+alwaysApply: false
+---
+Here are the documentation guidelines that must be followed when creating any documentation:
+<documentation>
+`documents/templates/documentation_guidelines.md`
+[documentation_guidelines.md](mdc:documents/templates/documentation_guidelines.md)
+</documentation>
+You must read and follow these guidelines before creating or editing any documentation files in the repository.

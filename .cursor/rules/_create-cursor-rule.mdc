@@ -1,0 +1,136 @@
+---
+description: 
+globs:
+alwaysApply: false
+---
+
+You are an expert at creating comprehensive cursor rules based on documentation files to help AI assistants understand and work with specific features in codebases.
+
+Here is your task:
+<task>
+When provided with a documentation file (typically in `documents/guides/_*.md`), create a comprehensive cursor rule file following the exact format shown in the example. The rule must include proper glob patterns that capture all relevant implementation files, correct frontmatter formatting, and unchanged template content for post-edit verification and pre-cognition sections.
+</task>
+
+Here is a comprehensive example showing how to create a proper cursor rule:
+<example>
+<input_documentation>
+# Demo Cards Tailwind System
+
+## Overview
+
+The **Demo Cards Tailwind System** generates minimal CSS builds containing only Tailwind classes used by demo card templates, reducing CSS payload from 39K (full site) to 7.0K (demo-specific). Supports both integrated site usage and standalone external domain deployment with conditional template rendering.
+
+---
+
+## File Structure
+
+```
+trailtracker/
+├── tailwind.demo.config.js                    # Demo-specific Tailwind config, scans only demo templates
+├── package.json                               # Contains build:tailwind-demo script
+├── static/css/
+│   ├── tailwind-demo-input.css               # Input CSS with @tailwind directives
+│   ├── demo-cards.min.css                    # Generated 7.0K minimal CSS output
+│   └── tailwind.min.css                      # Full site CSS (39K, unchanged)
+├── templates/trailtracker_database/
+│   ├── demo_cards.html                       # Integrated template (extends base.html)
+│   ├── demo_cards_standalone.html            # Standalone template with minimal CSS
+│   └── demo_cards/
+│       ├── _monthly_overview_demo.html       # Monthly overview card partial
+│       └── _key_insights_demo.html           # Key insights cards partial
+└── routes/visualizations/
+    └── demo_visualizations.py                # Route handlers with template selection logic
+```
+
+### Rest of document
+(NOTE: the document will have other content, but you are primarily concerned with the overview and file structure sections, since this is all that you need to create the new rule)
+</input_documentation>
+
+<output_rule_file>
+---
+globs: **/demo_cards.html,**/demo_cards_standalone.html,**/demo_cards/**,**/demo_visualizations.py,tailwind.demo.config.js,**/tailwind-demo-input.css,**/demo-cards.min.css
+alwaysApply: false
+---
+Here is documentation that outlines the Demo Cards Tailwind System implementation:
+<documentation>
+`documents/guides/_demo_cards_tailwind_system.md`
+[_demo_cards_tailwind_system.md](mdc:documents/guides/_demo_cards_tailwind_system.md)
+</documentation>
+
+Here are the steps you MUST follow after making any changes to any files mentioned in this documentation:
+<post_edit_code_changes>
+1. After making updates to the code, you MUST ensure that the documentation reflects the most up to date state of the code.
+2. Find and read the documentation using `file_search` and `read_file`.
+3. Compare the guide against the updated implementation.
+4. If discrepancies exist, update documentation using `edit_file`.
+
+Remember: the documentation must be comprehensive and information-dense. Focus on technical functionality and observed behavior, not presentation or aesthetics. You don't always need to update the docs, but you always need to check whether you need to.
+</post_edit_code_changes>
+
+<pre_cognition>
+- Before making or proposing any changes to files mentioned in the documentation, first assess whether the changes will impact other parts of the implementation.
+- If yes, you MUST first use `file_search`/`grep_search` and `read_file` tools to find the relevant files/code and understand their functionality.
+- Only then proceed to answer the user's question or make code changes.
+</pre_cognition>
+</output_rule_file>
+</example>
+
+Here is a description of your task:
+<task_description>
+## Purpose & Context
+
+Cursor rules provide persistent, reusable context to AI assistants. When a rule's glob pattern matches a file the user is working with, the rule's contents are automatically injected into the AI's context window at the start of the conversation.
+
+This means:
+- **Every file matching the glob pattern** receives the full documentation in its context
+- **Over-broad globs** (e.g., `**/*.ts`) would inject documentation into hundreds of unrelated files, wasting tokens and diluting focus
+- **Precise globs** ensure documentation only appears when working on files that are actually part of the feature implementation
+
+The goal is to create rules that provide relevant context exactly when needed—not too broad (context bloat), not too narrow (missing critical files). A well-crafted glob pattern is the difference between helpful guidance and noise.
+
+## Rule Creation Process
+
+1. **Analyze the documentation file** to understand the feature implementation
+2. **Create proper frontmatter** with required fields:
+   - `globs:` - Use [@creating-new-globs-auto-attach.mdc](mdc:.cursor/rules/creating-new-globs-auto-attach.mdc) to create comprehensive glob patterns that capture ALL relevant files
+   - `alwaysApply: false` - Must be included on the line after globs
+   - Do NOT include `description:` field in the frontmatter
+
+3. **Create documentation reference section** exactly as shown:
+   ```
+   Here is documentation that outlines the [FEATURE NAME] implementation:
+   <documentation>
+   `documents/guides/_[filename].md`
+   [_filename.md](mdc:documents/guides/_filename.md)
+   </documentation>
+   ```
+   (note that the [FEATURE NAME] and implementation are in lower case)
+
+4. **Include standard post-edit and pre-cognition sections** unchanged from template
+
+5. **File naming convention**:
+   - Convert documentation filename from underscores to hyphens
+   - Remove leading underscore
+   - Add `-high-level` suffix
+   - Example: `_demo_cards_tailwind_system.md` → `demo-cards-tailwind-system-high-level.mdc`
+
+6. **Critical requirements**:
+   - Frontmatter must have `globs:` and `alwaysApply: false` ONLY
+   - All content below documentation reference must remain unchanged from template
+   - Glob patterns must capture ALL implementation files, not files that just use the feature
+   - Documentation reference must use both backticks and mdc: link format
+   - Exclude test files from the glob patterns
+   - Remember: only include files that are critical to the feature implementation, not files that just use the feature.
+</task_description>
+
+Here is your task:
+<task>
+When provided with a documentation file (typically in `documents/guides/_*.md`), create a comprehensive cursor rule file following the exact format shown in the example. The rule must include proper glob patterns that capture all relevant implementation files, correct frontmatter formatting, and unchanged template content for post-edit verification and pre-cognition sections.
+</task>
+
+<pre_cognition>
+- Before creating the rule, analyze the documentation to identify ALL files that ARE part of the feature implementation
+- Use the glob pattern creation guide to ensure comprehensive coverage without capturing unrelated files
+- Verify the file naming follows the conversion pattern (underscores to hyphens, add high-level suffix)
+- Double-check the frontmatter format matches the template exactly
+</pre_cognition>

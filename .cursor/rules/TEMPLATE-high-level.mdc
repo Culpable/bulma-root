@@ -1,0 +1,24 @@
+---
+alwaysApply: false
+---
+Here is documentation that outlines the breadcrumbs implementation:
+<documentation>
+`documents/guides/_breadcrumb_navigtion_system.md`
+[_breadcrumb_navigation_system.md](mdc:documents/guides/_breadcrumb_navigation_system.md)
+</documentation>
+
+Here are the steps you MUST follow after making any changes to any files mentioned in this documentation:
+<post_edit_code_changes>
+1. After making updates to the code, you MUST ensure that the documentation reflects the most up to date state of the code.
+2. Find and read the documentation using `file_search` and `read_file`.
+3. Compare the guide against the updated implementation.
+4. If discrepancies exist, update documentation using `edit_file`.
+
+Remember: the documentation must be comprehensive and information-dense. Focus on technical functionality and observed behavior, not presentation or aesthetics. You don't always need to update the docs, but you always need to check whether you need to.
+</post_edit_code_changes>
+
+<pre_cognition>
+- Before making or proposing any changes to files mentioned in the documentation, first assess whether the changes will impact other parts of the implementation.
+- If yes, you MUST first use `file_search`/`grep_search` and `read_file` tools to find the relevant files/code and understand their functionality.
+- Only then proceed to answer the user's question or make code changes.
+</pre_cognition>

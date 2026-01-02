@@ -1,5 +1,101 @@
 # Content Editor's Guide - Bulma Website
 
+## ⚠️ Information Needed Before Starting
+
+Please provide the following information so I can complete all changes:
+
+### 1. Branding
+- [ ] **Product name:** (replacing "Oatmeal")
+- [ ] **Tagline:** (for page title metadata)
+- [ ] **Company legal name:** (for copyright, e.g., "Bulma Pty Ltd")
+
+### 2. Logo Files (provide SVG files)
+- [ ] **Light mode logo:** (replaces `oatmeal-mona-color-mist-950.svg`)
+- [ ] **Dark mode logo:** (replaces `oatmeal-mona-color-white.svg`)
+- [ ] **Favicon:** (ICO or PNG)
+
+### 3. Company Details
+- [ ] **Mission statement / company description**
+- [ ] **Contact email:** (for privacy policy)
+- [ ] **Physical address:** (for privacy policy)
+- [ ] **Social media URLs:**
+  - X/Twitter:
+  - GitHub:
+  - YouTube:
+  - Other:
+
+### 4. Product Copy
+- [ ] **Hero headline:** (main value proposition)
+- [ ] **Hero subheadline:** (supporting description)
+- [ ] **Announcement badge text:** (or remove?)
+- [ ] **CTA button labels:** (e.g., "Start free trial", "Book a demo")
+- [ ] **CTA destinations/URLs:** (signup page, demo booking, etc.)
+
+### 5. Features (need 2+ features)
+For each feature provide:
+- [ ] Feature name
+- [ ] Feature description (1-2 sentences)
+- [ ] Screenshot image (if available)
+
+### 6. Pricing Plans
+For each plan (Starter/Growth/Pro or your naming):
+- [ ] Plan name
+- [ ] Monthly price
+- [ ] Yearly price
+- [ ] Short description
+- [ ] Feature list (what's included)
+- [ ] Which plan is "most popular"?
+
+### 7. Stats/Metrics
+- [ ] Stat 1: number + description (e.g., "2M+ emails processed")
+- [ ] Stat 2: number + description (e.g., "99.98% uptime")
+- [ ] Additional stats?
+
+### 8. FAQs (need 4)
+- [ ] Question 1 + Answer
+- [ ] Question 2 + Answer
+- [ ] Question 3 + Answer
+- [ ] Question 4 + Answer
+
+### 9. Team Members (need up to 8)
+For each team member:
+- [ ] Name
+- [ ] Role/title
+- [ ] Photo (headshot, ~800x1000px)
+
+### 10. Testimonials (need 3-6)
+For each testimonial:
+- [ ] Quote text
+- [ ] Person's name
+- [ ] Title + company
+- [ ] Avatar/headshot image
+
+### 11. Images to Provide
+- [ ] **Product screenshots:** (ideally light + dark mode versions)
+  - Recommended sizes: 3440x1990, 2000x1408, 1300x1300
+- [ ] **Customer/partner logos:** (5-6 logos, SVG preferred)
+- [ ] **About page hero photo:** (team/office photo)
+
+### 12. Navigation Links
+Where should these link to?
+- [ ] Docs link:
+- [ ] Log in link:
+- [ ] Get started / Sign up link:
+- [ ] Help Center link:
+- [ ] API Docs link:
+- [ ] Status page link:
+
+### 13. Legal Content
+- [ ] **Privacy policy:** (provide full text or URL to copy from)
+- [ ] **Terms of service:** (provide full text or should I add a page?)
+- [ ] **Last updated date:** for legal pages
+
+### 14. Brand Colors (optional)
+- [ ] Primary brand color: (hex or oklch value)
+- [ ] If you want to customize the "mist" color palette
+
+---
+
 All content files are located in `/demo/src/`.
 
 ## Quick Reference: Template Naming
