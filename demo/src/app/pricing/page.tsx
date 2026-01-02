@@ -12,15 +12,15 @@ function plans(option: string) {
   return (
     <>
       <Plan
-        name="Starter"
-        price={option === 'Monthly' ? '$12' : '$120'}
+        name="Solo"
+        price={option === 'Monthly' ? '$49' : '$490'}
         period={option === 'Monthly' ? '/month' : '/year'}
-        subheadline={<p>Small teams getting started with shared inboxes</p>}
+        subheadline={<p>For individual brokers getting started</p>}
         features={[
-          'Shared inbox for up to 2 mailboxes',
-          'Tagging & assignment',
-          'Private notes',
-          'Automatic replies',
+          'Unlimited policy questions',
+          'All major lenders covered',
+          'Source attribution on every answer',
+          'Conversation history',
           'Email support',
         ]}
         cta={
@@ -30,19 +30,18 @@ function plans(option: string) {
         }
       />
       <Plan
-        name="Growth"
-        price={option === 'Monthly' ? '$49' : '$490'}
+        name="Team"
+        price={option === 'Monthly' ? '$99' : '$990'}
         period={option === 'Monthly' ? '/month' : '/year'}
-        subheadline={<p>Growing teams needing collaboration and insights</p>}
+        subheadline={<p>For growing brokerages with multiple users</p>}
         badge="Most popular"
         features={[
-          'Everything in Starter',
-          'Inbox Agent',
-          'Unlimited mailboxes',
-          'Collision detection',
-          'Snippets and templates',
-          'Reporting dashboard',
-          'Slack integration',
+          'Everything in Solo',
+          'Up to 5 team members',
+          'Cross-lender comparisons',
+          'Priority support',
+          'Team usage analytics',
+          'Shared conversation history',
         ]}
         cta={
           <ButtonLink href="#" size="lg">
@@ -51,22 +50,21 @@ function plans(option: string) {
         }
       />
       <Plan
-        name="Pro"
-        price={option === 'Monthly' ? '$299' : '$2990'}
-        period={option === 'Monthly' ? '/month' : '/year'}
-        subheadline={<p>Support-focused organizations and larger teams</p>}
+        name="Enterprise"
+        price="Custom"
+        period=""
+        subheadline={<p>For aggregators and large brokerages</p>}
         features={[
-          'Everything in Growth',
-          'Custom roles & permissions',
-          'Automation engine',
-          'API access',
-          'SLA tracking',
-          'SSO support',
-          'SOC 2 compliance',
+          'Everything in Team',
+          'Unlimited team members',
+          'Custom lender coverage',
+          'Dedicated account manager',
+          'Custom integrations',
+          'Volume discounts',
         ]}
         cta={
           <SoftButtonLink href="#" size="lg">
-            Start free trial
+            Contact sales
           </SoftButtonLink>
         }
       />
@@ -80,11 +78,10 @@ export default function Page() {
       {/* Hero */}
       <PricingHeroMultiTier
         id="pricing"
-        headline="Pricing"
+        headline="Simple pricing for every brokerage"
         subheadline={
           <p>
-            Simplify your shared inbox, collaborate effortlessly, and give every customer a reply that feels personal,
-            even if it was written by a bot.
+            Choose the plan that fits your team. All plans include unlimited policy questions and full lender coverage.
           </p>
         }
         options={['Monthly', 'Yearly']}
@@ -193,75 +190,43 @@ export default function Page() {
       {/* Plan Comparison Table */}
       <PlanComparisonTable
         id="pricing"
-        plans={['Starter', 'Growth', 'Pro']}
+        plans={['Solo', 'Team', 'Enterprise']}
         features={[
           {
-            title: 'Collaboration',
+            title: 'Policy Q&A',
             features: [
+              { name: 'Unlimited policy questions', value: true },
+              { name: 'All major lenders covered', value: true },
+              { name: 'Source attribution', value: true },
+              { name: 'Conversation history', value: true },
               {
-                name: 'Shared inboxes',
-                value: { Starter: '2', Growth: 'Unlimited', Pro: 'Unlimited' },
-              },
-              { name: 'Private notes', value: true },
-              { name: 'Tagging & assignment', value: true },
-              {
-                name: 'Collision detection',
-                value: { Starter: false, Growth: true, Pro: true },
-              },
-              {
-                name: 'Real-time activity indicators',
-                value: { Starter: false, Growth: true, Pro: true },
-              },
-              {
-                name: 'Internal chat',
-                value: { Starter: false, Growth: true, Pro: true },
+                name: 'Cross-lender comparisons',
+                value: { Solo: false, Team: true, Enterprise: true },
               },
             ],
           },
           {
-            title: 'Automation',
-            features: [
-              { name: 'Automatic replies', value: true },
-              {
-                name: 'Inbox Agent',
-                value: { Starter: false, Growth: true, Pro: true },
-              },
-              {
-                name: 'Automation engine',
-                value: { Starter: false, Growth: true, Pro: true },
-              },
-              {
-                name: 'Snippets and templates',
-                value: { Starter: false, Growth: true, Pro: true },
-              },
-              {
-                name: 'SLA tracking',
-                value: { Starter: false, Growth: false, Pro: true },
-              },
-            ],
-          },
-          {
-            title: 'Team Management',
+            title: 'Team Features',
             features: [
               {
-                name: 'Unlimited users',
-                value: { Starter: 'Up to 5', Growth: true, Pro: true },
+                name: 'Team members',
+                value: { Solo: '1', Team: 'Up to 5', Enterprise: 'Unlimited' },
               },
               {
-                name: 'Reporting dashboard',
-                value: { Starter: false, Growth: true, Pro: true },
+                name: 'Shared conversation history',
+                value: { Solo: false, Team: true, Enterprise: true },
               },
               {
-                name: 'Slack integration',
-                value: { Starter: false, Growth: true, Pro: true },
+                name: 'Team usage analytics',
+                value: { Solo: false, Team: true, Enterprise: true },
               },
               {
-                name: 'Roles & permissions',
-                value: { Starter: false, Growth: false, Pro: true },
+                name: 'Custom lender coverage',
+                value: { Solo: false, Team: false, Enterprise: true },
               },
               {
-                name: 'SSO support',
-                value: { Starter: false, Growth: false, Pro: true },
+                name: 'Custom integrations',
+                value: { Solo: false, Team: false, Enterprise: true },
               },
             ],
           },
@@ -270,12 +235,12 @@ export default function Page() {
             features: [
               { name: 'Email support', value: true },
               {
-                name: 'Priority response',
-                value: { Starter: false, Growth: true, Pro: true },
+                name: 'Priority support',
+                value: { Solo: false, Team: true, Enterprise: true },
               },
               {
-                name: 'Dedicated manager',
-                value: { Starter: false, Growth: false, Pro: true },
+                name: 'Dedicated account manager',
+                value: { Solo: false, Team: false, Enterprise: true },
               },
             ],
           },
@@ -286,8 +251,8 @@ export default function Page() {
         id="testimonial"
         quote={
           <p>
-            Ever since we started using Oatmeal, our customer satisfaction scores have skyrocketed. The personal touch
-            that their human-AI hybrid support provides is unparalleled.
+            The Team plan paid for itself in the first week. Our whole office now uses Bulma as the first stop for any
+            policy question — it's saved us countless hours.
           </p>
         }
         img={
@@ -299,43 +264,43 @@ export default function Page() {
             height={1000}
           />
         }
-        name="Lynn Marshall"
-        byline="Founder at Pine Labs"
+        name="James Mitchell"
+        byline="Principal Broker, Adelaide"
       />
       {/* FAQs */}
       <FAQsAccordion id="faqs" headline="Questions & Answers">
         <Faq
           id="faq-1"
-          question="Do I need a credit card to start the free trial?"
-          answer="Yes, but don't worry, you won't be charged until the trial period is over. We won't send you an email reminding you when this happens because we are really hoping you'll forget and we can keep charging you until your cards expires"
+          question="Is there a free trial?"
+          answer="Yes, all plans come with a 14-day free trial. No credit card required to get started — just sign up and start asking policy questions right away."
         />
         <Faq
           id="faq-2"
-          question="Can my whole team use the same inbox?"
-          answer="Yes, the more the merrier! Oatmeal works best when your entire company has access. We will charge you per additional seat, but we won't tell you about this until you get your invoice."
+          question="Can I upgrade or downgrade my plan?"
+          answer="Absolutely. You can change your plan at any time. If you upgrade, you'll be charged the prorated difference. If you downgrade, the change takes effect at your next billing cycle."
         />
         <Faq
           id="faq-3"
-          question="Is the AI agent actually a bunch of people in India?"
-          answer="Not just India! We have people in lots of countries around the world pretending to be an AI, including some that are currently under sanctions, so we can't legally mention them here."
+          question="What happens if I exceed my team member limit?"
+          answer="On the Team plan, you can add additional team members beyond the included 5 for an extra per-seat fee. Contact us for details, or consider the Enterprise plan for unlimited team members."
         />
         <Faq
           id="faq-4"
-          question="Does Oatmeal replace my email client?"
-          answer="Absolutely. The idea is that we transition you away from email entirely, so you become completely dependent on our service. Like a parasite living off a host."
+          question="Do you offer discounts for aggregators?"
+          answer="Yes, we offer volume discounts for aggregators and large brokerages. Get in touch with our sales team to discuss pricing that works for your organisation."
         />
       </FAQsAccordion>
       {/* Call To Action */}
       <CallToActionSimpleCentered
         id="call-to-action"
-        headline="Have anymore questions?"
+        headline="Have more questions?"
         subheadline={
-          <p>Chat to someone on our sales team, who will make promises about our roadmap that we won't keep.</p>
+          <p>We're happy to help. Get in touch to discuss how Bulma can work for your brokerage.</p>
         }
         cta={
           <div className="flex items-center gap-4">
             <ButtonLink href="#" size="lg">
-              Chat with us
+              Contact sales
             </ButtonLink>
 
             <PlainButtonLink href="#" size="lg">

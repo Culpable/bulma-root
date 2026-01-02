@@ -20,7 +20,8 @@ import Image from 'next/image'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Oatmeal Kit Demo',
+  title: 'Bulma - AI Policy Assistant for Mortgage Brokers',
+  description: 'Ask any lender policy question in plain English. Get instant, grounded answers with source attribution. Built for Australian mortgage brokers.',
 }
 
 export default function RootLayout({
@@ -93,8 +94,7 @@ export default function RootLayout({
                 headline="Stay in the loop"
                 subheadline={
                   <p>
-                    Get customer support tips, product updates and customer stories that you can archive as soon as they
-                    arrive.
+                    Get policy updates, lender insights, and tips to help you close more deals. Straight to your inbox.
                   </p>
                 }
                 action="#"
@@ -126,7 +126,7 @@ export default function RootLayout({
                 </FooterCategory>
               </>
             }
-            fineprint="© 2025 Oatmeal, Inc."
+            fineprint="© 2025 Bulma Pty Ltd"
             socialLinks={
               <>
                 <SocialLink href="https://x.com" name="X">

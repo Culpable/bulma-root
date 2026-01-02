@@ -13,11 +13,11 @@ export default function Page() {
       {/* Hero */}
       <HeroLeftAlignedWithPhoto
         id="hero"
-        headline="Your customer success is our mission."
+        headline="Built by brokers, for brokers."
         subheadline={
           <p>
-            We're on a mission to take the human element completely out of customer support — so your team can focus on
-            what matters most, profitability.
+            We know firsthand how much time gets lost to policy research. Bulma was created to give that time back — so
+            you can focus on what matters most: your clients.
           </p>
         }
         photo={
@@ -33,26 +33,25 @@ export default function Page() {
       {/* Stats */}
       <StatsWithGraph
         id="stats"
-        eyebrow="Built for scale"
-        headline="The inbox powering customer conversations everywhere."
+        eyebrow="Growing with brokers"
+        headline="The policy assistant Australian brokers rely on."
         subheadline={
           <p>
-            Oatmeal helps teams deliver personal, organized, and fast customer support across the world. From small
-            startups to enterprise teams, we process millions of messages each month — using a massive network of low
-            wage workers stationed around the globe.
+            Bulma helps mortgage brokers across Australia find policy answers faster, match clients to the right
+            lenders, and close more deals with confidence. We're growing every day alongside the brokers who use us.
           </p>
         }
       >
-        <Stat stat="2M+" text="Emails manually processed every week across thousands of teams." />
-        <Stat stat="99.98%" text="Uptime — because your customers never stop complaining." />
+        <Stat stat="30+" text="Major Australian lenders covered, with policies updated regularly." />
+        <Stat stat="Seconds" text="Average time to answer — compared to hours of manual research." />
       </StatsWithGraph>
       {/* Testimonial */}
       <TestimonialTwoColumnWithLargePhoto
         id="testimonial"
         quote={
           <p>
-            Ever since we started using Oatmeal, our customer satisfaction scores have skyrocketed. The personal touch
-            that their human-AI hybrid support provides is unparalleled.
+            Bulma has genuinely changed how I work. I used to dread the policy research part of complex applications.
+            Now it's the fastest part of my day.
           </p>
         }
         img={
@@ -64,17 +63,17 @@ export default function Page() {
             height={1000}
           />
         }
-        name="Lynn Marshall"
-        byline="Founder at Pine Labs"
+        name="Sarah Chen"
+        byline="Credit Adviser, Sydney"
       />
       {/* Team */}
       <TeamFourColumnGrid
         id="team"
-        headline="Our leadership team"
+        headline="Our team"
         subheadline={
           <p>
-            Oatmeals's leadership team combines decades of experience in private equity, where they honed their skills
-            in cost-cutting and maximizing shareholder value.
+            Bulma's team combines deep expertise in mortgage broking with AI and product development. We understand the
+            challenges you face because we've been there ourselves.
           </p>
         }
       >
@@ -186,14 +185,14 @@ export default function Page() {
       {/* Call To Action */}
       <CallToActionSimple
         id="call-to-action"
-        headline="Have anymore questions?"
+        headline="Have questions?"
         subheadline={
-          <p>Chat to someone on our sales team, who will make promises about our roadmap that we won't keep.</p>
+          <p>We'd love to hear from you. Get in touch to learn more about how Bulma can help your brokerage.</p>
         }
         cta={
           <div className="flex items-center gap-4">
             <ButtonLink href="#" size="lg">
-              Chat with us
+              Contact us
             </ButtonLink>
 
             <PlainButtonLink href="#" size="lg">

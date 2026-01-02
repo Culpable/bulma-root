@@ -127,4 +127,104 @@ This is a GitHub Pages project for the Bulma root domain at https://bulma.com.au
 It is a marketing website for the Bulma product, which is a web application that aims to assist Australian mortgage brokers with AI to automate scenario planning, credit assessment preparation, policy matching, and lender selection. Web app url: https://app.bulma.com.au
 </description>
 
+Here is a high level overview of the folder structure:
+<folder_structure>
+/                                               # Project root directory
+├── components/                                 # Reusable UI component library (source of truth)
+│   ├── elements/                               # Base UI primitives
+│   │   ├── announcement-badge.tsx              # Announcement/notification badge component
+│   │   ├── button.tsx                          # Primary button component with variants
+│   │   ├── container.tsx                       # Page container with max-width constraints
+│   │   ├── document.tsx                        # Document/article wrapper component
+│   │   ├── email-signup-form.tsx               # Email capture form for newsletter/waitlist
+│   │   ├── eyebrow.tsx                         # Small label text above headings
+│   │   ├── heading.tsx                         # Page/section heading component (h1-h6)
+│   │   ├── link.tsx                            # Styled anchor component
+│   │   ├── logo-grid.tsx                       # Grid layout for partner/client logos
+│   │   ├── screenshot.tsx                      # App screenshot display with styling
+│   │   ├── section.tsx                         # Page section wrapper with spacing
+│   │   ├── subheading.tsx                      # Secondary heading component
+│   │   ├── text.tsx                            # Body text component with variants
+│   │   └── wallpaper.tsx                       # Background pattern/gradient component
+│   ├── icons/                                  # SVG icon components (100+ icons)
+│   │   ├── sparkles-icon.tsx                   # AI/magic sparkles icon
+│   │   ├── building-library-icon.tsx           # Lender/institution icon
+│   │   ├── chart-line-icon.tsx                 # Analytics/trends icon
+│   │   └── social/                             # Social media icons
+│   │       ├── facebook-icon.tsx
+│   │       ├── instagram-icon.tsx
+│   │       └── x-icon.tsx
+│   └── sections/                               # Pre-built page sections
+│       ├── hero-centered-with-demo.tsx         # Hero section with centered demo screenshot
+│       ├── hero-left-aligned-with-demo.tsx     # Hero section with left-aligned content
+│       ├── features-three-column.tsx           # 3-column feature grid layout
+│       ├── features-with-large-demo.tsx        # Features section with large app screenshot
+│       ├── pricing-multi-tier.tsx              # Multi-tier pricing cards
+│       ├── pricing-single-tier-two-column.tsx  # Single plan with feature comparison
+│       ├── plan-comparison-table.tsx           # Detailed plan feature comparison table
+│       ├── faqs-accordion.tsx                  # Expandable FAQ section
+│       ├── testimonial-with-large-quote.tsx    # Customer testimonial display
+│       ├── call-to-action-simple-centered.tsx  # CTA section with centered content
+│       ├── navbar-with-logo-actions-and-left-aligned-links.tsx  # Main navigation bar
+│       └── footer-with-links-and-social-icons.tsx               # Site footer with links
+├── pages/                                      # Template page variations (reference/copy source)
+│   ├── home-01.tsx                             # Homepage variation 1 (hero + features + CTA)
+│   ├── home-02.tsx                             # Homepage variation 2 (different layout)
+│   ├── home-03.tsx                             # Homepage variation 3 (alternative design)
+│   ├── pricing-01.tsx                          # Pricing page with multi-tier cards
+│   ├── pricing-02.tsx                          # Pricing page with comparison table
+│   ├── pricing-03.tsx                          # Pricing page alternative layout
+│   ├── about-01.tsx                            # About page with team/mission
+│   ├── about-02.tsx                            # About page variation
+│   ├── about-03.tsx                            # About page variation
+│   ├── privacy-policy-01.tsx                   # Privacy policy template
+│   ├── privacy-policy-02.tsx                   # Privacy policy variation
+│   ├── 404-01.tsx                              # 404 error page template
+│   └── 404-02.tsx                              # 404 error page variation
+├── demo/                                       # Next.js 16 application (deployed to GitHub Pages)
+│   ├── src/
+│   │   ├── app/                                # Next.js App Router pages
+│   │   │   ├── layout.tsx                      # Root layout with fonts, metadata, global styles
+│   │   │   ├── page.tsx                        # Homepage (/) - imports from pages/home-01.tsx pattern
+│   │   │   ├── globals.css                     # Tailwind v4 global styles and theme config
+│   │   │   ├── about/page.tsx                  # About page (/about)
+│   │   │   ├── pricing/page.tsx                # Pricing page (/pricing)
+│   │   │   ├── privacy-policy/page.tsx         # Privacy policy (/privacy-policy)
+│   │   │   └── 404/page.tsx                    # Custom 404 page
+│   │   └── components/                         # Copied components for demo (mirrors ../components/)
+│   │       ├── elements/                       # Base UI elements (copied from components/elements/)
+│   │       ├── icons/                          # Icon components (copied from components/icons/)
+│   │       └── sections/                       # Page sections (copied from components/sections/)
+│   ├── public/                                 # Static assets
+│   │   └── screenshots/                        # App screenshots for marketing
+│   ├── package.json                            # Dependencies: Next.js 16, React 19, Tailwind v4
+│   ├── next.config.ts                          # Next.js config with static export for GitHub Pages
+│   ├── tsconfig.json                           # TypeScript configuration
+│   └── postcss.config.mjs                      # PostCSS config for Tailwind
+├── documents/                                  # Project documentation
+│   ├── _app_description.md                     # Detailed Bulma product description
+│   ├── reference/
+│   │   └── planning_new_feature.md             # Feature planning template guidelines
+│   └── templates/                              # Document templates
+│       ├── bug_template.md                     # Bug report template
+│       ├── error_template.md                   # Error documentation template
+│       └── plan_template.md                    # Implementation plan template
+├── .cursor/                                    # Cursor IDE configuration
+│   ├── plans/                                  # Implementation plan documents
+│   └── rules/                                  # Cursor rules for code assistance
+│       ├── git-commit-message-format.mdc       # Git commit message conventions
+│       └── documentation-guidelines.mdc        # Documentation standards
+├── .github/
+│   └── workflows/
+│       └── deploy.yml                          # GitHub Actions workflow for Pages deployment
+├── Configuration Files (root)
+│   ├── AGENTS.md                               # This file - AI agent guidelines and project structure
+│   ├── README.md                               # Project readme with setup instructions
+│   ├── tailwind.css                            # Root Tailwind CSS configuration
+│   ├── .gitignore                              # Git ignore patterns
+│   └── CHANGELOG.md                            # Version history and changes
+└── .vscode/
+    └── launch.json                             # VS Code debug configuration
+</folder_structure>
+
 </container_information>

@@ -4,9 +4,9 @@ import Link from 'next/link'
 export default function Page() {
   return (
     <>
-      <DocumentCentered id="document" headline="Privacy Policy" subheadline={<p>Last updated on December 19, 2025.</p>}>
+      <DocumentCentered id="document" headline="Privacy Policy" subheadline={<p>Last updated on January 1, 2025.</p>}>
         <p>
-          Company Inc. ("<strong>Company</strong>," "<strong>we</strong>," "<strong>us</strong>
+          Bulma Pty Ltd ("<strong>Bulma</strong>," "<strong>we</strong>," "<strong>us</strong>
           ," or "<strong>our</strong>") respects your privacy and is committed to protecting your personal information.
           This Privacy Policy describes, in general terms, how we collect, use, store, and protect information when you
           interact with our websites, products, or services (collectively, the "<strong>Services</strong>"). This policy
@@ -59,11 +59,11 @@ export default function Page() {
         </p>
         <p>If you have any questions about this Privacy Policy, please contact us at:</p>
         <p>
-          <strong>Company Inc.</strong>
+          <strong>Bulma Pty Ltd</strong>
           <br />
-          Email: <Link href="mailto:privacy@company.example">privacy@company.example</Link>
+          Email: <Link href="mailto:privacy@bulma.com.au">privacy@bulma.com.au</Link>
           <br />
-          Address: 123 Demo Street, Example City, Country
+          Address: [Your business address]
         </p>
       </DocumentCentered>
     </>
