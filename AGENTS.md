@@ -238,3 +238,14 @@ Here is a high level overview of the folder structure:
 </folder_structure>
 
 </container_information>
+
+<environments>
+- Development: Next.js App Router in `demo/` via `npm run dev` (port 3000)
+  - Dev URL: `http://localhost:3000` (for dev-browser testing)
+  - Build output: `npm run build` generates the static export in `demo/out`
+  - Data/API: None (static marketing site; no server/database)
+- Production: GitHub Pages deployment for `bulma.com.au`, built from `demo/` on pushes to `main`
+  - Hosting: GitHub Actions workflow `/.github/workflows/deploy.yml` publishes `demo/out`
+  - Domain: `bulma.com.au` via `demo/public/CNAME`
+  - Runtime: Static export only (no server-side execution)
+</environments>

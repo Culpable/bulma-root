@@ -23,6 +23,7 @@
   "dependencies": {
     "@tailwindplus/elements": "^1.0.21",
     "clsx": "^2.1.1",
+    "mixpanel-browser": "^2.73.0",
     "next": "^16",
     "react": "^19",
     "react-dom": "^19",

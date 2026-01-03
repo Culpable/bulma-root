@@ -11,8 +11,10 @@ import {
   NavbarLogo,
   NavbarWithLinksActionsAndCenteredLogo,
 } from '@/components/sections/navbar-with-links-actions-and-centered-logo'
+import MixpanelProvider from '@/components/MixpanelProvider'
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Script from 'next/script'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -41,12 +43,15 @@ export default function RootLayout({
       </head>
       <body>
         <>
+          <Script id="referral-tracking" src="/scripts/referral-tracking.js" strategy="afterInteractive" />
+          <MixpanelProvider />
           <NavbarWithLinksActionsAndCenteredLogo
             id="navbar"
             links={
               <>
                 <NavbarLink href="/pricing">Pricing</NavbarLink>
                 <NavbarLink href="/about">About</NavbarLink>
+                <NavbarLink href="/contact">Contact</NavbarLink>
                 <NavbarLink href="https://app.bulma.com.au/login" className="sm:hidden">
                   Log in
                 </NavbarLink>
