@@ -1,6 +1,13 @@
 import { Link } from '@/components/elements/link'
 import { ArrowNarrowRightIcon } from '@/components/icons/arrow-narrow-right-icon'
+import { pageMetadata } from '@/lib/metadata'
 import { HeroSimpleCentered } from '@/components/sections/hero-simple-centered'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: pageMetadata.notFound.title,
+  description: pageMetadata.notFound.description,
+}
 
 export default function Page() {
   return (

@@ -127,6 +127,16 @@ This is a GitHub Pages project for the Bulma root domain at https://bulma.com.au
 It is a marketing website for the Bulma product, which is a web application that aims to assist Australian mortgage brokers with AI to automate scenario planning, credit assessment preparation, policy matching, and lender selection. Web app url: https://app.bulma.com.au
 </description>
 
+<brand_colors>
+Primary gradient (dark mode, blue):
+- From: #243a42
+- To: #232f40
+
+Base colors:
+- white: #ffffff
+- black: #000000
+</brand_colors>
+
 Here is a high level overview of the folder structure:
 <folder_structure>
 /                                               # Project root directory
@@ -192,18 +202,32 @@ Here is a high level overview of the folder structure:
 │   │   │   ├── pricing/page.tsx                # Pricing page (/pricing)
 │   │   │   ├── privacy-policy/page.tsx         # Privacy policy (/privacy-policy)
 │   │   │   └── 404/page.tsx                    # Custom 404 page
-│   │   └── components/                         # Copied components for demo (mirrors ../components/)
-│   │       ├── elements/                       # Base UI elements (copied from components/elements/)
-│   │       ├── icons/                          # Icon components (copied from components/icons/)
-│   │       └── sections/                       # Page sections (copied from components/sections/)
+│   │   ├── components/                         # Copied components for demo (mirrors ../components/)
+│   │   │   ├── elements/                       # Base UI elements (copied from components/elements/)
+│   │   │   ├── icons/                          # Icon components (copied from components/icons/)
+│   │   │   ├── sections/                       # Page sections (copied from components/sections/)
+│   │   │   └── MixpanelProvider.jsx            # Mixpanel analytics provider component
+│   │   ├── lib/                                # Shared utilities and configuration
+│   │   │   ├── analytics.js                    # Analytics event tracking utilities
+│   │   │   ├── metadata.ts                     # SEO metadata config (sitewide + per-page)
+│   │   │   ├── mixpanelClient.js               # Mixpanel client initialization
+│   │   │   └── sitemap.js                      # Sitemap route configuration
+│   │   ├── schemas/                            # JSON-LD structured data schemas
+│   │   │   └── organization-schema.ts          # Organization schema for SEO
+│   │   └── scripts/                            # Build-time scripts
+│   │       └── generate-sitemap.js             # Sitemap XML generator (runs on build)
 │   ├── public/                                 # Static assets
 │   │   ├── CNAME                               # GitHub Pages CNAME for demo export
 │   │   ├── favicon.ico                         # Demo site favicon
-│   │   └── img/                                # Marketing images
-│   │       ├── avatars/                        # Team/testimonial avatars
-│   │       ├── logos/                          # Brand and partner logos
-│   │       ├── photos/                         # Marketing photos
-│   │       └── screenshots/                    # App screenshots for marketing
+│   │   ├── sitemap.xml                         # Generated sitemap (auto-generated on build)
+│   │   ├── img/                                # Marketing images
+│   │   │   ├── avatars/                        # Team/testimonial avatars
+│   │   │   ├── logos/                          # Brand and partner logos
+│   │   │   ├── og/                             # Open Graph social sharing images
+│   │   │   ├── photos/                         # Marketing photos
+│   │   │   └── screenshots/                    # App screenshots for marketing
+│   │   └── scripts/                            # Client-side tracking scripts
+│   │       └── referral-tracking.js            # UTM and referral parameter tracking
 │   ├── package.json                            # Dependencies: Next.js 16, React 19, Tailwind v4
 │   ├── next.config.ts                          # Next.js config with static export for GitHub Pages
 │   ├── tsconfig.json                           # TypeScript configuration

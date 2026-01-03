@@ -5,6 +5,7 @@ import { Logo, LogoGrid } from '@/components/elements/logo-grid'
 import { Screenshot } from '@/components/elements/screenshot'
 import { ArrowNarrowRightIcon } from '@/components/icons/arrow-narrow-right-icon'
 import { ChevronIcon } from '@/components/icons/chevron-icon'
+import { pageMetadata } from '@/lib/metadata'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { FAQsTwoColumnAccordion, Faq } from '@/components/sections/faqs-two-column-accordion'
 import { Feature, FeaturesTwoColumnWithDemos } from '@/components/sections/features-two-column-with-demos'
@@ -12,11 +13,29 @@ import { HeroLeftAlignedWithDemo } from '@/components/sections/hero-left-aligned
 import { Plan, PricingMultiTier } from '@/components/sections/pricing-multi-tier'
 import { Stat, StatsWithGraph } from '@/components/sections/stats-with-graph'
 import { Testimonial, TestimonialThreeColumnGrid } from '@/components/sections/testimonials-three-column-grid'
+import { organizationSchema } from '@/schemas/organization-schema'
+import type { Metadata } from 'next'
 import Image from 'next/image'
+import Script from 'next/script'
+
+// Homepage uses absolute title to bypass the " | Bulma" suffix from layout template
+export const metadata: Metadata = {
+  title: {
+    absolute: pageMetadata.home.title,
+  },
+  description: pageMetadata.home.description,
+}
 
 export default function Page() {
   return (
     <>
+      <Script
+        id="organization-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationSchema)
+        }}
+      />
       {/* Hero */}
       <HeroLeftAlignedWithDemo
         id="hero"

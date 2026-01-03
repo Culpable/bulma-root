@@ -2,8 +2,15 @@ import { Container } from '@/components/elements/container'
 import { Eyebrow } from '@/components/elements/eyebrow'
 import { Heading } from '@/components/elements/heading'
 import { Text } from '@/components/elements/text'
+import { pageMetadata } from '@/lib/metadata'
 import { ContactDetails } from './contact-details'
 import { ContactForm } from './contact-form'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: pageMetadata.contact.title,
+  description: pageMetadata.contact.description,
+}
 
 /**
  * Render the Bulma contact page with a simple hero and a two-column contact layout.

@@ -1,5 +1,12 @@
+import { pageMetadata } from '@/lib/metadata'
 import { DocumentCentered } from '@/components/sections/document-centered'
+import type { Metadata } from 'next'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: pageMetadata.privacyPolicy.title,
+  description: pageMetadata.privacyPolicy.description,
+}
 
 export default function Page() {
   return (

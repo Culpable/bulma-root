@@ -12,14 +12,48 @@ import {
   NavbarWithLinksActionsAndCenteredLogo,
 } from '@/components/sections/navbar-with-links-actions-and-centered-logo'
 import MixpanelProvider from '@/components/MixpanelProvider'
+import { siteMetadata } from '@/lib/metadata'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Script from 'next/script'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Bulma - AI Policy Assistant for Mortgage Brokers',
-  description: 'Ask any lender policy question in plain English. Get instant, grounded answers with source attribution. Built for Australian mortgage brokers.',
+  // Title template: pages get " | Bulma" suffix; homepage uses absolute to bypass
+  title: {
+    template: '%s | Bulma',
+    default: siteMetadata.title,
+  },
+  description: siteMetadata.description,
+
+  // Open Graph configuration (inherited by all pages)
+  openGraph: {
+    title: siteMetadata.title,
+    description: siteMetadata.description,
+    url: siteMetadata.siteUrl,
+    siteName: siteMetadata.name,
+    images: [
+      {
+        url: siteMetadata.ogImage,
+        width: 1200,
+        height: 630,
+        alt: siteMetadata.title,
+      },
+    ],
+    locale: siteMetadata.locale,
+    type: 'website',
+  },
+
+  // Twitter/X card configuration (inherited by all pages)
+  twitter: {
+    card: siteMetadata.twitter.cardType,
+    title: siteMetadata.title,
+    description: siteMetadata.description,
+    images: [siteMetadata.ogImage],
+  },
+
+  // Additional metadata
+  metadataBase: new URL(siteMetadata.siteUrl),
 }
 
 export default function RootLayout({

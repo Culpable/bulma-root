@@ -1,12 +1,19 @@
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
 import { Logo, LogoGrid } from '@/components/elements/logo-grid'
 import { ChevronIcon } from '@/components/icons/chevron-icon'
+import { pageMetadata } from '@/lib/metadata'
 import { CallToActionSimpleCentered } from '@/components/sections/call-to-action-simple-centered'
 import { FAQsAccordion, Faq } from '@/components/sections/faqs-accordion'
 import { PlanComparisonTable } from '@/components/sections/plan-comparison-table'
 import { Plan, PricingHeroMultiTier } from '@/components/sections/pricing-hero-multi-tier'
 import { TestimonialTwoColumnWithLargePhoto } from '@/components/sections/testimonial-two-column-with-large-photo'
+import type { Metadata } from 'next'
 import Image from 'next/image'
+
+export const metadata: Metadata = {
+  title: pageMetadata.pricing.title,
+  description: pageMetadata.pricing.description,
+}
 
 function plans(option: string) {
   return (

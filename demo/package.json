@@ -3,9 +3,10 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node src/scripts/generate-sitemap.js",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate-sitemap": "node src/scripts/generate-sitemap.js"
   },
   "prettier": {
     "semi": false,
@@ -23,6 +24,7 @@
   "dependencies": {
     "@tailwindplus/elements": "^1.0.21",
     "clsx": "^2.1.1",
+    "fast-glob": "^3.2.12",
     "mixpanel-browser": "^2.73.0",
     "next": "^16",
     "react": "^19",
