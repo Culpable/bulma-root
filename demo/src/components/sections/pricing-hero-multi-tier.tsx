@@ -92,7 +92,7 @@ export function PricingHeroMultiTier<T extends string>({
                 <button
                   key={option}
                   type="button"
-                  className="rounded-full px-4 py-1 text-sm/7 font-medium text-mist-950 aria-selected:bg-mist-950 aria-selected:text-white dark:text-white dark:aria-selected:bg-white/10 dark:aria-selected:text-white"
+                  className="cursor-pointer rounded-full px-4 py-1 text-sm/7 font-medium text-mist-950 aria-selected:bg-mist-950 aria-selected:text-white dark:text-white dark:aria-selected:bg-white/10 dark:aria-selected:text-white"
                 >
                   {option}
                 </button>

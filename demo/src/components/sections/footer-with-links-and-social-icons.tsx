@@ -6,7 +6,7 @@ import { Container } from '../elements/container'
 export function FooterLink({ href, className, ...props }: { href: string } & Omit<ComponentProps<'a'>, 'href'>) {
   return (
     <li className={clsx('text-mist-700 dark:text-mist-400', className)}>
-      <Link href={href} {...props} />
+      <Link href={href} className="cursor-pointer" {...props} />
     </li>
   )
 }
@@ -25,7 +25,7 @@ export function SocialLink({
       href={href}
       target="_blank"
       aria-label={name}
-      className={clsx('text-mist-950 *:size-6 dark:text-white', className)}
+      className={clsx('cursor-pointer text-mist-950 *:size-6 dark:text-white', className)}
       {...props}
     />
   )

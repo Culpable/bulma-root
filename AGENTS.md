@@ -188,6 +188,7 @@ Here is a high level overview of the folder structure:
 │   │   │   ├── page.tsx                        # Homepage (/) - imports from pages/home-01.tsx pattern
 │   │   │   ├── globals.css                     # Tailwind v4 global styles and theme config
 │   │   │   ├── about/page.tsx                  # About page (/about)
+│   │   │   ├── contact/page.tsx                # Contact page (/contact)
 │   │   │   ├── pricing/page.tsx                # Pricing page (/pricing)
 │   │   │   ├── privacy-policy/page.tsx         # Privacy policy (/privacy-policy)
 │   │   │   └── 404/page.tsx                    # Custom 404 page
@@ -196,7 +197,13 @@ Here is a high level overview of the folder structure:
 │   │       ├── icons/                          # Icon components (copied from components/icons/)
 │   │       └── sections/                       # Page sections (copied from components/sections/)
 │   ├── public/                                 # Static assets
-│   │   └── screenshots/                        # App screenshots for marketing
+│   │   ├── CNAME                               # GitHub Pages CNAME for demo export
+│   │   ├── favicon.ico                         # Demo site favicon
+│   │   └── img/                                # Marketing images
+│   │       ├── avatars/                        # Team/testimonial avatars
+│   │       ├── logos/                          # Brand and partner logos
+│   │       ├── photos/                         # Marketing photos
+│   │       └── screenshots/                    # App screenshots for marketing
 │   ├── package.json                            # Dependencies: Next.js 16, React 19, Tailwind v4
 │   ├── next.config.ts                          # Next.js config with static export for GitHub Pages
 │   ├── tsconfig.json                           # TypeScript configuration
@@ -222,7 +229,10 @@ Here is a high level overview of the folder structure:
 │   ├── README.md                               # Project readme with setup instructions
 │   ├── tailwind.css                            # Root Tailwind CSS configuration
 │   ├── .gitignore                              # Git ignore patterns
-│   └── CHANGELOG.md                            # Version history and changes
+│   ├── CHANGELOG.md                            # Version history and changes
+│   ├── CNAME                                   # Root domain configuration for GitHub Pages
+│   ├── files-to-change.md                      # Content/editing checklist
+│   └── github-pages-setup.md                   # GitHub Pages deployment notes
 └── .vscode/
     └── launch.json                             # VS Code debug configuration
 </folder_structure>

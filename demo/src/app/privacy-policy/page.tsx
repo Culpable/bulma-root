@@ -4,7 +4,7 @@ import Link from 'next/link'
 export default function Page() {
   return (
     <>
-      <DocumentCentered id="document" headline="Privacy Policy" subheadline={<p>Last updated on January 1, 2025.</p>}>
+      <DocumentCentered id="document" headline="Privacy Policy" subheadline={<p>Last updated on January 1, 2026.</p>}>
         <p>
           Bulma Pty Ltd ("<strong>Bulma</strong>," "<strong>we</strong>," "<strong>us</strong>
           ," or "<strong>our</strong>") respects your privacy and is committed to protecting your personal information.
@@ -61,9 +61,12 @@ export default function Page() {
         <p>
           <strong>Bulma Pty Ltd</strong>
           <br />
-          Email: <Link href="mailto:privacy@bulma.com.au">privacy@bulma.com.au</Link>
+          Email:{' '}
+          <Link href="mailto:solutions@bulma.com.au" className="cursor-pointer">
+            solutions@bulma.com.au
+          </Link>
           <br />
-          Address: [Your business address]
+          Address: PO Box 155, Northlands PO 6905
         </p>
       </DocumentCentered>
     </>

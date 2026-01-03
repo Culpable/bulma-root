@@ -23,7 +23,7 @@ export function Faq({
         id={`${id}-question`}
         command="--toggle"
         commandfor={`${id}-answer`}
-        className="flex w-full items-start justify-between gap-6 py-4 text-left text-base/7 text-mist-950 dark:text-white"
+        className="flex w-full cursor-pointer items-start justify-between gap-6 py-4 text-left text-base/7 text-mist-950 dark:text-white"
       >
         {question}
         <PlusIcon className="h-lh in-aria-expanded:hidden" />

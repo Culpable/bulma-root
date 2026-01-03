@@ -30,11 +30,11 @@ export default function Page() {
         }
         cta={
           <div className="flex items-center gap-4">
-            <ButtonLink href="#" size="lg">
+            <ButtonLink href="https://app.bulma.com.au/register" size="lg">
               Try Bulma free
             </ButtonLink>
 
-            <PlainButtonLink href="#" size="lg">
+            <PlainButtonLink href="/contact" size="lg">
               See it in action <ArrowNarrowRightIcon />
             </PlainButtonLink>
           </div>
@@ -528,7 +528,7 @@ export default function Page() {
                 'Email support',
               ]}
               cta={
-                <SoftButtonLink href="#" size="lg">
+                <SoftButtonLink href="https://app.bulma.com.au/register" size="lg">
                   Start free trial
                 </SoftButtonLink>
               }
@@ -548,7 +548,7 @@ export default function Page() {
                 'Shared conversation history',
               ]}
               cta={
-                <ButtonLink href="#" size="lg">
+                <ButtonLink href="https://app.bulma.com.au/register" size="lg">
                   Start free trial
                 </ButtonLink>
               }
@@ -567,7 +567,7 @@ export default function Page() {
                 'Volume discounts',
               ]}
               cta={
-                <SoftButtonLink href="#" size="lg">
+                <SoftButtonLink href="/contact" size="lg">
                   Contact sales
                 </SoftButtonLink>
               }
@@ -587,11 +587,11 @@ export default function Page() {
         }
         cta={
           <div className="flex items-center gap-4">
-            <ButtonLink href="#" size="lg">
+            <ButtonLink href="https://app.bulma.com.au/register" size="lg">
               Try Bulma free
             </ButtonLink>
 
-            <PlainButtonLink href="#" size="lg">
+            <PlainButtonLink href="/contact" size="lg">
               Book a demo <ChevronIcon />
             </PlainButtonLink>
           </div>

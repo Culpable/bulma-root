@@ -8,7 +8,7 @@ All copy and text content has been updated for the AI Mortgage Broker Assistant 
 - [x] Product name changed from "Oatmeal" to "Bulma" throughout
 - [x] Page title: "Bulma - AI Policy Assistant for Mortgage Brokers"
 - [x] Meta description: "Ask any lender policy question in plain English. Get instant, grounded answers with source attribution. Built for Australian mortgage brokers."
-- [x] Footer copyright: "© 2025 Bulma Pty Ltd"
+- [x] Footer copyright: "© 2026 Bulma Pty Ltd"
 - [x] Package.json name updated to "bulma"
 
 ### Home Page Copy
@@ -39,7 +39,7 @@ All copy and text content has been updated for the AI Mortgage Broker Assistant 
 
 ### Privacy Policy
 - [x] Company name: "Bulma Pty Ltd"
-- [x] Date updated to January 1, 2025
+- [x] Date updated to January 1, 2026
 - [x] Email placeholder: privacy@bulma.com.au
 
 ---
@@ -48,14 +48,14 @@ All copy and text content has been updated for the AI Mortgage Broker Assistant 
 
 ### 1. Logo Files (REQUIRED)
 The site references these files which need to be created:
-- [ ] `demo/public/img/logos/bulma-logo-dark.svg` - Logo for light backgrounds
-- [ ] `demo/public/img/logos/bulma-logo-light.svg` - Logo for dark backgrounds
-- [ ] Favicon (add to `demo/public/`)
+- [x] `demo/public/img/logos/bulma-logo-dark.svg` - Logo for light backgrounds
+- [x] `demo/public/img/logos/bulma-logo-light.svg` - Logo for dark backgrounds
+- [x] Favicon (add to `demo/public/`)
 
 ### 2. Company Details (REQUIRED)
-- [ ] **Company legal name** - Is "Bulma Pty Ltd" correct?
-- [ ] **Contact email** - Currently set to `privacy@bulma.com.au` - correct domain?
-- [ ] **Physical address** - For privacy policy (currently shows "[Your business address]")
+- [x] **Company legal name** - "Bulma Pty Ltd"
+- [x] **Contact email** - `solutions@bulma.com.au`
+- [x] **Physical address** - PO Box 155, Northlands PO 6905
 
 ### 3. Product Screenshots (REQUIRED)
 Current placeholder screenshots need replacing with actual Bulma UI:
@@ -75,18 +75,16 @@ Location: `demo/public/img/screenshots/`
 
 ### 4. Navigation & CTA Links (REQUIRED)
 Where should these buttons/links go?
-- [ ] "Try Bulma free" / "Start free trial" →
-- [ ] "Book a demo" →
-- [ ] "Contact sales" →
-- [ ] "Log in" →
-- [ ] "Docs" navbar link →
-- [ ] Newsletter form action →
+- [x] "Try Bulma free" / "Start free trial" → `https://app.bulma.com.au/register`
+- [x] "Book a demo" → `https://app.bulma.com.au/contact`
+- [x] "Contact sales" → `https://app.bulma.com.au/contact`
+- [x] "Log in" → `https://app.bulma.com.au/login`
+- [x] "Docs" navbar link → `https://app.bulma.com.au`
+- [x] Newsletter form action → `https://app.bulma.com.au/contact`
 
 ### 5. Social Media Links (OPTIONAL - or remove?)
 Currently placeholder URLs:
-- [ ] X/Twitter URL (or remove from footer?)
-- [ ] GitHub URL (or remove from footer?)
-- [ ] YouTube URL (or remove from footer?)
+- [x] Social links removed from footer (no confirmed URLs yet)
 
 ### 6. Pricing Confirmation (REVIEW)
 Please confirm these are correct:

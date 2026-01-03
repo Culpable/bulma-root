@@ -13,7 +13,7 @@ export function NavbarLink({
     <Link
       href={href}
       className={clsx(
-        'group inline-flex items-center justify-between gap-2 text-3xl/10 font-medium text-mist-950 lg:text-sm/7 dark:text-white',
+        'group inline-flex cursor-pointer items-center justify-between gap-2 text-3xl/10 font-medium text-mist-950 lg:text-sm/7 dark:text-white',
         className,
       )}
       {...props}
@@ -29,7 +29,7 @@ export function NavbarLink({
 }
 
 export function NavbarLogo({ className, href, ...props }: { href: string } & Omit<ComponentProps<'a'>, 'href'>) {
-  return <Link href={href} {...props} className={clsx('inline-flex items-stretch', className)} />
+  return <Link href={href} {...props} className={clsx('inline-flex cursor-pointer items-stretch', className)} />
 }
 
 export function NavbarWithLinksActionsAndCenteredLogo({
@@ -57,7 +57,7 @@ export function NavbarWithLinksActionsAndCenteredLogo({
               command="show-modal"
               commandfor="mobile-menu"
               aria-label="Toggle menu"
-              className="inline-flex rounded-full p-1.5 text-mist-950 hover:bg-mist-950/10 lg:hidden dark:text-white dark:hover:bg-white/10"
+              className="inline-flex cursor-pointer rounded-full p-1.5 text-mist-950 hover:bg-mist-950/10 lg:hidden dark:text-white dark:hover:bg-white/10"
             >
               <svg viewBox="0 0 24 24" fill="currentColor" className="size-6">
                 <path
@@ -78,7 +78,7 @@ export function NavbarWithLinksActionsAndCenteredLogo({
                   command="close"
                   commandfor="mobile-menu"
                   aria-label="Toggle menu"
-                  className="inline-flex rounded-full p-1.5 text-mist-950 hover:bg-mist-950/10 dark:text-white dark:hover:bg-white/10"
+                  className="inline-flex cursor-pointer rounded-full p-1.5 text-mist-950 hover:bg-mist-950/10 dark:text-white dark:hover:bg-white/10"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

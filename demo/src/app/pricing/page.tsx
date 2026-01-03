@@ -24,7 +24,7 @@ function plans(option: string) {
           'Email support',
         ]}
         cta={
-          <SoftButtonLink href="#" size="lg">
+          <SoftButtonLink href="https://app.bulma.com.au/register" size="lg">
             Start free trial
           </SoftButtonLink>
         }
@@ -44,7 +44,7 @@ function plans(option: string) {
           'Shared conversation history',
         ]}
         cta={
-          <ButtonLink href="#" size="lg">
+          <ButtonLink href="https://app.bulma.com.au/register" size="lg">
             Start free trial
           </ButtonLink>
         }
@@ -63,7 +63,7 @@ function plans(option: string) {
           'Volume discounts',
         ]}
         cta={
-          <SoftButtonLink href="#" size="lg">
+          <SoftButtonLink href="/contact" size="lg">
             Contact sales
           </SoftButtonLink>
         }
@@ -299,11 +299,11 @@ export default function Page() {
         }
         cta={
           <div className="flex items-center gap-4">
-            <ButtonLink href="#" size="lg">
+            <ButtonLink href="/contact" size="lg">
               Contact sales
             </ButtonLink>
 
-            <PlainButtonLink href="#" size="lg">
+            <PlainButtonLink href="/contact" size="lg">
               Book a demo <ChevronIcon />
             </PlainButtonLink>
           </div>
