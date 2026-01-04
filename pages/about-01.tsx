@@ -40,15 +40,15 @@ export default function Page() {
         logo={
           <NavbarLogo href="#">
             <img
-              src="https://assets.tailwindplus.com/logos/oatmeal-mona.svg?color=mist-950"
-              alt="Oatmeal"
+              src="https://bulma.com.au/img/logos/bulma-logo-dark.svg"
+              alt="Bulma"
               className="dark:hidden"
               width={113}
               height={28}
             />
             <img
-              src="https://assets.tailwindplus.com/logos/oatmeal-mona.svg?color=white"
-              alt="Oatmeal"
+              src="https://bulma.com.au/img/logos/bulma-logo-light.svg"
+              alt="Bulma"
               className="not-dark:hidden"
               width={113}
               height={28}
@@ -94,7 +94,7 @@ export default function Page() {
           headline="The inbox powering customer conversations everywhere."
           subheadline={
             <p>
-              Oatmeal helps teams deliver personal, organized, and fast customer support across the world. From small
+              Bulma helps teams deliver personal, organized, and fast customer support across the world. From small
               startups to enterprise teams, we process millions of messages each month — using a massive network of low
               wage workers stationed around the globe.
             </p>
@@ -109,7 +109,7 @@ export default function Page() {
           id="testimonial"
           quote={
             <p>
-              Ever since we started using Oatmeal, our customer satisfaction scores have skyrocketed. The personal touch
+              Ever since we started using Bulma, our customer satisfaction scores have skyrocketed. The personal touch
               that their human-AI hybrid support provides is unparalleled.
             </p>
           }
@@ -132,7 +132,7 @@ export default function Page() {
           headline="Our leadership team"
           subheadline={
             <p>
-              Oatmeals's leadership team combines decades of experience in private equity, where they honed their skills
+              Bulma's leadership team combines decades of experience in private equity, where they honed their skills
               in cost-cutting and maximizing shareholder value.
             </p>
           }
@@ -304,7 +304,7 @@ export default function Page() {
             </FooterCategory>
           </>
         }
-        fineprint="© 2025 Oatmeal, Inc."
+        fineprint="© 2025 Bulma, Inc."
         socialLinks={
           <>
             <SocialLink href="https://x.com" name="X">

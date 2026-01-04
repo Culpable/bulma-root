@@ -204,7 +204,7 @@ EOF
 git add .
 
 # Initial commit
-git commit -m "Initial commit: Oatmeal template for Bulma"
+git commit -m "Initial commit: Bulma marketing site template"
 
 # Connect to GitHub (replace <username> with your GitHub username)
 git remote add origin git@github.com:<username>/bulma-root.git

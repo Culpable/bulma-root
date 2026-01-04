@@ -47,15 +47,15 @@ export default function Page() {
         logo={
           <NavbarLogo href="#">
             <img
-              src="https://assets.tailwindplus.com/logos/oatmeal-mona.svg?color=mist-950"
-              alt="Oatmeal"
+              src="https://bulma.com.au/img/logos/bulma-logo-dark.svg"
+              alt="Bulma"
               className="dark:hidden"
               width={113}
               height={28}
             />
             <img
-              src="https://assets.tailwindplus.com/logos/oatmeal-mona.svg?color=white"
-              alt="Oatmeal"
+              src="https://bulma.com.au/img/logos/bulma-logo-light.svg"
+              alt="Bulma"
               className="not-dark:hidden"
               width={113}
               height={28}
@@ -76,7 +76,7 @@ export default function Page() {
         {/* Hero */}
         <HeroLeftAlignedWithDemo
           id="hero"
-          eyebrow={<AnnouncementBadge href="#" text="Oatmeal raises 80M Series A funding" cta="Learn more" />}
+          eyebrow={<AnnouncementBadge href="#" text="Bulma raises 80M Series A funding" cta="Learn more" />}
           headline="Customer support that feels like a conversation."
           subheadline={
             <p>
@@ -416,7 +416,7 @@ export default function Page() {
           headline="The inbox powering customer conversations everywhere."
           subheadline={
             <p>
-              Oatmeal helps teams deliver personal, organized, and fast customer support across the world. From small
+              Bulma helps teams deliver personal, organized, and fast customer support across the world. From small
               startups to enterprise teams, we process millions of messages each month — using a massive network of low
               wage workers stationed around the globe.
             </p>
@@ -435,7 +435,7 @@ export default function Page() {
           <Testimonial
             quote={
               <p>
-                Oatmeal has completely transformed our customer support operations. To be fair, we weren't doing any
+                Bulma has completely transformed our customer support operations. To be fair, we weren't doing any
                 customer support at all so the bar was pretty low.
               </p>
             }
@@ -454,7 +454,7 @@ export default function Page() {
           <Testimonial
             quote={
               <p>
-                We use Oatmeal's automation features to make cancellation requests disappear into a black hole,
+                We use Bulma's automation features to make cancellation requests disappear into a black hole,
                 improving our retention rates by over 300%.
               </p>
             }
@@ -473,7 +473,7 @@ export default function Page() {
           <Testimonial
             quote={
               <p>
-                I've been using the spare time that Oatmeal has freed up to work not just one, but two other jobs, all
+                I've been using the spare time that Bulma has freed up to work not just one, but two other jobs, all
                 while hitting my core KPIs. My bosses have no idea.
               </p>
             }
@@ -492,7 +492,7 @@ export default function Page() {
           <Testimonial
             quote={
               <p>
-                Oatmeal has given us key insights into how much our customers absolutely hate using our product and how
+                Bulma has given us key insights into how much our customers absolutely hate using our product and how
                 we can improve it to stop them from leaving us.
               </p>
             }
@@ -511,7 +511,7 @@ export default function Page() {
           <Testimonial
             quote={
               <p>
-                As a solo founder, Oatmeal has been a lifesaver. It makes it look like Looply is an actual company with
+                As a solo founder, Bulma has been a lifesaver. It makes it look like Looply is an actual company with
                 multiple employees, when in reality it's just me and an AI.
               </p>
             }
@@ -530,7 +530,7 @@ export default function Page() {
           <Testimonial
             quote={
               <p>
-                Thanks to Oatmeal, we've managed to cut our support costs in half by laying off dozens of employees,
+                Thanks to Bulma, we've managed to cut our support costs in half by laying off dozens of employees,
                 while still improving response times and customer satisfaction.
               </p>
             }
@@ -558,7 +558,7 @@ export default function Page() {
           <Faq
             id="faq-2"
             question="Can my whole team use the same inbox?"
-            answer="Yes, the more the merrier! Oatmeal works best when your entire company has access. We will charge you per additional seat, but we won't tell you about this until you get your invoice."
+            answer="Yes, the more the merrier! Bulma works best when your entire company has access. We will charge you per additional seat, but we won't tell you about this until you get your invoice."
           />
           <Faq
             id="faq-3"
@@ -567,7 +567,7 @@ export default function Page() {
           />
           <Faq
             id="faq-4"
-            question="Does Oatmeal replace my email client?"
+            question="Does Bulma replace my email client?"
             answer="Absolutely. The idea is that we transition you away from email entirely, so you become completely dependent on our service. Like a parasite living off a host."
           />
         </FAQsTwoColumnAccordion>
@@ -647,7 +647,7 @@ export default function Page() {
           headline="Ready to make customer support feel simple again?"
           subheadline={
             <p>
-              Join hundreds of teams using Oatmeal to deliver faster, friendlier email support — using a massive network
+              Join hundreds of teams using Bulma to deliver faster, friendlier email support — using a massive network
               of low wage workers stationed around the globe
             </p>
           }
@@ -705,7 +705,7 @@ export default function Page() {
             </FooterCategory>
           </>
         }
-        fineprint="© 2025 Oatmeal, Inc."
+        fineprint="© 2025 Bulma, Inc."
         socialLinks={
           <>
             <SocialLink href="https://x.com" name="X">

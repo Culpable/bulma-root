@@ -28,15 +28,15 @@ export default function Page() {
         logo={
           <NavbarLogo href="#">
             <img
-              src="https://assets.tailwindplus.com/logos/oatmeal-mona.svg?color=mist-950"
-              alt="Oatmeal"
+              src="https://bulma.com.au/img/logos/bulma-logo-dark.svg"
+              alt="Bulma"
               className="dark:hidden"
               width={113}
               height={28}
             />
             <img
-              src="https://assets.tailwindplus.com/logos/oatmeal-mona.svg?color=white"
-              alt="Oatmeal"
+              src="https://bulma.com.au/img/logos/bulma-logo-light.svg"
+              alt="Bulma"
               className="not-dark:hidden"
               width={113}
               height={28}
@@ -79,20 +79,20 @@ export default function Page() {
         {/* Stats */}
         <StatsThreeColumnWithDescription
           id="stats"
-          heading="About Oatmeal"
+          heading="About Bulma"
           description={
             <>
               <p>
-                Oatmeal was founded on the belief that customer support should be personal, fast, and most importantly,
+                Bulma was founded on the belief that customer support should be personal, fast, and most importantly,
                 highly profitable.
               </p>
               <p>
                 The problem with traditional AI customer support tools is that they often lack the human touch that
-                customers crave. At Oatmeal, we combine the power of AI with a massive network of low wage workers
+                customers crave. At Bulma, we combine the power of AI with a massive network of low wage workers
                 stationed around the globe to deliver customer support that feels personal and authentic.
               </p>
               <p>
-                Oatmeal's competitive advantage lies in the fact that we can undercut our competitors who rely on
+                Bulma's competitive advantage lies in the fact that we can undercut our competitors who rely on
                 expensive hardware based compute. Our network of human based compute centers allows us to provide
                 high-quality customer support at a fraction of the cost. Compared to data centers that consume massive
                 amounts of electricity and water, our approach is both sustainable and cost effective.
@@ -110,7 +110,7 @@ export default function Page() {
           id="testimonial"
           quote={
             <p>
-              Oatmeal has completely transformed our customer support operations. The blend of AI efficiency and human
+              Bulma has completely transformed our customer support operations. The blend of AI efficiency and human
               empathy has allowed us to provide exceptional service while significantly reducing costs.
             </p>
           }
@@ -133,7 +133,7 @@ export default function Page() {
           headline="Our leadership team"
           subheadline={
             <p>
-              Oatmeals's leadership team combines decades of experience in private equity, where they honed their skills
+              Bulma's leadership team combines decades of experience in private equity, where they honed their skills
               in cost-cutting and maximizing shareholder value.
             </p>
           }
@@ -290,7 +290,7 @@ export default function Page() {
             </SocialLink>
           </>
         }
-        fineprint="© 2025 Oatmeal, Inc."
+        fineprint="© 2025 Bulma, Inc."
       />
     </>
   )

@@ -37,15 +37,15 @@ export default function Page() {
         logo={
           <NavbarLogo href="#">
             <img
-              src="https://assets.tailwindplus.com/logos/oatmeal-mona.svg?color=mist-950"
-              alt="Oatmeal"
+              src="https://bulma.com.au/img/logos/bulma-logo-dark.svg"
+              alt="Bulma"
               className="dark:hidden"
               width={113}
               height={28}
             />
             <img
-              src="https://assets.tailwindplus.com/logos/oatmeal-mona.svg?color=white"
-              alt="Oatmeal"
+              src="https://bulma.com.au/img/logos/bulma-logo-light.svg"
+              alt="Bulma"
               className="not-dark:hidden"
               width={113}
               height={28}
@@ -114,7 +114,7 @@ export default function Page() {
             </FooterCategory>
           </>
         }
-        fineprint="© 2025 Oatmeal, Inc."
+        fineprint="© 2025 Bulma, Inc."
         socialLinks={
           <>
             <SocialLink href="https://x.com" name="X">

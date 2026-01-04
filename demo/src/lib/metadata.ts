@@ -12,9 +12,9 @@
 export const siteMetadata = {
   // Site identity
   name: 'Bulma',
-  title: 'Bulma: AI Mortgage Broker Assistant',
+  title: 'Bulma: AI Assistant for Australian Mortgage Brokers',
   description:
-    'Bulma is an AI mortgage broker assistant that helps you with scenario planning, credit assessment preparation, policy matching, and lender selection. Ask any policy question in plain English. Get instant, grounded answers with source attribution — so you spend less time searching and more time settling.',
+    'Built for Australian mortgage brokers, Bulma is an AI assistant that helps with scenario planning, credit assessment, policy matching, and lender selection. Ask any policy question in plain English and get instant, grounded answers with source attribution.',
 
   // URLs
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://bulma.com.au',

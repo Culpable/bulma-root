@@ -7,13 +7,48 @@ import { FAQsAccordion, Faq } from '@/components/sections/faqs-accordion'
 import { PlanComparisonTable } from '@/components/sections/plan-comparison-table'
 import { Plan, PricingHeroMultiTier } from '@/components/sections/pricing-hero-multi-tier'
 import { TestimonialTwoColumnWithLargePhoto } from '@/components/sections/testimonial-two-column-with-large-photo'
+import { buildFaqPageSchema } from '@/schemas/organization-schema'
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Script from 'next/script'
 
 export const metadata: Metadata = {
   title: pageMetadata.pricing.title,
   description: pageMetadata.pricing.description,
 }
+
+const pricingFaqs = [
+  {
+    id: 'faq-1',
+    question: 'Is there a free trial?',
+    answer:
+      'Yes, all plans come with a 14-day free trial. No credit card required to get started — just sign up and start asking policy questions right away.',
+  },
+  {
+    id: 'faq-2',
+    question: 'Can I upgrade or downgrade my plan?',
+    answer:
+      "Absolutely. You can change your plan at any time. If you upgrade, you'll be charged the prorated difference. If you downgrade, the change takes effect at your next billing cycle.",
+  },
+  {
+    id: 'faq-3',
+    question: 'What happens if I exceed my team member limit?',
+    answer:
+      'On the Team plan, you can add additional team members beyond the included 5 for an extra per-seat fee. Contact us for details, or consider the Enterprise plan for unlimited team members.',
+  },
+  {
+    id: 'faq-4',
+    question: 'Do you offer discounts for aggregators?',
+    answer:
+      'Yes, we offer volume discounts for aggregators and large brokerages. Get in touch with our sales team to discuss pricing that works for your organisation.',
+  },
+]
+
+const pricingStructuredData = buildFaqPageSchema({
+  path: '/pricing/',
+  name: 'Bulma Pricing FAQs',
+  faqs: pricingFaqs,
+})
 
 function plans(option: string) {
   return (
@@ -82,6 +117,13 @@ function plans(option: string) {
 export default function Page() {
   return (
     <>
+      <Script
+        id="pricing-faq-structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(pricingStructuredData),
+        }}
+      />
       {/* Hero */}
       <PricingHeroMultiTier
         id="pricing"
@@ -265,7 +307,7 @@ export default function Page() {
         img={
           <Image
             src="/img/avatars/16-h-1000-w-1400.webp"
-            alt=""
+            alt="Portrait of James Mitchell"
             className="not-dark:bg-white/75 dark:bg-black/75"
             width={1400}
             height={1000}
@@ -276,26 +318,9 @@ export default function Page() {
       />
       {/* FAQs */}
       <FAQsAccordion id="faqs" headline="Questions & Answers">
-        <Faq
-          id="faq-1"
-          question="Is there a free trial?"
-          answer="Yes, all plans come with a 14-day free trial. No credit card required to get started — just sign up and start asking policy questions right away."
-        />
-        <Faq
-          id="faq-2"
-          question="Can I upgrade or downgrade my plan?"
-          answer="Absolutely. You can change your plan at any time. If you upgrade, you'll be charged the prorated difference. If you downgrade, the change takes effect at your next billing cycle."
-        />
-        <Faq
-          id="faq-3"
-          question="What happens if I exceed my team member limit?"
-          answer="On the Team plan, you can add additional team members beyond the included 5 for an extra per-seat fee. Contact us for details, or consider the Enterprise plan for unlimited team members."
-        />
-        <Faq
-          id="faq-4"
-          question="Do you offer discounts for aggregators?"
-          answer="Yes, we offer volume discounts for aggregators and large brokerages. Get in touch with our sales team to discuss pricing that works for your organisation."
-        />
+        {pricingFaqs.map((faq) => (
+          <Faq key={faq.id} id={faq.id} question={faq.question} answer={faq.answer} />
+        ))}
       </FAQsAccordion>
       {/* Call To Action */}
       <CallToActionSimpleCentered

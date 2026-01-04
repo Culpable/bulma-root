@@ -13,7 +13,12 @@ import { HeroLeftAlignedWithDemo } from '@/components/sections/hero-left-aligned
 import { Plan, PricingMultiTier } from '@/components/sections/pricing-multi-tier'
 import { Stat, StatsWithGraph } from '@/components/sections/stats-with-graph'
 import { Testimonial, TestimonialThreeColumnGrid } from '@/components/sections/testimonials-three-column-grid'
-import { organizationSchema } from '@/schemas/organization-schema'
+import {
+  buildFaqPageSchema,
+  organizationSchema,
+  softwareApplicationSchema,
+  websiteSchema,
+} from '@/schemas/organization-schema'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Script from 'next/script'
@@ -26,20 +31,62 @@ export const metadata: Metadata = {
   description: pageMetadata.home.description,
 }
 
+const heroScreenshotAlt = 'Bulma policy Q&A interface screenshot'
+const policyQaScreenshotAlt = 'Bulma policy answers with source attribution'
+const lenderComparisonScreenshotAlt = 'Bulma lender policy comparison view'
+
+const homeFaqs = [
+  {
+    id: 'faq-1',
+    question: "How accurate are Bulma's answers?",
+    answer:
+      'Every answer is grounded in current policy text from our database — Bulma never makes things up. Each response shows which lender and policy category it draws from, plus when that policy was last updated, so you can verify the source.',
+  },
+  {
+    id: 'faq-2',
+    question: 'Which lenders does Bulma cover?',
+    answer:
+      'Bulma covers all major Australian lenders including the big four banks, plus a growing list of second-tier lenders and non-bank lenders. We regularly update our policy database to reflect the latest changes.',
+  },
+  {
+    id: 'faq-3',
+    question: 'Can I compare policies across different lenders?',
+    answer:
+      "Absolutely. Ask Bulma to compare policies across lenders — for example, 'Compare the big 4's LMI requirements for 95% LVR' — and you'll get a structured comparison highlighting key differences.",
+  },
+  {
+    id: 'faq-4',
+    question: 'Does Bulma provide credit advice?',
+    answer:
+      'No. Bulma is a research tool that helps you find policy information faster. You remain responsible for all credit advice and suitability assessments. We recommend confirming edge cases with your BDM.',
+  },
+]
+
+const homeStructuredData = [
+  organizationSchema,
+  websiteSchema,
+  softwareApplicationSchema,
+  buildFaqPageSchema({
+    path: '/',
+    name: 'Bulma FAQs',
+    faqs: homeFaqs,
+  }),
+]
+
 export default function Page() {
   return (
     <>
       <Script
-        id="organization-schema"
+        id="structured-data"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(organizationSchema)
+          __html: JSON.stringify(homeStructuredData),
         }}
       />
       {/* Hero */}
       <HeroLeftAlignedWithDemo
         id="hero"
-        eyebrow={<AnnouncementBadge href="#" text="Now covering all major Australian lenders" cta="See the list" />}
+        eyebrow={<AnnouncementBadge href="#lenders" text="Now covering all major Australian lenders" cta="See the list" />}
         headline="Your AI assistant for lender policy questions."
         subheadline={
           <p>
@@ -63,28 +110,28 @@ export default function Page() {
             <Screenshot className="rounded-md lg:hidden" wallpaper="blue" placement="bottom-right">
               <Image
                 src="/img/screenshots/1-left-1670-top-1408.webp"
-                alt=""
+                alt={heroScreenshotAlt}
                 width={1670}
                 height={1408}
                 className="bg-white/75 md:hidden dark:hidden"
               />
               <Image
                 src="/img/screenshots/1-color-mist-left-1670-top-1408.webp"
-                alt=""
+                alt={heroScreenshotAlt}
                 width={1670}
                 height={1408}
                 className="bg-black/75 not-dark:hidden md:hidden"
               />
               <Image
                 src="/img/screenshots/1-left-2000-top-1408.webp"
-                alt=""
+                alt={heroScreenshotAlt}
                 width={2000}
                 height={1408}
                 className="bg-white/75 max-md:hidden dark:hidden"
               />
               <Image
                 src="/img/screenshots/1-color-mist-left-2000-top-1408.webp"
-                alt=""
+                alt={heroScreenshotAlt}
                 width={2000}
                 height={1408}
                 className="bg-black/75 not-dark:hidden max-md:hidden"
@@ -93,7 +140,7 @@ export default function Page() {
             <Screenshot className="rounded-lg max-lg:hidden" wallpaper="blue" placement="bottom">
               <Image
                 src="/img/screenshots/1.webp"
-                alt=""
+                alt={heroScreenshotAlt}
                 className="bg-white/75 dark:hidden"
                 width={3440}
                 height={1990}
@@ -101,7 +148,7 @@ export default function Page() {
               <Image
                 className="bg-black/75 not-dark:hidden"
                 src="/img/screenshots/1-color-mist.webp"
-                alt=""
+                alt={heroScreenshotAlt}
                 width={3440}
                 height={1990}
               />
@@ -109,7 +156,8 @@ export default function Page() {
           </>
         }
         footer={
-          <LogoGrid>
+          <div id="lenders">
+            <LogoGrid>
             <Logo>
               <Image
                 src="/img/logos/9-color-black-height-32.svg"
@@ -206,7 +254,8 @@ export default function Page() {
                 height={32}
               />
             </Logo>
-          </LogoGrid>
+            </LogoGrid>
+          </div>
         }
       />
       {/* Features */}
@@ -226,56 +275,56 @@ export default function Page() {
                 <Screenshot wallpaper="purple" placement="bottom-right">
                   <Image
                     src="/img/screenshots/1-left-1000-top-800.webp"
-                    alt=""
+                    alt={policyQaScreenshotAlt}
                     className="bg-white/75 sm:hidden dark:hidden"
                     width={1000}
                     height={800}
                   />
                   <Image
                     src="/img/screenshots/1-color-mist-left-1000-top-800.webp"
-                    alt=""
+                    alt={policyQaScreenshotAlt}
                     className="bg-black/75 not-dark:hidden sm:hidden"
                     width={1000}
                     height={800}
                   />
                   <Image
                     src="/img/screenshots/1-left-1800-top-660.webp"
-                    alt=""
+                    alt={policyQaScreenshotAlt}
                     className="bg-white/75 max-sm:hidden lg:hidden dark:hidden"
                     width={1800}
                     height={660}
                   />
                   <Image
                     src="/img/screenshots/1-color-mist-left-1800-top-660.webp"
-                    alt=""
+                    alt={policyQaScreenshotAlt}
                     className="bg-black/75 not-dark:hidden max-sm:hidden lg:hidden"
                     width={1800}
                     height={660}
                   />
                   <Image
                     src="/img/screenshots/1-left-1300-top-1300.webp"
-                    alt=""
+                    alt={policyQaScreenshotAlt}
                     className="bg-white/75 max-lg:hidden xl:hidden dark:hidden"
                     width={1300}
                     height={1300}
                   />
                   <Image
                     src="/img/screenshots/1-color-mist-left-1300-top-1300.webp"
-                    alt=""
+                    alt={policyQaScreenshotAlt}
                     className="bg-black/75 not-dark:hidden max-lg:hidden xl:hidden"
                     width={1300}
                     height={1300}
                   />
                   <Image
                     src="/img/screenshots/1-left-1800-top-1250.webp"
-                    alt=""
+                    alt={policyQaScreenshotAlt}
                     className="bg-white/75 max-xl:hidden dark:hidden"
                     width={1800}
                     height={1250}
                   />
                   <Image
                     src="/img/screenshots/1-color-mist-left-1800-top-1250.webp"
-                    alt=""
+                    alt={policyQaScreenshotAlt}
                     className="bg-black/75 not-dark:hidden max-xl:hidden"
                     width={1800}
                     height={1250}
@@ -290,7 +339,7 @@ export default function Page() {
                 </p>
               }
               cta={
-                <Link href="#">
+                <Link href="#pricing">
                   Learn more <ArrowNarrowRightIcon />
                 </Link>
               }
@@ -300,56 +349,56 @@ export default function Page() {
                 <Screenshot wallpaper="blue" placement="bottom-left">
                   <Image
                     src="/img/screenshots/1-right-1000-top-800.webp"
-                    alt=""
+                    alt={lenderComparisonScreenshotAlt}
                     className="bg-white/75 sm:hidden dark:hidden"
                     width={1000}
                     height={800}
                   />
                   <Image
                     src="/img/screenshots/1-color-mist-right-1000-top-800.webp"
-                    alt=""
+                    alt={lenderComparisonScreenshotAlt}
                     className="bg-black/75 not-dark:hidden sm:hidden"
                     width={1000}
                     height={800}
                   />
                   <Image
                     src="/img/screenshots/1-right-1800-top-660.webp"
-                    alt=""
+                    alt={lenderComparisonScreenshotAlt}
                     className="bg-white/75 max-sm:hidden lg:hidden dark:hidden"
                     width={1800}
                     height={660}
                   />
                   <Image
                     src="/img/screenshots/1-color-mist-right-1800-top-660.webp"
-                    alt=""
+                    alt={lenderComparisonScreenshotAlt}
                     className="bg-black/75 not-dark:hidden max-sm:hidden lg:hidden"
                     width={1800}
                     height={660}
                   />
                   <Image
                     src="/img/screenshots/1-right-1300-top-1300.webp"
-                    alt=""
+                    alt={lenderComparisonScreenshotAlt}
                     className="bg-white/75 max-lg:hidden xl:hidden dark:hidden"
                     width={1300}
                     height={1300}
                   />
                   <Image
                     src="/img/screenshots/1-color-mist-right-1300-top-1300.webp"
-                    alt=""
+                    alt={lenderComparisonScreenshotAlt}
                     className="bg-black/75 not-dark:hidden max-lg:hidden xl:hidden"
                     width={1300}
                     height={1300}
                   />
                   <Image
                     src="/img/screenshots/1-right-1800-top-1250.webp"
-                    alt=""
+                    alt={lenderComparisonScreenshotAlt}
                     className="bg-white/75 max-xl:hidden dark:hidden"
                     width={1800}
                     height={1250}
                   />
                   <Image
                     src="/img/screenshots/1-color-mist-right-1800-top-1250.webp"
-                    alt=""
+                    alt={lenderComparisonScreenshotAlt}
                     className="bg-black/75 not-dark:hidden max-xl:hidden"
                     width={1800}
                     height={1250}
@@ -361,7 +410,7 @@ export default function Page() {
                 <p>Compare policies across lenders side-by-side. Find the best fit for your client's scenario in seconds.</p>
               }
               cta={
-                <Link href="#">
+                <Link href="#pricing">
                   Learn more <ArrowNarrowRightIcon />
                 </Link>
               }
@@ -400,7 +449,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/10-size-160.webp"
-              alt=""
+              alt="Portrait of Sarah Chen"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
@@ -419,7 +468,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/15-size-160.webp"
-              alt=""
+              alt="Portrait of Michael Torres"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
@@ -438,7 +487,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/13-size-160.webp"
-              alt=""
+              alt="Portrait of David Nguyen"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
@@ -457,7 +506,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/12-size-160.webp"
-              alt=""
+              alt="Portrait of Emma Williams"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
@@ -476,7 +525,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/11-size-160.webp"
-              alt=""
+              alt="Portrait of James Mitchell"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
@@ -495,7 +544,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/14-size-160.webp"
-              alt=""
+              alt="Portrait of Rachel Cooper"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
@@ -507,26 +556,9 @@ export default function Page() {
       </TestimonialThreeColumnGrid>
       {/* FAQs */}
       <FAQsTwoColumnAccordion id="faqs" headline="Questions & Answers">
-        <Faq
-          id="faq-1"
-          question="How accurate are Bulma's answers?"
-          answer="Every answer is grounded in current policy text from our database — Bulma never makes things up. Each response shows which lender and policy category it draws from, plus when that policy was last updated, so you can verify the source."
-        />
-        <Faq
-          id="faq-2"
-          question="Which lenders does Bulma cover?"
-          answer="Bulma covers all major Australian lenders including the big four banks, plus a growing list of second-tier lenders and non-bank lenders. We regularly update our policy database to reflect the latest changes."
-        />
-        <Faq
-          id="faq-3"
-          question="Can I compare policies across different lenders?"
-          answer="Absolutely. Ask Bulma to compare policies across lenders — for example, 'Compare the big 4's LMI requirements for 95% LVR' — and you'll get a structured comparison highlighting key differences."
-        />
-        <Faq
-          id="faq-4"
-          question="Does Bulma provide credit advice?"
-          answer="No. Bulma is a research tool that helps you find policy information faster. You remain responsible for all credit advice and suitability assessments. We recommend confirming edge cases with your BDM."
-        />
+        {homeFaqs.map((faq) => (
+          <Faq key={faq.id} id={faq.id} question={faq.question} answer={faq.answer} />
+        ))}
       </FAQsTwoColumnAccordion>
       {/* Pricing */}
       <PricingMultiTier

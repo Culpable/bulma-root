@@ -1,20 +1,20 @@
-# Oatmeal
+# Bulma Root
 
-Oatmeal is a [Tailwind Plus](https://tailwindcss.com/plus) SaaS Marketing Kit built using [Tailwind CSS](https://tailwindcss.com) and [Elements](https://tailwindcss.com/plus/ui-blocks/documentation/elements).
+Bulma Root is a [Tailwind Plus](https://tailwindcss.com/plus) marketing site built using [Tailwind CSS](https://tailwindcss.com) and [Elements](https://tailwindcss.com/plus/ui-blocks/documentation/elements).
 
 ## Quickstart using your coding agent
 
 If you are using a coding agent like Claude Code, Cursor, Codex, etc., the quickest way to get started is by using the following prompt and pointing its to this file:
 
 ```
-Please install the Oatmeal Tailwind Plus template into my project following the documentation from @path-to-oatmeal-template/README.md.
+Please install the Bulma Root Tailwind Plus template into my project following the documentation from @path-to-bulma-template/README.md.
 ```
 
 ## Installation
 
 ### 1. Install required dependencies
 
-Oatmeal requires Tailwind CSS v4 to be set up in your project. If this is not set up already, check out the [official installation guide for your setup](https://tailwindcss.com/docs/installation) or the [Tailwind CSS v4 upgrade guide](https://tailwindcss.com/docs/upgrade-guide).
+Bulma Root requires Tailwind CSS v4 to be set up in your project. If this is not set up already, check out the [official installation guide for your setup](https://tailwindcss.com/docs/installation) or the [Tailwind CSS v4 upgrade guide](https://tailwindcss.com/docs/upgrade-guide).
 
 In addition to Tailwind CSS, add the following dependencies to your project:
 
@@ -81,15 +81,15 @@ Add the following meta tags to the `<head>` tag in your project:
 
 ### 4. Copy the components to your project
 
-Add the components from the Oatmeal ZIP download to your project:
+Add the components from the Bulma Root ZIP download to your project:
 
 ```bash
-cp ~/Downloads/oatmeal/components /your-project/src/components
+cp ~/Downloads/bulma-root/components /your-project/src/components
 ```
 
 ### 5. Set up the `@` alias
 
-All the components in Oatmeal use an `@` alias that's expected to resolve to the
+All the components in Bulma Root use an `@` alias that's expected to resolve to the
 components directory in your project. If you don't already have this in place,
 update your `tsconfig.json`:
 
@@ -106,7 +106,7 @@ update your `tsconfig.json`:
 
 ### 6. Replace anchor links with SPA-link equivalent (Optional)
 
-If your framework provides an SPA-link component, you'll want to replace all `<a>` instances in the Oatmeal components with your link component.
+If your framework provides an SPA-link component, you'll want to replace all `<a>` instances in the Bulma Root components with your link component.
 
 Here's an example of how you'd do this in Next.js using their `Link` component:
 

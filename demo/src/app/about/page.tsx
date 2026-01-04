@@ -30,7 +30,7 @@ export default function Page() {
         photo={
           <Image
             src="/img/photos/1.webp"
-            alt=""
+            alt="Bulma team photo"
             width={1800}
             height={945}
             className="not-dark:bg-white/75 dark:bg-black/75"
@@ -64,7 +64,7 @@ export default function Page() {
         img={
           <Image
             src="/img/avatars/16-h-1000-w-1400.webp"
-            alt=""
+            alt="Portrait of Sarah Chen"
             className="not-dark:bg-white/75 dark:bg-black/75"
             width={1400}
             height={1000}
@@ -88,7 +88,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/1-h-1000-w-800.webp"
-              alt=""
+              alt="Portrait of Leslie Alexander"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -101,7 +101,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/2-h-1000-w-800.webp"
-              alt=""
+              alt="Portrait of Michael Foster"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -114,7 +114,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/7-h-1000-w-800.webp"
-              alt=""
+              alt="Portrait of Dries Vincent"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -127,7 +127,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/4-h-1000-w-800.webp"
-              alt=""
+              alt="Portrait of Lindsay Walton"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -140,7 +140,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/5-h-1000-w-800.webp"
-              alt=""
+              alt="Portrait of Noor Hasan"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -153,7 +153,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/6-h-1000-w-800.webp"
-              alt=""
+              alt="Portrait of Tom Cook"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -166,7 +166,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/8-h-1000-w-800.webp"
-              alt=""
+              alt="Portrait of Whitney Francis"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -179,7 +179,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/3-h-1000-w-800.webp"
-              alt=""
+              alt="Portrait of Leonard Wu"
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}

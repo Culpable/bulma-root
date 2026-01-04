@@ -39,15 +39,15 @@ export default function Page() {
         logo={
           <NavbarLogo href="#">
             <img
-              src="https://assets.tailwindplus.com/logos/oatmeal-mona.svg?color=mist-950"
-              alt="Oatmeal"
+              src="https://bulma.com.au/img/logos/bulma-logo-dark.svg"
+              alt="Bulma"
               className="dark:hidden"
               width={113}
               height={28}
             />
             <img
-              src="https://assets.tailwindplus.com/logos/oatmeal-mona.svg?color=white"
-              alt="Oatmeal"
+              src="https://bulma.com.au/img/logos/bulma-logo-light.svg"
+              alt="Bulma"
               className="not-dark:hidden"
               width={113}
               height={28}
@@ -69,7 +69,7 @@ export default function Page() {
         <HeroWithDemoOnBackground
           id="hero"
           eyebrow={
-            <AnnouncementBadge href="#" text="Oatmeal raises 80M Series A funding" cta="Learn more" variant="overlay" />
+            <AnnouncementBadge href="#" text="Bulma raises 80M Series A funding" cta="Learn more" variant="overlay" />
           }
           headline="Customer support that feels like a conversation."
           subheadline={
@@ -415,7 +415,7 @@ export default function Page() {
           headline="The inbox powering customer conversations everywhere."
           subheadline={
             <p>
-              Oatmeal helps teams deliver personal, organized, and fast customer support across the world. From small
+              Bulma helps teams deliver personal, organized, and fast customer support across the world. From small
               startups to enterprise teams, we process millions of messages each month — using a massive network of low
               wage workers stationed around the globe.
             </p>
@@ -430,7 +430,7 @@ export default function Page() {
           id="testimonial"
           quote={
             <p>
-              Oatmeal has completely transformed our customer support operations. The blend of AI efficiency and human
+              Bulma has completely transformed our customer support operations. The blend of AI efficiency and human
               empathy has allowed us to provide exceptional service while significantly reducing costs.
             </p>
           }
@@ -457,7 +457,7 @@ export default function Page() {
           <Faq
             id="faq-2"
             question="Can my whole team use the same inbox?"
-            answer="Yes, the more the merrier! Oatmeal works best when your entire company has access. We will charge you per additional seat, but we won't tell you about this until you get your invoice."
+            answer="Yes, the more the merrier! Bulma works best when your entire company has access. We will charge you per additional seat, but we won't tell you about this until you get your invoice."
           />
           <Faq
             id="faq-3"
@@ -466,7 +466,7 @@ export default function Page() {
           />
           <Faq
             id="faq-4"
-            question="Does Oatmeal replace my email client?"
+            question="Does Bulma replace my email client?"
             answer="Absolutely. The idea is that we transition you away from email entirely, so you become completely dependent on our service. Like a parasite living off a host."
           />
         </FAQsTwoColumnAccordion>
@@ -546,7 +546,7 @@ export default function Page() {
           headline="Ready to make customer support feel simple again?"
           subheadline={
             <p>
-              Join hundreds of teams using Oatmeal to deliver faster, friendlier email support — using a massive network
+              Join hundreds of teams using Bulma to deliver faster, friendlier email support — using a massive network
               of low wage workers stationed around the globe
             </p>
           }
@@ -597,7 +597,7 @@ export default function Page() {
             </FooterCategory>
           </>
         }
-        fineprint="© 2025 Oatmeal, Inc."
+        fineprint="© 2025 Bulma, Inc."
       />
     </>
   )

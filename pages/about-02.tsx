@@ -38,15 +38,15 @@ export default function Page() {
         logo={
           <NavbarLogo href="#">
             <img
-              src="https://assets.tailwindplus.com/logos/oatmeal-mona.svg?color=mist-950"
-              alt="Oatmeal"
+              src="https://bulma.com.au/img/logos/bulma-logo-dark.svg"
+              alt="Bulma"
               className="dark:hidden"
               width={113}
               height={28}
             />
             <img
-              src="https://assets.tailwindplus.com/logos/oatmeal-mona.svg?color=white"
-              alt="Oatmeal"
+              src="https://bulma.com.au/img/logos/bulma-logo-light.svg"
+              alt="Bulma"
               className="not-dark:hidden"
               width={113}
               height={28}
@@ -102,7 +102,7 @@ export default function Page() {
           headline="Funded by leading investors."
           subheadline={
             <p>
-              Oatmeal is backed by investors with decades of experience building the world's most boring and predictable
+              Bulma is backed by investors with decades of experience building the world's most boring and predictable
               B2B SaaS.
             </p>
           }
@@ -181,7 +181,7 @@ export default function Page() {
           headline="Our leadership team"
           subheadline={
             <p>
-              Oatmeals's leadership team combines decades of experience in private equity, where they honed their skills
+              Bulma's leadership team combines decades of experience in private equity, where they honed their skills
               in cost-cutting and maximizing shareholder value.
             </p>
           }
@@ -357,7 +357,7 @@ export default function Page() {
             </FooterCategory>
           </>
         }
-        fineprint="© 2025 Oatmeal, Inc."
+        fineprint="© 2025 Bulma, Inc."
       />
     </>
   )
