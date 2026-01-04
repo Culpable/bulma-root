@@ -1,6 +1,6 @@
 import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
 import { Main } from '@/components/elements/main'
-import { ChevronIcon } from '@/components/icons/chevron-icon'
+import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { GitHubIcon } from '@/components/icons/social/github-icon'
 import { XIcon } from '@/components/icons/social/x-icon'
 import { YouTubeIcon } from '@/components/icons/social/youtube-icon'
@@ -101,7 +101,7 @@ export default function Page() {
           }
         >
           <Stat stat="2M+" text="Emails manually processed every week across thousands of teams." />
-          <Stat stat="99.98%" text="Uptime — because your customers never stop complaining." />
+          <Stat stat="99.98%" text="Uptime - because your customers never stop complaining." />
           <Stat stat="70+" text="Countries where we have low wage workers pretending to be AI." />
         </StatsThreeColumnWithDescription>
 
@@ -257,8 +257,8 @@ export default function Page() {
                 Chat with us
               </ButtonLink>
 
-              <PlainButtonLink href="#" size="lg">
-                Book a demo <ChevronIcon />
+              <PlainButtonLink href="#" size="lg" className="group">
+                Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
               </PlainButtonLink>
             </div>
           }

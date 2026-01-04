@@ -1,6 +1,6 @@
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
 import { Main } from '@/components/elements/main'
-import { ChevronIcon } from '@/components/icons/chevron-icon'
+import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { FAQsTwoColumnAccordion, Faq } from '@/components/sections/faqs-two-column-accordion'
 import { FooterCategory, FooterLink, FooterWithLinkCategories } from '@/components/sections/footer-with-link-categories'
@@ -325,8 +325,8 @@ export default function Page() {
                 Chat with us
               </ButtonLink>
 
-              <PlainButtonLink href="#" size="lg">
-                Book a demo <ChevronIcon />
+              <PlainButtonLink href="#" size="lg" className="group">
+                Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
               </PlainButtonLink>
             </div>
           }

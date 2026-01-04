@@ -1,7 +1,7 @@
 import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
 import { Link } from '@/components/elements/link'
 import { Main } from '@/components/elements/main'
-import { ArrowNarrowRightIcon } from '@/components/icons/arrow-narrow-right-icon'
+import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { GitHubIcon } from '@/components/icons/social/github-icon'
 import { XIcon } from '@/components/icons/social/x-icon'
 import { YouTubeIcon } from '@/components/icons/social/youtube-icon'
@@ -67,8 +67,8 @@ export default function Page() {
           headline="Page not found"
           subheadline={<p>Sorry, but the page you were looking for could not be found.</p>}
           cta={
-            <Link href="#">
-              Go back home <ArrowNarrowRightIcon />
+            <Link href="#" className="group">
+              Go back home <AnimatedArrowIcon className="-mr-1 ml-1.5" />
             </Link>
           }
         />

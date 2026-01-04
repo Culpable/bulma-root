@@ -1,7 +1,7 @@
 import { AnnouncementBadge } from '@/components/elements/announcement-badge'
 import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
 import { Main } from '@/components/elements/main'
-import { ChevronIcon } from '@/components/icons/chevron-icon'
+import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { GitDiffIcon } from '@/components/icons/git-diff-icon'
 import { HeartIcon } from '@/components/icons/heart-icon'
 import { RocketIcon } from '@/components/icons/rocket-icon'
@@ -71,7 +71,7 @@ export default function Page() {
           headline="Your customer success is our mission."
           subheadline={
             <p>
-              We're on a mission to take the human element completely out of customer support — so your team can focus
+              We're on a mission to take the human element completely out of customer support - so your team can focus
               on what matters most, profitability.
             </p>
           }
@@ -233,7 +233,7 @@ export default function Page() {
           headline="Our values."
           subheadline={
             <p>
-              Work smarter, reply faster, and keep every customer conversation right where it belongs — in one simple
+              Work smarter, reply faster, and keep every customer conversation right where it belongs - in one simple
               inbox, where you can ignore it.
             </p>
           }
@@ -316,8 +316,8 @@ export default function Page() {
                 Chat with us
               </ButtonLink>
 
-              <PlainButtonLink href="#" size="lg">
-                Book a demo <ChevronIcon />
+              <PlainButtonLink href="#" size="lg" className="group">
+                Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
               </PlainButtonLink>
             </div>
           }

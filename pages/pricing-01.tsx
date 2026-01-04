@@ -1,7 +1,7 @@
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
 import { Logo, LogoGrid } from '@/components/elements/logo-grid'
 import { Main } from '@/components/elements/main'
-import { ChevronIcon } from '@/components/icons/chevron-icon'
+import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { GitHubIcon } from '@/components/icons/social/github-icon'
 import { XIcon } from '@/components/icons/social/x-icon'
 import { YouTubeIcon } from '@/components/icons/social/youtube-icon'
@@ -398,8 +398,8 @@ export default function Page() {
                 Chat with us
               </ButtonLink>
 
-              <PlainButtonLink href="#" size="lg">
-                Book a demo <ChevronIcon />
+              <PlainButtonLink href="#" size="lg" className="group">
+                Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
               </PlainButtonLink>
             </div>
           }

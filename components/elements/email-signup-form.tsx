@@ -35,7 +35,7 @@ export function EmailSignupForm({
         aria-label={label}
         placeholder={placeholder}
       />
-      <Button color={variant === 'normal' ? 'dark/light' : 'light'} type="submit">
+      <Button color={variant === 'normal' ? 'dark/light' : 'light'} type="submit" className="group">
         {cta}
       </Button>
     </form>

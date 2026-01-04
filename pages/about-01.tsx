@@ -1,6 +1,6 @@
 import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
 import { Main } from '@/components/elements/main'
-import { ChevronIcon } from '@/components/icons/chevron-icon'
+import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { GitHubIcon } from '@/components/icons/social/github-icon'
 import { XIcon } from '@/components/icons/social/x-icon'
 import { YouTubeIcon } from '@/components/icons/social/youtube-icon'
@@ -72,7 +72,7 @@ export default function Page() {
           headline="Your customer success is our mission."
           subheadline={
             <p>
-              We're on a mission to take the human element completely out of customer support — so your team can focus
+              We're on a mission to take the human element completely out of customer support - so your team can focus
               on what matters most, profitability.
             </p>
           }
@@ -95,13 +95,13 @@ export default function Page() {
           subheadline={
             <p>
               Bulma helps teams deliver personal, organized, and fast customer support across the world. From small
-              startups to enterprise teams, we process millions of messages each month — using a massive network of low
+              startups to enterprise teams, we process millions of messages each month - using a massive network of low
               wage workers stationed around the globe.
             </p>
           }
         >
           <Stat stat="2M+" text="Emails manually processed every week across thousands of teams." />
-          <Stat stat="99.98%" text="Uptime — because your customers never stop complaining." />
+          <Stat stat="99.98%" text="Uptime - because your customers never stop complaining." />
         </StatsWithGraph>
 
         {/* Testimonial */}
@@ -256,8 +256,8 @@ export default function Page() {
                 Chat with us
               </ButtonLink>
 
-              <PlainButtonLink href="#" size="lg">
-                Book a demo <ChevronIcon />
+              <PlainButtonLink href="#" size="lg" className="group">
+                Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
               </PlainButtonLink>
             </div>
           }

@@ -92,6 +92,18 @@ export type FaqEntry = {
 }
 
 /**
+ * Strip HTML tags from a string and normalize whitespace.
+ *
+ * This is intentionally conservative: JSON-LD FAQPage `name` and `text` fields should be plain text.
+ * (Search engines may ignore or penalize markup inside structured data fields.)
+ */
+function toPlainText(value: string) {
+  // Remove any HTML tags (e.g. "<em>") and collapse whitespace for cleaner schema output.
+  const withoutTags = value.replace(/<[^>]*>/g, ' ')
+  return withoutTags.replace(/\s+/g, ' ').trim()
+}
+
+/**
  * Build a FAQPage JSON-LD schema for a given route and FAQ list.
  */
 export function buildFaqPageSchema({
@@ -105,19 +117,30 @@ export function buildFaqPageSchema({
 }) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
   const url = normalizedPath === '/' ? SITE_URL : `${BASE_URL}${normalizedPath}`
+  const mainEntity = faqs
+    .map((faq) => {
+      const question = toPlainText(faq.question)
+      const answer = toPlainText(faq.answer)
+
+      // Skip invalid/empty entries rather than emitting broken schema.
+      if (!question || !answer) return null
+
+      return {
+        '@type': 'Question',
+        name: question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: answer,
+        },
+      }
+    })
+    .filter(Boolean)
 
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     name,
     url,
-    mainEntity: faqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
-      },
-    })),
+    mainEntity,
   }
 }

@@ -1,5 +1,5 @@
 import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
-import { ChevronIcon } from '@/components/icons/chevron-icon'
+import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { pageMetadata } from '@/lib/metadata'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { HeroLeftAlignedWithPhoto } from '@/components/sections/hero-left-aligned-with-photo'
@@ -14,6 +14,11 @@ export const metadata: Metadata = {
   description: pageMetadata.about.description,
 }
 
+const aboutSeoAltContext =
+  'About Bulma and our mission to help Australian mortgage brokers work smarter with AI policy assistance'
+const aboutAlt = (text: string) => `${text} - ${aboutSeoAltContext}`
+const aboutPortraitAlt = (name: string) => aboutAlt(`Portrait of ${name}`)
+
 export default function Page() {
   return (
     <>
@@ -23,14 +28,14 @@ export default function Page() {
         headline="Built by brokers, for brokers."
         subheadline={
           <p>
-            We know firsthand how much time gets lost to policy research. Bulma was created to give that time back — so
+            We know firsthand how much time gets lost to policy research. Bulma was created to give that time back - so
             you can focus on what matters most: your clients.
           </p>
         }
         photo={
           <Image
             src="/img/photos/1.webp"
-            alt="Bulma team photo"
+            alt={aboutAlt('Bulma team photo')}
             width={1800}
             height={945}
             className="not-dark:bg-white/75 dark:bg-black/75"
@@ -50,7 +55,7 @@ export default function Page() {
         }
       >
         <Stat stat="30+" text="Major Australian lenders covered, with policies updated regularly." />
-        <Stat stat="Seconds" text="Average time to answer — compared to hours of manual research." />
+        <Stat stat="Seconds" text="Average time to answer - compared to hours of manual research." />
       </StatsWithGraph>
       {/* Testimonial */}
       <TestimonialTwoColumnWithLargePhoto
@@ -64,7 +69,7 @@ export default function Page() {
         img={
           <Image
             src="/img/avatars/16-h-1000-w-1400.webp"
-            alt="Portrait of Sarah Chen"
+            alt={aboutPortraitAlt('Sarah Chen')}
             className="not-dark:bg-white/75 dark:bg-black/75"
             width={1400}
             height={1000}
@@ -88,7 +93,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/1-h-1000-w-800.webp"
-              alt="Portrait of Leslie Alexander"
+              alt={aboutPortraitAlt('Leslie Alexander')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -101,7 +106,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/2-h-1000-w-800.webp"
-              alt="Portrait of Michael Foster"
+              alt={aboutPortraitAlt('Michael Foster')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -114,7 +119,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/7-h-1000-w-800.webp"
-              alt="Portrait of Dries Vincent"
+              alt={aboutPortraitAlt('Dries Vincent')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -127,7 +132,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/4-h-1000-w-800.webp"
-              alt="Portrait of Lindsay Walton"
+              alt={aboutPortraitAlt('Lindsay Walton')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -140,7 +145,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/5-h-1000-w-800.webp"
-              alt="Portrait of Noor Hasan"
+              alt={aboutPortraitAlt('Noor Hasan')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -153,7 +158,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/6-h-1000-w-800.webp"
-              alt="Portrait of Tom Cook"
+              alt={aboutPortraitAlt('Tom Cook')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -166,7 +171,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/8-h-1000-w-800.webp"
-              alt="Portrait of Whitney Francis"
+              alt={aboutPortraitAlt('Whitney Francis')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -179,7 +184,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/3-h-1000-w-800.webp"
-              alt="Portrait of Leonard Wu"
+              alt={aboutPortraitAlt('Leonard Wu')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={800}
               height={1000}
@@ -202,8 +207,8 @@ export default function Page() {
               Contact us
             </ButtonLink>
 
-            <PlainButtonLink href="/contact" size="lg">
-              Book a demo <ChevronIcon />
+            <PlainButtonLink href="/contact" size="lg" className="group">
+              Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
             </PlainButtonLink>
           </div>
         }

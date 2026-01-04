@@ -3,8 +3,7 @@ import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elemen
 import { Link } from '@/components/elements/link'
 import { Logo, LogoGrid } from '@/components/elements/logo-grid'
 import { Screenshot } from '@/components/elements/screenshot'
-import { ArrowNarrowRightIcon } from '@/components/icons/arrow-narrow-right-icon'
-import { ChevronIcon } from '@/components/icons/chevron-icon'
+import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { pageMetadata } from '@/lib/metadata'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { FAQsTwoColumnAccordion, Faq } from '@/components/sections/faqs-two-column-accordion'
@@ -31,16 +30,27 @@ export const metadata: Metadata = {
   description: pageMetadata.home.description,
 }
 
-const heroScreenshotAlt = 'Bulma policy Q&A interface screenshot'
-const policyQaScreenshotAlt = 'Bulma policy answers with source attribution'
-const lenderComparisonScreenshotAlt = 'Bulma lender policy comparison view'
+const homeSeoAltContext =
+  'Bulma AI assistant for Australian mortgage brokers focused on scenario planning, credit assessment, policy matching, and lender selection'
+const homeAlt = (text: string) => `${text} - ${homeSeoAltContext}`
+const heroScreenshotAlt = homeAlt('Bulma policy Q&A interface screenshot')
+const policyQaScreenshotAlt = homeAlt('Bulma policy answers with source attribution')
+const lenderComparisonScreenshotAlt = homeAlt('Bulma lender policy comparison view')
+const homeLenderLogoAlt = homeAlt('Australian lender logo')
+const homeTestimonialAlt = (name: string) => homeAlt(`Portrait of ${name}`)
 
 const homeFaqs = [
   {
-    id: 'faq-1',
-    question: "How accurate are Bulma's answers?",
+    id: 'faq-0',
+    question: 'What can Bulma do for my brokerage?',
     answer:
-      'Every answer is grounded in current policy text from our database — Bulma never makes things up. Each response shows which lender and policy category it draws from, plus when that policy was last updated, so you can verify the source.',
+      'Bulma answers lender policy questions in seconds instead of hours. Ask questions like "<em>What lenders go to 95% LVR?</em>" or "<em>What add-backs does CBA accept?</em>" and get instant, grounded answers that cite the exact policy source. It’s like having a senior broker with encyclopaedic policy knowledge available 24/7.',
+  },
+  {
+    id: 'faq-1',
+    question: 'Why should I use Bulma instead of ChatGPT?',
+    answer:
+      'ChatGPT can make up policy details that sound plausible but don’t exist — a risk you can’t afford when advising clients. Bulma is different: every answer draws directly from current lender policy documents, and we show you the exact source (lender, policy category, last updated date) so you can verify it. You get the speed of AI with the reliability your clients expect.',
   },
   {
     id: 'faq-2',
@@ -52,13 +62,19 @@ const homeFaqs = [
     id: 'faq-3',
     question: 'Can I compare policies across different lenders?',
     answer:
-      "Absolutely. Ask Bulma to compare policies across lenders — for example, 'Compare the big 4's LMI requirements for 95% LVR' — and you'll get a structured comparison highlighting key differences.",
+      "Absolutely. Ask Bulma to compare policies across lenders - for example, 'Compare the big 4’s LMI requirements for 95% LVR' - and you’ll get a structured comparison highlighting key differences.",
   },
   {
     id: 'faq-4',
     question: 'Does Bulma provide credit advice?',
     answer:
       'No. Bulma is a research tool that helps you find policy information faster. You remain responsible for all credit advice and suitability assessments. We recommend confirming edge cases with your BDM.',
+  },
+  {
+    id: 'faq-5',
+    question: 'Is my data secure with Bulma?',
+    answer:
+      'Yes. Ask questions like "<em>Who can see my client data?</em>" or "<em>Are my queries shared with lenders?</em>" and we’ll explain the safeguards. We use enterprise-grade encryption (AES-256 at rest, TLS 1.3 in transit) and never share your queries or client information with third parties. Your conversation history is stored securely and only accessible by you.',
   },
 ]
 
@@ -90,7 +106,7 @@ export default function Page() {
         headline="Your AI assistant for lender policy questions."
         subheadline={
           <p>
-            Ask any policy question in plain English. Get instant, grounded answers with source attribution — so you
+            Ask any policy question in plain English. Get instant, grounded answers with source attribution - so you
             spend less time searching and more time settling.
           </p>
         }
@@ -100,8 +116,8 @@ export default function Page() {
               Try Bulma free
             </ButtonLink>
 
-            <PlainButtonLink href="/contact" size="lg">
-              See it in action <ArrowNarrowRightIcon />
+            <PlainButtonLink href="/contact" size="lg" className="group">
+              See it in action <AnimatedArrowIcon className="-mr-1 ml-1.5" />
             </PlainButtonLink>
           </div>
         }
@@ -162,14 +178,14 @@ export default function Page() {
               <Image
                 src="/img/logos/9-color-black-height-32.svg"
                 className="dark:hidden"
-                alt=""
+                alt={homeLenderLogoAlt}
                 width={51}
                 height={32}
               />
               <Image
                 src="/img/logos/9-color-white-height-32.svg"
                 className="bg-black/75 not-dark:hidden"
-                alt=""
+                alt={homeLenderLogoAlt}
                 width={51}
                 height={32}
               />
@@ -178,14 +194,14 @@ export default function Page() {
               <Image
                 src="/img/logos/10-color-black-height-32.svg"
                 className="dark:hidden"
-                alt=""
+                alt={homeLenderLogoAlt}
                 width={70}
                 height={32}
               />
               <Image
                 src="/img/logos/10-color-white-height-32.svg"
                 className="bg-black/75 not-dark:hidden"
-                alt=""
+                alt={homeLenderLogoAlt}
                 width={70}
                 height={32}
               />
@@ -194,14 +210,14 @@ export default function Page() {
               <Image
                 src="/img/logos/11-color-black-height-32.svg"
                 className="dark:hidden"
-                alt=""
+                alt={homeLenderLogoAlt}
                 width={100}
                 height={32}
               />
               <Image
                 src="/img/logos/11-color-white-height-32.svg"
                 className="bg-black/75 not-dark:hidden"
-                alt=""
+                alt={homeLenderLogoAlt}
                 width={100}
                 height={32}
               />
@@ -210,14 +226,14 @@ export default function Page() {
               <Image
                 src="/img/logos/12-color-black-height-32.svg"
                 className="dark:hidden"
-                alt=""
+                alt={homeLenderLogoAlt}
                 width={85}
                 height={32}
               />
               <Image
                 src="/img/logos/12-color-white-height-32.svg"
                 className="bg-black/75 not-dark:hidden"
-                alt=""
+                alt={homeLenderLogoAlt}
                 width={85}
                 height={32}
               />
@@ -226,14 +242,14 @@ export default function Page() {
               <Image
                 src="/img/logos/13-color-black-height-32.svg"
                 className="dark:hidden"
-                alt=""
+                alt={homeLenderLogoAlt}
                 width={75}
                 height={32}
               />
               <Image
                 src="/img/logos/13-color-white-height-32.svg"
                 className="bg-black/75 not-dark:hidden"
-                alt=""
+                alt={homeLenderLogoAlt}
                 width={75}
                 height={32}
               />
@@ -242,14 +258,14 @@ export default function Page() {
               <Image
                 src="/img/logos/8-color-black-height-32.svg"
                 className="dark:hidden"
-                alt=""
+                alt={homeLenderLogoAlt}
                 width={85}
                 height={32}
               />
               <Image
                 src="/img/logos/8-color-white-height-32.svg"
                 className="bg-black/75 not-dark:hidden"
-                alt=""
+                alt={homeLenderLogoAlt}
                 width={85}
                 height={32}
               />
@@ -339,8 +355,8 @@ export default function Page() {
                 </p>
               }
               cta={
-                <Link href="#pricing">
-                  Learn more <ArrowNarrowRightIcon />
+                <Link href="#pricing" className="group">
+                  Learn more <AnimatedArrowIcon className="-mr-1 ml-1.5" />
                 </Link>
               }
             />
@@ -410,8 +426,8 @@ export default function Page() {
                 <p>Compare policies across lenders side-by-side. Find the best fit for your client's scenario in seconds.</p>
               }
               cta={
-                <Link href="#pricing">
-                  Learn more <ArrowNarrowRightIcon />
+                <Link href="#pricing" className="group">
+                  Learn more <AnimatedArrowIcon className="-mr-1 ml-1.5" />
                 </Link>
               }
             />
@@ -431,7 +447,7 @@ export default function Page() {
         }
       >
         <Stat stat="30+" text="Major Australian lenders covered, with policies updated regularly." />
-        <Stat stat="Seconds" text="Average time to answer — compared to hours of manual research." />
+        <Stat stat="Seconds" text="Average time to answer - compared to hours of manual research." />
       </StatsWithGraph>
       {/* Testimonial */}
       <TestimonialThreeColumnGrid
@@ -443,13 +459,13 @@ export default function Page() {
           quote={
             <p>
               I used to spend hours checking lender portals for policy details. Now I just ask Bulma and get an answer
-              in seconds — with the source right there so I can verify it.
+              in seconds - with the source right there so I can verify it.
             </p>
           }
           img={
             <Image
               src="/img/avatars/10-size-160.webp"
-              alt="Portrait of Sarah Chen"
+              alt={homeTestimonialAlt('Sarah Chen')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
@@ -468,7 +484,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/15-size-160.webp"
-              alt="Portrait of Michael Torres"
+              alt={homeTestimonialAlt('Michael Torres')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
@@ -487,7 +503,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/13-size-160.webp"
-              alt="Portrait of David Nguyen"
+              alt={homeTestimonialAlt('David Nguyen')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
@@ -506,7 +522,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/12-size-160.webp"
-              alt="Portrait of Emma Williams"
+              alt={homeTestimonialAlt('Emma Williams')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
@@ -525,7 +541,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/11-size-160.webp"
-              alt="Portrait of James Mitchell"
+              alt={homeTestimonialAlt('James Mitchell')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
@@ -544,7 +560,7 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/14-size-160.webp"
-              alt="Portrait of Rachel Cooper"
+              alt={homeTestimonialAlt('Rachel Cooper')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
@@ -642,8 +658,8 @@ export default function Page() {
               Try Bulma free
             </ButtonLink>
 
-            <PlainButtonLink href="/contact" size="lg">
-              Book a demo <ChevronIcon />
+            <PlainButtonLink href="/contact" size="lg" className="group">
+              Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
             </PlainButtonLink>
           </div>
         }

@@ -16,6 +16,20 @@ export function Faq({
   const autoId = useId()
   id = id || autoId
 
+  /**
+   * Render FAQ strings as HTML so authors can include simple markup (e.g. <em>, <strong>, <a>).
+   *
+   * IMPORTANT:
+   * - Only use this with trusted, developer-authored content (not user input).
+   * - Our JSON-LD schema separately strips HTML so structured data remains plain text.
+   */
+  const renderedAnswer =
+    typeof answer === 'string' ? (
+      <div dangerouslySetInnerHTML={{ __html: answer }} />
+    ) : (
+      answer
+    )
+
   return (
     <div id={id} {...props}>
       <button
@@ -34,7 +48,7 @@ export function Faq({
         hidden
         className="-mt-2 flex flex-col gap-2 pr-12 pb-4 text-sm/7 text-mist-700 dark:text-mist-400"
       >
-        {answer}
+        {renderedAnswer}
       </ElDisclosure>
     </div>
   )

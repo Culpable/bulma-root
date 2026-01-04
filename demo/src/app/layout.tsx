@@ -56,6 +56,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
 }
 
+const siteLogoAlt = `${siteMetadata.title} logo - AI policy assistant for Australian mortgage brokers`
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -95,14 +97,14 @@ export default function RootLayout({
               <NavbarLogo href="/">
                 <Image
                   src="/img/logos/bulma-logo-dark.svg"
-                  alt="Bulma"
+                  alt={siteLogoAlt}
                   className="dark:hidden"
                   width={40}
                   height={40}
                 />
                 <Image
                   src="/img/logos/bulma-logo-light.svg"
-                  alt="Bulma"
+                  alt={siteLogoAlt}
                   className="not-dark:hidden"
                   width={40}
                   height={40}

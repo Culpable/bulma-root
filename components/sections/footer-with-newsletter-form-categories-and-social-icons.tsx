@@ -1,7 +1,7 @@
 import { clsx } from 'clsx/lite'
 import type { ComponentProps, ReactNode } from 'react'
 import { Container } from '../elements/container'
-import { ArrowNarrowRightIcon } from '../icons/arrow-narrow-right-icon'
+import { AnimatedArrowIcon } from '../icons/animated-arrow-icon'
 
 export function FooterCategory({ title, children, ...props }: { title: ReactNode } & ComponentProps<'div'>) {
   return (
@@ -65,9 +65,9 @@ export function NewsletterForm({
         <button
           type="submit"
           aria-label="Subscribe"
-          className="relative inline-flex size-7 items-center justify-center rounded-full after:absolute after:-inset-2 hover:bg-mist-950/10 dark:hover:bg-white/10 after:pointer-fine:hidden"
+          className="group relative inline-flex size-7 items-center justify-center rounded-full after:absolute after:-inset-2 hover:bg-mist-950/10 dark:hover:bg-white/10 after:pointer-fine:hidden"
         >
-          <ArrowNarrowRightIcon />
+          <AnimatedArrowIcon />
         </button>
       </div>
     </form>

@@ -1,6 +1,6 @@
 import { clsx } from 'clsx/lite'
 import type { ComponentProps, ReactNode } from 'react'
-import { ChevronIcon } from '../icons/chevron-icon'
+import { AnimatedArrowIcon } from '../icons/animated-arrow-icon'
 
 export function AnnouncementBadge({
   text,
@@ -43,7 +43,7 @@ export function AnnouncementBadge({
           variant === 'normal' && 'text-mist-950 dark:text-white',
         )}
       >
-        {cta} <ChevronIcon className="shrink-0" />
+        {cta} <AnimatedArrowIcon className="h-3 w-3 shrink-0" />
       </span>
     </a>
   )

@@ -1,6 +1,6 @@
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
 import { Logo, LogoGrid } from '@/components/elements/logo-grid'
-import { ChevronIcon } from '@/components/icons/chevron-icon'
+import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { pageMetadata } from '@/lib/metadata'
 import { CallToActionSimpleCentered } from '@/components/sections/call-to-action-simple-centered'
 import { FAQsAccordion, Faq } from '@/components/sections/faqs-accordion'
@@ -17,12 +17,18 @@ export const metadata: Metadata = {
   description: pageMetadata.pricing.description,
 }
 
+const pricingSeoAltContext =
+  'Bulma pricing for Australian mortgage brokerages with transparent plans and a free trial'
+const pricingAlt = (text: string) => `${text} - ${pricingSeoAltContext}`
+const pricingLenderLogoAlt = pricingAlt('Australian lender logo')
+const pricingTestimonialAlt = pricingAlt('Portrait of James Mitchell')
+
 const pricingFaqs = [
   {
     id: 'faq-1',
     question: 'Is there a free trial?',
     answer:
-      'Yes, all plans come with a 14-day free trial. No credit card required to get started — just sign up and start asking policy questions right away.',
+      'Yes, all plans come with a 14-day free trial. No credit card required to get started - just sign up and start asking policy questions right away.',
   },
   {
     id: 'faq-2',
@@ -141,14 +147,14 @@ export default function Page() {
               <Image
                 src="/img/logos/9-color-black-height-32.svg"
                 className="dark:hidden"
-                alt=""
+                alt={pricingLenderLogoAlt}
                 width={51}
                 height={32}
               />
               <Image
                 src="/img/logos/9-color-white-height-32.svg"
                 className="not-dark:hidden"
-                alt=""
+                alt={pricingLenderLogoAlt}
                 width={51}
                 height={32}
               />
@@ -157,14 +163,14 @@ export default function Page() {
               <Image
                 src="/img/logos/10-color-black-height-32.svg"
                 className="dark:hidden"
-                alt=""
+                alt={pricingLenderLogoAlt}
                 width={70}
                 height={32}
               />
               <Image
                 src="/img/logos/10-color-white-height-32.svg"
                 className="not-dark:hidden"
-                alt=""
+                alt={pricingLenderLogoAlt}
                 width={70}
                 height={32}
               />
@@ -173,14 +179,14 @@ export default function Page() {
               <Image
                 src="/img/logos/11-color-black-height-32.svg"
                 className="dark:hidden"
-                alt=""
+                alt={pricingLenderLogoAlt}
                 width={100}
                 height={32}
               />
               <Image
                 src="/img/logos/11-color-white-height-32.svg"
                 className="not-dark:hidden"
-                alt=""
+                alt={pricingLenderLogoAlt}
                 width={100}
                 height={32}
               />
@@ -189,14 +195,14 @@ export default function Page() {
               <Image
                 src="/img/logos/12-color-black-height-32.svg"
                 className="dark:hidden"
-                alt=""
+                alt={pricingLenderLogoAlt}
                 width={85}
                 height={32}
               />
               <Image
                 src="/img/logos/12-color-white-height-32.svg"
                 className="not-dark:hidden"
-                alt=""
+                alt={pricingLenderLogoAlt}
                 width={85}
                 height={32}
               />
@@ -205,14 +211,14 @@ export default function Page() {
               <Image
                 src="/img/logos/13-color-black-height-32.svg"
                 className="dark:hidden"
-                alt=""
+                alt={pricingLenderLogoAlt}
                 width={75}
                 height={32}
               />
               <Image
                 src="/img/logos/13-color-white-height-32.svg"
                 className="not-dark:hidden"
-                alt=""
+                alt={pricingLenderLogoAlt}
                 width={75}
                 height={32}
               />
@@ -221,14 +227,14 @@ export default function Page() {
               <Image
                 src="/img/logos/8-color-black-height-32.svg"
                 className="dark:hidden"
-                alt=""
+                alt={pricingLenderLogoAlt}
                 width={85}
                 height={32}
               />
               <Image
                 src="/img/logos/8-color-white-height-32.svg"
                 className="not-dark:hidden"
-                alt=""
+                alt={pricingLenderLogoAlt}
                 width={85}
                 height={32}
               />
@@ -301,13 +307,13 @@ export default function Page() {
         quote={
           <p>
             The Team plan paid for itself in the first week. Our whole office now uses Bulma as the first stop for any
-            policy question — it's saved us countless hours.
+            policy question - it's saved us countless hours.
           </p>
         }
         img={
           <Image
             src="/img/avatars/16-h-1000-w-1400.webp"
-            alt="Portrait of James Mitchell"
+            alt={pricingTestimonialAlt}
             className="not-dark:bg-white/75 dark:bg-black/75"
             width={1400}
             height={1000}
@@ -335,8 +341,8 @@ export default function Page() {
               Contact sales
             </ButtonLink>
 
-            <PlainButtonLink href="/contact" size="lg">
-              Book a demo <ChevronIcon />
+            <PlainButtonLink href="/contact" size="lg" className="group">
+              Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
             </PlainButtonLink>
           </div>
         }

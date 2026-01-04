@@ -80,7 +80,7 @@ All `.cursor/plans/*.plan.md` must open with:
 
 The plan must be comprehensive and information dense. It must include all the information necessary to implement the plan without being verbose. Assume the plan will serve as a STANDALONE DOCUMENT, and hence include ALL relevant context within the file itself.
 
-When writing a plan for a complex feature, if you're unsure about anything, ask the user for clarification, presenting your questions and possible solutions clearly so they can understand and provide direction. For each unknown, ask a numbered clarification question and provide 2–4 concrete answer options (A, B, C…), including "Other: ____". ALWAYS your questions as numbered lists with options (A/B/C etc.) so that it's easy for the user to respond.
+When writing a plan for a complex feature, if you're unsure about anything, ask the user for clarification, presenting your questions and possible solutions clearly so they can understand and provide direction. For each unknown, ask a numbered clarification question and provide 2–4 concrete answer options (A, B, C…), including "Other: ____". ALWAYS format your questions as numbered lists with options (A/B/C etc.) so that it's easy for the user to respond.
 
 AFTER you have built the plan, append an **Implemented Solution** section to the same plan file summarizing (a) the exact code/doc files touched, (b) the key logic or behavioral deltas (backend, cache/versioning, UI/methodology, docs), and (c) any other important notes. Keep it information-dense and bulletised; no narrative filler. The goal is to allow a reviewer to understand the implementation to facilitate reviewing the changes.
 </plan_mode_guidelines>
