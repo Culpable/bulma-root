@@ -28,6 +28,8 @@ export function Plan({
     <div
       className={clsx(
         'flex flex-col justify-between gap-6 rounded-xl bg-mist-950/2.5 p-6 sm:items-start dark:bg-white/5',
+        // Hover lift effect with smooth transition
+        'transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:shadow-mist-950/5 dark:hover:shadow-black/20',
         className,
       )}
     >

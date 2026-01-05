@@ -20,10 +20,15 @@ export function SocialLink({
   href: string
   name: string
 } & Omit<ComponentProps<'a'>, 'href'>) {
+  const rel = props.rel
+    ? Array.from(new Set([...props.rel.split(' '), 'noopener', 'noreferrer'])).join(' ')
+    : 'noopener noreferrer'
+
   return (
     <Link
       href={href}
       target="_blank"
+      rel={rel}
       aria-label={name}
       className={clsx('cursor-pointer text-mist-950 *:size-6 dark:text-white', className)}
       {...props}

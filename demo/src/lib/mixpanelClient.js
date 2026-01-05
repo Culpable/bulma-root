@@ -8,7 +8,8 @@ const MIXPANEL_TOKEN = 'd6d41f4f948512ee3e388559f7b1686e'
  */
 export const initMixpanel = () => {
   mixpanel.init(MIXPANEL_TOKEN, {
-    track_pageview: true,
+    // Disable automatic pageview tracking to avoid duplicate initial events; rely on MixpanelProvider for SPA route changes.
+    track_pageview: false,
     persistence: 'cookie',
     cross_subdomain_cookie: true,
     record_sessions_percent: 100,

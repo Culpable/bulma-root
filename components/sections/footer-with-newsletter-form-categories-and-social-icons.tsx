@@ -55,9 +55,14 @@ export function NewsletterForm({
     <form className={clsx('flex max-w-sm flex-col gap-2', className)} {...props}>
       <p>{headline}</p>
       <div className="flex flex-col gap-4 text-mist-700 dark:text-mist-400">{subheadline}</div>
+      {/* Label the submission so downstream tooling can distinguish footer newsletter signups. */}
+      <input type="hidden" name="form_source" value="footer_newsletter" />
       <div className="flex items-center border-b border-mist-950/20 py-2 has-[input:focus]:border-mist-950 dark:border-white/20 dark:has-[input:focus]:border-white">
         <input
+          name="email"
           type="email"
+          autoComplete="email"
+          required
           placeholder="Email"
           aria-label="Email"
           className="flex-1 text-mist-950 focus:outline-hidden dark:text-white"

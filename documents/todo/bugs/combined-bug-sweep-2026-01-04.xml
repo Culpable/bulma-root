@@ -1,0 +1,399 @@
+<bug_1>
+<summary>
+<title>~~[Newsletter] Footer signup form never submits an email address~~ ✅ FIXED</title>
+<one_line_description>Footer newsletter submissions drop the email because the input has no name and the form posts to /contact without a handler.</one_line_description>
+</summary>
+
+<file_locations>
+- /Users/sacino/bulma-root/demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx - function: `NewsletterForm`, Lines 46-74
+- /Users/sacino/bulma-root/demo/src/app/layout.tsx - component usage: `RootLayout`, Lines 126-137
+- demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx - function: `NewsletterForm`, Lines 46-65
+- demo/src/app/layout.tsx - component usage: `NewsletterForm`, Lines 126-137
+</file_locations>
+
+<issue_description>
+<description>The footer newsletter CTA renders a form with an email input that has no `name` attribute and no client-side submit handler. The layout wires the form to action="/contact" and does not specify a method, so the browser performs a standard HTML form submission (GET by default), which simply navigates to /contact. Because the email field is unnamed, its value is excluded from FormData and query parameters regardless of GET or POST semantics. Users can click Subscribe and are redirected, but no email is ever captured, so newsletter leads are silently dropped and users believe they subscribed when they did not.</description>
+
+<code_example>
+
+```tsx
+# File: /Users/sacino/bulma-root/demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx, Lines 56-73
+
+<form className={clsx('flex max-w-sm flex-col gap-2', className)} {...props}>
+  ...
+  <input
+    type="email"
+    placeholder="Email"
+    aria-label="Email"
+    className="flex-1 text-mist-950 focus:outline-hidden dark:text-white"
+  />
+  <button type="submit" aria-label="Subscribe">...</button>
+</form>
+```
+
+```tsx
+# File: /Users/sacino/bulma-root/demo/src/app/layout.tsx, Lines 126-137
+
+<NewsletterForm
+  headline="Stay in the loop"
+  subheadline={<p>Get policy updates, lender insights, and tips to help you close more deals.</p>}
+  action="/contact"
+/>
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Behaviour** | Submitting the form sends the email to a newsletter endpoint or carries it to /contact | Submitting navigates to /contact without any email field included |
+| **Submission payload** | Email included in request body or query string | No email field is submitted |
+| **User flow** | Email is captured by a subscription endpoint | User is redirected to /contact without any signup |
+| **Data capture** | Email address persisted for follow-up | Email is discarded due to missing name attribute |
+| **Business impact** | Newsletter leads recorded | Leads silently dropped |
+</expected_vs_actual>
+</issue_description>
+
+<resolution>
+<analysis>Confirmed the footer form submits to /contact with no email field name. The contact page does not read query parameters or auto-submit, so the email never reaches Formspree or any backend. This means the submission is silently dropped despite the "Stay in the loop" CTA.</analysis>
+<fix_summary>
+- Added an explicit email field name, autocomplete, and required validation in `demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx` so the browser includes the email in FormData.
+- Added a hidden `form_source` field in `demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx` and `components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx` to tag footer newsletter signups for downstream routing.
+- Wired the footer newsletter form to submit directly to Formspree with `method="POST"` in `demo/src/app/layout.tsx` to ensure the email is captured end-to-end.
+</fix_summary>
+<validation_notes>
+- Submit the footer newsletter form and confirm Formspree receives `email` plus `form_source=footer_newsletter`.
+- Verify the form submission no longer redirects to `/contact` without payload.
+</validation_notes>
+</resolution>
+</bug_1>
+
+<bug_2>
+<summary>
+<title>~~[SEO] Open Graph image URL points to a missing file~~ ✅ FIXED</title>
+<one_line_description>Metadata references /img/og/bulma-og-image.png but the asset is missing, so OG/Twitter cards 404.</one_line_description>
+</summary>
+
+<file_locations>
+- /Users/sacino/bulma-root/demo/src/lib/metadata.ts - object: `siteMetadata`, Lines 19-23
+- /Users/sacino/bulma-root/demo/public/img/og/bulma-og-image.png - file missing
+- demo/src/lib/metadata.ts - object: `siteMetadata`, Lines 19-23
+- demo/public/img/og/bulma-og-image.png - file missing
+</file_locations>
+
+<issue_description>
+<description>The Open Graph image URL is constructed as /img/og/bulma-og-image.png, but there is no corresponding file under demo/public/img/og. Social crawlers (X/Twitter, LinkedIn, and other OG consumers) request the URL and receive a 404, which results in broken previews or fallback images when links are shared. The missing asset means metadata points to a non-existent file, degrading shareability and brand consistency.</description>
+
+<code_example>
+
+```ts
+# File: demo/src/lib/metadata.ts, Lines 19-23
+
+// Open Graph image (absolute URL for social sharing)
+ogImage: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://bulma.com.au'}/img/og/bulma-og-image.png`,
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Social previews** | OG/Twitter image loads and renders a branded card | Image request returns 404 and previews fall back to defaults |
+| **SEO/shareability** | Consistent branded previews across shares | Missing or default previews across social networks |
+| **Asset integrity** | Metadata references an existing file | Metadata points to a non-existent file |
+</expected_vs_actual>
+</issue_description>
+
+<resolution>
+<summary>Added the missing Open Graph image at the exact path referenced by site metadata, so social crawlers receive a valid asset instead of a 404.</summary>
+<changes>
+- demo/public/img/og/bulma-og-image.png (new 1200x630 PNG OG image using the Bulma brand gradient and messaging)
+</changes>
+<validation>
+- Confirmed demo/public/img/og/bulma-og-image.png exists and is a 1200x630 PNG asset
+</validation>
+<notes>This keeps the metadata URL stable while restoring OG/Twitter card rendering for shared links.</notes>
+</resolution>
+</bug_2>
+
+<bug_3>
+<summary>
+<title>~~[Routing] Custom 404 page is not wired to Next.js App Router~~ ✅ **FIXED**</title>
+<one_line_description>The 404 UI lives under app/404/page.tsx, but App Router expects app/not-found.tsx, so unknown routes fall back to the default 404.</one_line_description>
+</summary>
+
+<file_locations>
+- /Users/sacino/bulma-root/demo/src/app/404/page.tsx - component: `Page`, Lines 1-26
+- /Users/sacino/bulma-root/demo/src/app/not-found.tsx - component: `NotFound`, Lines 1-26
+- demo/src/app/404/page.tsx - component: `Page`, Lines 1-25
+- demo/src/app/not-found.tsx - component: `NotFound`, Lines 1-26
+</file_locations>
+
+<issue_description>
+<description>Next.js App Router renders custom 404 UI via app/not-found.tsx. The project defines the content under app/404/page.tsx instead, which only creates a normal /404 route and is not used for unknown URLs. As a result, real 404s render the default Next.js fallback instead of the designed Bulma page, and the static export will not emit a custom 404.html from this file. Users see an inconsistent experience unless they explicitly visit /404.</description>
+
+<code_example>
+
+```tsx
+# File: /Users/sacino/bulma-root/demo/src/app/404/page.tsx, Lines 1-25
+
+export default function Page() {
+  return (
+    <>
+      <HeroSimpleCentered
+        headline="Page not found"
+        subheadline={<p>Sorry, but the page you were looking for could not be found.</p>}
+        cta={
+          <Link href="/" className="group">
+            Go back home <AnimatedArrowIcon className="-mr-1 ml-1.5" />
+          </Link>
+        }
+      />
+    </>
+  )
+}
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Unknown routes** | Branded Bulma 404 UI renders | Default Next.js 404 renders |
+| **Static export** | 404.html uses the custom design | Custom design is only available at /404 |
+| **Routing** | not-found.tsx intercepts all 404s | /404 only works as a direct route |
+| **User experience** | Consistent messaging on all 404s | Generic fallback page on missing routes |
+</expected_vs_actual>
+</issue_description>
+
+<resolution>
+<summary>Added the App Router not-found entrypoint so unmatched routes render the branded Bulma 404 experience instead of the default Next.js fallback.</summary>
+<changes>
+- demo/src/app/not-found.tsx (new App Router not-found entry that mirrors the existing 404 UI and metadata)
+</changes>
+<validation>
+- npm run build (demo/)
+- Confirmed demo/src/app/not-found.tsx exists and exports a valid App Router not-found component
+</validation>
+<notes>App Router only uses app/not-found.tsx for unknown routes; the existing app/404/page.tsx remains as a direct /404 route.</notes>
+</resolution>
+</bug_3>
+
+<bug_4>
+<summary>
+<title>~~[Analytics] Page view events are double-counted on initial load~~ ✅ **FIXED**</title>
+<one_line_description>Mixpanel auto-tracks page views while the app also sends a manual Page View event on route changes.</one_line_description>
+</summary>
+
+<file_locations>
+- /Users/sacino/bulma-root/demo/src/lib/mixpanelClient.js - function: `initMixpanel`, Lines 9-21
+- /Users/sacino/bulma-root/demo/src/components/MixpanelProvider.jsx - effect: page view tracking, Lines 20-26
+</file_locations>
+
+<issue_description>
+<description>The Mixpanel configuration enables track_pageview: true, which automatically records a page view on initial load. The client provider also manually calls mixpanel.track('Page View', ...) whenever the pathname changes. This results in a duplicate page view for the first visit (auto + manual), inflating analytics counts and skewing conversion funnels.</description>
+
+<code_example>
+
+```js
+# File: /Users/sacino/bulma-root/demo/src/lib/mixpanelClient.js, Lines 10-12
+
+mixpanel.init(MIXPANEL_TOKEN, {
+  track_pageview: true,
+  ...
+})
+```
+
+```js
+# File: /Users/sacino/bulma-root/demo/src/components/MixpanelProvider.jsx, Lines 20-26
+
+if (pathname) {
+  mixpanel.track('Page View', { url: pathname, page: pathname })
+}
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Analytics accuracy** | One page view per initial visit | Two page views recorded on first load |
+| **Reporting** | Funnels reflect true traffic | Inflated page view counts |
+| **Event semantics** | Single source of truth for page views | Auto + manual tracking overlap |
+</expected_vs_actual>
+</issue_description>
+
+<resolution>
+<description>Mixpanel JS auto-tracks a $mp_web_page_view event on init when track_pageview is enabled. The client provider also emits a Page View event on the initial pathname, which results in two page-view-type events per first visit. Because the app already tracks SPA route changes manually, the fix disables automatic pageview tracking so only the manual Page View event fires on initial load and subsequent route changes.</description>
+<changes>
+- demo/src/lib/mixpanelClient.js: set track_pageview to false and add a comment explaining the manual tracking strategy.
+</changes>
+<validation>
+- Load the site once and confirm only one page-view event is emitted for the initial visit.
+- Navigate between routes and confirm the Page View event continues to fire on each pathname change.
+</validation>
+</resolution>
+</bug_4>
+
+<bug_5>
+<summary>
+<title>~~[Attribution] Referral tracking silently drops when Mixpanel loads slowly~~ ❌ **NOT A BUG**</title>
+<one_line_description>The referral script stops retrying after 1 second; if Mixpanel is not ready yet, the event is never sent.</one_line_description>
+</summary>
+
+<file_locations>
+- /Users/sacino/bulma-root/demo/public/scripts/referral-tracking.js - function: `trackReferralSource`, Lines 140-197
+- demo/public/scripts/referral-tracking.js - function: `trackReferralSource`, Lines 140-160
+</file_locations>
+
+<issue_description>
+<description>The referral attribution script only retries Mixpanel readiness 10 times at 100ms intervals. If Mixpanel initializes after 1 second (slow network, delayed hydration, blocked script, or heavy page load), the attribution event is never fired and first-touch properties are not recorded. This silently undercounts marketing sources and yields missing or incorrect referral data for affected visitors. Review notes: Mixpanel is bundled and initialized synchronously in `MixpanelProvider` on the first client effect, and the afterInteractive script runs after hydration; the retry loop is only an ordering guard (attempts are scheduled on the same JS thread), so initialization occurs within the retry window in normal operation.</description>
+
+<code_example>
+
+```javascript
+# File: demo/public/scripts/referral-tracking.js, Lines 140-196
+
+var maxAttempts = 10;
+var attempts = 0;
+var interval = 100;
+
+function trackReferralSource() {
+  attempts++;
+  if (window.mixpanelLoaded && typeof window.mixpanel !== 'undefined' && typeof window.mixpanel.track === 'function') {
+    window.mixpanel.track('Referral Source Identified', trackingData);
+  } else if (attempts < maxAttempts) {
+    setTimeout(trackReferralSource, interval);
+  }
+}
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Attribution** | Referral event always sent once Mixpanel is ready | Event dropped if Mixpanel loads after 1s |
+| **Reliability** | Tracking resilient to slow hydration | Tracking fails silently under load |
+| **Analytics quality** | Consistent first-touch data | Missing data on slow sessions |
+</expected_vs_actual>
+</issue_description>
+</bug_5>
+
+<bug_6>
+<summary>
+<title>~~[Security] External social links open without rel="noopener noreferrer"~~ ✅ **FIXED**</title>
+<one_line_description>Links that open in a new tab omit rel safeguards, enabling reverse tabnabbing.</one_line_description>
+</summary>
+
+<file_locations>
+- /Users/sacino/bulma-root/demo/src/components/sections/footer-with-links-and-social-icons.tsx - function: `SocialLink`, Lines 14-30
+- /Users/sacino/bulma-root/demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx - function: `SocialLink`, Lines 24-42
+- demo/src/components/sections/footer-with-links-and-social-icons.tsx - function: `SocialLink`, Lines 24-29
+- demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx - function: `SocialLink`, Lines 26-42
+</file_locations>
+
+<issue_description>
+<description>The SocialLink component opens external sites in a new tab via target="_blank" but omits rel="noopener noreferrer" in both footer variants. Without noopener, the opened page can access window.opener and redirect the original Bulma tab (reverse tabnabbing). This is a known security risk and violates best practice for external links.</description>
+
+<code_example>
+
+```tsx
+# File: /Users/sacino/bulma-root/demo/src/components/sections/footer-with-links-and-social-icons.tsx, Lines 24-29
+
+<Link
+  href={href}
+  target="_blank"
+  aria-label={name}
+  className={clsx('cursor-pointer text-mist-950 *:size-6 dark:text-white', className)}
+  {...props}
+/>
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Security** | New-tab links include rel safeguards | target="_blank" without rel allows window.opener access |
+| **User safety** | Original tab protected from malicious redirects | External site can manipulate opener window |
+| **Best practice** | rel="noopener noreferrer" applied consistently | Rel attribute is omitted |
+</expected_vs_actual>
+</issue_description>
+
+<resolution>
+<summary>Added a secure, default rel value for all SocialLink instances that open new tabs, preventing reverse tabnabbing while preserving any caller-provided rel values.</summary>
+<changes>
+- demo/src/components/sections/footer-with-links-and-social-icons.tsx: Added a rel builder that appends noopener/noreferrer and applied it to the SocialLink Link component.
+- demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx: Added the same rel builder and applied it to the SocialLink Link component.
+</changes>
+<rationale>target="_blank" exposes window.opener by default; appending noopener/noreferrer is the standard mitigation and does not alter visible UI or navigation flow.</rationale>
+<validation>Verify that each social icon link renders rel="noopener noreferrer" (and preserves any custom rel values) in the footer variants.</validation>
+</resolution>
+</bug_6>
+
+<bug_7>
+<summary>
+<title>~~[Styling] not-dark variant is used but never defined~~ ❌ **NOT A BUG**</title>
+<one_line_description>Tailwind strips every not-dark:* utility because no not-dark variant exists, so light-mode-specific styling never applies.</one_line_description>
+</summary>
+
+<file_locations>
+- /Users/sacino/bulma-root/demo/src/app/globals.css - Lines 21-31 (only dark variant defined)
+- /Users/sacino/bulma-root/demo/src/app/layout.tsx - function: `RootLayout`, Lines 96-109
+- /Users/sacino/bulma-root/demo/src/app/page.tsx - function: `Page`, Lines 126-166
+</file_locations>
+
+<issue_description>
+<description>Multiple components rely on not-dark utilities (for example, hiding light-mode assets or applying light-only backgrounds). Tailwind v4 only ships the dark variant by default, and the project does not define a not-dark variant in its theme layer. As a result, all not-dark:* classes are dropped at build time, so light-mode overrides never take effect. This causes visuals like duplicate logos, dark-tinted screenshots, and missing light backgrounds in normal (light) mode.
+
+Assessment: Not a bug. Tailwind v4 ships the compound `not` variant by default, so `not-dark:*` is parsed as `not` + `dark` and compiled into an inverted dark media query (effectively “not (prefers-color-scheme: dark)”), which keeps the classes and applies them in light mode. The `@variant dark` block in globals.css is only grouping base rules under the built-in `dark` variant; it does not define the variant itself.</description>
+
+<code_example>
+
+```tsx
+# File: /Users/sacino/bulma-root/demo/src/app/layout.tsx, Lines 96-109
+
+<NavbarLogo href="/">
+  <Image
+    src="/img/logos/bulma-logo-dark.svg"
+    alt={siteLogoAlt}
+    className="dark:hidden"
+    width={40}
+    height={40}
+  />
+  <Image
+    src="/img/logos/bulma-logo-light.svg"
+    alt={siteLogoAlt}
+    className="not-dark:hidden"
+    width={40}
+    height={40}
+  />
+</NavbarLogo>
+```
+
+```css
+# File: /Users/sacino/bulma-root/demo/src/app/globals.css, Lines 21-31
+
+@layer base {
+  html {
+    background-color: var(--color-mist-100);
+
+    @variant dark {
+      background-color: var(--color-mist-950);
+    }
+  }
+}
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Light mode assets** | Light-only styles apply via not-dark utilities | not-dark classes are removed, so overrides never apply |
+| **Logo rendering** | Only light logo visible in light mode | Both light and dark logos render in light mode |
+| **Screenshots/overlays** | Light background treatments appear | Dark-tinted assets show in light mode |
+</expected_vs_actual>
+</issue_description>
+</bug_7>

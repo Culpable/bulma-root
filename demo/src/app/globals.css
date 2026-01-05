@@ -31,3 +31,32 @@
     }
   }
 }
+
+/* Scroll-triggered reveal animations */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply animation when element has data-animate="visible" */
+.animate-fade-up {
+  opacity: 0;
+}
+
+.animate-fade-up[data-animate='visible'] {
+  animation: fade-up 0.5s ease-out forwards;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}

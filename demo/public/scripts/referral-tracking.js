@@ -137,7 +137,7 @@
         additionalReferralData['Referral Page'] = utmPage;
     }
 
-    // Polling mechanism to ensure MixPanel is loaded before tracking
+    // Document that Mixpanel is initialized synchronously in MixpanelProvider after hydration; use retries only to guard load ordering, not network latency.
     var maxAttempts = 10;
     var attempts = 0;
     var interval = 100; // in milliseconds

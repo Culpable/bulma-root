@@ -57,6 +57,8 @@ export const metadata: Metadata = {
 }
 
 const siteLogoAlt = `${siteMetadata.title} logo - AI policy assistant for Australian mortgage brokers`
+// Use the shared Formspree endpoint until a dedicated newsletter form is provisioned.
+const newsletterFormAction = 'https://formspree.io/f/xojvwybl'
 
 export default function RootLayout({
   children,
@@ -102,6 +104,7 @@ export default function RootLayout({
                   width={40}
                   height={40}
                 />
+                {/* Use Tailwind's built-in `not` compound variant (not-dark:*) to invert the dark media query. */}
                 <Image
                   src="/img/logos/bulma-logo-light.svg"
                   alt={siteLogoAlt}
@@ -133,7 +136,8 @@ export default function RootLayout({
                     Get policy updates, lender insights, and tips to help you close more deals. Straight to your inbox.
                   </p>
                 }
-                action="/contact"
+                action={newsletterFormAction}
+                method="POST"
               />
             }
             links={
