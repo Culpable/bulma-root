@@ -57,13 +57,13 @@
 <resolution>
 <analysis>Confirmed the footer form submits to /contact with no email field name. The contact page does not read query parameters or auto-submit, so the email never reaches Formspree or any backend. This means the submission is silently dropped despite the "Stay in the loop" CTA.</analysis>
 <fix_summary>
-- Added an explicit email field name, autocomplete, and required validation in `demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx` so the browser includes the email in FormData.
-- Added a hidden `form_source` field in `demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx` and `components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx` to tag footer newsletter signups for downstream routing.
-- Wired the footer newsletter form to submit directly to Formspree with `method="POST"` in `demo/src/app/layout.tsx` to ensure the email is captured end-to-end.
+- Removed the newsletter CTA from the live footer in `demo/src/app/layout.tsx` so no footer signup is displayed.
+- Marked `NewsletterForm` as deprecated in `demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx` and `components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx` to discourage future use.
+- Made the footer CTA optional and adjusted layout behavior when no CTA is provided in both footer section files above.
 </fix_summary>
 <validation_notes>
-- Submit the footer newsletter form and confirm Formspree receives `email` plus `form_source=footer_newsletter`.
-- Verify the form submission no longer redirects to `/contact` without payload.
+- Load any page and confirm the footer no longer renders the newsletter signup form.
+- Verify footer columns stack correctly without an empty CTA column.
 </validation_notes>
 </resolution>
 </bug_1>

@@ -21,11 +21,23 @@ export function Testimonial({
     <figure
       className={clsx(
         // h-full ensures testimonial fills its container for consistent grid heights
-        'flex h-full flex-col justify-between gap-10 rounded-md bg-mist-950/2.5 p-6 text-sm/7 text-mist-950 dark:bg-white/5 dark:text-white',
+        'relative flex h-full flex-col justify-between gap-10 rounded-md p-6 text-sm/7 text-mist-950 dark:text-white',
+        // Glassmorphism effect: semi-transparent background with backdrop blur
+        'bg-white/60 backdrop-blur-md',
+        // Subtle border for definition
+        'ring-1 ring-mist-950/5',
+        // Dark mode: darker glass with inner glow effect
+        'dark:bg-white/[0.03] dark:ring-white/10 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]',
+        // Hover enhancement for interactivity
+        'transition-all duration-300 hover:bg-white/70 dark:hover:bg-white/[0.05]',
         className,
       )}
       {...props}
     >
+      {/* Decorative quotation mark watermark */}
+      <div className="pointer-events-none absolute right-4 top-4 select-none font-serif text-6xl leading-none text-mist-950/[0.03] dark:text-white/[0.03]">
+        "
+      </div>
       <blockquote className="relative flex flex-col gap-4 *:first:before:absolute *:first:before:inline *:first:before:-translate-x-full *:first:before:content-['\201c'] *:last:after:inline *:last:after:content-['\201d']">
         {quote}
       </blockquote>

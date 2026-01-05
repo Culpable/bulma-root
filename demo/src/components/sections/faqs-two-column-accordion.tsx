@@ -37,16 +37,45 @@ export function Faq({
         id={`${id}-question`}
         command="--toggle"
         commandfor={`${id}-answer`}
-        className="flex w-full cursor-pointer items-start justify-between gap-6 py-4 text-left text-base/7 text-mist-950 dark:text-white"
+        className="group flex w-full cursor-pointer items-start justify-between gap-6 py-4 text-left text-base/7 text-mist-950 dark:text-white"
       >
         {question}
-        <PlusIcon className="h-lh in-aria-expanded:hidden" />
-        <MinusIcon className="h-lh not-in-aria-expanded:hidden" />
+        {/* Icon container with spring rotation animation */}
+        <span className="relative flex h-lh w-4 shrink-0 items-center justify-center">
+          {/* Plus icon - rotates out with spring overshoot when expanded */}
+          <PlusIcon
+            className={clsx(
+              'absolute h-lh transition-all duration-300',
+              // Spring easing curve for overshoot effect
+              '[transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]',
+              // Default state: visible, no rotation
+              'opacity-100 rotate-0',
+              // Expanded state: hidden, rotated 90deg
+              'in-aria-expanded:opacity-0 in-aria-expanded:rotate-90',
+            )}
+          />
+          {/* Minus icon - rotates in with spring overshoot when expanded */}
+          <MinusIcon
+            className={clsx(
+              'absolute h-lh transition-all duration-300',
+              // Spring easing curve for overshoot effect
+              '[transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]',
+              // Default state: hidden, rotated -90deg
+              'opacity-0 -rotate-90',
+              // Expanded state: visible, no rotation
+              'in-aria-expanded:opacity-100 in-aria-expanded:rotate-0',
+            )}
+          />
+        </span>
       </button>
       <ElDisclosure
         id={`${id}-answer`}
         hidden
-        className="-mt-2 flex flex-col gap-2 pr-12 pb-4 text-sm/7 text-mist-700 dark:text-mist-400"
+        className={clsx(
+          '-mt-2 flex flex-col gap-2 pr-12 pb-4 text-sm/7 text-mist-700 dark:text-mist-400',
+          // Spring animation for content reveal
+          'faq-spring-content',
+        )}
       >
         {renderedAnswer}
       </ElDisclosure>

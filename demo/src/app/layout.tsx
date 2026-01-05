@@ -4,7 +4,6 @@ import {
   FooterCategory,
   FooterLink,
   FooterWithNewsletterFormCategoriesAndSocialIcons,
-  NewsletterForm,
 } from '@/components/sections/footer-with-newsletter-form-categories-and-social-icons'
 import {
   NavbarLink,
@@ -57,8 +56,6 @@ export const metadata: Metadata = {
 }
 
 const siteLogoAlt = `${siteMetadata.title} logo - AI policy assistant for Australian mortgage brokers`
-// Use the shared Formspree endpoint until a dedicated newsletter form is provisioned.
-const newsletterFormAction = 'https://formspree.io/f/xojvwybl'
 
 export default function RootLayout({
   children,
@@ -128,18 +125,6 @@ export default function RootLayout({
 
           <FooterWithNewsletterFormCategoriesAndSocialIcons
             id="footer"
-            cta={
-              <NewsletterForm
-                headline="Stay in the loop"
-                subheadline={
-                  <p>
-                    Get policy updates, lender insights, and tips to help you close more deals. Straight to your inbox.
-                  </p>
-                }
-                action={newsletterFormAction}
-                method="POST"
-              />
-            }
             links={
               <>
                 <FooterCategory title="Product">

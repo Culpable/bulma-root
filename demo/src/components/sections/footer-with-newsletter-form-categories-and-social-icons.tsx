@@ -48,6 +48,9 @@ export function SocialLink({
   )
 }
 
+/**
+ * @deprecated Footer newsletter signups are deprecated; avoid adding this form to new layouts.
+ */
 export function NewsletterForm({
   headline,
   subheadline,
@@ -93,16 +96,23 @@ export function FooterWithNewsletterFormCategoriesAndSocialIcons({
   className,
   ...props
 }: {
-  cta: ReactNode
+  cta?: ReactNode
   links: ReactNode
   fineprint: ReactNode
   socialLinks?: ReactNode
 } & ComponentProps<'footer'>) {
+  const hasCta = Boolean(cta)
+
   return (
     <footer className={clsx('pt-16', className)} {...props}>
       <div className="bg-mist-950/2.5 py-16 text-mist-950 dark:bg-white/5 dark:text-white">
         <Container className="flex flex-col gap-16">
-          <div className="grid grid-cols-1 gap-x-6 gap-y-16 text-sm/7 lg:grid-cols-2">
+          <div
+            className={clsx(
+              'grid grid-cols-1 gap-x-6 gap-y-16 text-sm/7',
+              hasCta ? 'lg:grid-cols-2' : 'lg:grid-cols-1',
+            )}
+          >
             {cta}
             <nav className="grid grid-cols-2 gap-6 sm:has-[>:last-child:nth-child(3)]:grid-cols-3 sm:has-[>:nth-child(5)]:grid-cols-3 md:has-[>:last-child:nth-child(4)]:grid-cols-4 lg:max-xl:has-[>:last-child:nth-child(4)]:grid-cols-2">
               {links}

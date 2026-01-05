@@ -26,16 +26,38 @@ export function HeroLeftAlignedWithDemo({
       <Container className="flex flex-col gap-16">
         <div className="flex flex-col gap-32">
           <div className="flex flex-col items-start gap-6">
-            {eyebrow}
-            <Heading className="max-w-5xl">{headline}</Heading>
-            <Text size="lg" className="flex max-w-3xl flex-col gap-4">
+            {/* Announcement badge - first to appear */}
+            {eyebrow && (
+              <div className="hero-animate hero-delay-0">
+                {eyebrow}
+              </div>
+            )}
+            {/* Headline - appears second */}
+            <Heading className="hero-animate hero-delay-1 max-w-5xl">{headline}</Heading>
+            {/* Subheadline - appears third */}
+            <Text size="lg" className="hero-animate hero-delay-2 flex max-w-3xl flex-col gap-4">
               {subheadline}
             </Text>
-            {cta}
+            {/* CTA buttons - appear fourth */}
+            {cta && (
+              <div className="hero-animate hero-delay-3">
+                {cta}
+              </div>
+            )}
           </div>
-          {demo}
+          {/* Demo screenshot - appears fifth with scale effect */}
+          {demo && (
+            <div className="hero-animate-scale hero-delay-4">
+              {demo}
+            </div>
+          )}
         </div>
-        {footer}
+        {/* Footer/logos - appears last */}
+        {footer && (
+          <div className="hero-animate hero-delay-5">
+            {footer}
+          </div>
+        )}
       </Container>
     </section>
   )

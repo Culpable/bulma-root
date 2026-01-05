@@ -102,9 +102,7 @@ Git commit guidelines are documented in `.cursor/rules/git-commit-message-format
 </commenting_standards>
 
 <animation_standards>
-**NEVER add `prefers-reduced-motion` checks or similar accessibility media query conditionals to animation code.**
-
-This is a marketing website; animations must work consistently for all users, so do not gate/short-circuit IntersectionObserver setup with accessibility or timing conditionals (including `requestAnimationFrame` wrappers).
+**NEVER add `prefers-reduced-motion` checks or similar accessibility media query conditionals to animation code.** Animations must work consistently for all users, so do not gate/short-circuit IntersectionObserver setup with accessibility or timing conditionals (including `requestAnimationFrame` wrappers).
 </animation_standards>
 </code_standards>
 
