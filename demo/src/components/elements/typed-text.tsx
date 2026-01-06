@@ -127,7 +127,7 @@ export function TypedText({
 
   return (
     <span className={clsx('inline-flex items-baseline', className)}>
-      <span className="whitespace-pre whitespace-nowrap">{displayText}</span>
+      <span>{displayText}</span>
       {showCursor && (
         <span
           className={clsx(
