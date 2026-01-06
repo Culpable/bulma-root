@@ -259,20 +259,6 @@
 }
 
 /* =============================================================================
-   TYPED TEXT CURSOR ANIMATION
-   Blinking cursor for typewriter effect
-   ============================================================================= */
-
-@keyframes cursor-blink {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-
-/* =============================================================================
    MAGNETIC BUTTON EFFECT
    CSS fallback styles (JS handles the actual magnetic behavior)
    ============================================================================= */
@@ -374,4 +360,59 @@
 .gradient-border-wrapper:hover .gradient-border-rotating,
 .gradient-border-wrapper:hover .gradient-border-glow {
   animation-duration: calc(var(--gradient-rotation-duration) * 0.5);
+}
+
+/* =============================================================================
+   SHIMMER TEXT ANIMATION
+   Animated gradient sweep across text for subtle highlight effect
+   ============================================================================= */
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* =============================================================================
+   BLUR TRANSITION TEXT ANIMATION
+   Smooth blur in/out transitions for text changes
+   ============================================================================= */
+
+@keyframes blur-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes blur-out {
+  from {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    filter: blur(8px);
+  }
+}
+
+/* =============================================================================
+   CHARACTER SCRAMBLE ANIMATION
+   Random character cycling effect for text decode
+   ============================================================================= */
+
+.scramble-char {
+  display: inline-block;
+  min-width: 0.5em;
+}
+
+.scramble-char-space {
+  min-width: 0.25em;
 }

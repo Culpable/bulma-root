@@ -252,7 +252,7 @@ Here is a high level overview of the folder structure:
 │   │   │   │   ├── floating-orbs.tsx           # Ambient drifting background orbs
 │   │   │   │   ├── gradient-border-wrapper.tsx # Rotating gradient CTA border
 │   │   │   │   ├── magnetic-wrapper.tsx        # Magnetic cursor-attraction effect
-│   │   │   │   ├── typed-text.tsx              # Typewriter text cycling animation
+│   │   │   │   ├── blur-transition-text.tsx    # Blur in/out text cycling animation
 │   │   │   │   └── screenshot.tsx              # Parallax tilt implementation
 │   │   │   ├── icons/                          # Icon components (copied from components/icons/)
 │   │   │   ├── sections/                       # Page sections (copied from components/sections/)
@@ -322,4 +322,5 @@ Here is a high level overview of the folder structure:
   - Hosting: GitHub Actions workflow `/.github/workflows/deploy.yml` publishes `demo/out`
   - Domain: `bulma.com.au` via `demo/public/CNAME`
   - Runtime: Static export only (no server-side execution)
+  - **Critical config**: Pages must use `build_type: workflow` (not `legacy`). If site shows README instead of the app, the setting flipped. Fix: `gh api repos/Culpable/bulma-root/pages -X PUT -f build_type=workflow && gh workflow run deploy.yml`
 </environments>

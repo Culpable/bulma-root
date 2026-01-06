@@ -5,7 +5,7 @@ import { Link } from '@/components/elements/link'
 import { Logo, LogoGrid } from '@/components/elements/logo-grid'
 import { MagneticWrapper } from '@/components/elements/magnetic-wrapper'
 import { Screenshot } from '@/components/elements/screenshot'
-import { TypedText } from '@/components/elements/typed-text'
+import { BlurTransitionText } from '@/components/elements/blur-transition-text'
 import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { pageMetadata } from '@/lib/metadata'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
@@ -109,7 +109,7 @@ export default function Page() {
         headline={
           <>
             Your AI assistant for{' '}
-            <TypedText
+            <BlurTransitionText
               phrases={[
                 'policy questions.',
                 'planning scenarios.',

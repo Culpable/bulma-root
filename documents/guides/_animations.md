@@ -21,7 +21,7 @@ demo/src/
     │   ├── floating-orbs.tsx             # Ambient drifting background orbs
     │   ├── gradient-border-wrapper.tsx   # Rotating gradient CTA border
     │   ├── magnetic-wrapper.tsx          # Magnetic cursor-attraction effect
-    │   ├── typed-text.tsx                # Typewriter text cycling animation
+    │   ├── blur-transition-text.tsx      # Blur in/out text cycling animation
     │   └── screenshot.tsx                # Parallax tilt implementation
     └── sections/
         # Home page sections
@@ -194,45 +194,47 @@ All animations use `transition-all` with `ease-out` timing. Duration ranges from
 
 ---
 
-## 8. Typed Text Animation
+## 8. Blur Transition Text Animation
 
-`typed-text.tsx::TypedText` creates a typewriter effect that cycles through phrases, perfect for hero headlines communicating multiple value propositions.
+`blur-transition-text.tsx::BlurTransitionText` creates a dreamy blur in/out effect that cycles through phrases, perfect for hero headlines communicating multiple value propositions without layout shift.
 
-**File:** `demo/src/components/elements/typed-text.tsx`
+**File:** `demo/src/components/elements/blur-transition-text.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
 | `phrases` | `string[]` | — | Array of phrases to cycle |
-| `showCursor` | `boolean` | `true` | Show blinking cursor |
-| `typeSpeed` | `number` | `60` | Typing delay per character (ms) |
-| `deleteSpeed` | `number` | `40` | Deletion delay per character (ms) |
-| `pauseAfterType` | `number` | `2500` | Pause before deleting (ms) |
-| `cursorClassName` | `string` | — | Additional cursor styling |
+| `className` | `string` | — | Additional container styling |
 
-**Configuration constants (`TYPING_CONFIG`):**
+**Configuration constants (`BLUR_CONFIG`):**
 
 | Setting | Value | Effect |
 |---------|-------|--------|
-| `typeSpeed` | 60 | Character typing interval (ms) |
-| `deleteSpeed` | 40 | Character deletion interval (ms) |
-| `pauseAfterType` | 2500 | Display duration before delete |
-| `pauseAfterDelete` | 300 | Pause before typing next phrase |
-| `initialDelay` | 1000 | Delay before animation starts |
+| `blurDuration` | 400 | Duration of blur out/in transition (ms) |
+| `displayDuration` | 3000 | How long each phrase is displayed (ms) |
 
-**State machine phases:** `waiting` → `typing` → `pausing` → `deleting` → `waiting` (loop)
+**Animation behavior:**
+- Uses fixed-width container sized to longest phrase (prevents layout shift)
+- Current phrase blurs out (12px blur + 0.95 scale + opacity 0)
+- Next phrase blurs in (0px blur + 1.0 scale + opacity 1)
+- Smooth 400ms transitions with ease-out timing
 
-**Cursor animation:** CSS keyframe `cursor-blink` with 1s step-end timing for classic terminal cursor.
+**Implementation details:**
+- Measures all phrases on mount to determine container width
+- Uses `useRef` to track initialization state
+- Single `useEffect` manages the animation cycle with proper cleanup
+- CSS `filter: blur()` and `transform: scale()` for the visual effect
 
 **Integration:** Insert within text content. Currently applied to hero headline.
 
 ```tsx
 <h1>
   Your AI assistant for{' '}
-  <TypedText
+  <BlurTransitionText
     phrases={[
-      'lender policy questions.',
-      'scenario planning.',
-      'credit assessment.',
+      'policy questions.',
+      'planning scenarios.',
+      'credit prep.',
+      'comparing lenders.',
     ]}
   />
 </h1>
@@ -250,7 +252,6 @@ All animations use `transition-all` with `ease-out` timing. Duration ranges from
 | `@keyframes scroll-slide-left` | Fade from left 32px |
 | `@keyframes scroll-slide-right` | Fade from right 32px |
 | `@keyframes scroll-scale-up` | Fade with 0.95 scale |
-| `@keyframes cursor-blink` | Typewriter cursor blink (1s step-end) |
 | `@keyframes gradient-border-rotate` | Rotating angle for conic gradient |
 | `@keyframes orb-float` | Multi-point drifting movement for orbs |
 | `@keyframes orb-pulse` | Opacity pulsing for orbs |
@@ -526,7 +527,7 @@ The `Stat` component in `stats-with-graph.tsx` accepts optional `countTo` props:
 - **Tilt on touch devices**: Parallax tilt uses mouse events only; touch devices see no effect (acceptable degradation)
 - **CSS transition conflicts**: Plan components have their own hover transitions; ensure animation wrapper transitions don't override using specific properties rather than `transition-all` if conflicts arise
 - **Magnetic on touch**: Magnetic wrapper uses mouse events only; touch devices see no magnetic effect (acceptable degradation)
-- **TypedText SSR**: Component initializes with empty display text; ensure layout doesn't shift significantly when first phrase types in
+- **BlurTransitionText SSR**: Component measures phrase widths on mount; ensure container has appropriate styling while width is calculated (shows `auto` width initially)
 - **Gradient border browser support**: `@property` (CSS Houdini) required for smooth gradient angle animation; older browsers may show static gradient. Dark mode detection uses MutationObserver on `html.dark` class.
 - **Floating orbs visibility**: Opacity range [0.08–0.15] and size range [80–180px] calibrated for visible but subtle effect. Reduce blur if GPU performance is impacted.
 - **Animated counter precision**: For large numbers or many decimal places, floating-point rounding may cause minor visual jitter near end of animation
