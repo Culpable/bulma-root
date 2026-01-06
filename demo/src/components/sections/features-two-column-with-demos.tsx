@@ -1,6 +1,9 @@
+'use client'
+
 import { clsx } from 'clsx/lite'
-import type { ComponentProps, ReactNode } from 'react'
+import { Children, type ComponentProps, type ReactNode } from 'react'
 import { Section } from '../elements/section'
+import { useScrollAnimation } from '@/hooks/use-scroll-animation'
 
 export function Feature({
   demo,
@@ -32,11 +35,40 @@ export function Feature({
 
 export function FeaturesTwoColumnWithDemos({
   features,
+  staggerDelay = 150,
   ...props
-}: { features: ReactNode } & Omit<ComponentProps<typeof Section>, 'children'>) {
+}: { features: ReactNode; staggerDelay?: number } & Omit<ComponentProps<typeof Section>, 'children'>) {
+  const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
+
+  // Wrap each feature child with staggered animation
+  // First feature slides from left, second slides from right for visual interest
+  const animatedFeatures = Children.map(features, (child, index) => {
+    const delay = index * staggerDelay
+    const isEven = index % 2 === 0
+
+    return (
+      <div
+        className={clsx(
+          'transition-all duration-700 ease-out',
+          // Staggered slide direction: left for even, right for odd
+          isVisible
+            ? 'opacity-100 translate-x-0'
+            : isEven
+              ? 'opacity-0 -translate-x-8'
+              : 'opacity-0 translate-x-8'
+        )}
+        style={{ transitionDelay: `${delay}ms` }}
+      >
+        {child}
+      </div>
+    )
+  })
+
   return (
     <Section {...props}>
-      <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">{features}</div>
+      <div ref={containerRef} className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+        {animatedFeatures}
+      </div>
     </Section>
   )
 }

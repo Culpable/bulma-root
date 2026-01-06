@@ -1,6 +1,9 @@
+'use client'
+
 import { clsx } from 'clsx/lite'
-import { useId, type ComponentProps, type ReactNode } from 'react'
+import { Children, useId, type ComponentProps, type ReactNode } from 'react'
 import { Section } from '../elements/section'
+import { useScrollAnimation } from '@/hooks/use-scroll-animation'
 
 export function Stat({
   stat,
@@ -16,17 +19,46 @@ export function Stat({
   )
 }
 
-export function StatsWithGraph({ children, ...props }: ComponentProps<typeof Section>) {
+export function StatsWithGraph({
+  children,
+  staggerDelay = 120,
+  ...props
+}: { staggerDelay?: number } & ComponentProps<typeof Section>) {
   const pathId = useId()
+  const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.2 })
+
+  // Wrap each stat child with staggered animation
+  const animatedStats = Children.map(children, (child, index) => {
+    const delay = index * staggerDelay
+
+    return (
+      <div
+        className={clsx(
+          'transition-all duration-600 ease-out',
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+        )}
+        style={{ transitionDelay: `${delay}ms` }}
+      >
+        {child}
+      </div>
+    )
+  })
 
   return (
     <Section {...props}>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      <div ref={containerRef} className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
         <div className="col-span-2 grid grid-cols-2 gap-x-2 gap-y-10 sm:auto-cols-fr sm:grid-flow-col-dense">
-          {children}
+          {animatedStats}
         </div>
       </div>
-      <div className="pointer-events-none relative h-48 sm:h-64 lg:h-36">
+      {/* Graph with fade-in and draw animation */}
+      <div
+        className={clsx(
+          'pointer-events-none relative h-48 sm:h-64 lg:h-36 transition-all duration-1000 ease-out',
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        )}
+        style={{ transitionDelay: `${(Children.count(children) + 1) * staggerDelay}ms` }}
+      >
         <div className="absolute bottom-0 left-1/2 w-[150vw] max-w-[calc(var(--container-7xl)-(--spacing(10)*2))] -translate-x-1/2">
           <svg
             className="h-100 w-full fill-mist-950/2.5 stroke-mist-950/40 dark:fill-white/2.5 dark:stroke-white/40"

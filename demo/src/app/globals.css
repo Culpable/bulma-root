@@ -153,3 +153,107 @@
 .faq-icon-spring[data-open='true'] {
   transform: rotate(90deg);
 }
+
+/* =============================================================================
+   SCROLL-TRIGGERED SECTION ANIMATIONS
+   Reusable animation classes for section reveals on scroll
+   ============================================================================= */
+
+/* Slide up animation - default for most elements */
+@keyframes scroll-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide from left animation - for alternating layouts */
+@keyframes scroll-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide from right animation - for alternating layouts */
+@keyframes scroll-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale up animation - for cards and contained elements */
+@keyframes scroll-scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* =============================================================================
+   PARALLAX TILT EFFECT
+   3D tilt effect on hover for screenshots and cards
+   ============================================================================= */
+
+.parallax-tilt {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: transform 0.15s ease-out, box-shadow 0.3s ease-out;
+}
+
+.parallax-tilt:hover {
+  /* Shadow enhancement on hover for depth */
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.15),
+    0 12px 24px -8px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode shadow adjustment */
+@variant dark {
+  .parallax-tilt:hover {
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.4),
+      0 12px 24px -8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Subtle glow effect on the screenshot content */
+.parallax-tilt-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.parallax-tilt-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.15) 0%,
+    transparent 50%
+  );
+  transition: opacity 0.3s ease-out;
+  pointer-events: none;
+}
+
+.parallax-tilt-glow:hover::after {
+  opacity: 1;
+}

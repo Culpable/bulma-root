@@ -1,7 +1,10 @@
+'use client'
+
 import { clsx } from 'clsx/lite'
-import type { ComponentProps, ReactNode } from 'react'
+import { Children, type ComponentProps, type ReactNode } from 'react'
 import { Section } from '../elements/section'
 import { CheckmarkIcon } from '../icons/checkmark-icon'
+import { useScrollAnimation } from '@/hooks/use-scroll-animation'
 
 export function Plan({
   name,
@@ -24,7 +27,8 @@ export function Plan({
   return (
     <div
       className={clsx(
-        'flex flex-col justify-between gap-6 rounded-xl bg-mist-950/2.5 p-6 sm:items-start dark:bg-white/5',
+        // h-full ensures Plan fills its container for equal height alignment in grids
+        'flex h-full flex-col justify-between gap-6 rounded-xl bg-mist-950/2.5 p-6 sm:items-start dark:bg-white/5',
         // Hover lift effect with smooth transition
         'transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:shadow-mist-950/5 dark:hover:shadow-black/20',
         className,
@@ -61,14 +65,39 @@ export function Plan({
 
 export function PricingMultiTier({
   plans,
+  staggerDelay = 100,
   ...props
 }: {
   plans: ReactNode
+  staggerDelay?: number
 } & ComponentProps<typeof Section>) {
+  const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
+
+  // Wrap each plan child with staggered animation from left to right
+  // h-full ensures wrapper fills grid cell so child Plan components align heights
+  const animatedPlans = Children.map(plans, (child, index) => {
+    const delay = index * staggerDelay
+
+    return (
+      <div
+        className={clsx(
+          'h-full transition-all duration-600 ease-out',
+          isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-[0.97]'
+        )}
+        style={{ transitionDelay: `${delay}ms` }}
+      >
+        {child}
+      </div>
+    )
+  })
+
   return (
     <Section {...props}>
-      <div className="grid grid-cols-1 gap-2 sm:has-[>:nth-child(5)]:grid-cols-2 sm:max-lg:has-[>:last-child:nth-child(even)]:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none lg:has-[>:nth-child(5)]:grid-flow-row lg:has-[>:nth-child(5)]:grid-cols-3">
-        {plans}
+      <div
+        ref={containerRef}
+        className="grid grid-cols-1 gap-2 sm:has-[>:nth-child(5)]:grid-cols-2 sm:max-lg:has-[>:last-child:nth-child(even)]:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none lg:has-[>:nth-child(5)]:grid-flow-row lg:has-[>:nth-child(5)]:grid-cols-3"
+      >
+        {animatedPlans}
       </div>
     </Section>
   )

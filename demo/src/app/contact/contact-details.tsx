@@ -5,7 +5,7 @@ import { Eyebrow } from '@/components/elements/eyebrow'
  */
 export function ContactDetails() {
   return (
-    <div className="rounded-3xl bg-white/70 p-8 shadow-sm ring-1 ring-mist-950/10 dark:bg-white/5 dark:ring-white/10">
+    <div className="h-full rounded-3xl bg-white/70 p-8 shadow-sm ring-1 ring-mist-950/10 dark:bg-white/5 dark:ring-white/10">
       {/* Introduce what the Bulma team can help with. */}
       <div>
         <Eyebrow>What to expect</Eyebrow>

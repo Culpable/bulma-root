@@ -1,6 +1,9 @@
+'use client'
+
 import { clsx } from 'clsx/lite'
-import type { ComponentProps, ReactNode } from 'react'
+import { Children, type ComponentProps, type ReactNode } from 'react'
 import { Section } from '../elements/section'
+import { useScrollAnimation } from '@/hooks/use-scroll-animation'
 
 export function TeamMember({
   img,
@@ -27,11 +30,28 @@ export function TeamMember({
 }
 
 export function TeamFourColumnGrid({ children, ...props }: ComponentProps<typeof Section>) {
+  const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.1 })
+
+  // Wrap each team member in an animation container with staggered delay
+  const animatedChildren = Children.map(children, (child, index) => (
+    <div
+      className={clsx(
+        'transition-all duration-600 ease-out',
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
+      )}
+      style={{ transitionDelay: `${index * 80}ms` }}
+    >
+      {child}
+    </div>
+  ))
+
   return (
-    <Section {...props}>
-      <ul role="list" className="grid grid-cols-2 gap-x-2 gap-y-10 md:grid-cols-3 lg:grid-cols-4">
-        {children}
-      </ul>
-    </Section>
+    <div ref={containerRef}>
+      <Section {...props}>
+        <ul role="list" className="grid grid-cols-2 gap-x-2 gap-y-10 md:grid-cols-3 lg:grid-cols-4">
+          {animatedChildren}
+        </ul>
+      </Section>
+    </div>
   )
 }

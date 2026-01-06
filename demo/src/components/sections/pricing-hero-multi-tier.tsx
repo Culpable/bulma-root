@@ -1,10 +1,13 @@
+'use client'
+
 import { ElTabGroup, ElTabList, ElTabPanels } from '@tailwindplus/elements/react'
 import { clsx } from 'clsx/lite'
-import type { ComponentProps, ReactNode } from 'react'
+import { Children, type ComponentProps, type ReactNode } from 'react'
 import { Container } from '../elements/container'
 import { Heading } from '../elements/heading'
 import { Text } from '../elements/text'
 import { CheckmarkIcon } from '../icons/checkmark-icon'
+import { useScrollAnimation } from '@/hooks/use-scroll-animation'
 
 export function Plan({
   name,
@@ -79,11 +82,37 @@ export function PricingHeroMultiTier<T extends string>({
   plans: Record<T, ReactNode>
   footer?: ReactNode
 } & ComponentProps<'section'>) {
+  const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.1 })
+
+  // Wrap plan cards with staggered animation
+  const animatedPlans = Object.fromEntries(
+    options.map((option) => [
+      option,
+      Children.map(plans[option] as ReactNode, (child, index) => (
+        <div
+          className={clsx(
+            'h-full transition-all duration-600 ease-out',
+            isVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-6 scale-95 opacity-0',
+          )}
+          style={{ transitionDelay: `${300 + index * 100}ms` }}
+        >
+          {child}
+        </div>
+      )),
+    ]),
+  ) as Record<T, ReactNode>
+
   return (
-    <section className={clsx('py-16', className)} {...props}>
+    <section ref={containerRef} className={clsx('py-16', className)} {...props}>
       <ElTabGroup>
         <Container className="flex flex-col gap-16">
-          <div className="flex flex-col items-center gap-6">
+          {/* Header with slide up animation */}
+          <div
+            className={clsx(
+              'flex flex-col items-center gap-6 transition-all duration-700 ease-out',
+              isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
+            )}
+          >
             {eyebrow}
             <Heading>{headline}</Heading>
             <Text size="lg" className="flex max-w-xl flex-col gap-4 text-center">
@@ -107,7 +136,7 @@ export function PricingHeroMultiTier<T extends string>({
                 key={option}
                 className="grid grid-cols-1 gap-2 sm:has-[>:nth-child(5)]:grid-cols-2 sm:max-lg:has-[>:last-child:nth-child(even)]:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none lg:has-[>:nth-child(5)]:grid-flow-row lg:has-[>:nth-child(5)]:grid-cols-3"
               >
-                {plans[option]}
+                {animatedPlans[option]}
               </div>
             ))}
           </ElTabPanels>

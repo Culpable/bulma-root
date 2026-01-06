@@ -6,6 +6,7 @@ import { type ComponentProps, type ReactNode } from 'react'
 import { Container } from '../elements/container'
 import { CheckmarkIcon } from '../icons/checkmark-icon'
 import { MinusIcon } from '../icons/minus-icon'
+import { useScrollAnimation } from '@/hooks/use-scroll-animation'
 
 function FeatureGroup<Plan extends string>({
   group,
@@ -75,10 +76,17 @@ export function PlanComparisonTable<const Plan extends string>({
     features: { name: ReactNode; value: ReactNode | Record<Plan, ReactNode> }[]
   }[]
 } & ComponentProps<'section'>) {
+  const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.1 })
+
   return (
-    <section className={clsx('py-16', className)} {...props}>
+    <section ref={containerRef} className={clsx('py-16', className)} {...props}>
       <Container>
-        <table className="w-full border-collapse text-left text-sm/5 max-sm:hidden">
+        <table
+          className={clsx(
+            'w-full border-collapse text-left text-sm/5 transition-all duration-700 ease-out max-sm:hidden',
+            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
+          )}
+        >
           <colgroup>
             <col className="w-2/5" />
             {plans.map((plan) => (
@@ -105,7 +113,12 @@ export function PlanComparisonTable<const Plan extends string>({
           ))}
         </table>
 
-        <div className="sm:hidden">
+        <div
+          className={clsx(
+            'transition-all duration-700 ease-out sm:hidden',
+            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
+          )}
+        >
           <ElTabGroup>
             <ElTabList className="flex gap-6">
               {plans.map((plan) => (
