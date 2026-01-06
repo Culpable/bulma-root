@@ -126,12 +126,12 @@ export function TypedText({
   }, [phase, displayText, currentPhrase, phrases.length, typeSpeed, deleteSpeed, pauseAfterType])
 
   return (
-    <span className={clsx('inline-flex items-baseline', className)}>
+    <span className={clsx('inline', className)}>
       <span>{displayText}</span>
       {showCursor && (
         <span
           className={clsx(
-            // Blinking cursor animation
+            // Blinking cursor - inline-block maintains dimensions while flowing inline with text
             'ml-0.5 inline-block h-[1em] w-[2px] translate-y-[0.1em]',
             'animate-[cursor-blink_1s_step-end_infinite]',
             'bg-current',
