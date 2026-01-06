@@ -363,20 +363,6 @@
 }
 
 /* =============================================================================
-   SHIMMER TEXT ANIMATION
-   Animated gradient sweep across text for subtle highlight effect
-   ============================================================================= */
-
-@keyframes shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-/* =============================================================================
    BLUR TRANSITION TEXT ANIMATION
    Smooth blur in/out transitions for text changes
    ============================================================================= */
@@ -401,18 +387,4 @@
     opacity: 0;
     filter: blur(8px);
   }
-}
-
-/* =============================================================================
-   CHARACTER SCRAMBLE ANIMATION
-   Random character cycling effect for text decode
-   ============================================================================= */
-
-.scramble-char {
-  display: inline-block;
-  min-width: 0.5em;
-}
-
-.scramble-char-space {
-  min-width: 0.25em;
 }
