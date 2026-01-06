@@ -257,3 +257,121 @@
 .parallax-tilt-glow:hover::after {
   opacity: 1;
 }
+
+/* =============================================================================
+   TYPED TEXT CURSOR ANIMATION
+   Blinking cursor for typewriter effect
+   ============================================================================= */
+
+@keyframes cursor-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* =============================================================================
+   MAGNETIC BUTTON EFFECT
+   CSS fallback styles (JS handles the actual magnetic behavior)
+   ============================================================================= */
+
+.magnetic-wrapper {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* =============================================================================
+   ANIMATED GRADIENT BORDER
+   Rotating conic gradient border for primary CTAs
+   ============================================================================= */
+
+@keyframes gradient-border-rotate {
+  from {
+    --gradient-angle: 0deg;
+  }
+  to {
+    --gradient-angle: 360deg;
+  }
+}
+
+/* Register custom property for smooth animation (Houdini) */
+@property --gradient-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Wrapper establishes positioning context */
+.gradient-border-wrapper {
+  --gradient-rotation-duration: 3000ms;
+}
+
+/* Rotating gradient border layer */
+.gradient-border-rotating {
+  background: conic-gradient(
+    from var(--gradient-angle),
+    /* Light mode: mist palette colors */
+    oklch(45% 0.017 213.2) 0deg,      /* mist-600 */
+    oklch(56% 0.021 213.5) 60deg,     /* mist-500 */
+    oklch(72.3% 0.014 214.4) 120deg,  /* mist-400 */
+    oklch(56% 0.021 213.5) 180deg,    /* mist-500 */
+    oklch(37.8% 0.015 216) 240deg,    /* mist-700 */
+    oklch(45% 0.017 213.2) 300deg,    /* mist-600 */
+    oklch(45% 0.017 213.2) 360deg     /* mist-600 - seamless loop */
+  );
+  animation: gradient-border-rotate var(--gradient-rotation-duration) linear infinite;
+}
+
+/* Dark mode gradient uses lighter values for visibility */
+@variant dark {
+  .gradient-border-rotating {
+    background: conic-gradient(
+      from var(--gradient-angle),
+      oklch(72.3% 0.014 214.4) 0deg,    /* mist-400 */
+      oklch(87.2% 0.007 219.6) 60deg,   /* mist-300 */
+      oklch(92.5% 0.005 214.3) 120deg,  /* mist-200 */
+      oklch(87.2% 0.007 219.6) 180deg,  /* mist-300 */
+      oklch(72.3% 0.014 214.4) 240deg,  /* mist-400 */
+      oklch(56% 0.021 213.5) 300deg,    /* mist-500 */
+      oklch(72.3% 0.014 214.4) 360deg   /* mist-400 - seamless loop */
+    );
+  }
+}
+
+/* Glow effect - uses same gradient but blurred */
+.gradient-border-glow {
+  background: conic-gradient(
+    from var(--gradient-angle),
+    oklch(45% 0.017 213.2) 0deg,
+    oklch(56% 0.021 213.5) 90deg,
+    oklch(72.3% 0.014 214.4) 180deg,
+    oklch(56% 0.021 213.5) 270deg,
+    oklch(45% 0.017 213.2) 360deg
+  );
+  animation: gradient-border-rotate var(--gradient-rotation-duration) linear infinite;
+}
+
+@variant dark {
+  .gradient-border-glow {
+    background: conic-gradient(
+      from var(--gradient-angle),
+      oklch(72.3% 0.014 214.4) 0deg,
+      oklch(87.2% 0.007 219.6) 90deg,
+      oklch(92.5% 0.005 214.3) 180deg,
+      oklch(87.2% 0.007 219.6) 270deg,
+      oklch(72.3% 0.014 214.4) 360deg
+    );
+  }
+}
+
+/* Hover state: show glow and speed up rotation */
+.gradient-border-wrapper:hover .gradient-border-glow {
+  opacity: 0.5;
+}
+
+.gradient-border-wrapper:hover .gradient-border-rotating,
+.gradient-border-wrapper:hover .gradient-border-glow {
+  animation-duration: calc(var(--gradient-rotation-duration) * 0.5);
+}

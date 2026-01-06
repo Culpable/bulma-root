@@ -101,9 +101,6 @@ Git commit guidelines are documented in `.cursor/rules/git-commit-message-format
 - ALWAYS document critical logic, especially complex algorithms, business rules, and edge cases.
 </commenting_standards>
 
-<animation_standards>
-**NEVER add `prefers-reduced-motion` checks or similar accessibility media query conditionals to animation code.** Animations must work consistently for all users, so do not gate/short-circuit IntersectionObserver setup with accessibility or timing conditionals (including `requestAnimationFrame` wrappers).
-</animation_standards>
 </code_standards>
 
 <code_architecture>
@@ -130,6 +127,37 @@ This is a GitHub Pages project for the Bulma root domain at https://bulma.com.au
 
 It is a marketing website for the Bulma product, which is a web application that aims to assist Australian mortgage brokers with AI to automate scenario planning, credit assessment preparation, policy matching, and lender selection. Web app url: https://app.bulma.com.au
 </description>
+
+System architecture documentation (IMPORTANT):
+<system_architecture_documentation>
+
+📝 **System Architecture Documentation**: This section establishes canonical terms for core system components. When any task involves these workflows, subsystems, or capabilities, the corresponding documentation MUST be read to understand implementation details.
+
+| Component | Path (documents/guides) | Purpose |
+|-----------|-------------------------|---------|
+| **Animations** | [`_animations.md`](documents/guides/_animations.md) | Animation system conventions, motion principles, and implementation rules for the marketing site |
+
+IMPORTANT: You MUST read the appropriate documentation above when working with any of the systems mentioned.
+
+When you edit, modify, or refactor code related to ANY system architecture component listed above, you MUST follow this workflow:
+<documentation_synchronisation>
+
+**After Making Code Changes:**
+1. Identify which system architecture component(s) your changes affect
+2. Locate and read the corresponding documentation file from the table above
+3. Compare the guide against your updated implementation
+4. If discrepancies exist, update the documentation to reflect the current state
+5. Ensure documentation remains comprehensive and information-dense, focusing on technical functionality and observed behavior
+
+**Documentation Standards:** 
+- The GOAL of the documentation is to provide a high-level overview of how the overall system works, that way a person can understand the system without having to read every single file, and prevents them from introducing bugs or errors. Given this, the documentation must be comprehensive, but IMPORTANTLY: **information-dense**. 
+- Focus on technical functionality and observed behavior, not presentation or aesthetics. It should not be verbose or include anything other than the most essential details.
+
+REMEMBER: You don't always need to update docs, but you always need to check whether updates are required. This applies to ALL components in the system architecture table.
+
+</documentation_synchronisation>
+
+</system_architecture_documentation>
 
 <brand_colors>
 Primary gradient (dark mode, blue):
@@ -171,13 +199,22 @@ Here is a high level overview of the folder structure:
 │   └── sections/                               # Pre-built page sections
 │       ├── hero-centered-with-demo.tsx         # Hero section with centered demo screenshot
 │       ├── hero-left-aligned-with-demo.tsx     # Hero section with left-aligned content
+│       ├── hero-left-aligned-with-photo.tsx    # Hero section with photo layout
+│       ├── team-four-column-grid.tsx           # Team grid layout (four columns)
 │       ├── features-three-column.tsx           # 3-column feature grid layout
+│       ├── features-two-column-with-demos.tsx  # Two-column feature layout with demos
 │       ├── features-with-large-demo.tsx        # Features section with large app screenshot
+│       ├── stats-with-graph.tsx                # Stats section with inline graph
+│       ├── pricing-hero-multi-tier.tsx         # Pricing hero with multi-tier emphasis
 │       ├── pricing-multi-tier.tsx              # Multi-tier pricing cards
 │       ├── pricing-single-tier-two-column.tsx  # Single plan with feature comparison
 │       ├── plan-comparison-table.tsx           # Detailed plan feature comparison table
 │       ├── faqs-accordion.tsx                  # Expandable FAQ section
+│       ├── faqs-two-column-accordion.tsx       # Two-column FAQ layout with accordion
 │       ├── testimonial-with-large-quote.tsx    # Customer testimonial display
+│       ├── testimonial-two-column-with-large-photo.tsx  # Testimonial with large photo
+│       ├── testimonials-three-column-grid.tsx  # Three-column testimonial grid
+│       ├── call-to-action-simple.tsx           # Simple CTA section
 │       ├── call-to-action-simple-centered.tsx  # CTA section with centered content
 │       ├── navbar-with-logo-actions-and-left-aligned-links.tsx  # Main navigation bar
 │       └── footer-with-links-and-social-icons.tsx               # Site footer with links
@@ -206,8 +243,17 @@ Here is a high level overview of the folder structure:
 │   │   │   ├── pricing/page.tsx                # Pricing page (/pricing)
 │   │   │   ├── privacy-policy/page.tsx         # Privacy policy (/privacy-policy)
 │   │   │   └── 404/page.tsx                    # Custom 404 page
+│   │   ├── hooks/                              # Shared React hooks
+│   │   │   └── use-scroll-animation.ts         # Reusable IntersectionObserver hook
 │   │   ├── components/                         # Copied components for demo (mirrors ../components/)
 │   │   │   ├── elements/                       # Base UI elements (copied from components/elements/)
+│   │   │   │   ├── animated-counter.tsx        # Scroll-triggered number counting
+│   │   │   │   ├── cursor-spotlight.tsx        # Cursor-following ambient glow
+│   │   │   │   ├── floating-orbs.tsx           # Ambient drifting background orbs
+│   │   │   │   ├── gradient-border-wrapper.tsx # Rotating gradient CTA border
+│   │   │   │   ├── magnetic-wrapper.tsx        # Magnetic cursor-attraction effect
+│   │   │   │   ├── typed-text.tsx              # Typewriter text cycling animation
+│   │   │   │   └── screenshot.tsx              # Parallax tilt implementation
 │   │   │   ├── icons/                          # Icon components (copied from components/icons/)
 │   │   │   ├── sections/                       # Page sections (copied from components/sections/)
 │   │   │   └── MixpanelProvider.jsx            # Mixpanel analytics provider component

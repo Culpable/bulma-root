@@ -1,8 +1,11 @@
 import { AnnouncementBadge } from '@/components/elements/announcement-badge'
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
+import { GradientBorderWrapper } from '@/components/elements/gradient-border-wrapper'
 import { Link } from '@/components/elements/link'
 import { Logo, LogoGrid } from '@/components/elements/logo-grid'
+import { MagneticWrapper } from '@/components/elements/magnetic-wrapper'
 import { Screenshot } from '@/components/elements/screenshot'
+import { TypedText } from '@/components/elements/typed-text'
 import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { pageMetadata } from '@/lib/metadata'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
@@ -103,22 +106,39 @@ export default function Page() {
       <HeroLeftAlignedWithDemo
         id="hero"
         eyebrow={<AnnouncementBadge href="#lenders" text="Now covering all major Australian lenders" cta="See the list" />}
-        headline="Your AI assistant for lender policy questions."
+        headline={
+          <>
+            Your AI assistant for{' '}
+            <TypedText
+              phrases={[
+                'policy questions.',
+                'planning scenarios.',
+                'credit prep.',
+                'comparing lenders.',
+              ]}
+            />
+          </>
+        }
         subheadline={
           <p>
-            Ask any policy question in plain English. Get instant, grounded answers with source attribution - so you
-            spend less time searching and more time settling.
+            Bulma helps Australian mortgage brokers get instant, source-cited answers to lender policy questions. No more digging through PDFs and portals.
           </p>
         }
         cta={
           <div className="flex items-center gap-4">
-            <ButtonLink href="https://app.bulma.com.au/register" size="lg">
-              Try Bulma free
-            </ButtonLink>
+            <MagneticWrapper>
+              <GradientBorderWrapper>
+                <ButtonLink href="https://app.bulma.com.au/register" size="lg">
+                  Try Bulma free
+                </ButtonLink>
+              </GradientBorderWrapper>
+            </MagneticWrapper>
 
-            <PlainButtonLink href="/contact" size="lg" className="group">
-              See it in action <AnimatedArrowIcon className="-mr-1 ml-1.5" />
-            </PlainButtonLink>
+            <MagneticWrapper>
+              <PlainButtonLink href="/contact" size="lg" className="group">
+                See it in action <AnimatedArrowIcon className="-mr-1 ml-1.5" />
+              </PlainButtonLink>
+            </MagneticWrapper>
           </div>
         }
         demo={
@@ -446,7 +466,7 @@ export default function Page() {
           </p>
         }
       >
-        <Stat stat="30+" text="Major Australian lenders covered, with policies updated regularly." />
+        <Stat countTo={30} countSuffix="+" text="Major Australian lenders covered, with policies updated regularly." />
         <Stat stat="Seconds" text="Average time to answer - compared to hours of manual research." />
       </StatsWithGraph>
       {/* Testimonial */}
@@ -654,13 +674,19 @@ export default function Page() {
         }
         cta={
           <div className="flex items-center gap-4">
-            <ButtonLink href="https://app.bulma.com.au/register" size="lg">
-              Try Bulma free
-            </ButtonLink>
+            <MagneticWrapper>
+              <GradientBorderWrapper>
+                <ButtonLink href="https://app.bulma.com.au/register" size="lg">
+                  Try Bulma free
+                </ButtonLink>
+              </GradientBorderWrapper>
+            </MagneticWrapper>
 
-            <PlainButtonLink href="/contact" size="lg" className="group">
-              Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
-            </PlainButtonLink>
+            <MagneticWrapper>
+              <PlainButtonLink href="/contact" size="lg" className="group">
+                Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
+              </PlainButtonLink>
+            </MagneticWrapper>
           </div>
         }
       />

@@ -24,7 +24,7 @@ export function HeroLeftAlignedWithDemo({
 } & ComponentProps<'section'>) {
   return (
     <CursorSpotlight>
-      <section className={clsx('py-16', className)} {...props}>
+      <section className={clsx('relative z-10 py-16', className)} {...props}>
         <Container className="flex flex-col gap-16">
           <div className="flex flex-col gap-32">
             <div className="flex flex-col items-start gap-6">
@@ -35,7 +35,7 @@ export function HeroLeftAlignedWithDemo({
                 </div>
               )}
               {/* Headline - appears second */}
-              <Heading className="hero-animate hero-delay-1 max-w-5xl">{headline}</Heading>
+              <Heading className="hero-animate hero-delay-1 max-w-6xl">{headline}</Heading>
               {/* Subheadline - appears third */}
               <Text size="lg" className="hero-animate hero-delay-2 flex max-w-3xl flex-col gap-4">
                 {subheadline}

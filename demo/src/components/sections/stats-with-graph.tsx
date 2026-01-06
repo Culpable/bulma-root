@@ -2,18 +2,52 @@
 
 import { clsx } from 'clsx/lite'
 import { Children, useId, type ComponentProps, type ReactNode } from 'react'
+import { AnimatedCounter } from '../elements/animated-counter'
 import { Section } from '../elements/section'
 import { useScrollAnimation } from '@/hooks/use-scroll-animation'
+
+interface StatProps extends ComponentProps<'div'> {
+  /** Static text or ReactNode to display as the stat */
+  stat?: ReactNode
+  /** Description text below the stat */
+  text: ReactNode
+  /** Numeric value to animate (if provided, animates instead of showing stat) */
+  countTo?: number
+  /** Prefix before the animated number (e.g., "$") */
+  countPrefix?: string
+  /** Suffix after the animated number (e.g., "+", "%", "k") */
+  countSuffix?: string
+  /** Animation duration in ms (default: 1500) */
+  countDuration?: number
+}
 
 export function Stat({
   stat,
   text,
+  countTo,
+  countPrefix = '',
+  countSuffix = '',
+  countDuration = 1500,
   className,
   ...props
-}: { stat: ReactNode; text: ReactNode } & ComponentProps<'div'>) {
+}: StatProps) {
+  // Determine if we should use animated counter
+  const useAnimatedCounter = typeof countTo === 'number'
+
   return (
     <div className={clsx('border-l border-mist-950/20 pl-6 dark:border-white/20', className)} {...props}>
-      <div className="text-2xl/10 tracking-tight text-mist-950 dark:text-white">{stat}</div>
+      <div className="text-2xl/10 tracking-tight text-mist-950 dark:text-white">
+        {useAnimatedCounter ? (
+          <AnimatedCounter
+            value={countTo}
+            prefix={countPrefix}
+            suffix={countSuffix}
+            duration={countDuration}
+          />
+        ) : (
+          stat
+        )}
+      </div>
       <p className="mt-2 text-sm/7 text-mist-700 dark:text-mist-400">{text}</p>
     </div>
   )
