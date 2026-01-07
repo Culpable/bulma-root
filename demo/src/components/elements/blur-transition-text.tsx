@@ -76,13 +76,12 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
 
   // Single wrapper span with relative positioning to contain the absolute measurement span.
   // This prevents the hidden span from escaping and interfering with parent layout (e.g. text-balance).
-  // Uses width for stability on desktop (prevents jumping) + maxWidth 100% to prevent mobile overflow.
+  // Uses min() to pick smaller of: fixed width (prevents jumping) OR viewport minus padding (prevents overflow).
   return (
     <span
       className="relative inline-block align-baseline"
       style={{
-        width: containerWidth ? `${containerWidth}px` : 'auto',
-        maxWidth: '100%'
+        width: containerWidth ? `min(${containerWidth}px, 100vw - 3rem)` : 'auto'
       }}
     >
       {/* Hidden element used to measure phrase widths - absolutely positioned within relative parent */}
