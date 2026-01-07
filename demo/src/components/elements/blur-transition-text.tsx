@@ -33,8 +33,25 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isBlurred, setIsBlurred] = useState(false)
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
+  const [isVisible, setIsVisible] = useState(true)
+  const containerRef = useRef<HTMLSpanElement>(null)
   const measureRef = useRef<HTMLSpanElement>(null)
   const hasInitialized = useRef(false)
+  const intervalRef = useRef<number | null>(null)
+  const timeoutRef = useRef<number | null>(null)
+
+  // Clear any scheduled interval/timeout so the animation can pause cleanly.
+  const clearTimers = () => {
+    if (intervalRef.current !== null) {
+      window.clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+
+    if (timeoutRef.current !== null) {
+      window.clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+  }
 
   // Measure the longest phrase on mount to set fixed container width
   useEffect(() => {
@@ -56,29 +73,55 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
     }
   }, [phrases])
 
+  // Track visibility so the animation pauses when the hero scrolls out of view.
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting)
+      },
+      { threshold: 0.1 }
+    )
+
+    observer.observe(container)
+
+    return () => observer.disconnect()
+  }, [])
+
   // Handle the blur transition cycle
   useEffect(() => {
-    if (!containerWidth) return
+    if (!containerWidth || phrases.length < 2) return
 
-    const interval = setInterval(() => {
+    if (!isVisible) {
+      clearTimers()
+      setIsBlurred(false)
+      return
+    }
+
+    clearTimers()
+
+    intervalRef.current = window.setInterval(() => {
       // Blur out
       setIsBlurred(true)
 
       // After blur out completes, change phrase and blur in
-      setTimeout(() => {
+      timeoutRef.current = window.setTimeout(() => {
         setCurrentIndex((prev) => (prev + 1) % phrases.length)
         setIsBlurred(false)
       }, BLUR_CONFIG.blurDuration)
     }, BLUR_CONFIG.displayDuration)
 
-    return () => clearInterval(interval)
-  }, [phrases.length, containerWidth])
+    return () => clearTimers()
+  }, [phrases.length, containerWidth, isVisible])
 
   // Single wrapper span with relative positioning to contain the absolute measurement span.
   // This prevents the hidden span from escaping and interfering with parent layout (e.g. text-balance).
   // Uses min() to pick smaller of: fixed width (prevents jumping) OR viewport minus padding (prevents overflow).
   return (
     <span
+      ref={containerRef}
       className="relative inline-block align-baseline"
       style={{
         width: containerWidth ? `min(${containerWidth}px, 100vw - 3rem)` : 'auto'

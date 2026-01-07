@@ -216,6 +216,7 @@ All animations use `transition-all` with `ease-out` timing. Duration ranges from
 - Current phrase blurs out (12px blur + 0.95 scale + opacity 0)
 - Next phrase blurs in (0px blur + 1.0 scale + opacity 1)
 - Smooth 400ms transitions with ease-out timing
+- Animation pauses when the text is scrolled out of view to avoid layout jank
 
 **Layout stability (width constraint):**
 - Measures longest phrase on mount, applies as `width` (prevents desktop jumping)
@@ -225,6 +226,7 @@ All animations use `transition-all` with `ease-out` timing. Duration ranges from
 
 **Implementation details:**
 - Uses `useRef` to track initialization and prevent re-measurement
+- IntersectionObserver toggles visibility state so intervals stop when offscreen
 - Single `useEffect` manages animation cycle with proper cleanup
 - Hidden measurement span (`whitespace-nowrap`) sized absolutely within relative parent
 - CSS `filter: blur()` and `transform: scale()` for visual effect
@@ -238,7 +240,7 @@ All animations use `transition-all` with `ease-out` timing. Duration ranges from
     phrases={[
       'policy questions.',
       'planning scenarios.',
-      'credit prep.',
+      'credit preparation.',
       'comparing lenders.',
     ]}
   />

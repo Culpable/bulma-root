@@ -113,7 +113,7 @@ export default function Page() {
               phrases={[
                 'policy questions.',
                 'planning scenarios.',
-                'credit prep.',
+                'credit preparation.',
                 'comparing lenders.',
               ]}
             />

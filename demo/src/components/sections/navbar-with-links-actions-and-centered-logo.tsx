@@ -1,7 +1,9 @@
+'use client'
+
 import { ElDialog, ElDialogPanel } from '@tailwindplus/elements/react'
 import { clsx } from 'clsx/lite'
 import Link from 'next/link'
-import type { ComponentProps, ReactNode } from 'react'
+import type { ComponentProps, ReactNode, MouseEvent } from 'react'
 
 export function NavbarLink({
   children,
@@ -43,6 +45,18 @@ export function NavbarWithLinksActionsAndCenteredLogo({
   logo: ReactNode
   actions: ReactNode
 } & ComponentProps<'header'>) {
+  // Close the mobile dialog when a navigation link is clicked so it doesn't block the viewport.
+  const handleMobileMenuLinkClick = (event: MouseEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement | null
+    const link = target?.closest('a')
+    if (!link) return
+
+    const dialog = event.currentTarget.closest('dialog')
+    if (dialog instanceof HTMLDialogElement && dialog.open) {
+      dialog.close()
+    }
+  }
+
   return (
     <header className={clsx('sticky top-0 z-10 bg-mist-100 dark:bg-mist-950', className)} {...props}>
       <style>{`:root { --scroll-padding-top: 5.25rem }`}</style>
@@ -92,7 +106,9 @@ export function NavbarWithLinksActionsAndCenteredLogo({
                   </svg>
                 </button>
               </div>
-              <div className="mt-6 flex flex-col gap-6">{links}</div>
+              <div className="mt-6 flex flex-col gap-6" onClick={handleMobileMenuLinkClick}>
+                {links}
+              </div>
             </ElDialogPanel>
           </dialog>
         </ElDialog>
