@@ -21,7 +21,7 @@ const pricingSeoAltContext =
   'Bulma pricing for Australian mortgage brokerages with transparent plans and a free trial'
 const pricingAlt = (text: string) => `${text} - ${pricingSeoAltContext}`
 const pricingLenderLogoAlt = pricingAlt('Australian lender logo')
-const pricingTestimonialAlt = pricingAlt('Portrait of James Mitchell')
+const pricingTestimonialAlt = pricingAlt('Portrait of Jake Miller')
 
 const pricingFaqs = [
   {
@@ -319,7 +319,7 @@ export default function Page() {
             height={1000}
           />
         }
-        name="James Mitchell"
+        name="Jake Miller"
         byline="Principal Broker, Adelaide"
       />
       {/* FAQs */}

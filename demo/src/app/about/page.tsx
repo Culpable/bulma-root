@@ -3,7 +3,7 @@ import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { pageMetadata } from '@/lib/metadata'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { HeroLeftAlignedWithPhoto } from '@/components/sections/hero-left-aligned-with-photo'
-import { Stat, StatsWithGraph } from '@/components/sections/stats-with-graph'
+import { StatAnimated, StatsAnimatedGraph } from '@/components/sections/stats-animated-graph'
 import { TeamFourColumnGrid, TeamMember } from '@/components/sections/team-four-column-grid'
 import { TestimonialTwoColumnWithLargePhoto } from '@/components/sections/testimonial-two-column-with-large-photo'
 import type { Metadata } from 'next'
@@ -43,7 +43,7 @@ export default function Page() {
         }
       />
       {/* Stats */}
-      <StatsWithGraph
+      <StatsAnimatedGraph
         id="stats"
         eyebrow="Growing with brokers"
         headline="The policy assistant Australian brokers rely on."
@@ -54,9 +54,9 @@ export default function Page() {
           </p>
         }
       >
-        <Stat stat="30+" text="Major Australian lenders covered, with policies updated regularly." />
-        <Stat stat="Seconds" text="Average time to answer - compared to hours of manual research." />
-      </StatsWithGraph>
+        <StatAnimated stat="30+" text="Major Australian lenders covered, with policies updated regularly." />
+        <StatAnimated stat="Seconds" text="Average time to answer - compared to hours of manual research." />
+      </StatsAnimatedGraph>
       {/* Testimonial */}
       <TestimonialTwoColumnWithLargePhoto
         id="testimonial"
@@ -69,13 +69,13 @@ export default function Page() {
         img={
           <Image
             src="/img/avatars/16-h-1000-w-1400.webp"
-            alt={aboutPortraitAlt('Sarah Chen')}
+            alt={aboutPortraitAlt("Liam O'Connor")}
             className="not-dark:bg-white/75 dark:bg-black/75"
             width={1400}
             height={1000}
           />
         }
-        name="Sarah Chen"
+        name="Liam O'Connor"
         byline="Credit Adviser, Sydney"
       />
       {/* Team */}

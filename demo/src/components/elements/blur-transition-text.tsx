@@ -24,6 +24,10 @@ interface BlurTransitionTextProps {
  * Blur transition text component that blurs out the current phrase
  * and blurs in the next phrase for a dreamy, modern effect.
  * Uses a fixed-width container sized to the longest phrase to prevent layout shift.
+ *
+ * IMPORTANT: Wraps in a single relative container so the absolute-positioned
+ * measurement span is properly contained and doesn't interfere with parent
+ * text-balance or other layout properties.
  */
 export function BlurTransitionText({ phrases, className }: BlurTransitionTextProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -70,34 +74,38 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
     return () => clearInterval(interval)
   }, [phrases.length, containerWidth])
 
+  // Single wrapper span with relative positioning to contain the absolute measurement span.
+  // This prevents the hidden span from escaping and interfering with parent layout (e.g. text-balance).
+  // Uses width for stability on desktop (prevents jumping) + maxWidth 100% to prevent mobile overflow.
   return (
-    <>
-      {/* Hidden element used to measure phrase widths */}
+    <span
+      className="relative inline-block align-baseline"
+      style={{
+        width: containerWidth ? `${containerWidth}px` : 'auto',
+        maxWidth: '100%'
+      }}
+    >
+      {/* Hidden element used to measure phrase widths - absolutely positioned within relative parent */}
       <span
         ref={measureRef}
-        className={clsx('invisible absolute whitespace-nowrap', className)}
+        className={clsx('pointer-events-none invisible absolute left-0 top-0 whitespace-nowrap', className)}
         aria-hidden="true"
       >
         {phrases[0]}
       </span>
 
-      {/* Visible container with fixed width */}
+      {/* Visible animated text */}
       <span
-        className={clsx('inline-block text-left', className)}
-        style={{ width: containerWidth ? `${containerWidth}px` : 'auto' }}
+        className={clsx('inline-block text-left transition-all ease-out', className)}
+        style={{
+          transitionDuration: `${BLUR_CONFIG.blurDuration}ms`,
+          opacity: isBlurred ? 0 : 1,
+          filter: isBlurred ? 'blur(12px)' : 'blur(0)',
+          transform: isBlurred ? 'scale(0.95)' : 'scale(1)',
+        }}
       >
-        <span
-          className="inline-block transition-all ease-out"
-          style={{
-            transitionDuration: `${BLUR_CONFIG.blurDuration}ms`,
-            opacity: isBlurred ? 0 : 1,
-            filter: isBlurred ? 'blur(12px)' : 'blur(0)',
-            transform: isBlurred ? 'scale(0.95)' : 'scale(1)',
-          }}
-        >
-          {phrases[currentIndex]}
-        </span>
+        {phrases[currentIndex]}
       </span>
-    </>
+    </span>
   )
 }

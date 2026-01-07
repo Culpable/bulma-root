@@ -2,6 +2,16 @@
 
 Bulma Root is a [Tailwind Plus](https://tailwindcss.com/plus) marketing site built using [Tailwind CSS](https://tailwindcss.com) and [Elements](https://tailwindcss.com/plus/ui-blocks/documentation/elements).
 
+## Repo layout and running the site
+
+- The only runnable Next.js app in this repo lives in `demo/`.
+- The repo root has no `package.json`, so all dev and build commands must be run from `demo/`.
+- `components/` and `pages/` are source templates and variations, not routed pages.
+- Dev: `cd demo && npm run dev` (example `npm run dev -- -p 3001` for `http://localhost:3001`).
+- Production: GitHub Pages builds from the default branch `main` using the workflow in `/.github/workflows/deploy.yml`, and serves the static export from `demo/out`.
+- If GitHub Pages shows the README instead of the app, Pages is pointing at the repo root. Fix by setting Pages to use workflow builds:
+  - `gh api repos/Culpable/bulma-root/pages -X PUT -f build_type=workflow && gh workflow run deploy.yml`
+
 ## Quickstart using your coding agent
 
 If you are using a coding agent like Claude Code, Cursor, Codex, etc., the quickest way to get started is by using the following prompt and pointing its to this file:

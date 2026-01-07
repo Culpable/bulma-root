@@ -13,8 +13,8 @@ import { FAQsTwoColumnAccordion, Faq } from '@/components/sections/faqs-two-colu
 import { Feature, FeaturesTwoColumnWithDemos } from '@/components/sections/features-two-column-with-demos'
 import { HeroLeftAlignedWithDemo } from '@/components/sections/hero-left-aligned-with-demo'
 import { Plan, PricingMultiTier } from '@/components/sections/pricing-multi-tier'
-import { Stat, StatsWithGraph } from '@/components/sections/stats-with-graph'
-import { Testimonial, TestimonialThreeColumnGrid } from '@/components/sections/testimonials-three-column-grid'
+import { StatAnimated, StatsAnimatedGraph } from '@/components/sections/stats-animated-graph'
+import { TestimonialGlass, TestimonialsGlassmorphism } from '@/components/sections/testimonials-glassmorphism'
 import {
   buildFaqPageSchema,
   organizationSchema,
@@ -455,7 +455,7 @@ export default function Page() {
         }
       />
       {/* Stats */}
-      <StatsWithGraph
+      <StatsAnimatedGraph
         id="stats"
         eyebrow="Trusted by brokers"
         headline="The policy assistant Australian brokers rely on."
@@ -466,16 +466,16 @@ export default function Page() {
           </p>
         }
       >
-        <Stat countTo={30} countSuffix="+" text="Major Australian lenders covered, with policies updated regularly." />
-        <Stat stat="Seconds" text="Average time to answer - compared to hours of manual research." />
-      </StatsWithGraph>
-      {/* Testimonial */}
-      <TestimonialThreeColumnGrid
+        <StatAnimated countTo={30} countSuffix="+" text="Major Australian lenders covered, with policies updated regularly." />
+        <StatAnimated stat="Seconds" text="Average time to answer - compared to hours of manual research." />
+      </StatsAnimatedGraph>
+      {/* Testimonials */}
+      <TestimonialsGlassmorphism
         id="testimonial"
         headline="What brokers are saying"
         subheadline={<p>Hear from mortgage brokers who use Bulma every day to serve their clients better.</p>}
       >
-        <Testimonial
+        <TestimonialGlass
           quote={
             <p>
               I used to spend hours checking lender portals for policy details. Now I just ask Bulma and get an answer
@@ -485,35 +485,35 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/10-size-160.webp"
-              alt={homeTestimonialAlt('Sarah Chen')}
+              alt={homeTestimonialAlt("Liam O'Connor")}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
             />
           }
-          name="Sarah Chen"
+          name="Liam O'Connor"
           byline="Credit Adviser, Sydney"
         />
-        <Testimonial
+        <TestimonialGlass
           quote={
             <p>
               The cross-lender comparison feature is brilliant. I can instantly see which lenders will accept my
-              client's scenario without opening five different PDFs.
+              client’s scenario without opening five different PDFs.
             </p>
           }
           img={
             <Image
               src="/img/avatars/15-size-160.webp"
-              alt={homeTestimonialAlt('Michael Torres')}
+              alt={homeTestimonialAlt('Emily Carter')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
             />
           }
-          name="Michael Torres"
+          name="Emily Carter"
           byline="Senior Broker, Melbourne"
         />
-        <Testimonial
+        <TestimonialGlass
           quote={
             <p>
               For complex scenarios with casual employment or self-employed clients, Bulma saves me from making
@@ -523,16 +523,16 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/13-size-160.webp"
-              alt={homeTestimonialAlt('David Nguyen')}
+              alt={homeTestimonialAlt('Neil Kapoor')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
             />
           }
-          name="David Nguyen"
+          name="Neil Kapoor"
           byline="Mortgage Broker, Brisbane"
         />
-        <Testimonial
+        <TestimonialGlass
           quote={
             <p>
               Bulma understands broker terminology. I can ask about LMI thresholds, genuine savings, or income shading
@@ -542,35 +542,35 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/12-size-160.webp"
-              alt={homeTestimonialAlt('Emma Williams')}
+              alt={homeTestimonialAlt('Mark Davidson')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
             />
           }
-          name="Emma Williams"
+          name="Mark Davidson"
           byline="Credit Adviser, Perth"
         />
-        <Testimonial
+        <TestimonialGlass
           quote={
             <p>
-              My team uses Bulma as our first stop for policy questions. It's like having a senior broker on call 24/7
+              My team uses Bulma as our first stop for policy questions. It’s like having a senior broker on call 24/7
               who never forgets a policy update.
             </p>
           }
           img={
             <Image
               src="/img/avatars/11-size-160.webp"
-              alt={homeTestimonialAlt('James Mitchell')}
+              alt={homeTestimonialAlt('Jake Miller')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
             />
           }
-          name="James Mitchell"
+          name="Jake Miller"
           byline="Principal Broker, Adelaide"
         />
-        <Testimonial
+        <TestimonialGlass
           quote={
             <p>
               The source attribution is what sold me. I can see exactly which lender policy and category the answer came
@@ -580,16 +580,16 @@ export default function Page() {
           img={
             <Image
               src="/img/avatars/14-size-160.webp"
-              alt={homeTestimonialAlt('Rachel Cooper')}
+              alt={homeTestimonialAlt('Matt Lawson')}
               className="not-dark:bg-white/75 dark:bg-black/75"
               width={160}
               height={160}
             />
           }
-          name="Rachel Cooper"
+          name="Matt Lawson"
           byline="Lending Specialist, Gold Coast"
         />
-      </TestimonialThreeColumnGrid>
+      </TestimonialsGlassmorphism>
       {/* FAQs */}
       <FAQsTwoColumnAccordion id="faqs" headline="Questions & Answers">
         {homeFaqs.map((faq) => (

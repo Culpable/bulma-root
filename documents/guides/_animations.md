@@ -26,11 +26,11 @@ demo/src/
     └── sections/
         # Home page sections
         ├── features-two-column-with-demos.tsx   # Slide left/right staggered
-        ├── stats-with-graph.tsx                 # Slide up staggered
+        ├── stats-animated-graph.tsx             # Slide up staggered + graph draw
         ├── pricing-multi-tier.tsx               # Scale up staggered
         ├── faqs-two-column-accordion.tsx        # Header slide + item fade
         ├── call-to-action-simple.tsx            # Slide up with CTA delay
-        ├── testimonials-three-column-grid.tsx   # Slide up staggered
+        ├── testimonials-glassmorphism.tsx       # Slide up + scale staggered
         # About page sections
         ├── hero-left-aligned-with-photo.tsx     # Slide up with photo delay
         ├── team-four-column-grid.tsx            # Staggered fade-in
@@ -75,11 +75,11 @@ const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
 | Section | Animation | Direction | Stagger Delay |
 |---------|-----------|-----------|---------------|
 | Features | Slide X | Alternating left/right | 150ms |
-| Stats | Slide Y | Up | 120ms |
+| Stats | Slide Y + graph draw | Up | 120ms |
 | Pricing | Scale + Slide Y | Up with scale | 100ms |
 | FAQs Two Column | Slide X (header) + Slide Y (items) | Left / Up | 80ms |
 | CTA Simple | Slide Y | Up | 150ms (CTA delayed) |
-| Testimonials Grid | Slide Y | Up | 100ms |
+| Testimonials Grid | Slide Y + scale | Up | 100ms |
 
 ### About Page
 
@@ -98,7 +98,7 @@ const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
 | FAQs Accordion | Slide Y (header) + Slide Y (items) | Up | 80ms (items start at 200ms) |
 | CTA Centered | Slide Y | Up | 150ms (CTA delayed) |
 
-All animations use `transition-all` with `ease-out` timing. Duration ranges from 500ms to 700ms depending on section importance.
+All animations use `transition-all` with `ease-out` timing. Duration ranges from 500ms to 1500ms, with longer timings reserved for graph draw and glow effects.
 
 ---
 
@@ -213,16 +213,21 @@ All animations use `transition-all` with `ease-out` timing. Duration ranges from
 | `displayDuration` | 3000 | How long each phrase is displayed (ms) |
 
 **Animation behavior:**
-- Uses fixed-width container sized to longest phrase (prevents layout shift)
 - Current phrase blurs out (12px blur + 0.95 scale + opacity 0)
 - Next phrase blurs in (0px blur + 1.0 scale + opacity 1)
 - Smooth 400ms transitions with ease-out timing
 
+**Layout stability (width constraint):**
+- Measures longest phrase on mount, applies as `width` (prevents desktop jumping)
+- Constrains with `maxWidth: '100%'` to prevent mobile overflow
+- Desktop: fixed width ensures consistent container size across all phrases
+- Mobile: text wraps naturally when width exceeds viewport
+
 **Implementation details:**
-- Measures all phrases on mount to determine container width
-- Uses `useRef` to track initialization state
-- Single `useEffect` manages the animation cycle with proper cleanup
-- CSS `filter: blur()` and `transform: scale()` for the visual effect
+- Uses `useRef` to track initialization and prevent re-measurement
+- Single `useEffect` manages animation cycle with proper cleanup
+- Hidden measurement span (`whitespace-nowrap`) sized absolutely within relative parent
+- CSS `filter: blur()` and `transform: scale()` for visual effect
 
 **Integration:** Insert within text content. Currently applied to hero headline.
 
@@ -330,34 +335,42 @@ Content uses `.faq-spring-content` class which applies the keyframe animation on
 
 ## 12. Glassmorphism Testimonials
 
-`testimonials-three-column-grid.tsx::Testimonial` implements a frosted glass effect using backdrop blur and semi-transparent backgrounds.
+`testimonials-glassmorphism.tsx::TestimonialGlass` implements a premium glass card using layered gradients, stronger blur, and a hover lift/glow.
 
 **Visual layers by theme:**
 
 | Property | Light Mode | Dark Mode |
 |----------|------------|-----------|
-| Background | `bg-white/60` | `bg-white/[0.03]` |
-| Blur | `backdrop-blur-md` | `backdrop-blur-md` |
-| Border | `ring-1 ring-mist-950/5` | `ring-1 ring-white/10` |
-| Inner glow | — | `shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]` |
-| Hover BG | `hover:bg-white/70` | `hover:bg-white/[0.05]` |
+| Background | `from-white/70 via-white/50 to-white/30` | `from-white/[0.08] via-white/[0.04] to-white/[0.02]` |
+| Blur | `backdrop-blur-xl backdrop-saturate-150` | same |
+| Border | `ring-1 ring-white/50` | `ring-1 ring-white/10` |
+| Shadow | `shadow-[0_4px_20px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.6)]` | `shadow-[0_4px_20px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]` |
+| Hover | `-translate-y-1` + stronger glow | darker glow + gradient intensifies |
 
 **Combined Tailwind classes:**
 ```tsx
 <figure className={clsx(
-  'bg-white/60 backdrop-blur-md',
-  'ring-1 ring-mist-950/5',
-  'dark:bg-white/[0.03] dark:ring-white/10',
-  'dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]',
-  'transition-all duration-300 hover:bg-white/70 dark:hover:bg-white/[0.05]',
+  'bg-gradient-to-br from-white/70 via-white/50 to-white/30',
+  'backdrop-blur-xl backdrop-saturate-150',
+  'ring-1 ring-white/50',
+  'shadow-[0_4px_20px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.6)]',
+  'dark:from-white/[0.08] dark:via-white/[0.04] dark:to-white/[0.02]',
+  'dark:ring-white/10',
+  'dark:shadow-[0_4px_20px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]',
+  'transition-all duration-500 ease-out',
+  'hover:-translate-y-1',
+  'hover:shadow-[0_12px_28px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.8)]',
 )}>
 ```
 
+**Section animation + backdrop details:**
+- `TestimonialsGlassmorphism` wraps cards in staggered containers (700ms duration, 100ms delay, slight scale-in).
+- A background blur layer adds two gradient orbs (`bg-mist-400/10` and `bg-mist-500/10`) for depth without competing with content.
+
 **Design notes:**
-- 60% opacity in light mode provides readability while showing background texture
-- 3% opacity in dark mode creates subtle depth without washing out
-- Inset top shadow in dark mode simulates light reflection on glass edge
-- Decorative `"` watermark at 3% opacity adds visual interest without distraction
+- Gradient overlay and top highlight line simulate layered glass edges.
+- Decorative gradient quote mark uses `text-7xl` with `bg-clip-text` for subtle emphasis.
+- Avatar ring glow reinforces the premium feel on hover.
 
 ---
 
@@ -498,19 +511,19 @@ Content uses `.faq-spring-content` class which applies the keyframe animation on
 - Animates only once (guards against re-triggering)
 - Uses `tabular-nums` font feature for stable width during counting
 
-**Integration with Stat component:**
+**Integration with StatAnimated component:**
 
-The `Stat` component in `stats-with-graph.tsx` accepts optional `countTo` props:
+The `StatAnimated` component in `stats-animated-graph.tsx` accepts optional `countTo` props:
 
 ```tsx
 // Static stat (no animation)
-<Stat stat="Seconds" text="Average time to answer" />
+<StatAnimated stat="Seconds" text="Average time to answer" />
 
 // Animated counter
-<Stat countTo={30} countSuffix="+" text="Major lenders covered" />
+<StatAnimated countTo={30} countSuffix="+" text="Major lenders covered" />
 ```
 
-| Stat Prop | Type | Purpose |
+| StatAnimated Prop | Type | Purpose |
 |-----------|------|---------|
 | `countTo` | `number` | If provided, animates from 0 to this value |
 | `countPrefix` | `string` | Prefix before animated number |
@@ -527,7 +540,7 @@ The `Stat` component in `stats-with-graph.tsx` accepts optional `countTo` props:
 - **Tilt on touch devices**: Parallax tilt uses mouse events only; touch devices see no effect (acceptable degradation)
 - **CSS transition conflicts**: Plan components have their own hover transitions; ensure animation wrapper transitions don't override using specific properties rather than `transition-all` if conflicts arise
 - **Magnetic on touch**: Magnetic wrapper uses mouse events only; touch devices see no magnetic effect (acceptable degradation)
-- **BlurTransitionText SSR**: Component measures phrase widths on mount; ensure container has appropriate styling while width is calculated (shows `auto` width initially)
+- **BlurTransitionText width calculation**: Component measures phrase widths on mount; uses `width` + `maxWidth: '100%'` to prevent desktop jumping while avoiding mobile overflow. Container shows `auto` width until measurement completes.
 - **Gradient border browser support**: `@property` (CSS Houdini) required for smooth gradient angle animation; older browsers may show static gradient. Dark mode detection uses MutationObserver on `html.dark` class.
 - **Floating orbs visibility**: Opacity range [0.08–0.15] and size range [80–180px] calibrated for visible but subtle effect. Reduce blur if GPU performance is impacted.
 - **Animated counter precision**: For large numbers or many decimal places, floating-point rounding may cause minor visual jitter near end of animation

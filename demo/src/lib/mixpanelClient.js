@@ -2,11 +2,21 @@ import mixpanel from 'mixpanel-browser'
 
 // Mixpanel project token - hardcoded for reliability
 const MIXPANEL_TOKEN = 'd6d41f4f948512ee3e388559f7b1686e'
+const isDevelopment = process.env.NODE_ENV === 'development'
 
 /**
  * Initialize Mixpanel with Session Replay and Heatmaps configuration.
  */
 export const initMixpanel = () => {
+  if (isDevelopment) {
+    if (typeof window !== 'undefined') {
+      window.mixpanelLoaded = false
+      window.mixpanelDisabled = true
+    }
+    console.info('Mixpanel disabled in development environment.')
+    return
+  }
+
   mixpanel.init(MIXPANEL_TOKEN, {
     // Disable automatic pageview tracking to avoid duplicate initial events; rely on MixpanelProvider for SPA route changes.
     track_pageview: false,

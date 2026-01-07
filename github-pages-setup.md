@@ -2,6 +2,12 @@
 
 End-to-end guide to deploy this Next.js static site to GitHub Pages.
 
+## Important repo layout (read first)
+
+- The only runnable Next.js app in this repo lives in `demo/`.
+- The repo root has no `package.json`, so all dev and build commands must be run from `demo/`.
+- `components/` and `pages/` are template sources only - they are not routed pages.
+
 ## Prerequisites
 
 - Node.js 18+ installed locally
@@ -164,7 +170,7 @@ Value: <username>.github.io
 ### 5.3 Enable GitHub Pages
 
 1. Go to repository **Settings** > **Pages**
-2. Under **Source**, select **GitHub Actions**
+2. Under **Source**, select **GitHub Actions** (build from workflow, not from branch/root)
 3. Under **Custom domain**, enter `bulma.com.au`
 4. Check **Enforce HTTPS** (after DNS propagates)
 
@@ -209,7 +215,7 @@ git commit -m "Initial commit: Bulma marketing site template"
 # Connect to GitHub (replace <username> with your GitHub username)
 git remote add origin git@github.com:<username>/bulma-root.git
 
-# Push to GitHub
+# Push to GitHub (default branch must be main)
 git push -u origin main
 ```
 
@@ -280,3 +286,7 @@ bulma-root/
 ├── files-to-change.md
 └── README.md
 ```
+### README shows instead of the app
+- GitHub Pages is pointing at the repo root instead of workflow output.
+- Fix by forcing workflow builds:
+  - `gh api repos/Culpable/bulma-root/pages -X PUT -f build_type=workflow && gh workflow run deploy.yml`

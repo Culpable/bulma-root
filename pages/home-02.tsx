@@ -17,7 +17,7 @@ import {
   NavbarWithLogoActionsAndCenteredLinks,
 } from '@/components/sections/navbar-with-logo-actions-and-centered-links'
 import { Plan, PricingMultiTier } from '@/components/sections/pricing-multi-tier'
-import { Stat, StatsWithGraph } from '@/components/sections/stats-with-graph'
+import { StatAnimated, StatsAnimatedGraph } from '@/components/sections/stats-animated-graph'
 import { TestimonialLargeQuote } from '@/components/sections/testimonial-with-large-quote'
 
 export default function Page() {
@@ -407,7 +407,7 @@ export default function Page() {
         />
 
         {/* Stats */}
-        <StatsWithGraph
+        <StatsAnimatedGraph
           id="stats"
           eyebrow="Built for scale"
           headline="The inbox powering customer conversations everywhere."
@@ -419,9 +419,9 @@ export default function Page() {
             </p>
           }
         >
-          <Stat stat="2M+" text="Emails manually processed every week across thousands of teams." />
-          <Stat stat="99.98%" text="Uptime - because your customers never stop complaining." />
-        </StatsWithGraph>
+          <StatAnimated stat="2M+" text="Emails manually processed every week across thousands of teams." />
+          <StatAnimated stat="99.98%" text="Uptime - because your customers never stop complaining." />
+        </StatsAnimatedGraph>
 
         {/* Testimonial */}
         <TestimonialLargeQuote

@@ -25,8 +25,8 @@ import {
   NavbarWithLinksActionsAndCenteredLogo,
 } from '@/components/sections/navbar-with-links-actions-and-centered-logo'
 import { Plan, PricingMultiTier } from '@/components/sections/pricing-multi-tier'
-import { Stat, StatsWithGraph } from '@/components/sections/stats-with-graph'
-import { Testimonial, TestimonialThreeColumnGrid } from '@/components/sections/testimonials-three-column-grid'
+import { StatAnimated, StatsAnimatedGraph } from '@/components/sections/stats-animated-graph'
+import { TestimonialGlass, TestimonialsGlassmorphism } from '@/components/sections/testimonials-glassmorphism'
 
 export default function Page() {
   return (
@@ -408,7 +408,7 @@ export default function Page() {
         />
 
         {/* Stats */}
-        <StatsWithGraph
+        <StatsAnimatedGraph
           id="stats"
           eyebrow="Built for scale"
           headline="The inbox powering customer conversations everywhere."
@@ -420,17 +420,17 @@ export default function Page() {
             </p>
           }
         >
-          <Stat stat="2M+" text="Emails manually processed every week across thousands of teams." />
-          <Stat stat="99.98%" text="Uptime - because your customers never stop complaining." />
-        </StatsWithGraph>
+          <StatAnimated stat="2M+" text="Emails manually processed every week across thousands of teams." />
+          <StatAnimated stat="99.98%" text="Uptime - because your customers never stop complaining." />
+        </StatsAnimatedGraph>
 
         {/* Testimonial */}
-        <TestimonialThreeColumnGrid
+        <TestimonialsGlassmorphism
           id="testimonial"
           headline="What our customers are saying"
           subheadline={<p>We've given these customers a significant discount in exchange for their honest reviews.</p>}
         >
-          <Testimonial
+          <TestimonialGlass
             quote={
               <p>
                 Bulma has completely transformed our customer support operations. To be fair, we weren't doing any
@@ -449,7 +449,7 @@ export default function Page() {
             name="Jordan Rogers"
             byline="Founder at Anomaly"
           />
-          <Testimonial
+          <TestimonialGlass
             quote={
               <p>
                 We use Bulma's automation features to make cancellation requests disappear into a black hole,
@@ -468,7 +468,7 @@ export default function Page() {
             name="Lynn Marshall"
             byline="Founder at Pine Labs"
           />
-          <Testimonial
+          <TestimonialGlass
             quote={
               <p>
                 I've been using the spare time that Bulma has freed up to work not just one, but two other jobs, all
@@ -487,7 +487,7 @@ export default function Page() {
             name="Rajat Singh"
             byline="Head of Support at Concise"
           />
-          <Testimonial
+          <TestimonialGlass
             quote={
               <p>
                 Bulma has given us key insights into how much our customers absolutely hate using our product and how
@@ -506,7 +506,7 @@ export default function Page() {
             name="John Walters"
             byline="CPO at Orbital"
           />
-          <Testimonial
+          <TestimonialGlass
             quote={
               <p>
                 As a solo founder, Bulma has been a lifesaver. It makes it look like Looply is an actual company with
@@ -525,7 +525,7 @@ export default function Page() {
             name="Noah Gold"
             byline="CEO at Looply"
           />
-          <Testimonial
+          <TestimonialGlass
             quote={
               <p>
                 Thanks to Bulma, we've managed to cut our support costs in half by laying off dozens of employees,
@@ -544,7 +544,7 @@ export default function Page() {
             name="Mark Levinson"
             byline="COO at Quirk"
           />
-        </TestimonialThreeColumnGrid>
+        </TestimonialsGlassmorphism>
 
         {/* FAQs */}
         <FAQsTwoColumnAccordion id="faqs" headline="Questions & Answers">

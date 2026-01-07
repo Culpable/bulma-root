@@ -1,5 +1,7 @@
 import mixpanel from './mixpanelClient'
 
+const isDevelopment = process.env.NODE_ENV === 'development'
+
 /**
  * Analytics utility functions for tracking user interactions.
  */
@@ -8,6 +10,9 @@ const analytics = {
    * Track a custom event with properties.
    */
   track: (eventName, properties = {}) => {
+    if (isDevelopment) {
+      return
+    }
     if (typeof window !== 'undefined') {
       mixpanel.track(eventName, properties)
     }
@@ -18,6 +23,9 @@ const analytics = {
    * Track form submission events.
    */
   trackFormSubmission: (formName, formData = {}) => {
+    if (isDevelopment) {
+      return
+    }
     if (typeof window !== 'undefined') {
       mixpanel.track('Form Submitted', {
         form_name: formName,
@@ -31,6 +39,9 @@ const analytics = {
    * Track button click events.
    */
   trackButtonClick: (buttonName, properties = {}) => {
+    if (isDevelopment) {
+      return
+    }
     if (typeof window !== 'undefined') {
       mixpanel.track('Button Clicked', {
         button_name: buttonName,
@@ -44,6 +55,9 @@ const analytics = {
    * Track video play events.
    */
   trackVideoPlay: (videoId, properties = {}) => {
+    if (isDevelopment) {
+      return
+    }
     if (typeof window !== 'undefined') {
       mixpanel.track('Video Play', {
         video_id: videoId,
@@ -57,6 +71,9 @@ const analytics = {
    * Identify a user and set their properties in Mixpanel People.
    */
   identifyUser: (email, userProperties = {}) => {
+    if (isDevelopment) {
+      return
+    }
     if (typeof window !== 'undefined' && email) {
       mixpanel.identify(email)
 
@@ -72,6 +89,9 @@ const analytics = {
    * Track form submission with user identification.
    */
   trackFormSubmissionWithIdentification: (formName, formData = {}, userInfo = {}) => {
+    if (isDevelopment) {
+      return
+    }
     if (typeof window !== 'undefined') {
       mixpanel.track('Form Submitted', {
         form_name: formName,

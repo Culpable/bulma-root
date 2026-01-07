@@ -30,6 +30,38 @@
       background-color: var(--color-mist-950);
     }
   }
+
+  /* =============================================================================
+     FILM GRAIN TEXTURE OVERLAY
+     Adds subtle noise texture for warmth and tactility, breaking the "too clean"
+     digital look. Uses SVG noise filter for crisp, performant rendering.
+     ============================================================================= */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.035;
+    /* SVG noise filter - creates organic film grain effect */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 128px 128px;
+  }
+
+  /* Slightly stronger grain in dark mode for visibility */
+  @variant dark {
+    body::before {
+      opacity: 0.05;
+    }
+  }
+
+  /* Respect reduced motion - disable animated grain if motion is reduced */
+  @media (prefers-reduced-motion: reduce) {
+    body::before {
+      opacity: 0.025;
+    }
+  }
 }
 
 /* Scroll-triggered reveal animations */
@@ -386,5 +418,38 @@
   to {
     opacity: 0;
     filter: blur(8px);
+  }
+}
+
+/* =============================================================================
+   GRADIENT MESH BACKGROUND ANIMATION
+   Organic drifting movement for ambient background blobs
+   ============================================================================= */
+
+@keyframes mesh-drift {
+  0%, 100% {
+    transform: translate(-50%, -50%) translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(-50%, -50%) translate(30px, -20px) scale(1.05);
+  }
+  50% {
+    transform: translate(-50%, -50%) translate(-20px, 30px) scale(0.95);
+  }
+  75% {
+    transform: translate(-50%, -50%) translate(-30px, -10px) scale(1.02);
+  }
+}
+
+/* Slower, more subtle variant for large blobs */
+@keyframes mesh-drift-slow {
+  0%, 100% {
+    transform: translate(-50%, -50%) translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-50%, -50%) translate(15px, -25px) scale(1.03);
+  }
+  66% {
+    transform: translate(-50%, -50%) translate(-25px, 15px) scale(0.97);
   }
 }

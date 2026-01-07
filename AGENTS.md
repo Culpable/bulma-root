@@ -101,6 +101,9 @@ Git commit guidelines are documented in `.cursor/rules/git-commit-message-format
 - ALWAYS document critical logic, especially complex algorithms, business rules, and edge cases.
 </commenting_standards>
 
+<frontend_design>
+- For pricing card grids, always enforce equal heights by pairing `items-stretch` on the grid with `h-full` on each plan card, and verify visually.
+<frontend_design>
 </code_standards>
 
 <code_architecture>
@@ -172,7 +175,7 @@ Base colors:
 Here is a high level overview of the folder structure:
 <folder_structure>
 /                                               # Project root directory
-├── components/                                 # Reusable UI component library (source of truth)
+├── components/                                 # Reusable UI component library (source of truth, not a running app)
 │   ├── elements/                               # Base UI primitives
 │   │   ├── announcement-badge.tsx              # Announcement/notification badge component
 │   │   ├── button.tsx                          # Primary button component with variants
@@ -204,7 +207,7 @@ Here is a high level overview of the folder structure:
 │       ├── features-three-column.tsx           # 3-column feature grid layout
 │       ├── features-two-column-with-demos.tsx  # Two-column feature layout with demos
 │       ├── features-with-large-demo.tsx        # Features section with large app screenshot
-│       ├── stats-with-graph.tsx                # Stats section with inline graph
+│       ├── stats-animated-graph.tsx            # Stats section with animated graph
 │       ├── pricing-hero-multi-tier.tsx         # Pricing hero with multi-tier emphasis
 │       ├── pricing-multi-tier.tsx              # Multi-tier pricing cards
 │       ├── pricing-single-tier-two-column.tsx  # Single plan with feature comparison
@@ -213,12 +216,12 @@ Here is a high level overview of the folder structure:
 │       ├── faqs-two-column-accordion.tsx       # Two-column FAQ layout with accordion
 │       ├── testimonial-with-large-quote.tsx    # Customer testimonial display
 │       ├── testimonial-two-column-with-large-photo.tsx  # Testimonial with large photo
-│       ├── testimonials-three-column-grid.tsx  # Three-column testimonial grid
+│       ├── testimonials-glassmorphism.tsx      # Glassmorphism testimonial grid
 │       ├── call-to-action-simple.tsx           # Simple CTA section
 │       ├── call-to-action-simple-centered.tsx  # CTA section with centered content
 │       ├── navbar-with-logo-actions-and-left-aligned-links.tsx  # Main navigation bar
 │       └── footer-with-links-and-social-icons.tsx               # Site footer with links
-├── pages/                                      # Template page variations (reference/copy source)
+├── pages/                                      # Template page variations (reference and copy source, not routed pages)
 │   ├── home-01.tsx                             # Homepage variation 1 (hero + features + CTA)
 │   ├── home-02.tsx                             # Homepage variation 2 (different layout)
 │   ├── home-03.tsx                             # Homepage variation 3 (alternative design)
@@ -232,7 +235,7 @@ Here is a high level overview of the folder structure:
 │   ├── privacy-policy-02.tsx                   # Privacy policy variation
 │   ├── 404-01.tsx                              # 404 error page template
 │   └── 404-02.tsx                              # 404 error page variation
-├── demo/                                       # Next.js 16 application (deployed to GitHub Pages)
+├── demo/                                       # The only runnable Next.js app in this repo (serves localhost and deploys to Pages)
 │   ├── src/
 │   │   ├── app/                                # Next.js App Router pages
 │   │   │   ├── layout.tsx                      # Root layout with fonts, metadata, global styles
@@ -256,11 +259,11 @@ Here is a high level overview of the folder structure:
 │   │   │   │   └── screenshot.tsx              # Parallax tilt implementation
 │   │   │   ├── icons/                          # Icon components (copied from components/icons/)
 │   │   │   ├── sections/                       # Page sections (copied from components/sections/)
-│   │   │   └── MixpanelProvider.jsx            # Mixpanel analytics provider component
+│   │   │   └── MixpanelProvider.jsx            # Mixpanel analytics provider component (disabled in development)
 │   │   ├── lib/                                # Shared utilities and configuration
 │   │   │   ├── analytics.js                    # Analytics event tracking utilities
 │   │   │   ├── metadata.ts                     # SEO metadata config (sitewide + per-page)
-│   │   │   ├── mixpanelClient.js               # Mixpanel client initialization
+│   │   │   ├── mixpanelClient.js               # Mixpanel client initialization (disabled in development)
 │   │   │   └── sitemap.js                      # Sitemap route configuration
 │   │   ├── schemas/                            # JSON-LD structured data schemas
 │   │   │   └── organization-schema.ts          # Organization schema for SEO
@@ -278,7 +281,7 @@ Here is a high level overview of the folder structure:
 │   │   │   └── screenshots/                    # App screenshots for marketing
 │   │   └── scripts/                            # Client-side tracking scripts
 │   │       └── referral-tracking.js            # UTM and referral parameter tracking
-│   ├── package.json                            # Dependencies: Next.js 16, React 19, Tailwind v4
+│   ├── package.json                            # Dependencies: Next.js 16, React 19, Tailwind v4 (root has no package.json)
 │   ├── next.config.ts                          # Next.js config with static export for GitHub Pages
 │   ├── tsconfig.json                           # TypeScript configuration
 │   └── postcss.config.mjs                      # PostCSS config for Tailwind
@@ -314,13 +317,15 @@ Here is a high level overview of the folder structure:
 </container_information>
 
 <environments>
-- Development: Next.js App Router in `demo/` via `npm run dev` (port 3000)
-  - Dev URL: `http://localhost:3000` (for dev-browser testing)
+- Development: Only the `demo/` app runs a dev server
+  - Start: `cd demo && npm run dev` (default port 3000)
+  - Example: `npm run dev -- -p 3001` serves `http://localhost:3001`
   - Build output: `npm run build` generates the static export in `demo/out`
   - Data/API: None (static marketing site; no server/database)
-- Production: GitHub Pages deployment for `bulma.com.au`, built from `demo/` on pushes to `main`
+- Production: GitHub Pages deployment for `bulma.com.au`, built from `demo/` on pushes to the default branch (`main`)
   - Hosting: GitHub Actions workflow `/.github/workflows/deploy.yml` publishes `demo/out`
+  - Pages source: GitHub Actions (workflow build), not repo root
   - Domain: `bulma.com.au` via `demo/public/CNAME`
   - Runtime: Static export only (no server-side execution)
-  - **Critical config**: Pages must use `build_type: workflow` (not `legacy`). If site shows README instead of the app, the setting flipped. Fix: `gh api repos/Culpable/bulma-root/pages -X PUT -f build_type=workflow && gh workflow run deploy.yml`
+  - **Critical config**: Pages must use `build_type: workflow` (not `legacy`). If the site shows the README instead of the app, Pages is pointing at the repo root. Fix: `gh api repos/Culpable/bulma-root/pages -X PUT -f build_type=workflow && gh workflow run deploy.yml`
 </environments>
