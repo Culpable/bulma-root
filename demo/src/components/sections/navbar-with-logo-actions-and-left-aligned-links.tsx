@@ -1,7 +1,53 @@
+'use client'
+
 import { ElDialog, ElDialogPanel } from '@tailwindplus/elements/react'
 import { clsx } from 'clsx/lite'
 import Link from 'next/link'
-import type { ComponentProps, ReactNode } from 'react'
+import { usePathname } from 'next/navigation'
+import { useEffect, useState, type ComponentProps, type ReactNode } from 'react'
+
+/**
+ * Hook to track whether user has scrolled past a threshold.
+ * Returns true when scrollY exceeds the threshold.
+ */
+function useScrolled(threshold = 20) {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > threshold)
+    }
+
+    // Check initial state
+    handleScroll()
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [threshold])
+
+  return scrolled
+}
+
+/**
+ * Determine if a nav link should be considered active based on the current pathname.
+ * Handles exact matches and nested routes.
+ */
+function useIsActive(href: string) {
+  const pathname = usePathname()
+
+  // Skip external links
+  if (href.startsWith('http')) {
+    return false
+  }
+
+  // Exact match for home or short paths
+  if (href === '/') {
+    return pathname === '/'
+  }
+
+  // For other paths, check if pathname starts with href (handles nested routes)
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
 
 export function NavbarLink({
   children,
@@ -9,16 +55,39 @@ export function NavbarLink({
   className,
   ...props
 }: { href: string } & Omit<ComponentProps<'a'>, 'href'>) {
+  const isActive = useIsActive(href)
+
   return (
     <Link
       href={href}
       className={clsx(
-        'group inline-flex cursor-pointer items-center justify-between gap-2 text-3xl/10 font-medium text-mist-950 lg:text-sm/7 dark:text-white',
+        'group relative inline-flex cursor-pointer items-center justify-between gap-2 text-3xl/10 font-medium lg:text-sm/7',
+        // Text color: active state is slightly bolder
+        isActive
+          ? 'text-mist-950 dark:text-white'
+          : 'text-mist-700 hover:text-mist-950 dark:text-mist-300 dark:hover:text-white',
+        // Transition for smooth color changes
+        'transition-colors duration-200',
         className,
       )}
+      aria-current={isActive ? 'page' : undefined}
       {...props}
     >
       {children}
+      {/* Active indicator - animated underline (desktop only) */}
+      <span
+        className={clsx(
+          'absolute -bottom-1 left-0 h-0.5 rounded-full max-lg:hidden',
+          // Gradient underline using mist palette
+          'bg-gradient-to-r from-mist-500 via-mist-400 to-mist-500',
+          'dark:from-mist-400 dark:via-mist-300 dark:to-mist-400',
+          // Animation: scale from center
+          'origin-center transition-all duration-300 ease-out',
+          isActive ? 'w-full opacity-100' : 'w-0 opacity-0 group-hover:w-full group-hover:opacity-50',
+        )}
+        aria-hidden="true"
+      />
+      {/* Mobile chevron indicator */}
       <span className="inline-flex p-1.5 opacity-0 group-hover:opacity-100 lg:hidden" aria-hidden="true">
         <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
           <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -43,8 +112,22 @@ export function NavbarWithLogoActionsAndLeftAlignedLinks({
   links: ReactNode
   actions: ReactNode
 } & ComponentProps<'header'>) {
+  const scrolled = useScrolled(20)
+
   return (
-    <header className={clsx('sticky top-0 z-10 bg-mist-100 dark:bg-mist-950', className)} {...props}>
+    <header
+      className={clsx(
+        'sticky top-0 z-10 transition-all duration-300',
+        // Base background - solid when at top
+        !scrolled && 'bg-mist-100 dark:bg-mist-950',
+        // Glassmorphism when scrolled - semi-transparent with blur
+        scrolled && 'bg-mist-100/80 backdrop-blur-xl backdrop-saturate-150 dark:bg-mist-950/80',
+        // Subtle shadow when scrolled for depth
+        scrolled && 'shadow-sm shadow-mist-950/5 dark:shadow-black/20',
+        className
+      )}
+      {...props}
+    >
       <style>{`:root { --scroll-padding-top: 5.25rem }`}</style>
       <nav>
         <div className="mx-auto flex h-(--scroll-padding-top) max-w-7xl items-center gap-4 px-6 lg:px-10">

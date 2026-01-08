@@ -1,0 +1,484 @@
+<bug_1>
+<summary>
+<title>[UI/React] GradientBorderWrapper violates hook order when disabled toggles</title>
+<one_line_description>The early return for disabled skips useEffect hooks, so changing disabled at runtime triggers a React hook order error.</one_line_description>
+</summary>
+
+<file_locations>
+- demo/src/components/elements/gradient-border-wrapper.tsx - function: `GradientBorderWrapper`, Lines 53-132 (also referenced as /Users/sacino/bulma-root/demo/src/components/elements/gradient-border-wrapper.tsx, Lines 53-132)
+</file_locations>
+
+<issue_description>
+<description>The component returns before its useEffect hooks when `disabled` is true, which means the hook call order changes if the prop toggles between true and false. React throws a runtime error (“Rendered fewer hooks than expected”) when this happens, breaking the CTA render path. Recommendation: always call hooks unconditionally and gate the effect logic or rendering after the hooks.</description>
+
+<code_example>
+
+```tsx
+// File: /Users/sacino/bulma-root/demo/src/components/elements/gradient-border-wrapper.tsx, Lines 53-132
+
+export function GradientBorderWrapper({
+  children,
+  className,
+  disabled = false,
+  rotationDuration = GRADIENT_CONFIG.rotationDuration,
+  shimmer = true,
+  shimmerInterval = GRADIENT_CONFIG.shimmerInterval,
+}: GradientBorderWrapperProps) {
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const shimmerRef = useRef<HTMLDivElement>(null)
+
+  if (disabled) {
+    return <>{children}</>
+  }
+
+  useEffect(() => {
+    // ...
+  }, [])
+
+  useEffect(() => {
+    // ...
+  }, [shimmer, shimmerInterval])
+
+  return (
+    <div ref={wrapperRef}>...</div>
+  )
+}
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Hook order** | Hooks run in the same order on every render | Hooks are skipped when `disabled` is true |
+| **Runtime stability** | Toggling `disabled` is safe | React throws a hook order error on toggle |
+| **User impact** | CTA can be disabled/enabled without crashing | CTA can break the page when disabled state changes |
+</expected_vs_actual>
+</issue_description>
+</bug_1>
+
+<bug_2>
+<summary>
+<title>[Animation] AnimatedCounter leaks requestAnimationFrame when animateOnView is false</title>
+<one_line_description>When animateOnView is false, the animation starts without any cleanup, so unmounting can call setState after unmount.</one_line_description>
+</summary>
+
+<file_locations>
+- demo/src/components/elements/animated-counter.tsx - function: `AnimatedCounter`, Lines 60-115 (also referenced as Lines 88-92 in /Users/sacino/bulma-root/demo/src/components/elements/animated-counter.tsx)
+</file_locations>
+
+<issue_description>
+<description>The effect short-circuits when `animateOnView` is false and returns no cleanup. If the component unmounts mid-animation (route change or conditional render), the scheduled requestAnimationFrame continues and updates state on an unmounted component. Recommendation: always return a cleanup that cancels any pending animation frame, even for the immediate-start path.</description>
+
+<code_example>
+
+```tsx
+// File: /Users/sacino/bulma-root/demo/src/components/elements/animated-counter.tsx, Lines 88-114
+
+useEffect(() => {
+  if (!animateOnView) {
+    startAnimation()
+    return
+  }
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting && !hasAnimated) {
+        startAnimation()
+        observer.disconnect()
+      }
+    },
+    { threshold }
+  )
+
+  observer.observe(element)
+
+  return () => {
+    observer.disconnect()
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current)
+    }
+  }
+}, [animateOnView, threshold, hasAnimated, value, duration])
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Cleanup** | rAF cancelled on unmount in all modes | No cleanup when `animateOnView` is false |
+| **Console** | No setState-after-unmount warnings | Potential warnings and memory leaks |
+| **User impact** | Smooth route changes | Route changes can trigger noisy errors |
+</expected_vs_actual>
+</issue_description>
+</bug_2>
+
+<bug_3>
+<summary>
+<title>[LogoMarquee] Duplicated children cause key collisions and duplicate AT output</title>
+<one_line_description>The marquee doubles children without unique keys or aria-hiding, leading to React warnings and repeated content for assistive tech.</one_line_description>
+</summary>
+
+<file_locations>
+- demo/src/components/elements/logo-marquee.tsx - function: `LogoMarquee`, Lines 80-110 (also referenced as Lines 83-88, 110)
+</file_locations>
+
+<issue_description>
+<description>LogoMarquee duplicates the children array to create an infinite scroll loop, but it reuses the same React keys and does not hide the duplicated set from assistive technologies. `Children.toArray` preserves keys, so concatenating the array with itself produces duplicate keys in a single sibling list. This can trigger React key collision warnings in development, may cause unstable DOM reconciliation if the list changes, and causes screen readers to announce each logo twice. Recommendation: clone the second set with unique keys (e.g., suffix keys per copy) and mark it aria-hidden (or wrap it in a container with aria-hidden="true").</description>
+
+<code_example>
+
+```tsx
+# File: demo/src/components/elements/logo-marquee.tsx, Lines 83-110
+
+const childArray = Children.toArray(children)
+const duplicatedChildren = [...childArray, ...childArray]
+
+<div className="logo-marquee-track ...">
+  {duplicatedChildren}
+</div>
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **React keys** | Each rendered child has a unique key | Duplicated children reuse keys |
+| **Accessibility** | Logos announced once | Logos can be announced twice |
+| **Dev experience** | No reconciliation warnings | React warns about duplicate keys |
+</expected_vs_actual>
+</issue_description>
+</bug_3>
+
+<bug_4>
+<summary>
+<title>[InstallCommand] Duplicate copy target IDs break multi-instance copy</title>
+<one_line_description>Every InstallCommand instance hardcodes id="snippet", so multiple instances share IDs and the copy button targets the wrong snippet.</one_line_description>
+</summary>
+
+<file_locations>
+- demo/src/components/elements/install-command.tsx - function: `InstallCommand`, Lines 16-37 (also referenced as Lines 26-33 in /Users/sacino/bulma-root/demo/src/components/elements/install-command.tsx)
+</file_locations>
+
+<issue_description>
+<description>The component uses a fixed id (`snippet`) and a fixed command target (`commandfor="snippet"`). If more than one InstallCommand is rendered on a page, the DOM contains duplicate IDs and the copy button can target the first instance instead of the clicked one, making later instances copy the wrong text (or behave inconsistently across browsers). Recommendation: generate a unique id per instance (e.g., via `useId` or a prop) and wire both ElCopyable and the button to that value.</description>
+
+<code_example>
+
+```tsx
+// File: /Users/sacino/bulma-root/demo/src/components/elements/install-command.tsx, Lines 26-33
+
+<ElCopyable id="snippet">{snippet}</ElCopyable>
+<button
+  command="--copy"
+  commandfor="snippet"
+  type="button"
+>
+  ...
+</button>
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **DOM IDs** | Unique ids per component instance | Duplicate `snippet` ids on the same page |
+| **Copy behavior** | Button copies its own snippet | Button may copy the first snippet found |
+| **HTML validity** | Valid, unique IDs | Invalid duplicate IDs |
+</expected_vs_actual>
+</issue_description>
+</bug_4>
+
+<bug_5>
+<summary>
+<title>[Pricing Page] Duplicate "pricing" IDs create ambiguous anchor targets</title>
+<one_line_description>The pricing page renders two sections with id="pricing", so in-page links resolve unpredictably.</one_line_description>
+</summary>
+
+<file_locations>
+- demo/src/app/pricing/page.tsx - PricingHeroMultiTier id prop, Lines 133-145 (also referenced as Lines 134-248 in /Users/sacino/bulma-root/demo/src/app/pricing/page.tsx)
+- demo/src/app/pricing/page.tsx - PlanComparisonTable id prop, Lines 245-248 (also referenced as Lines 134-248 in /Users/sacino/bulma-root/demo/src/app/pricing/page.tsx)
+</file_locations>
+
+<issue_description>
+<description>Both the hero section and the plan comparison table are rendered with id="pricing". This violates the HTML uniqueness requirement for IDs, so anchor links and scroll targeting (e.g., /pricing#pricing) can land on the wrong element depending on browser behavior. The first occurrence is always chosen, which breaks intent for in-page navigation. Recommendation: rename one of the IDs (e.g., "pricing-hero" and "pricing-comparison") and update any related links.</description>
+
+<code_example>
+
+```tsx
+// File: demo/src/app/pricing/page.tsx, Lines 133-248
+
+<PricingHeroMultiTier
+  id="pricing"
+  ...
+/>
+
+<PlanComparisonTable
+  id="pricing"
+  ...
+/>
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **HTML validity** | Each id is unique per page | Two elements share id="pricing" |
+| **Anchor behavior** | #pricing scrolls to a single, stable section | #pricing target is ambiguous and browser-dependent |
+| **User impact** | Consistent in-page navigation | Users may land on the wrong section |
+</expected_vs_actual>
+</issue_description>
+</bug_5>
+
+<bug_6>
+<summary>
+<title>[Analytics] Referral attribution drops if Mixpanel loads after retry window</title>
+<one_line_description>The referral script retries only 10 times (1s), so delayed Mixpanel init misses the attribution event.</one_line_description>
+</summary>
+
+<file_locations>
+- demo/public/scripts/referral-tracking.js - function: `trackReferralSource`, Lines 140-196 (also referenced as /Users/sacino/bulma-root/demo/public/scripts/referral-tracking.js)
+</file_locations>
+
+<issue_description>
+<description>The script retries for only 10×100ms before giving up. If Mixpanel initializes after this window (slow device, blocked main thread, or late hydration), the attribution event is never sent and first-touch data is lost. Recommendation: wait on an explicit Mixpanel-ready signal or extend retry/backoff to ensure the event eventually fires.</description>
+
+<code_example>
+
+```js
+// File: /Users/sacino/bulma-root/demo/public/scripts/referral-tracking.js, Lines 140-196
+
+var maxAttempts = 10;
+var attempts = 0;
+var interval = 100; // in milliseconds
+
+function trackReferralSource() {
+  attempts++;
+  if (window.mixpanelLoaded && typeof window.mixpanel !== 'undefined') {
+    window.mixpanel.track('Referral Source Identified', trackingData);
+  } else if (attempts < maxAttempts) {
+    setTimeout(trackReferralSource, interval);
+  }
+}
+
+trackReferralSource();
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Attribution** | Event fires once Mixpanel is ready | Event is skipped if init happens after 1s |
+| **Reliability** | Robust across slow devices | Sensitive to hydration and load timing |
+| **Analytics impact** | Consistent referral data | Missing referral data for late loads |
+</expected_vs_actual>
+</issue_description>
+</bug_6>
+
+<bug_7>
+<summary>
+<title>[BlurTransitionText] Invalid CSS min() width expression drops the width constraint</title>
+<one_line_description>The width style uses an invalid min() expression, so the browser ignores it and layout can shift/overflow.</one_line_description>
+</summary>
+
+<file_locations>
+- demo/src/components/elements/blur-transition-text.tsx - inline style width, Lines 123-128
+</file_locations>
+
+<issue_description>
+<description>The width style is set to `min(${containerWidth}px, 100vw - 3rem)`, but `100vw - 3rem` is not valid without `calc()`. This makes the entire width declaration invalid, so the browser falls back to `auto`, defeating the fixed-width anti-jank logic and allowing layout shifts or overflow on long phrases. Recommendation: wrap the second argument in `calc(...)` (e.g., `min(${containerWidth}px, calc(100vw - 3rem))`).</description>
+
+<code_example>
+
+```tsx
+# File: demo/src/components/elements/blur-transition-text.tsx, Lines 123-128
+
+style={{
+  width: containerWidth ? `min(${containerWidth}px, 100vw - 3rem)` : 'auto'
+}}
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **CSS validity** | min() arguments are valid lengths | Second argument is invalid without calc() |
+| **Layout stability** | Container width stays fixed to longest phrase | Width falls back to auto and can shift |
+| **User impact** | Smooth text cycling with no layout jump | Occasional layout jump/overflow |
+</expected_vs_actual>
+</issue_description>
+</bug_7>
+
+<bug_8>
+<summary>
+<title>[Team Grid] Animated wrappers break list semantics in TeamFourColumnGrid</title>
+<one_line_description>List items are wrapped in divs inside a ul, producing invalid HTML and undermining accessibility.</one_line_description>
+</summary>
+
+<file_locations>
+- demo/src/components/sections/team-four-column-grid.tsx - animatedChildren wrapper and ul render, Lines 35-53
+</file_locations>
+
+<issue_description>
+<description>TeamMember returns an <li>, but TeamFourColumnGrid wraps each child in a <div> before inserting it into the <ul>. This yields `<ul><div><li>...` which is invalid list structure and can confuse screen readers, list styling, and CSS selectors that assume li is a direct child. Recommendation: move the animation wrapper into the li itself (or render the wrapper as an li) so the ul contains only li elements.</description>
+
+<code_example>
+
+```tsx
+# File: demo/src/components/sections/team-four-column-grid.tsx, Lines 35-53
+
+const animatedChildren = Children.map(children, (child, index) => (
+  <div className="transition-all duration-600 ease-out" style={{ transitionDelay: `${index * 80}ms` }}>
+    {child}
+  </div>
+))
+
+<ul role="list" className="grid ...">
+  {animatedChildren}
+</ul>
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **HTML semantics** | ul has li as direct children | ul has div children containing li |
+| **Accessibility** | Screen readers parse a proper list | List structure is ambiguous/invalid |
+| **Styling predictability** | List-related CSS behaves consistently | CSS selectors can behave unexpectedly |
+</expected_vs_actual>
+</issue_description>
+</bug_8>
+
+<bug_9>
+<summary>
+<title>[EmailSignupForm] Email input missing name prevents submission payload</title>
+<one_line_description>The email input has no name attribute, so form submissions omit the email field entirely.</one_line_description>
+</summary>
+
+<status>not_a_bug</status>
+<resolution_note>This form is deprecated and not used in the current site experience, so the missing name attribute does not affect any live submissions.</resolution_note>
+
+<file_locations>
+- demo/src/components/elements/email-signup-form.tsx - function: `EmailSignupForm`, Lines 28-37 (also referenced as /Users/sacino/bulma-root/demo/src/components/elements/email-signup-form.tsx)
+</file_locations>
+
+<issue_description>
+<description>The email input omits a `name` attribute, which means `FormData` and default browser form submissions will not include the email value. Any backend or analytics listener relying on `email` will receive an empty payload, making signup forms appear functional while silently dropping user input. Recommendation: add `name="email"` (or a prop-driven name) and consider `required` if submission depends on it.</description>
+
+<code_example>
+
+```tsx
+# File: /Users/sacino/bulma-root/demo/src/components/elements/email-signup-form.tsx, Lines 28-37
+
+<input
+  type="email"
+  aria-label={label}
+  placeholder={placeholder}
+/>
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Form Payload** | Email included in submitted form data | Email omitted from submission |
+| **Integrations** | Backend/analytics receive address | Receives empty or missing field |
+| **User Impact** | Signup works as advertised | User submits but data is lost |
+</expected_vs_actual>
+</issue_description>
+</bug_9>
+
+<bug_10>
+<summary>
+<title>[Layout Tokens] Undefined --spacing/--container tokens break sizing math</title>
+<one_line_description>Classes reference `--spacing()` and `--container-7xl` tokens that are not defined in theme CSS, so sizing calculations can collapse or overflow.</one_line_description>
+</summary>
+
+<file_locations>
+- demo/src/components/elements/screenshot.tsx - component: `Screenshot`, Lines 100-104
+- demo/src/components/sections/stats-animated-graph.tsx - component: `StatsAnimatedGraph`, Line 157
+</file_locations>
+
+<issue_description>
+<description>The layout relies on CSS custom function tokens like `--spacing(16)` and `--spacing(10)` plus `var(--container-7xl)` inside `calc()`, but these tokens are not defined anywhere in `@theme` or `globals.css`. When the variables resolve to nothing, the full `calc()` becomes invalid and the browser drops the property, leading to incorrect padding/max-width and possible horizontal overflow. Recommendation: define these tokens in the theme (e.g., `--spacing-16`, `--container-7xl`) or replace with concrete `rem` values and include `var()` fallbacks.</description>
+
+<code_example>
+
+```tsx
+# File: demo/src/components/elements/screenshot.tsx, Lines 100-104
+
+className={clsx(
+  'relative [--padding:min(10%,--spacing(16))]',
+  'group-data-[placement=bottom]:px-(--padding) group-data-[placement=bottom]:pt-(--padding)'
+)}
+
+# File: demo/src/components/sections/stats-animated-graph.tsx, Line 157
+
+<div className="absolute bottom-0 left-1/2 w-[150vw] max-w-[calc(var(--container-7xl)-(--spacing(10)*2))] -translate-x-1/2">
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Sizing Tokens** | Tokens resolve to real values | Tokens are undefined in CSS |
+| **Layout** | Predictable padding/max-width | Browser drops invalid `calc()` rules |
+| **User Impact** | Graph/screenshot stay within container | Sections can overflow or misalign |
+</expected_vs_actual>
+</issue_description>
+</bug_10>
+
+<bug_11>
+<summary>
+<title>[Animation Consistency] Reduced-motion short-circuits disable required animations</title>
+<one_line_description>Components skip IntersectionObserver logic when prefers-reduced-motion is enabled, conflicting with the project animation standard that animations must always run.</one_line_description>
+</summary>
+
+<file_locations>
+- demo/src/components/elements/animated-reveal.tsx - component: `AnimatedReveal`, Lines 33-37
+- demo/src/components/elements/logo-grid.tsx - component: `LogoGrid`, Lines 27-33
+</file_locations>
+
+<issue_description>
+<description>The animation standard in this repo explicitly forbids gating animations on `prefers-reduced-motion`, but both components short-circuit their reveal logic when the media query is matched. This yields inconsistent behavior (e.g., observers never start, visibility flags behave differently) and violates the documented requirement that animations remain consistent for all users. Recommendation: remove reduced-motion short-circuiting and keep the same reveal flow for all users.</description>
+
+<code_example>
+
+```tsx
+# File: demo/src/components/elements/animated-reveal.tsx, Lines 33-37
+
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+if (prefersReducedMotion) {
+  setIsVisible(true)
+  return
+}
+
+# File: demo/src/components/elements/logo-grid.tsx, Lines 27-33
+
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+if (prefersReducedMotion) {
+  setIsVisible(true)
+  return
+}
+```
+
+</code_example>
+
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Animation Policy** | Animations run for all users | Animations bypassed for reduced-motion users |
+| **Behavior** | Consistent reveal timing/logic | Alternate code path with no observer |
+| **Spec Compliance** | Matches animation standards | Violates documented requirement |
+</expected_vs_actual>
+</issue_description>
+</bug_11>

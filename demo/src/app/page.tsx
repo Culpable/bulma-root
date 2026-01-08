@@ -2,7 +2,7 @@ import { AnnouncementBadge } from '@/components/elements/announcement-badge'
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
 import { GradientBorderWrapper } from '@/components/elements/gradient-border-wrapper'
 import { Link } from '@/components/elements/link'
-import { Logo, LogoGrid } from '@/components/elements/logo-grid'
+import { LogoMarquee, MarqueeLogo } from '@/components/elements/logo-marquee'
 import { MagneticWrapper } from '@/components/elements/magnetic-wrapper'
 import { Screenshot } from '@/components/elements/screenshot'
 import { BlurTransitionText } from '@/components/elements/blur-transition-text'
@@ -143,6 +143,7 @@ export default function Page() {
         }
         demo={
           <>
+            {/* Mobile/tablet screenshot */}
             <Screenshot className="rounded-md lg:hidden" wallpaper="blue" placement="bottom-right">
               <Image
                 src="/img/screenshots/1-left-1670-top-1408.webp"
@@ -173,6 +174,7 @@ export default function Page() {
                 className="bg-black/75 not-dark:hidden max-md:hidden"
               />
             </Screenshot>
+            {/* Desktop screenshot */}
             <Screenshot className="rounded-lg max-lg:hidden" wallpaper="blue" placement="bottom">
               <Image
                 src="/img/screenshots/1.webp"
@@ -193,104 +195,104 @@ export default function Page() {
         }
         footer={
           <div id="lenders">
-            <LogoGrid>
-            <Logo>
-              <Image
-                src="/img/logos/9-color-black-height-32.svg"
-                className="dark:hidden"
-                alt={homeLenderLogoAlt}
-                width={51}
-                height={32}
-              />
-              <Image
-                src="/img/logos/9-color-white-height-32.svg"
-                className="bg-black/75 not-dark:hidden"
-                alt={homeLenderLogoAlt}
-                width={51}
-                height={32}
-              />
-            </Logo>
-            <Logo>
-              <Image
-                src="/img/logos/10-color-black-height-32.svg"
-                className="dark:hidden"
-                alt={homeLenderLogoAlt}
-                width={70}
-                height={32}
-              />
-              <Image
-                src="/img/logos/10-color-white-height-32.svg"
-                className="bg-black/75 not-dark:hidden"
-                alt={homeLenderLogoAlt}
-                width={70}
-                height={32}
-              />
-            </Logo>
-            <Logo>
-              <Image
-                src="/img/logos/11-color-black-height-32.svg"
-                className="dark:hidden"
-                alt={homeLenderLogoAlt}
-                width={100}
-                height={32}
-              />
-              <Image
-                src="/img/logos/11-color-white-height-32.svg"
-                className="bg-black/75 not-dark:hidden"
-                alt={homeLenderLogoAlt}
-                width={100}
-                height={32}
-              />
-            </Logo>
-            <Logo>
-              <Image
-                src="/img/logos/12-color-black-height-32.svg"
-                className="dark:hidden"
-                alt={homeLenderLogoAlt}
-                width={85}
-                height={32}
-              />
-              <Image
-                src="/img/logos/12-color-white-height-32.svg"
-                className="bg-black/75 not-dark:hidden"
-                alt={homeLenderLogoAlt}
-                width={85}
-                height={32}
-              />
-            </Logo>
-            <Logo>
-              <Image
-                src="/img/logos/13-color-black-height-32.svg"
-                className="dark:hidden"
-                alt={homeLenderLogoAlt}
-                width={75}
-                height={32}
-              />
-              <Image
-                src="/img/logos/13-color-white-height-32.svg"
-                className="bg-black/75 not-dark:hidden"
-                alt={homeLenderLogoAlt}
-                width={75}
-                height={32}
-              />
-            </Logo>
-            <Logo>
-              <Image
-                src="/img/logos/8-color-black-height-32.svg"
-                className="dark:hidden"
-                alt={homeLenderLogoAlt}
-                width={85}
-                height={32}
-              />
-              <Image
-                src="/img/logos/8-color-white-height-32.svg"
-                className="bg-black/75 not-dark:hidden"
-                alt={homeLenderLogoAlt}
-                width={85}
-                height={32}
-              />
-            </Logo>
-            </LogoGrid>
+            <LogoMarquee speed={0.8}>
+              <MarqueeLogo>
+                <Image
+                  src="/img/logos/9-color-black-height-32.svg"
+                  className="dark:hidden"
+                  alt={homeLenderLogoAlt}
+                  width={51}
+                  height={32}
+                />
+                <Image
+                  src="/img/logos/9-color-white-height-32.svg"
+                  className="not-dark:hidden"
+                  alt={homeLenderLogoAlt}
+                  width={51}
+                  height={32}
+                />
+              </MarqueeLogo>
+              <MarqueeLogo>
+                <Image
+                  src="/img/logos/10-color-black-height-32.svg"
+                  className="dark:hidden"
+                  alt={homeLenderLogoAlt}
+                  width={70}
+                  height={32}
+                />
+                <Image
+                  src="/img/logos/10-color-white-height-32.svg"
+                  className="not-dark:hidden"
+                  alt={homeLenderLogoAlt}
+                  width={70}
+                  height={32}
+                />
+              </MarqueeLogo>
+              <MarqueeLogo>
+                <Image
+                  src="/img/logos/11-color-black-height-32.svg"
+                  className="dark:hidden"
+                  alt={homeLenderLogoAlt}
+                  width={100}
+                  height={32}
+                />
+                <Image
+                  src="/img/logos/11-color-white-height-32.svg"
+                  className="not-dark:hidden"
+                  alt={homeLenderLogoAlt}
+                  width={100}
+                  height={32}
+                />
+              </MarqueeLogo>
+              <MarqueeLogo>
+                <Image
+                  src="/img/logos/12-color-black-height-32.svg"
+                  className="dark:hidden"
+                  alt={homeLenderLogoAlt}
+                  width={85}
+                  height={32}
+                />
+                <Image
+                  src="/img/logos/12-color-white-height-32.svg"
+                  className="not-dark:hidden"
+                  alt={homeLenderLogoAlt}
+                  width={85}
+                  height={32}
+                />
+              </MarqueeLogo>
+              <MarqueeLogo>
+                <Image
+                  src="/img/logos/13-color-black-height-32.svg"
+                  className="dark:hidden"
+                  alt={homeLenderLogoAlt}
+                  width={75}
+                  height={32}
+                />
+                <Image
+                  src="/img/logos/13-color-white-height-32.svg"
+                  className="not-dark:hidden"
+                  alt={homeLenderLogoAlt}
+                  width={75}
+                  height={32}
+                />
+              </MarqueeLogo>
+              <MarqueeLogo>
+                <Image
+                  src="/img/logos/8-color-black-height-32.svg"
+                  className="dark:hidden"
+                  alt={homeLenderLogoAlt}
+                  width={85}
+                  height={32}
+                />
+                <Image
+                  src="/img/logos/8-color-white-height-32.svg"
+                  className="not-dark:hidden"
+                  alt={homeLenderLogoAlt}
+                  width={85}
+                  height={32}
+                />
+              </MarqueeLogo>
+            </LogoMarquee>
           </div>
         }
       />
@@ -626,6 +628,7 @@ export default function Page() {
               period="/mo"
               subheadline={<p>For growing brokerages with multiple users</p>}
               badge="Most popular"
+              featured={true}
               features={[
                 'Everything in Solo',
                 'Up to 5 team members',

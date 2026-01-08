@@ -18,6 +18,10 @@ const GRADIENT_CONFIG = {
   glowBlur: 8,
   // Glow opacity (0-1)
   glowOpacity: 0.4,
+  // Shimmer interval (ms) - how often shimmer repeats
+  shimmerInterval: 4000,
+  // Shimmer duration (ms) - how long each shimmer takes
+  shimmerDuration: 600,
 }
 
 interface GradientBorderWrapperProps {
@@ -29,6 +33,10 @@ interface GradientBorderWrapperProps {
   disabled?: boolean
   /** Custom rotation duration in ms */
   rotationDuration?: number
+  /** Enable shimmer effect (default: true) */
+  shimmer?: boolean
+  /** Custom shimmer interval in ms */
+  shimmerInterval?: number
 }
 
 /**
@@ -38,14 +46,20 @@ interface GradientBorderWrapperProps {
  *
  * The gradient uses brand-appropriate colors that work in both light
  * and dark modes, with a subtle glow effect for added depth.
+ *
+ * Includes an optional shimmer effect - a diagonal shine sweep that
+ * periodically crosses the button to draw attention.
  */
 export function GradientBorderWrapper({
   children,
   className,
   disabled = false,
   rotationDuration = GRADIENT_CONFIG.rotationDuration,
+  shimmer = true,
+  shimmerInterval = GRADIENT_CONFIG.shimmerInterval,
 }: GradientBorderWrapperProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
+  const shimmerRef = useRef<HTMLDivElement>(null)
 
   if (disabled) {
     return <>{children}</>
@@ -92,6 +106,31 @@ export function GradientBorderWrapper({
     return () => observer.disconnect()
   }, [])
 
+  // Shimmer animation - triggers periodically
+  useEffect(() => {
+    if (!shimmer || !shimmerRef.current) return
+
+    const triggerShimmer = () => {
+      if (!shimmerRef.current) return
+      // Reset and trigger animation
+      shimmerRef.current.classList.remove('cta-shimmer-animate')
+      // Force reflow to restart animation
+      void shimmerRef.current.offsetWidth
+      shimmerRef.current.classList.add('cta-shimmer-animate')
+    }
+
+    // Initial shimmer after a short delay
+    const initialTimeout = setTimeout(triggerShimmer, 1000)
+
+    // Periodic shimmer
+    const intervalId = setInterval(triggerShimmer, shimmerInterval)
+
+    return () => {
+      clearTimeout(initialTimeout)
+      clearInterval(intervalId)
+    }
+  }, [shimmer, shimmerInterval])
+
   return (
     <div
       ref={wrapperRef}
@@ -114,8 +153,16 @@ export function GradientBorderWrapper({
       }}
     >
       {/* Inner content with solid background to reveal border */}
-      <div className="relative z-10 rounded-full bg-mist-100 dark:bg-mist-950">
+      <div className="relative z-10 overflow-hidden rounded-full bg-mist-100 dark:bg-mist-950">
         {children}
+        {/* Shimmer overlay - diagonal shine sweep */}
+        {shimmer && (
+          <div
+            ref={shimmerRef}
+            className="cta-shimmer pointer-events-none absolute inset-0 z-20 rounded-full"
+            aria-hidden="true"
+          />
+        )}
       </div>
     </div>
   )

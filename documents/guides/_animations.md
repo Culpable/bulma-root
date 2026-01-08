@@ -20,6 +20,7 @@ demo/src/
     │   ├── cursor-spotlight.tsx          # Cursor-following ambient glow
     │   ├── floating-orbs.tsx             # Ambient drifting background orbs
     │   ├── gradient-border-wrapper.tsx   # Rotating gradient CTA border
+    │   ├── logo-marquee.tsx              # Infinite scrolling logo display
     │   ├── magnetic-wrapper.tsx          # Magnetic cursor-attraction effect
     │   ├── blur-transition-text.tsx      # Blur in/out text cycling animation
     │   └── screenshot.tsx                # Parallax tilt implementation
@@ -415,10 +416,39 @@ Content uses `.faq-spring-content` class which applies the keyframe animation on
 | Light mode | mist-600 → mist-500 → mist-400 → mist-700 |
 | Dark mode | mist-400 → mist-300 → mist-200 → mist-500 |
 
+**Shimmer effect:**
+
+The component includes a periodic shimmer effect - a diagonal shine sweep that crosses the button to draw attention. Controlled via props:
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `shimmer` | `boolean` | `true` | Enable/disable shimmer |
+| `shimmerInterval` | `number` | `4000` | Time between shimmer animations (ms) |
+
+**Shimmer behavior:**
+- Initial shimmer triggers 1s after mount
+- Repeats every 4s by default
+- 600ms sweep animation with ease-out timing
+- Skewed diagonal gradient for natural light reflection
+- Respects `prefers-reduced-motion`
+
+**CSS Keyframe (`cta-shimmer-sweep`):**
+```css
+0%   { transform: translateX(-100%) skewX(-20deg); opacity: 0; }
+10%  { opacity: 1; }
+90%  { opacity: 1; }
+100% { transform: translateX(200%) skewX(-20deg); opacity: 0; }
+```
+
 **Integration:** Currently applied to hero and bottom CTA buttons.
 
 ```tsx
 <GradientBorderWrapper>
+  <ButtonLink href="/register">Try Bulma free</ButtonLink>
+</GradientBorderWrapper>
+
+// Disable shimmer if needed
+<GradientBorderWrapper shimmer={false}>
   <ButtonLink href="/register">Try Bulma free</ButtonLink>
 </GradientBorderWrapper>
 ```
@@ -534,7 +564,82 @@ The `StatAnimated` component in `stats-animated-graph.tsx` accepts optional `cou
 
 ---
 
-## 16. Points of Error
+## 16. Logo Marquee
+
+`logo-marquee.tsx::LogoMarquee` creates an infinite horizontal scrolling display of logos, commonly used for partner/lender logos to create visual movement and imply scale.
+
+**File:** `demo/src/components/elements/logo-marquee.tsx`
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `children` | `ReactNode` | — | Logo items to display |
+| `speed` | `number` | `1` | Speed multiplier (1 = normal, 2 = twice as fast) |
+| `direction` | `'left' \| 'right'` | `'left'` | Scroll direction |
+| `pauseOnHover` | `boolean` | `true` | Whether to pause on hover |
+
+**Configuration constants (`MARQUEE_CONFIG`):**
+
+| Setting | Value | Effect |
+|---------|-------|--------|
+| `baseDuration` | 30 | Base duration for one scroll cycle (seconds) |
+| `gap` | 16 | Gap between logo items (Tailwind spacing) |
+| `pauseOnHover` | true | Pause animation on hover |
+
+**Animation behavior:**
+- Children are duplicated to create seamless infinite loop
+- Uses CSS `translateX(-50%)` animation on duplicated content
+- Edge fade gradients (via `::before`/`::after`) create smooth visual blend
+- Pauses on hover for accessibility and logo inspection
+- Respects `prefers-reduced-motion` (pauses animation)
+
+**CSS Keyframes:**
+```css
+@keyframes marquee-scroll-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+```
+
+**Integration:**
+```tsx
+<LogoMarquee speed={0.8}>
+  <MarqueeLogo><Image src="/logo1.svg" /></MarqueeLogo>
+  <MarqueeLogo><Image src="/logo2.svg" /></MarqueeLogo>
+</LogoMarquee>
+```
+
+---
+
+## 17. Navbar Glassmorphism on Scroll
+
+The navbar components (`navbar-with-links-actions-and-centered-logo.tsx`, `navbar-with-logo-actions-and-left-aligned-links.tsx`) implement a glassmorphism effect that activates when the user scrolls down.
+
+**Hook:** `useScrolled(threshold = 20)` — returns `true` when `scrollY > threshold`
+
+**Visual states:**
+
+| State | Background | Effects |
+|-------|------------|---------|
+| At top (`!scrolled`) | `bg-mist-100` / `bg-mist-950` (solid) | None |
+| Scrolled (`scrolled`) | `bg-mist-100/80` / `bg-mist-950/80` (semi-transparent) | `backdrop-blur-xl`, `backdrop-saturate-150`, subtle shadow |
+
+**Transition:** `transition-all duration-300` for smooth state changes
+
+**Implementation:**
+```tsx
+const scrolled = useScrolled(20)
+
+<header className={clsx(
+  'sticky top-0 z-10 transition-all duration-300',
+  !scrolled && 'bg-mist-100 dark:bg-mist-950',
+  scrolled && 'bg-mist-100/80 backdrop-blur-xl backdrop-saturate-150 dark:bg-mist-950/80',
+  scrolled && 'shadow-sm shadow-mist-950/5 dark:shadow-black/20',
+)}>
+```
+
+---
+
+## 18. Points of Error
 
 - **Missing `h-full`**: Grid children wrapped for animation lose equal-height alignment without `h-full` on both wrapper and inner component (see `pricing-multi-tier.tsx::Plan`)
 - **Server-side rendering**: Hook initializes `isVisible` to `false`, so elements start hidden. This is intentional—elements animate in on scroll
@@ -544,5 +649,8 @@ The `StatAnimated` component in `stats-animated-graph.tsx` accepts optional `cou
 - **Magnetic on touch**: Magnetic wrapper uses mouse events only; touch devices see no magnetic effect (acceptable degradation)
 - **BlurTransitionText width calculation**: Component measures phrase widths on mount; uses `width` + `maxWidth: '100%'` to prevent desktop jumping while avoiding mobile overflow. Container shows `auto` width until measurement completes.
 - **Gradient border browser support**: `@property` (CSS Houdini) required for smooth gradient angle animation; older browsers may show static gradient. Dark mode detection uses MutationObserver on `html.dark` class.
+- **CTA shimmer timing**: Shimmer uses JS class toggle with `offsetWidth` reflow to restart animation. If multiple CTAs are visible, they shimmer in sync (by design). Disable with `shimmer={false}` prop if unwanted.
 - **Floating orbs visibility**: Opacity range [0.08–0.15] and size range [80–180px] calibrated for visible but subtle effect. Reduce blur if GPU performance is impacted.
 - **Animated counter precision**: For large numbers or many decimal places, floating-point rounding may cause minor visual jitter near end of animation
+- **Logo marquee with few items**: If fewer than ~4-5 logos are provided, the marquee may have visible gaps during the seamless loop. Add more logos or reduce speed to compensate.
+- **Navbar glassmorphism on Safari**: `backdrop-blur` may have performance implications on older iOS Safari versions. Effect degrades gracefully to solid background.

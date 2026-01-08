@@ -77,6 +77,7 @@ export default function Page() {
             </p>
           }
           cta={
+            /* Note that this template is reference-only; the signup form is a visual placeholder. */
             <EmailSignupForm
               className="max-w-full"
               variant="overlay"

@@ -395,6 +395,58 @@
 }
 
 /* =============================================================================
+   CTA SHIMMER EFFECT
+   Diagonal shine sweep that periodically crosses CTA buttons
+   ============================================================================= */
+
+@keyframes cta-shimmer-sweep {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(200%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+/* Base shimmer element - positioned but hidden until animated */
+.cta-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  width: 50%;
+  transform: translateX(-100%) skewX(-20deg);
+  opacity: 0;
+}
+
+/* Dark mode shimmer - slightly brighter for visibility */
+@variant dark {
+  .cta-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 100%
+    );
+  }
+}
+
+/* Shimmer animation - triggered via JS class toggle */
+.cta-shimmer-animate {
+  animation: cta-shimmer-sweep 600ms ease-out forwards;
+}
+
+/* =============================================================================
    BLUR TRANSITION TEXT ANIMATION
    Smooth blur in/out transitions for text changes
    ============================================================================= */
@@ -453,3 +505,36 @@
     transform: translate(-50%, -50%) translate(-25px, 15px) scale(0.97);
   }
 }
+
+/* =============================================================================
+   LOGO MARQUEE ANIMATION
+   Infinite horizontal scrolling for logo displays
+   ============================================================================= */
+
+@keyframes marquee-scroll-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-scroll-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Marquee scroll animation classes */
+.logo-marquee-scroll-left {
+  animation: marquee-scroll-left var(--marquee-duration, 30s) linear infinite;
+}
+
+.logo-marquee-scroll-right {
+  animation: marquee-scroll-right var(--marquee-duration, 30s) linear infinite;
+}
+

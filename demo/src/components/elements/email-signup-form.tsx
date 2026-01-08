@@ -16,6 +16,7 @@ export function EmailSignupForm({
   variant?: 'normal' | 'overlay'
 } & ComponentProps<'form'>) {
   return (
+    // Document that this is a legacy visual-only pattern; keep it inert in static exports.
     <form
       className={clsx(
         'flex rounded-full p-1 inset-ring-1 dark:bg-white/10 dark:inset-ring-white/10',
@@ -25,6 +26,7 @@ export function EmailSignupForm({
       )}
       {...props}
     >
+      {/* Clarify that the input is intentionally nameless; add name/required only when wiring real submissions. */}
       <input
         className={clsx(
           'min-w-0 flex-1 px-3 text-sm/7 focus:outline-hidden dark:text-white',

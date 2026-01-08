@@ -103,6 +103,10 @@ Git commit guidelines are documented in `.cursor/rules/git-commit-message-format
 
 <frontend_design>
 - For pricing card grids, always enforce equal heights by pairing `items-stretch` on the grid with `h-full` on each plan card, and verify visually.
+
+<animation_standards>
+**NEVER add `prefers-reduced-motion` checks or similar accessibility media query conditionals to animation code.** Animations must work consistently for all users, so do not gate/short-circuit IntersectionObserver setup with accessibility or timing conditionals (including `requestAnimationFrame` wrappers).
+</animation_standards>
 <frontend_design>
 </code_standards>
 
@@ -288,7 +292,7 @@ Here is a high level overview of the folder structure:
 ├── documents/                                  # Project documentation
 │   ├── _app_description.md                     # Detailed Bulma product description
 │   ├── reference/
-│   │   └── planning_new_feature.md             # Feature planning template guidelines
+│   │   └── planning_new_feature.md             # Feature planning template guidelinesA
 │   └── templates/                              # Document templates
 │       ├── bug_template.md                     # Bug report template
 │       ├── error_template.md                   # Error documentation template
