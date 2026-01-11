@@ -2,6 +2,7 @@
 
 import { clsx } from 'clsx/lite'
 import { useCallback, useRef, useState, type ReactNode } from 'react'
+import { BorderBeam } from './border-beam'
 
 interface CardSpotlightProps {
   /** Content to render within the spotlight card */
@@ -90,8 +91,8 @@ export function CardSpotlight({
         <div
           className={clsx(
             'pointer-events-none absolute -inset-px z-0 overflow-hidden rounded-xl',
-            'opacity-60 transition-opacity duration-500',
-            isHovering && 'opacity-100'
+            'opacity-40 transition-opacity duration-500',
+            isHovering && 'opacity-70'
           )}
           aria-hidden="true"
         >
@@ -99,19 +100,29 @@ export function CardSpotlight({
           <div
             className={clsx(
               'absolute inset-0 rounded-xl',
-              'bg-gradient-to-br from-mist-400/20 via-transparent to-mist-500/20',
-              'dark:from-mist-300/10 dark:to-mist-400/10'
+              'bg-gradient-to-br from-mist-400/15 via-transparent to-mist-500/15',
+              'dark:from-mist-300/8 dark:to-mist-400/8'
             )}
           />
           {/* Inner glow pulse */}
           <div
             className={clsx(
               'absolute inset-0 rounded-xl',
-              'bg-gradient-to-t from-mist-500/5 to-transparent',
-              'dark:from-mist-400/5'
+              'bg-gradient-to-t from-mist-500/3 to-transparent',
+              'dark:from-mist-400/3'
             )}
           />
         </div>
+      )}
+
+      {/* Border beam effect - traveling light around featured card perimeter */}
+      {featured && (
+        <BorderBeam
+          duration={8000}
+          size={100}
+          borderRadius={12}
+          className="opacity-50 dark:opacity-35"
+        />
       )}
 
       {/* Card content */}

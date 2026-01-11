@@ -25,11 +25,15 @@ export function Screenshot({
   placement,
   className,
   enableTilt = true,
+  enableReflection = false,
   ...props
 }: {
   wallpaper: 'green' | 'blue' | 'purple' | 'brown'
   placement: 'bottom' | 'bottom-left' | 'bottom-right' | 'top' | 'top-left' | 'top-right'
+  /** Enable 3D parallax tilt effect on hover */
   enableTilt?: boolean
+  /** Enable polished surface reflection effect below screenshot */
+  enableReflection?: boolean
 } & Omit<ComponentProps<'div'>, 'color'>) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [tiltStyle, setTiltStyle] = useState<React.CSSProperties>({})
@@ -90,7 +94,12 @@ export function Screenshot({
   }, [])
 
   return (
-    <Wallpaper color={wallpaper} data-placement={placement} className={clsx('group', className)} {...props}>
+    <Wallpaper
+      color={wallpaper}
+      data-placement={placement}
+      className={clsx('group', enableReflection && 'screenshot-reflection', className)}
+      {...props}
+    >
       <div
         ref={containerRef}
         onMouseMove={enableTilt ? handleMouseMove : undefined}

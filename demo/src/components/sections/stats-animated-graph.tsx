@@ -3,6 +3,7 @@
 import { clsx } from 'clsx/lite'
 import { Children, useEffect, useId, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { AnimatedCounter } from '../elements/animated-counter'
+import { DotMatrix } from '../elements/dot-matrix'
 import { Section } from '../elements/section'
 
 interface StatAnimatedProps extends ComponentProps<'div'> {
@@ -37,14 +38,7 @@ export function StatAnimated({
 
   return (
     <div
-      className={clsx(
-        'relative border-l-2 border-mist-500/40 pl-6 dark:border-mist-400/40',
-        // Add subtle gradient highlight on the border (full height for visibility)
-        'before:absolute before:left-0 before:top-0 before:h-full before:w-0.5',
-        'before:bg-gradient-to-b before:from-mist-500/80 before:via-mist-500/40 before:to-mist-500/20',
-        'dark:before:from-mist-400/80 dark:before:via-mist-400/40 dark:before:to-mist-400/20',
-        className
-      )}
+      className={clsx('relative', className)}
       {...props}
     >
       <div className="text-3xl/10 font-semibold tracking-tight text-mist-950 dark:text-white">
@@ -78,7 +72,9 @@ export function StatsAnimatedGraph({
   children,
   staggerDelay = 120,
   ...props
-}: { staggerDelay?: number } & ComponentProps<typeof Section>) {
+}: {
+  staggerDelay?: number
+} & ComponentProps<typeof Section>) {
   const pathId = useId()
   const glowId = useId()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -139,8 +135,17 @@ export function StatsAnimatedGraph({
   const graphDelay = (Children.count(children) + 1) * staggerDelay
 
   return (
-    <Section {...props}>
-      <div ref={containerRef} className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+    <Section {...props} className={clsx('relative isolate', props.className)}>
+      {/* Dot matrix background with cursor proximity effect */}
+      <DotMatrix
+        className="-z-10"
+        spacing={28}
+        baseOpacity={0.025}
+        maxOpacity={0.12}
+        effectRadius={180}
+      />
+
+      <div ref={containerRef} className="relative grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
         <div className="col-span-2 grid grid-cols-2 gap-x-2 gap-y-10 sm:auto-cols-fr sm:grid-flow-col-dense">
           {animatedStats}
         </div>

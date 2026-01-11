@@ -36,8 +36,14 @@ export function Feature({
 export function FeaturesTwoColumnWithDemos({
   features,
   staggerDelay = 150,
+  enableHorizon = true,
   ...props
-}: { features: ReactNode; staggerDelay?: number } & Omit<ComponentProps<typeof Section>, 'children'>) {
+}: {
+  features: ReactNode
+  staggerDelay?: number
+  /** Enable animated horizon line at section top */
+  enableHorizon?: boolean
+} & Omit<ComponentProps<typeof Section>, 'children'>) {
   const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
 
   // Wrap each feature child with staggered animation
@@ -66,8 +72,14 @@ export function FeaturesTwoColumnWithDemos({
 
   return (
     <Section {...props}>
-      <div ref={containerRef} className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-        {animatedFeatures}
+      {/* Horizon line wrapper - draws animated accent lines at section top */}
+      <div
+        data-visible={isVisible}
+        className={clsx(enableHorizon && 'section-horizon')}
+      >
+        <div ref={containerRef} className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+          {animatedFeatures}
+        </div>
       </div>
     </Section>
   )

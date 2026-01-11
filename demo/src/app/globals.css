@@ -538,3 +538,436 @@
   animation: marquee-scroll-right var(--marquee-duration, 30s) linear infinite;
 }
 
+/* =============================================================================
+   BORDER BEAM EFFECT
+   A single point of light that travels around the perimeter of an element,
+   creating a premium "scan line" effect for featured cards.
+   ============================================================================= */
+
+@keyframes border-beam {
+  /* Start at top-left corner */
+  0% {
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+  }
+  /* Move along top edge to top-right */
+  25% {
+    top: 0;
+    left: 100%;
+    transform: translate(-50%, -50%);
+  }
+  /* Move down right edge to bottom-right */
+  50% {
+    top: 100%;
+    left: 100%;
+    transform: translate(-50%, -50%);
+  }
+  /* Move along bottom edge to bottom-left */
+  75% {
+    top: 100%;
+    left: 0;
+    transform: translate(-50%, -50%);
+  }
+  /* Return up left edge to top-left (complete loop) */
+  100% {
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Border beam animation class - used by the BorderBeam component */
+.animate-border-beam {
+  animation: border-beam 8s linear infinite;
+}
+
+/* =============================================================================
+   MORPHING PRICE DIGITS
+   Smooth digit-by-digit morph animation for price changes.
+   Creates a mechanical counter / slot machine effect.
+   ============================================================================= */
+
+@keyframes digit-morph {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes digit-slide-out {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes digit-slide-in {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Digit morph animation classes */
+.animate-digit-morph {
+  animation: digit-morph 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-digit-slide-out {
+  animation: digit-slide-out 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-digit-slide-in {
+  animation: digit-slide-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Pricing tab panel transition - morphing effect when switching tabs */
+.pricing-tab-panels > [role="tabpanel"] {
+  animation: pricing-panel-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes pricing-panel-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Morphing price - adds subtle transition for price value changes */
+.morphing-price {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* =============================================================================
+   LINK UNDERLINE GROW-FROM-CENTER ANIMATION
+   Creates a premium underline effect that expands from center outward on hover.
+   The underline "breathes" into existence rather than simply appearing.
+   ============================================================================= */
+
+.link-underline-grow {
+  position: relative;
+  text-decoration: none;
+}
+
+/* The animated underline pseudo-element */
+.link-underline-grow::after {
+  content: '';
+  position: absolute;
+  /* Position at the baseline of the text */
+  bottom: 0;
+  /* Start centered */
+  left: 50%;
+  /* Initial width of 0, will expand on hover */
+  width: 0;
+  /* Underline thickness */
+  height: 1.5px;
+  /* Use mist-500 for visible contrast against light backgrounds */
+  background: oklch(56% 0.021 213.5);
+  /* Smooth expansion animation with ease-out for natural feel */
+  transition:
+    width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    left 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Hover state - expand underline to full width */
+.link-underline-grow:hover::after,
+.link-underline-grow:focus-visible::after {
+  width: 100%;
+  left: 0;
+}
+
+/* Dark mode - use white for clear visibility against dark backgrounds */
+:is(.dark .link-underline-grow)::after {
+  background: white;
+}
+
+/* =============================================================================
+   SCREENSHOT REFLECTION EFFECT
+   Creates a premium "floating above polished surface" appearance with a
+   mirrored, blurred reflection below screenshots.
+   ============================================================================= */
+
+.screenshot-reflection {
+  position: relative;
+}
+
+/* The reflection pseudo-element */
+.screenshot-reflection::after {
+  content: '';
+  position: absolute;
+  /* Position below the screenshot with small gap */
+  top: 100%;
+  left: 0;
+  right: 0;
+  /* Reflection height - proportional to the parent */
+  height: 30%;
+  /* Mirror effect using gradient that simulates reflection */
+  background: linear-gradient(
+    to bottom,
+    var(--reflection-color, rgba(0, 0, 0, 0.04)) 0%,
+    transparent 100%
+  );
+  /* Blur for frosted glass effect */
+  filter: blur(8px);
+  /* Fade out mask */
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, transparent 80%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, transparent 80%);
+  /* Match parent border radius */
+  border-radius: inherit;
+  /* Don't interfere with interactions */
+  pointer-events: none;
+  /* Subtle animation on parent hover */
+  opacity: 0.6;
+  transition: opacity 0.5s ease-out;
+  transform: scaleY(0.5);
+  transform-origin: top;
+}
+
+/* Enhance reflection on hover */
+.screenshot-reflection:hover::after {
+  opacity: 0.8;
+}
+
+/* Dark mode: lighter reflection color */
+@variant dark {
+  .screenshot-reflection::after {
+    --reflection-color: rgba(255, 255, 255, 0.03);
+  }
+}
+
+/* =============================================================================
+   ELASTIC PRICING TOGGLE
+   Spring physics animation for Monthly/Yearly toggle indicator with
+   overshoot and settle effect.
+   ============================================================================= */
+
+@keyframes elastic-slide {
+  0% {
+    transform: translateX(var(--from-x, 0));
+  }
+  60% {
+    /* Overshoot by 8% */
+    transform: translateX(calc(var(--to-x, 0) + (var(--to-x, 0) - var(--from-x, 0)) * 0.08));
+  }
+  80% {
+    /* Settle back slightly past target */
+    transform: translateX(calc(var(--to-x, 0) - (var(--to-x, 0) - var(--from-x, 0)) * 0.03));
+  }
+  100% {
+    transform: translateX(var(--to-x, 0));
+  }
+}
+
+/* Pill indicator base styles */
+.pricing-toggle-pill {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* When animating, use the elastic keyframe */
+.pricing-toggle-pill[data-animating="true"] {
+  animation: elastic-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* =============================================================================
+   SECTION REVEAL HORIZON LINE
+   Animated horizontal accent line that draws inward from both edges
+   when a section enters the viewport.
+   ============================================================================= */
+
+.section-horizon {
+  position: relative;
+}
+
+/* Left line */
+.section-horizon::before,
+.section-horizon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  height: 1px;
+  /* Gradient using mist palette */
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(56% 0.021 213.5) 50%,  /* mist-500 */
+    oklch(72.3% 0.014 214.4) 100% /* mist-400 */
+  );
+  /* Start hidden */
+  transform: scaleX(0);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Left line - draws from left edge */
+.section-horizon::before {
+  left: 0;
+  width: 35%;
+  transform-origin: left center;
+}
+
+/* Right line - draws from right edge */
+.section-horizon::after {
+  right: 0;
+  width: 35%;
+  transform-origin: right center;
+  /* Reverse the gradient direction */
+  background: linear-gradient(
+    90deg,
+    oklch(72.3% 0.014 214.4) 0%,  /* mist-400 */
+    oklch(56% 0.021 213.5) 50%,   /* mist-500 */
+    transparent 100%
+  );
+}
+
+/* Animate in when visible */
+.section-horizon[data-visible="true"]::before,
+.section-horizon[data-visible="true"]::after {
+  transform: scaleX(1);
+}
+
+/* Stagger the right line slightly */
+.section-horizon[data-visible="true"]::after {
+  transition-delay: 0.1s;
+}
+
+/* Dark mode: brighter lines */
+@variant dark {
+  .section-horizon::before {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      oklch(72.3% 0.014 214.4) 50%,  /* mist-400 */
+      oklch(87.2% 0.007 219.6) 100%  /* mist-300 */
+    );
+  }
+  .section-horizon::after {
+    background: linear-gradient(
+      90deg,
+      oklch(87.2% 0.007 219.6) 0%,   /* mist-300 */
+      oklch(72.3% 0.014 214.4) 50%,  /* mist-400 */
+      transparent 100%
+    );
+  }
+}
+
+/* =============================================================================
+   TESTIMONIAL AVATAR PRESENCE RING
+   Slow-pulsing concentric ring on hover that creates a "live presence"
+   indicator effect, humanizing testimonials.
+   ============================================================================= */
+
+@keyframes presence-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* Avatar wrapper with presence effect */
+.avatar-presence {
+  position: relative;
+}
+
+/* The pulsing ring - hidden by default, shown on group hover */
+.avatar-presence::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  /* Ring using mist palette */
+  border: 2px solid oklch(56% 0.021 213.5); /* mist-500 */
+  opacity: 0;
+  pointer-events: none;
+  /* Animation paused by default */
+  animation: presence-pulse 2.5s ease-out infinite;
+  animation-play-state: paused;
+}
+
+/* Activate on group hover */
+.group:hover .avatar-presence::before {
+  animation-play-state: running;
+}
+
+/* Dark mode: lighter ring color */
+@variant dark {
+  .avatar-presence::before {
+    border-color: oklch(72.3% 0.014 214.4); /* mist-400 */
+  }
+}
+
+/* =============================================================================
+   CARD ENTRANCE DEPTH STACK
+   Ghost shadow card that appears behind cards during entrance animation,
+   creating a "pulled from deck" sensation.
+   ============================================================================= */
+
+@keyframes depth-stack-fade {
+  0% {
+    opacity: 0.25;
+    transform: translate(4px, 6px) scale(0.98);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+/* Container for depth stack effect */
+.card-depth-stack {
+  position: relative;
+}
+
+/* Ghost card shadow - appears behind the main card */
+.card-depth-stack::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  /* Semi-transparent background matching card */
+  background: oklch(27.5% 0.011 216.9 / 0.08); /* mist-800 at 8% */
+  /* Hidden by default */
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Animate when visible */
+.card-depth-stack[data-animating="true"]::before {
+  animation: depth-stack-fade 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Dark mode: lighter ghost card */
+@variant dark {
+  .card-depth-stack::before {
+    background: oklch(92.5% 0.005 214.3 / 0.06); /* mist-200 at 6% */
+  }
+}
+

@@ -1,11 +1,25 @@
 'use client'
 
 import { clsx } from 'clsx/lite'
-import { Children, type ComponentProps, type ReactNode } from 'react'
+import { Children, createContext, useContext, type ComponentProps, type ReactNode } from 'react'
 import { CardSpotlight } from '../elements/card-spotlight'
 import { Section } from '../elements/section'
-import { CheckmarkIcon } from '../icons/checkmark-icon'
+import { AnimatedCheckmarkIcon } from '../icons/animated-checkmark-icon'
 import { useScrollAnimation } from '@/hooks/use-scroll-animation'
+
+/**
+ * Context to pass animation state from PricingMultiTier to Plan components.
+ * Allows checkmarks to animate in sync with card visibility.
+ */
+interface PricingAnimationContextValue {
+  isVisible: boolean
+  baseDelay: number
+}
+
+const PricingAnimationContext = createContext<PricingAnimationContextValue>({
+  isVisible: false,
+  baseDelay: 0,
+})
 
 export function Plan({
   name,
@@ -28,6 +42,14 @@ export function Plan({
   /** Whether this is the featured/recommended plan (adds ambient glow) */
   featured?: boolean
 } & ComponentProps<'div'>) {
+  // Get animation context for staggered checkmark reveals
+  const { isVisible, baseDelay } = useContext(PricingAnimationContext)
+
+  // Checkmark animation config: stagger each checkmark by 60ms
+  const checkmarkStagger = 60
+  // Start checkmark animations after the card has faded in (300ms base)
+  const checkmarkBaseDelay = baseDelay + 300
+
   return (
     <CardSpotlight featured={featured} className="h-full">
       <div
@@ -57,7 +79,12 @@ export function Plan({
           <ul className="mt-4 space-y-2 text-sm/6 text-mist-700 dark:text-mist-400">
             {features.map((feature, index) => (
               <li key={index} className="flex gap-4">
-                <CheckmarkIcon className="h-lh shrink-0 stroke-mist-950 dark:stroke-white" />
+                <AnimatedCheckmarkIcon
+                  animate={isVisible}
+                  delay={checkmarkBaseDelay + index * checkmarkStagger}
+                  duration={350}
+                  className="h-lh shrink-0 stroke-mist-950 dark:stroke-white"
+                />
                 <p>{feature}</p>
               </li>
             ))}
@@ -81,18 +108,24 @@ export function PricingMultiTier({
 
   // Wrap each plan child with staggered animation from left to right
   // h-full ensures wrapper fills grid cell so child Plan components align heights
+  // Each plan gets its own context with the appropriate base delay for checkmarks
+  // Includes depth stack effect for "pulled from deck" card entrance
   const animatedPlans = Children.map(plans, (child, index) => {
     const delay = index * staggerDelay
 
     return (
       <div
+        data-animating={isVisible}
         className={clsx(
-          'h-full transition-all duration-600 ease-out',
+          'card-depth-stack h-full rounded-xl transition-all duration-600 ease-out',
           isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-[0.97]'
         )}
         style={{ transitionDelay: `${delay}ms` }}
       >
-        {child}
+        {/* Provide animation context to Plan component for checkmark staggering */}
+        <PricingAnimationContext.Provider value={{ isVisible, baseDelay: delay }}>
+          {child}
+        </PricingAnimationContext.Provider>
       </div>
     )
   })

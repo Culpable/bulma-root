@@ -56,69 +56,8 @@ const pricingStructuredData = buildFaqPageSchema({
   faqs: pricingFaqs,
 })
 
-function plans(option: string) {
-  return (
-    <>
-      <Plan
-        name="Solo"
-        price={option === 'Monthly' ? '$49' : '$490'}
-        period={option === 'Monthly' ? '/month' : '/year'}
-        subheadline={<p>For individual brokers getting started</p>}
-        features={[
-          'Unlimited policy questions',
-          'All major lenders covered',
-          'Source attribution on every answer',
-          'Conversation history',
-          'Email support',
-        ]}
-        cta={
-          <SoftButtonLink href="https://app.bulma.com.au/register" size="lg">
-            Start free trial
-          </SoftButtonLink>
-        }
-      />
-      <Plan
-        name="Team"
-        price={option === 'Monthly' ? '$99' : '$990'}
-        period={option === 'Monthly' ? '/month' : '/year'}
-        subheadline={<p>For growing brokerages with multiple users</p>}
-        badge="Most popular"
-        features={[
-          'Everything in Solo',
-          'Up to 5 team members',
-          'Cross-lender comparisons',
-          'Priority support',
-          'Team usage analytics',
-          'Shared conversation history',
-        ]}
-        cta={
-          <ButtonLink href="https://app.bulma.com.au/register" size="lg">
-            Start free trial
-          </ButtonLink>
-        }
-      />
-      <Plan
-        name="Enterprise"
-        price="Custom"
-        period=""
-        subheadline={<p>For aggregators and large brokerages</p>}
-        features={[
-          'Everything in Team',
-          'Unlimited team members',
-          'Custom lender coverage',
-          'Dedicated account manager',
-          'Custom integrations',
-          'Volume discounts',
-        ]}
-        cta={
-          <SoftButtonLink href="/contact" size="lg">
-            Contact sales
-          </SoftButtonLink>
-        }
-      />
-    </>
-  )
-}
+// Period labels for each pricing option
+const pricingPeriods = { Monthly: '/month', Yearly: '/year' }
 
 export default function Page() {
   return (
@@ -140,7 +79,68 @@ export default function Page() {
           </p>
         }
         options={['Monthly', 'Yearly']}
-        plans={{ Monthly: plans('Monthly'), Yearly: plans('Yearly') }}
+        plans={
+          <>
+            <Plan
+              name="Solo"
+              prices={{ Monthly: '$49', Yearly: '$490' }}
+              periods={pricingPeriods}
+              subheadline={<p>For individual brokers getting started</p>}
+              features={[
+                'Unlimited policy questions',
+                'All major lenders covered',
+                'Source attribution on every answer',
+                'Conversation history',
+                'Email support',
+              ]}
+              cta={
+                <SoftButtonLink href="https://app.bulma.com.au/register" size="lg">
+                  Start free trial
+                </SoftButtonLink>
+              }
+            />
+            <Plan
+              name="Team"
+              prices={{ Monthly: '$99', Yearly: '$990' }}
+              periods={pricingPeriods}
+              subheadline={<p>For growing brokerages with multiple users</p>}
+              badge="Most popular"
+              featured={true}
+              features={[
+                'Everything in Solo',
+                'Up to 5 team members',
+                'Cross-lender comparisons',
+                'Priority support',
+                'Team usage analytics',
+                'Shared conversation history',
+              ]}
+              cta={
+                <ButtonLink href="https://app.bulma.com.au/register" size="lg">
+                  Start free trial
+                </ButtonLink>
+              }
+            />
+            <Plan
+              name="Enterprise"
+              prices={{ Monthly: 'Custom', Yearly: 'Custom' }}
+              periods=""
+              subheadline={<p>For aggregators and large brokerages</p>}
+              features={[
+                'Everything in Team',
+                'Unlimited team members',
+                'Custom lender coverage',
+                'Dedicated account manager',
+                'Custom integrations',
+                'Volume discounts',
+              ]}
+              cta={
+                <SoftButtonLink href="/contact" size="lg">
+                  Contact sales
+                </SoftButtonLink>
+              }
+            />
+          </>
+        }
         footer={
           <LogoGrid>
             <Logo>

@@ -639,7 +639,388 @@ const scrolled = useScrolled(20)
 
 ---
 
-## 18. Points of Error
+## 18. Border Beam Effect
+
+`border-beam.tsx::BorderBeam` creates a traveling light effect around the perimeter of an element, producing a premium "scan line" effect for featured cards.
+
+**File:** `demo/src/components/elements/border-beam.tsx`
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `duration` | `number` | `8000` | Duration for one complete revolution (ms) |
+| `size` | `number` | `100` | Size of the beam gradient (px) |
+| `delay` | `number` | `0` | Delay before animation starts (ms) |
+| `borderRadius` | `number` | `12` | Border radius to match parent element |
+| `active` | `boolean` | `true` | Whether the beam is active |
+
+**Animation behavior:**
+- A single point of light continuously traces the element's border
+- Uses CSS keyframe animation `border-beam` moving through four corners
+- Secondary softer glow follows the primary beam for added depth
+- Light/dark mode adaptive gradient colors from mist palette
+
+**CSS Keyframe (`border-beam`):**
+```css
+0%   { top: 0; left: 0; }     /* top-left */
+25%  { top: 0; left: 100%; }  /* top-right */
+50%  { top: 100%; left: 100%; } /* bottom-right */
+75%  { top: 100%; left: 0; }  /* bottom-left */
+100% { top: 0; left: 0; }     /* top-left (loop) */
+```
+
+**Integration:** Currently applied to featured pricing cards via `CardSpotlight` when `featured={true}`.
+
+```tsx
+<CardSpotlight featured={true}>
+  <Plan ... />
+</CardSpotlight>
+```
+
+---
+
+## 19. Animated Checkmark Icons
+
+`animated-checkmark-icon.tsx::AnimatedCheckmarkIcon` draws itself in with a satisfying stroke animation using stroke-dasharray/dashoffset technique.
+
+**File:** `demo/src/components/icons/animated-checkmark-icon.tsx`
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `animate` | `boolean` | `false` | Whether to animate (false = static) |
+| `delay` | `number` | `0` | Delay before animation starts (ms) |
+| `duration` | `number` | `400` | Duration of draw animation (ms) |
+
+**Animation behavior:**
+- Measures path length on mount for accurate dash animation
+- Stroke draws from start to end after specified delay
+- Uses ease-out easing for satisfying deceleration at end
+- Falls back to static display when `animate={false}`
+
+**Integration with staggered pricing features:**
+
+The `PricingMultiTier` and `PricingHeroMultiTier` components use React Context to pass visibility state and base delay to child `Plan` components. Each checkmark in the features list receives a staggered delay:
+
+```tsx
+// Inside Plan component
+const checkmarkStagger = 60 // ms between each checkmark
+const checkmarkBaseDelay = baseDelay + 300 // start after card fades in
+
+{features.map((feature, index) => (
+  <AnimatedCheckmarkIcon
+    animate={isVisible}
+    delay={checkmarkBaseDelay + index * checkmarkStagger}
+    duration={350}
+  />
+))}
+```
+
+---
+
+## 20. Morphing Price Transitions
+
+The pricing toggle includes enhanced transitions when switching between Monthly/Yearly options, creating a morph-like feel.
+
+**Files:**
+- `demo/src/components/elements/morphing-price.tsx` — `MorphingPrice` component (available for advanced use)
+- `demo/src/components/sections/pricing-hero-multi-tier.tsx` — Tab panel transitions
+- `demo/src/app/globals.css` — CSS keyframes
+
+**Tab panel morph animation:**
+When switching tabs, the new panel slides up with a subtle fade:
+
+```css
+@keyframes pricing-panel-enter {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+```
+
+**Digit morph animations (for advanced use):**
+The `MorphingPrice` component can animate individual digits when price values change:
+
+| Keyframe | Purpose |
+|----------|---------|
+| `digit-morph` | Digit slides up into position |
+| `digit-slide-out` | Previous digit slides up and fades out |
+| `digit-slide-in` | New digit slides up and fades in |
+
+**CSS class `.morphing-price`:**
+Applied to price elements to enable `tabular-nums` and smooth transitions.
+
+---
+
+## 21. Dot Matrix Background
+
+`dot-matrix.tsx::DotMatrix` creates a subtle dot grid pattern with cursor proximity effect, where dots near the cursor brighten to create a wave that follows mouse movement.
+
+**File:** `demo/src/components/elements/dot-matrix.tsx`
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `dotSize` | `number` | `1` | Size of each dot (px) |
+| `spacing` | `number` | `24` | Spacing between dots (px) |
+| `baseOpacity` | `number` | `0.03` | Base dot opacity |
+| `maxOpacity` | `number` | `0.15` | Maximum opacity near cursor |
+| `effectRadius` | `number` | `150` | Radius of cursor effect (px) |
+| `active` | `boolean` | `true` | Whether effect is active |
+
+**Animation behavior:**
+- Uses Canvas for performance with many dots
+- Tracks mouse position relative to container
+- Applies easeOutQuad falloff for smooth opacity transition
+- Dark mode adaptive: white dots on dark, black dots on light
+- 60fps animation loop via requestAnimationFrame
+
+**Performance considerations:**
+- Canvas scales for retina displays via devicePixelRatio
+- Animation stops when component unmounts
+- ResizeObserver handles dimension changes
+
+**Integration:** Currently applied to `StatsAnimatedGraph` section.
+
+```tsx
+<Section className="relative isolate">
+  <DotMatrix
+    className="-z-10"
+    spacing={28}
+    baseOpacity={0.025}
+    maxOpacity={0.12}
+    effectRadius={180}
+  />
+  {/* Section content */}
+</Section>
+```
+
+---
+
+## 22. Table Row Highlight
+
+The Plan Comparison Table features enhanced row and cell hover states for improved usability and visual polish.
+
+**File:** `demo/src/components/sections/plan-comparison-table.tsx`
+
+**Row highlight behavior:**
+| Element | Hover Effect |
+|---------|-------------|
+| Table row (`<tr>`) | Subtle background tint (`bg-mist-950/[0.02]`) |
+| Row label (`<th>`) | Text color intensifies to primary |
+| Cell (`<td>`) | Gradient overlay fades in from top |
+
+**Implementation:**
+```tsx
+<tr className={clsx(
+  'group',
+  'transition-colors duration-200',
+  'hover:bg-mist-950/[0.02] dark:hover:bg-white/[0.02]',
+)}>
+  <th className="... group-hover:text-mist-950 dark:group-hover:text-white">
+    {feature.name}
+  </th>
+  <td className={clsx(
+    '...',
+    'before:bg-gradient-to-b before:from-mist-500/5 before:to-transparent',
+    'hover:before:opacity-100',
+  )}>
+    {value}
+  </td>
+</tr>
+```
+
+**Design notes:**
+- Uses CSS `group` utility for coordinated hover effects
+- Row background creates cross-column visual continuity
+- Cell gradient overlay provides vertical column emphasis
+- 200ms transition duration for responsive feel
+
+---
+
+## 23. Screenshot Reflection Effect
+
+`screenshot.tsx::Screenshot` can display a blurred, faded reflection below screenshots, simulating a polished glass surface.
+
+**File:** `demo/src/components/elements/screenshot.tsx`
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `enableReflection` | `boolean` | `false` | Enable polished surface reflection effect |
+
+**CSS class:** `.screenshot-reflection` (in `globals.css`)
+
+**Visual behavior:**
+- Pseudo-element positioned below the screenshot (30% height)
+- Uses gradient mask that fades from 40% opacity to transparent
+- Blur filter (8px) creates frosted effect
+- Scales vertically to 50% for compressed reflection look
+- Enhanced opacity on hover (0.6 → 0.8)
+
+**Theme adaptation:**
+| Theme | Reflection Color |
+|-------|-----------------|
+| Light mode | `rgba(0, 0, 0, 0.04)` — subtle dark shadow |
+| Dark mode | `rgba(255, 255, 255, 0.03)` — subtle light reflection |
+
+**Integration:** Currently enabled on hero screenshots.
+
+```tsx
+<Screenshot wallpaper="blue" placement="bottom" enableReflection>
+  <Image src="/screenshot.webp" ... />
+</Screenshot>
+```
+
+**To disable:** Remove `enableReflection` prop or set to `false`.
+
+---
+
+## 24. Elastic Pricing Toggle
+
+`pricing-hero-multi-tier.tsx::ElasticTabToggle` implements a sliding pill indicator with spring physics animation.
+
+**File:** `demo/src/components/sections/pricing-hero-multi-tier.tsx`
+
+**Animation behavior:**
+- Pill indicator slides between tab positions
+- Uses spring easing `cubic-bezier(0.34, 1.56, 0.64, 1)` for overshoot effect
+- ~8% overshoot past target, then settles back
+- 400ms transition duration when animating, 300ms for normal repositioning
+
+**CSS class:** `.pricing-toggle-pill` (in `globals.css`)
+
+**Implementation:**
+```tsx
+<ElasticTabToggle
+  options={['Monthly', 'Yearly']}
+  selectedIndex={selectedIndex}
+  onSelect={handleSelect}
+/>
+```
+
+**Visual states:**
+| State | Easing | Duration |
+|-------|--------|----------|
+| Animating (just clicked) | Spring with overshoot | 400ms |
+| Repositioning | Ease-out | 300ms |
+
+**To disable:** Replace `ElasticTabToggle` with standard tab buttons.
+
+---
+
+## 25. Section Reveal Horizon Line
+
+Animated horizontal accent lines that draw inward from both edges when a section enters the viewport.
+
+**CSS class:** `.section-horizon` (in `globals.css`)
+
+**Animation behavior:**
+- Two lines animate from left and right edges toward center
+- Each line spans 35% of container width
+- Uses `scaleX(0)` → `scaleX(1)` with `transform-origin` at edges
+- 800ms duration with ease-out easing
+- Right line staggers 100ms after left
+
+**Usage:**
+```tsx
+<div
+  data-visible={isVisible}
+  className={clsx(enableHorizon && 'section-horizon')}
+>
+  {/* Section content */}
+</div>
+```
+
+**Theme adaptation:**
+| Theme | Gradient Colors |
+|-------|----------------|
+| Light mode | transparent → mist-500 → mist-400 |
+| Dark mode | transparent → mist-400 → mist-300 |
+
+**Currently applied to:**
+- `FeaturesTwoColumnWithDemos` (prop: `enableHorizon`, default: `true`)
+
+**To disable:** Set `enableHorizon={false}` on the section component.
+
+---
+
+## 26. Testimonial Avatar Presence Ring
+
+Slow-pulsing concentric ring on testimonial avatar hover that creates a "live presence" indicator effect.
+
+**CSS class:** `.avatar-presence` (in `globals.css`)
+
+**Animation behavior:**
+- Ring pulses from 100% to 115% scale
+- Opacity fades from 0.4 to 0 during pulse
+- 2.5s animation cycle, infinite loop
+- Animation pauses when not hovering (via `animation-play-state`)
+- Activates on parent `.group:hover`
+
+**CSS Keyframe (`presence-pulse`):**
+```css
+0%   { transform: scale(1); opacity: 0.4; }
+50%  { transform: scale(1.15); opacity: 0; }
+100% { transform: scale(1); opacity: 0; }
+```
+
+**Theme adaptation:**
+| Theme | Ring Color |
+|-------|-----------|
+| Light mode | mist-500 |
+| Dark mode | mist-400 |
+
+**Integration:** Applied to `TestimonialGlass` avatar wrapper.
+
+```tsx
+<div className="avatar-presence relative ...">
+  <div className="size-full">{img}</div>
+</div>
+```
+
+**To disable:** Remove `avatar-presence` class from the avatar wrapper.
+
+---
+
+## 27. Card Entrance Depth Stack
+
+Ghost shadow card that appears behind cards during entrance animation, creating a "pulled from deck" sensation.
+
+**CSS class:** `.card-depth-stack` (in `globals.css`)
+
+**Animation behavior:**
+- Ghost card starts offset by 4px right, 6px down, scaled to 98%
+- Fades from 25% opacity to 0 over 700ms
+- Uses ease-out easing for natural settling
+- Triggered via `data-animating="true"` attribute
+
+**CSS Keyframe (`depth-stack-fade`):**
+```css
+0%   { opacity: 0.25; transform: translate(4px, 6px) scale(0.98); }
+100% { opacity: 0; transform: translate(0, 0) scale(1); }
+```
+
+**Theme adaptation:**
+| Theme | Ghost Card Color |
+|-------|-----------------|
+| Light mode | mist-800 at 8% opacity |
+| Dark mode | mist-200 at 6% opacity |
+
+**Currently applied to:**
+- `PricingMultiTier` plan cards
+- `TestimonialsGlassmorphism` testimonial cards
+
+**Integration:**
+```tsx
+<div
+  data-animating={isVisible}
+  className="card-depth-stack rounded-xl ..."
+>
+  {child}
+</div>
+```
+
+**To disable:** Remove `card-depth-stack` class and `data-animating` attribute from the card wrapper.
+
+---
+
+## 28. Points of Error
 
 - **Missing `h-full`**: Grid children wrapped for animation lose equal-height alignment without `h-full` on both wrapper and inner component (see `pricing-multi-tier.tsx::Plan`)
 - **Server-side rendering**: Hook initializes `isVisible` to `false`, so elements start hidden. This is intentional—elements animate in on scroll
@@ -654,3 +1035,13 @@ const scrolled = useScrolled(20)
 - **Animated counter precision**: For large numbers or many decimal places, floating-point rounding may cause minor visual jitter near end of animation
 - **Logo marquee with few items**: If fewer than ~4-5 logos are provided, the marquee may have visible gaps during the seamless loop. Add more logos or reduce speed to compensate.
 - **Navbar glassmorphism on Safari**: `backdrop-blur` may have performance implications on older iOS Safari versions. Effect degrades gracefully to solid background.
+- **Border beam on touch devices**: Border beam uses CSS animation only; works on all devices but may impact battery on mobile. Consider disabling on touch devices for extended sessions.
+- **Animated checkmark path length**: Path length measurement occurs on mount. If SVG is hidden initially, measurement may fail. Ensure parent is mounted before animating.
+- **Dot matrix canvas performance**: Canvas redraws at 60fps when active. On low-end devices with many dots, may cause jank. Increase `spacing` or reduce `effectRadius` to mitigate.
+- **Dot matrix dark mode detection**: Uses `document.documentElement.classList.contains('dark')` which runs on every frame. If dark mode toggle doesn't use this class, dots won't adapt.
+- **Table row highlight z-index**: Cell `::before` pseudo-element requires `position: relative` on parent. If table cells have positioned children, may need z-index adjustment.
+- **Screenshot reflection overflow**: Reflection pseudo-element extends 30% below the screenshot. Ensure parent container has sufficient padding-bottom or `overflow: visible` to accommodate.
+- **Elastic toggle initial position**: Pill position is calculated via `getBoundingClientRect` on mount. If the toggle is rendered off-screen initially, pill may misposition until first interaction.
+- **Section horizon line visibility**: Lines use `scaleX(0)` to hide initially. If parent has `overflow: hidden`, ensure the horizon wrapper itself doesn't clip the lines.
+- **Avatar presence ring z-index**: Ring uses `::before` pseudo-element with `inset: -4px`. If avatar has sibling elements, ring may appear behind them. Add `z-index` if needed.
+- **Card depth stack border-radius**: Ghost card inherits `border-radius` from parent. Ensure wrapper div has matching `rounded-*` class to avoid visible corners on the ghost.

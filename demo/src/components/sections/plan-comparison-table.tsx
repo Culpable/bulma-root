@@ -30,14 +30,28 @@ function FeatureGroup<Plan extends string>({
         </th>
       </tr>
       {group.features.map((feature) => (
-        <tr key={String(feature.name)} className="group">
+        <tr
+          key={String(feature.name)}
+          className={clsx(
+            'group',
+            // Row highlight effect on hover
+            'transition-colors duration-200',
+            'hover:bg-mist-950/[0.02] dark:hover:bg-white/[0.02]',
+          )}
+        >
           <th
             scope="row"
-            className="border-t border-mist-950/5 py-4 pr-3 font-normal text-mist-700 group-first:border-mist-950/10 dark:border-white/5 dark:text-mist-400 dark:group-first:border-white/10"
+            className={clsx(
+              'border-t border-mist-950/5 py-4 pr-3 font-normal text-mist-700',
+              'group-first:border-mist-950/10 dark:border-white/5 dark:text-mist-400 dark:group-first:border-white/10',
+              // Highlight row label text on hover
+              'transition-colors duration-200',
+              'group-hover:text-mist-950 dark:group-hover:text-white',
+            )}
           >
             {feature.name}
           </th>
-          {plans.map((plan) => {
+          {plans.map((plan, planIndex) => {
             const value = ((value: any): value is Record<Plan, ReactNode> =>
               typeof value === 'object' && value !== null && plan in value)(feature.value)
               ? feature.value[plan]
@@ -46,7 +60,18 @@ function FeatureGroup<Plan extends string>({
             return (
               <td
                 key={plan}
-                className="border-t border-mist-950/5 px-3 py-4 text-center text-mist-700 group-first:border-mist-950/10 dark:border-white/10 dark:text-mist-400 dark:group-first:border-white/10"
+                data-column={planIndex}
+                className={clsx(
+                  'relative border-t border-mist-950/5 px-3 py-4 text-center text-mist-700',
+                  'group-first:border-mist-950/10 dark:border-white/10 dark:text-mist-400 dark:group-first:border-white/10',
+                  // Column highlight effect - subtle glow on hover
+                  'transition-all duration-200',
+                  'before:pointer-events-none before:absolute before:inset-0 before:opacity-0',
+                  'before:bg-gradient-to-b before:from-mist-500/5 before:to-transparent',
+                  'before:transition-opacity before:duration-200',
+                  'hover:before:opacity-100',
+                  'dark:before:from-mist-400/5',
+                )}
               >
                 {value === true ? (
                   <CheckmarkIcon aria-label="Included" className="stroke-mist-950 dark:stroke-white" />

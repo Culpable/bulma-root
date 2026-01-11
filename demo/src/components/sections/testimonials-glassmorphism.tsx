@@ -90,10 +90,10 @@ export function TestimonialGlass({
       </blockquote>
 
       <figcaption className="relative z-10 flex items-center gap-4">
-        {/* Avatar with ring glow effect */}
+        {/* Avatar with ring glow effect and presence pulse */}
         <div
           className={clsx(
-            'relative flex size-12 overflow-hidden rounded-full',
+            'avatar-presence relative flex size-12 overflow-hidden rounded-full',
             // Outer glow ring
             'ring-2 ring-white/50 ring-offset-2 ring-offset-transparent',
             'shadow-[0_0_0_1px_rgba(0,0,0,0.05)]',
@@ -149,14 +149,15 @@ export function TestimonialsGlassmorphism({
     return () => observer.disconnect()
   }, [])
 
-  // Wrap each child in animated container
+  // Wrap each child in animated container with depth stack effect
   const animatedChildren = Children.map(children, (child, index) => {
     const delay = index * staggerDelay
 
     return (
       <div
+        data-animating={isVisible}
         className={clsx(
-          'h-full transition-all duration-700 ease-out',
+          'card-depth-stack h-full rounded-2xl transition-all duration-700 ease-out',
           isVisible
             ? 'opacity-100 translate-y-0 scale-100'
             : 'opacity-0 translate-y-4 scale-[0.98]'

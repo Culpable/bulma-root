@@ -144,7 +144,7 @@ export default function Page() {
         demo={
           <>
             {/* Mobile/tablet screenshot */}
-            <Screenshot className="rounded-md lg:hidden" wallpaper="blue" placement="bottom-right">
+            <Screenshot className="rounded-md lg:hidden" wallpaper="blue" placement="bottom-right" enableReflection>
               <Image
                 src="/img/screenshots/1-left-1670-top-1408.webp"
                 alt={heroScreenshotAlt}
@@ -175,7 +175,7 @@ export default function Page() {
               />
             </Screenshot>
             {/* Desktop screenshot */}
-            <Screenshot className="rounded-lg max-lg:hidden" wallpaper="blue" placement="bottom">
+            <Screenshot className="rounded-lg max-lg:hidden" wallpaper="blue" placement="bottom" enableReflection>
               <Image
                 src="/img/screenshots/1.webp"
                 alt={heroScreenshotAlt}

@@ -34,7 +34,7 @@ export function ContactDetails() {
         <p className="mt-2 text-base/7 text-mist-700 dark:text-mist-400">
           Reach us at{' '}
           <a
-            className="cursor-pointer font-semibold text-mist-950 underline decoration-mist-950/30 underline-offset-4 hover:text-mist-800 dark:text-white dark:decoration-white/30"
+            className="link-underline-grow cursor-pointer font-semibold text-mist-950 transition-colors duration-200 hover:text-mist-800 dark:text-white dark:hover:text-[oklch(95%_0.015_210)]"
             href="mailto:solutions@bulma.com.au"
           >
             solutions@bulma.com.au
