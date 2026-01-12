@@ -23,18 +23,33 @@ export function FooterLink({ href, className, ...props }: { href: string } & Omi
   )
 }
 
+/**
+ * Social media link with optional micro-animated icon effect.
+ *
+ * Icons within this link will animate on hover using the specified animation type.
+ * Available animations: 'wiggle', 'pulse', 'bounce', 'float', 'spin', 'sparkle'
+ *
+ * To disable animation: Set iconAnimation to undefined or remove the prop.
+ */
 export function SocialLink({
   href,
   name,
   className,
+  iconAnimation = 'pulse',
+  children,
   ...props
 }: {
   href: string
   name: string
+  /** Icon hover animation type. Set to undefined to disable. */
+  iconAnimation?: 'wiggle' | 'pulse' | 'bounce' | 'float' | 'spin' | 'sparkle'
 } & Omit<ComponentProps<'a'>, 'href'>) {
   const rel = props.rel
     ? Array.from(new Set([...props.rel.split(' '), 'noopener', 'noreferrer'])).join(' ')
     : 'noopener noreferrer'
+
+  // Map animation type to CSS class
+  const animationClass = iconAnimation ? `icon-${iconAnimation}` : ''
 
   return (
     <Link
@@ -42,9 +57,17 @@ export function SocialLink({
       target="_blank"
       rel={rel}
       aria-label={name}
-      className={clsx('cursor-pointer text-mist-950 *:size-6 dark:text-white', className)}
+      className={clsx(
+        'group cursor-pointer text-mist-950 dark:text-white',
+        className
+      )}
       {...props}
-    />
+    >
+      {/* Wrap children in animated container */}
+      <span className={clsx('inline-flex size-6', animationClass)}>
+        {children}
+      </span>
+    </Link>
   )
 }
 

@@ -1003,7 +1003,8 @@ Ghost shadow card that appears behind cards during entrance animation, creating 
 | Dark mode | mist-200 at 6% opacity |
 
 **Currently applied to:**
-- `PricingMultiTier` plan cards
+- `PricingMultiTier` plan cards (home page)
+- `PricingHeroMultiTier` plan cards (pricing page)
 - `TestimonialsGlassmorphism` testimonial cards
 
 **Integration:**
@@ -1020,7 +1021,194 @@ Ghost shadow card that appears behind cards during entrance animation, creating 
 
 ---
 
-## 28. Points of Error
+## 29. Page Route Transitions
+
+`page-transition.tsx::PageTransition` and `main.tsx::Main` provide smooth entrance animations for page content, creating a polished transition feel when navigating between routes.
+
+**Files:**
+- `demo/src/components/elements/page-transition.tsx` — Standalone wrapper component
+- `demo/src/components/elements/main.tsx` — Main wrapper with built-in transition
+- `demo/src/app/globals.css` — CSS keyframes
+
+**Animation behavior:**
+- Content fades in from 0 to full opacity
+- Subtle slide up from 16px offset
+- 500ms duration with smooth ease-out timing
+- Triggers automatically on page mount
+
+**CSS Keyframe (`page-enter`):**
+```css
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+```
+
+**Configuration:**
+
+| Setting | Value | Effect |
+|---------|-------|--------|
+| Duration | 500ms | Animation length |
+| Easing | cubic-bezier(0.22, 1, 0.36, 1) | Smooth ease-out |
+| Slide distance | 16px | Vertical translation |
+
+**Integration via Main component (automatic):**
+
+The `Main` component in `layout.tsx` automatically applies page transitions to all page content.
+
+```tsx
+// In layout.tsx - transitions enabled by default
+<Main>{children}</Main>
+
+// To disable for a specific layout
+<Main enableTransition={false}>{children}</Main>
+```
+
+**Integration via PageTransition wrapper (manual):**
+
+```tsx
+import { PageTransition } from '@/components/elements/page-transition'
+
+export default function Page() {
+  return (
+    <PageTransition>
+      <HeroSection />
+      <ContentSection />
+    </PageTransition>
+  )
+}
+```
+
+**To disable:**
+- Set `enableTransition={false}` on the `Main` component, or
+- Remove the `page-transition-enter` class from the wrapper element
+
+---
+
+## 30. Micro-Animated Icons
+
+CSS classes and wrapper components that add subtle hover animations to SVG icons, making the interface feel more responsive and alive.
+
+**Files:**
+- `demo/src/components/elements/animated-icon.tsx` — Reusable wrapper component
+- `demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx` — SocialLink with built-in animation
+- `demo/src/app/globals.css` — CSS keyframes and animation classes
+
+**Available animation types:**
+
+| Type | Effect | Best For | Duration |
+|------|--------|----------|----------|
+| `wiggle` | Rotation back and forth (±8°) | Notification, settings, warning icons | 400ms |
+| `pulse` | Gentle scale pulse (1× → 1.15×) | Heart, star, favorite icons | 500ms |
+| `bounce` | Vertical bounce with squash | Arrow, navigation, action icons | 500ms |
+| `float` | Gentle up-down drift (-3px) | Cloud, mail, document icons | 600ms (infinite) |
+| `spin` | Single full rotation | Settings, refresh, loading icons | 500ms |
+| `sparkle` | Scale + brightness pulse | Sparkles, star, magic icons | 600ms |
+
+**Animation behavior:**
+- Animations trigger on direct element hover
+- Also trigger when parent with `.group` class is hovered
+- Uses CSS animations for consistent performance
+- Non-infinite animations play once per hover
+
+**CSS classes:**
+
+```css
+/* Base class for animated icons */
+.icon-animated { ... }
+
+/* Animation variants */
+.icon-wiggle:hover,
+.group:hover .icon-wiggle { animation: icon-wiggle 0.4s ease-in-out; }
+
+.icon-pulse:hover,
+.group:hover .icon-pulse { animation: icon-pulse 0.5s ease-out; }
+
+.icon-bounce:hover,
+.group:hover .icon-bounce { animation: icon-bounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+.icon-float:hover,
+.group:hover .icon-float { animation: icon-float 0.6s ease-in-out infinite; }
+
+.icon-spin:hover,
+.group:hover .icon-spin { animation: icon-spin 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+
+.icon-sparkle:hover,
+.group:hover .icon-sparkle { animation: icon-sparkle 0.6s ease-in-out; }
+```
+
+**Integration via AnimatedIcon wrapper:**
+
+```tsx
+import { AnimatedIcon } from '@/components/elements/animated-icon'
+import { HeartIcon } from '@/components/icons/heart-icon'
+
+// Direct hover animation
+<AnimatedIcon animation="pulse">
+  <HeartIcon className="size-5" />
+</AnimatedIcon>
+
+// Parent group hover animation
+<button className="group">
+  <AnimatedIcon animation="bounce">
+    <ArrowRightIcon className="size-4" />
+  </AnimatedIcon>
+  Continue
+</button>
+```
+
+**Integration via SocialLink (footer icons):**
+
+```tsx
+import { SocialLink } from '@/components/sections/footer-with-newsletter-form-categories-and-social-icons'
+import { XIcon } from '@/components/icons/social/x-icon'
+
+// Default pulse animation
+<SocialLink href="https://x.com/bulma" name="X">
+  <XIcon />
+</SocialLink>
+
+// Custom animation type
+<SocialLink href="..." name="..." iconAnimation="wiggle">
+  <BellIcon />
+</SocialLink>
+
+// Disable animation
+<SocialLink href="..." name="..." iconAnimation={undefined}>
+  <LinkIcon />
+</SocialLink>
+```
+
+**Integration via direct CSS classes:**
+
+```tsx
+// Apply class directly to icon or wrapper
+<span className="icon-pulse">
+  <HeartIcon className="size-5" />
+</span>
+
+// With group hover
+<button className="group">
+  <CogIcon className="icon-spin size-4" />
+  Settings
+</button>
+```
+
+**To disable:**
+- Remove the `AnimatedIcon` wrapper, or
+- Set `animation={undefined}` on AnimatedIcon, or
+- Remove the `icon-*` class from the element, or
+- Remove the `group` class from the parent element
+
+---
+
+## 31. Points of Error
 
 - **Missing `h-full`**: Grid children wrapped for animation lose equal-height alignment without `h-full` on both wrapper and inner component (see `pricing-multi-tier.tsx::Plan`)
 - **Server-side rendering**: Hook initializes `isVisible` to `false`, so elements start hidden. This is intentional—elements animate in on scroll
@@ -1045,3 +1233,408 @@ Ghost shadow card that appears behind cards during entrance animation, creating 
 - **Section horizon line visibility**: Lines use `scaleX(0)` to hide initially. If parent has `overflow: hidden`, ensure the horizon wrapper itself doesn't clip the lines.
 - **Avatar presence ring z-index**: Ring uses `::before` pseudo-element with `inset: -4px`. If avatar has sibling elements, ring may appear behind them. Add `z-index` if needed.
 - **Card depth stack border-radius**: Ghost card inherits `border-radius` from parent. Ensure wrapper div has matching `rounded-*` class to avoid visible corners on the ghost.
+- **Page transition double animation**: If using both `Main` with `enableTransition={true}` (default) and a manual `PageTransition` wrapper, the animation will apply twice. Use only one method.
+- **Page transition with hero animations**: Page transition (500ms) runs concurrently with hero entrance animations (600ms with delays). This is intentional—the page fades in while hero elements stagger. If timing feels off, adjust `hero-delay-*` values.
+- **Icon animation replay**: Icon animations play once per hover and reset when cursor leaves. Rapid hover in/out may cause animation to restart mid-play. This is expected CSS behavior.
+- **Icon animation on touch**: Touch devices don't trigger hover states, so icon animations won't play on tap. Consider adding `:active` variants if touch feedback is desired.
+- **SocialLink children sizing**: The `SocialLink` component wraps children in a `size-6` span. Ensure child icons don't have conflicting size classes that override this.
+
+---
+
+## 32. Prismatic Grid Entrances (Rec A)
+
+Cards enter from different directions based on grid position with subtle color temperature shift, creating an organic "dealing from deck" sensation.
+
+**Files:**
+- `demo/src/app/globals.css` — Keyframes and prismatic-enter classes
+- `demo/src/components/sections/testimonials-glassmorphism.tsx` — Applied to testimonial cards
+
+**Animation behavior:**
+- Corner cards enter diagonally (top-left, top-right, bottom-left, bottom-right)
+- Edge cards enter horizontally or vertically
+- Center cards scale in from center
+- Subtle hue shift (±8°) during entrance that settles to neutral
+- 700ms duration with smooth ease-out timing
+
+**Position-based directions (3-column grid):**
+
+| Position | Direction | Hue Shift |
+|----------|-----------|-----------|
+| 0 (top-left) | Diagonal from top-left | -8° |
+| 1 (top-center) | Slide up | 0° |
+| 2 (top-right) | Diagonal from top-right | +8° |
+| 3 (middle-left) | Slide from left | -5° |
+| 4 (center) | Scale up | 0° |
+| 5 (middle-right) | Slide from right | +5° |
+| 6 (bottom-left) | Diagonal from bottom-left | -8° |
+| 7 (bottom-center) | Slide up | 0° |
+| 8 (bottom-right) | Diagonal from bottom-right | +8° |
+
+**Integration:**
+```tsx
+<div
+  data-visible={isVisible}
+  data-position={index}
+  className="prismatic-enter"
+  style={{ animationDelay: `${delay}ms` }}
+>
+  {child}
+</div>
+```
+
+**To disable:** Remove `prismatic-enter` class and `data-position` attribute; use standard transition classes instead.
+
+---
+
+## 33. Pricing Card Focus Isolation (Rec B)
+
+Cinema-style focus pull where hovering one pricing card dims others, creating decisive attention direction.
+
+**Files:**
+- `demo/src/app/globals.css` — Focus group and focus card classes
+- `demo/src/components/sections/pricing-multi-tier.tsx` — Applied to home page pricing grid
+- `demo/src/components/sections/pricing-hero-multi-tier.tsx` — Applied to pricing page grid
+
+**Animation behavior:**
+- Parent container uses `pricing-focus-group` class
+- Each card uses `pricing-focus-card` class
+- When any card is hovered, siblings are dimmed (70% opacity, 70% saturation)
+- Hovered card gains subtle glow halo effect
+- 400ms transition for smooth focus shift
+
+**Visual states:**
+
+| State | Opacity | Saturation | Brightness | Shadow |
+|-------|---------|------------|------------|--------|
+| Default | 1 | 1 | 1 | None |
+| Sibling hovered | 0.7 | 0.7 | 0.95 | None |
+| Self hovered | 1 | 1 | 1 | Glow halo |
+
+**Integration:**
+```tsx
+<div className="pricing-focus-group grid ...">
+  <div className="pricing-focus-card">
+    <Plan ... />
+  </div>
+</div>
+```
+
+**To disable:** Remove `pricing-focus-group` from parent and `pricing-focus-card` from children.
+
+---
+
+## 34. Magnetic Ripple on CTA Entry (Rec C)
+
+Radial ripple emanating from CTA buttons when cursor enters the magnetic field, providing anticipation feedback.
+
+**Files:**
+- `demo/src/app/globals.css` — Ripple keyframes and classes
+- `demo/src/components/elements/magnetic-wrapper.tsx` — Ripple integration
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `enableRipple` | `boolean` | `true` | Enable/disable ripple effect |
+
+**Animation behavior:**
+- Ripple triggers when cursor enters magnetic field (before touching button)
+- Single pulse at 40% opacity radiating outward
+- 500ms duration, fires once per entry
+- Resets when cursor leaves element
+
+**CSS Keyframe (`magnetic-ripple`):**
+```css
+@keyframes magnetic-ripple {
+  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0.4; }
+  100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+}
+```
+
+**Integration:**
+```tsx
+<MagneticWrapper enableRipple={true}>
+  <Button>Click me</Button>
+</MagneticWrapper>
+
+// To disable ripple only
+<MagneticWrapper enableRipple={false}>
+  <Button>No ripple</Button>
+</MagneticWrapper>
+```
+
+**To disable:** Set `enableRipple={false}` prop on MagneticWrapper.
+
+---
+
+## 35. Progressive Screenshot Reveal (Rec D)
+
+Gradient wipe that "materializes" screenshots from left to right with glowing leading edge.
+
+**Files:**
+- `demo/src/app/globals.css` — Reveal keyframes and classes
+- `demo/src/components/elements/screenshot.tsx` — Reveal integration
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `enableReveal` | `boolean` | `false` | Enable progressive reveal animation |
+
+**Animation behavior:**
+- Screenshot starts hidden via clip-path
+- Reveals from left to right using animated clip-path
+- Glowing leading edge travels with reveal
+- 800ms duration, triggers on scroll visibility
+- Tilt effect activates after reveal completes
+
+**CSS Keyframe (`screenshot-reveal`):**
+```css
+@keyframes screenshot-reveal {
+  0% { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); }
+  100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+}
+```
+
+**Integration:**
+```tsx
+<Screenshot
+  wallpaper="blue"
+  placement="bottom"
+  enableReveal={true}
+>
+  <Image src="/screenshot.webp" ... />
+</Screenshot>
+```
+
+**To disable:** Omit `enableReveal` prop or set to `false`.
+
+---
+
+## 36. Animated Section Dividers (Rec E)
+
+Horizontal lines that draw from center outward with traveling light pulse, creating visual rhythm between sections.
+
+**Files:**
+- `demo/src/app/globals.css` — Divider keyframes and classes
+- `demo/src/components/elements/section-divider.tsx` — Divider component
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `enablePulse` | `boolean` | `true` | Enable light pulse after line draws |
+| `className` | `string` | — | Additional styling classes |
+
+**Animation behavior:**
+- Lines draw from center outward (left and right simultaneously)
+- 600ms draw duration with slight stagger
+- Optional light pulse travels along line after drawing
+- Pulse travels both directions from center
+
+**Integration:**
+```tsx
+import { SectionDivider } from '@/components/elements/section-divider'
+
+// Between sections
+<HeroSection />
+<SectionDivider />
+<FeaturesSection />
+
+// Without pulse
+<SectionDivider enablePulse={false} />
+```
+
+**To disable:** Remove the `SectionDivider` component from the page composition.
+
+---
+
+## 37. Navbar Scroll Glow (Rec 6)
+
+Animated gradient glow line along navbar bottom edge when scrolled, adding life to glassmorphism state.
+
+**Files:**
+- `demo/src/app/globals.css` — Glow keyframes and classes
+- `demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx` — Glow integration
+
+**Animation behavior:**
+- Glow line appears when navbar is scrolled (glassmorphism state)
+- 2px height with animated gradient that shifts colors over 6s cycle
+- 25% opacity for subtle ambient effect
+- Fades in/out with 300ms transition
+
+**CSS Keyframe (`navbar-glow-shift`):**
+```css
+@keyframes navbar-glow-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+```
+
+**Integration:** Automatic when `navbar-scrolled` class is applied (via scroll detection).
+
+**To disable:** Remove the `.navbar-glow` div element from the navbar component.
+
+---
+
+## 38. Testimonial Quote Mark Float (Rec 7)
+
+Slow floating animation for decorative quote marks, adding organic breathing life to testimonial cards.
+
+**Files:**
+- `demo/src/app/globals.css` — Float keyframe
+- `demo/src/components/sections/testimonials-glassmorphism.tsx` — Applied to quote marks
+
+**Animation behavior:**
+- Quote mark floats up 4px and down over 8s cycle
+- Pauses when card is hovered (for focus)
+- Increases opacity slightly on hover
+- Uses sinusoidal easing for natural movement
+
+**CSS Keyframe (`quote-float`):**
+```css
+@keyframes quote-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+```
+
+**Integration:**
+```tsx
+<div className="quote-float">
+  "
+</div>
+```
+
+**To disable:** Remove `quote-float` class from the quote mark element.
+
+---
+
+## 39. Stats Graph Data Pulse (Rec 8)
+
+Traveling dots along graph line suggesting live data activity.
+
+**Files:**
+- `demo/src/app/globals.css` — Pulse keyframes and classes
+- `demo/src/components/sections/stats-animated-graph.tsx` — Pulse integration
+
+**Animation behavior:**
+- Small glowing dots travel along graph path
+- Uses CSS `offset-path` for path-following animation
+- 4s full path traversal, infinite loop
+- Two pulses staggered 2s apart
+- Starts after graph draw animation completes
+
+**CSS Keyframe (`data-pulse-travel`):**
+```css
+@keyframes data-pulse-travel {
+  0% { offset-distance: 0%; opacity: 0; }
+  5% { opacity: 1; }
+  95% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+```
+
+**Integration:** Automatic in StatsAnimatedGraph component when `isVisible` is true.
+
+**To disable:** Remove the data pulse div elements from the stats component.
+
+---
+
+## 40. FAQ Accordion Glow Trail (Rec 9)
+
+Glow effect that follows the expanding content edge when FAQ items open.
+
+**Files:**
+- `demo/src/app/globals.css` — Glow trail keyframes and classes
+- `demo/src/components/sections/faqs-two-column-accordion.tsx` — Glow integration
+
+**Animation behavior:**
+- 2px glow line appears at bottom of expanding content
+- Animates from full opacity to fade-out over 600ms
+- Uses gradient with center emphasis
+- Triggers when FAQ item opens
+
+**CSS Keyframe (`faq-glow-trail`):**
+```css
+@keyframes faq-glow-trail {
+  0% { opacity: 0.8; height: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; height: 100%; }
+}
+```
+
+**Integration:**
+```tsx
+<div data-open={isOpen} className="faq-glow-trail">
+  <ElDisclosure>{content}</ElDisclosure>
+</div>
+```
+
+**To disable:** Remove `faq-glow-trail` class from the wrapper element.
+
+---
+
+## 41. Scroll-Velocity Responsive Elements (Rec 10)
+
+Global scroll velocity tracking that influences animation timing and visual intensity.
+
+**Files:**
+- `demo/src/hooks/use-scroll-velocity.ts` — Velocity tracking hook
+- `demo/src/app/globals.css` — CSS custom properties and velocity-responsive classes
+
+**Hook return values:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `velocity` | `number` | Current scroll velocity in px/s |
+| `intensity` | `'stopped' \| 'slow' \| 'normal' \| 'fast'` | Scroll intensity level |
+| `intensityMultiplier` | `number` | 1 = normal, >1 = fast, <1 = slow |
+
+**CSS custom properties (set on :root):**
+- `--scroll-velocity`: Current velocity in px/s
+- `--scroll-intensity`: Multiplier (0.7–1.5)
+
+**Velocity thresholds:**
+
+| Level | Velocity Range | Multiplier |
+|-------|----------------|------------|
+| Stopped | < 10 px/s | 0.7 |
+| Slow | 10–200 px/s | 0.7–1.0 |
+| Normal | 200–800 px/s | 1.0 |
+| Fast | > 800 px/s | 1.0–1.5 |
+
+**Integration:**
+```tsx
+import { useScrollVelocity } from '@/hooks/use-scroll-velocity'
+
+function Page() {
+  // Hook sets CSS custom properties automatically
+  useScrollVelocity()
+
+  return (
+    <div className="velocity-responsive">
+      {/* Animation duration scales with scroll velocity */}
+    </div>
+  )
+}
+```
+
+**CSS usage:**
+```css
+.velocity-responsive {
+  transition-duration: calc(0.6s / var(--scroll-intensity, 1));
+}
+```
+
+**To disable:** Don't call the `useScrollVelocity` hook, or don't apply velocity-responsive classes.
+
+---
+
+## 42. Premium Effects Points of Error
+
+- **Prismatic entrance filter conflict**: The hue-rotate filter may conflict with other filters on the element. If using multiple filters, combine them carefully.
+- **Focus isolation on touch**: The focus isolation effect relies on hover states; touch devices won't see the dimming effect.
+- **Magnetic ripple z-index**: The ripple element uses `pointer-events: none` but may appear above other absolutely positioned elements. Adjust z-index if needed.
+- **Screenshot reveal clip-path**: Clip-path animations may not work in older browsers. Falls back to instant reveal.
+- **Section divider pulse visibility**: The light pulse is 30px wide and very brief. On very narrow viewports, it may be barely visible.
+- **Navbar glow GPU impact**: The animated gradient glow uses continuous animation. On low-end devices, may impact scrolling performance.
+- **Quote float pausing**: Animation pauses via `animation-play-state`, which may cause a slight visual jump on hover.
+- **Data pulse offset-path support**: The `offset-path` property has limited browser support. Falls back to no animation in unsupported browsers.
+- **FAQ glow trail timing**: The glow effect is brief (600ms). If content takes longer to expand, the glow may complete before content is fully visible.
+- **Scroll velocity sampling**: Velocity is sampled at ~50ms intervals with exponential smoothing. Rapid direction changes may not register accurately.

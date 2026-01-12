@@ -311,13 +311,17 @@ export function PricingHeroMultiTier<T extends string>({
   }, [])
 
   // Wrap plan cards with staggered animation and context provider
+  // Includes depth stack effect for "pulled from deck" card entrance
+  // Includes focus isolation effect - hovering one card dims others
   const animatedPlans = Children.map(plans, (child, index) => {
     const delay = 300 + index * staggerDelay
 
     return (
       <div
+        data-animating={isVisible}
         className={clsx(
-          'h-full transition-all duration-600 ease-out',
+          // Base styles for animation and layout
+          'card-depth-stack pricing-focus-card h-full rounded-xl transition-all duration-600 ease-out',
           isVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-6 scale-95 opacity-0',
         )}
         style={{ transitionDelay: `${delay}ms` }}
@@ -351,7 +355,8 @@ export function PricingHeroMultiTier<T extends string>({
           </div>
 
           {/* Plan cards - persistent across option changes for smooth price morphing */}
-          <div className="grid grid-cols-1 items-stretch gap-2 sm:has-[>:nth-child(5)]:grid-cols-2 sm:max-lg:has-[>:last-child:nth-child(even)]:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none lg:has-[>:nth-child(5)]:grid-flow-row lg:has-[>:nth-child(5)]:grid-cols-3">
+          {/* pricing-focus-group enables focus isolation - hovering one card dims siblings */}
+          <div className="pricing-focus-group grid grid-cols-1 items-stretch gap-2 sm:has-[>:nth-child(5)]:grid-cols-2 sm:max-lg:has-[>:last-child:nth-child(even)]:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none lg:has-[>:nth-child(5)]:grid-flow-row lg:has-[>:nth-child(5)]:grid-cols-3">
             {animatedPlans}
           </div>
 

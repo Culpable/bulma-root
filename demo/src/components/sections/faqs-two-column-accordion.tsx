@@ -2,7 +2,7 @@
 
 import { ElDisclosure } from '@tailwindplus/elements/react'
 import { clsx } from 'clsx/lite'
-import { Children, type ComponentProps, type ReactNode, useId } from 'react'
+import { Children, useCallback, useState, type ComponentProps, type ReactNode, useId } from 'react'
 import { Container } from '../elements/container'
 import { Subheading } from '../elements/subheading'
 import { Text } from '../elements/text'
@@ -18,6 +18,13 @@ export function Faq({
 }: { question: ReactNode; answer: ReactNode } & ComponentProps<'div'>) {
   const autoId = useId()
   id = id || autoId
+  // Track open state for glow trail effect (Rec 9)
+  const [isOpen, setIsOpen] = useState(false)
+
+  // Handle toggle to track open state
+  const handleToggle = useCallback(() => {
+    setIsOpen((prev) => !prev)
+  }, [])
 
   /**
    * Render FAQ strings as HTML so authors can include simple markup (e.g. <em>, <strong>, <a>).
@@ -40,6 +47,7 @@ export function Faq({
         id={`${id}-question`}
         command="--toggle"
         commandfor={`${id}-answer`}
+        onClick={handleToggle}
         className="group flex w-full cursor-pointer items-start justify-between gap-6 py-4 text-left text-base/7 text-mist-950 dark:text-white"
       >
         {question}
@@ -71,17 +79,23 @@ export function Faq({
           />
         </span>
       </button>
-      <ElDisclosure
-        id={`${id}-answer`}
-        hidden
-        className={clsx(
-          '-mt-2 flex flex-col gap-2 pr-12 pb-4 text-sm/7 text-mist-700 dark:text-mist-400',
-          // Spring animation for content reveal
-          'faq-spring-content',
-        )}
+      {/* Glow trail wrapper (Rec 9) - tracks expansion edge */}
+      <div
+        data-open={isOpen}
+        className="faq-glow-trail"
       >
-        {renderedAnswer}
-      </ElDisclosure>
+        <ElDisclosure
+          id={`${id}-answer`}
+          hidden
+          className={clsx(
+            '-mt-2 flex flex-col gap-2 pr-12 pb-4 text-sm/7 text-mist-700 dark:text-mist-400',
+            // Spring animation for content reveal
+            'faq-spring-content',
+          )}
+        >
+          {renderedAnswer}
+        </ElDisclosure>
+      </div>
     </div>
   )
 }

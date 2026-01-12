@@ -1,7 +1,7 @@
 'use client'
 
 import { clsx } from 'clsx/lite'
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 /**
  * Configuration for the animated gradient border effect.
@@ -60,6 +60,26 @@ export function GradientBorderWrapper({
 }: GradientBorderWrapperProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const shimmerRef = useRef<HTMLDivElement>(null)
+  // Track visibility to pause animation when scrolled off-screen (performance optimisation)
+  const [isVisible, setIsVisible] = useState(true)
+
+  // Set up IntersectionObserver to track when the wrapper enters/exits the viewport.
+  // When off-screen, we pause the CSS animation and shimmer to reduce GPU overhead.
+  useEffect(() => {
+    const wrapper = wrapperRef.current
+    if (!wrapper) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting)
+      },
+      { threshold: 0.1 }
+    )
+
+    observer.observe(wrapper)
+
+    return () => observer.disconnect()
+  }, [])
 
   if (disabled) {
     return <>{children}</>
@@ -106,9 +126,9 @@ export function GradientBorderWrapper({
     return () => observer.disconnect()
   }, [])
 
-  // Shimmer animation - triggers periodically
+  // Shimmer animation - triggers periodically, but only when visible
   useEffect(() => {
-    if (!shimmer || !shimmerRef.current) return
+    if (!shimmer || !shimmerRef.current || !isVisible) return
 
     const triggerShimmer = () => {
       if (!shimmerRef.current) return
@@ -129,7 +149,7 @@ export function GradientBorderWrapper({
       clearTimeout(initialTimeout)
       clearInterval(intervalId)
     }
-  }, [shimmer, shimmerInterval])
+  }, [shimmer, shimmerInterval, isVisible])
 
   return (
     <div
@@ -144,6 +164,8 @@ export function GradientBorderWrapper({
         padding: `${GRADIENT_CONFIG.borderWidth}px`,
         borderRadius: '9999px',
         animation: `gradient-border-rotate var(--gradient-rotation-duration) linear infinite`,
+        // Pause animation when off-screen to save GPU/compositor resources
+        animationPlayState: isVisible ? 'running' : 'paused',
       } as React.CSSProperties}
       onMouseEnter={(e) => {
         ;(e.currentTarget as HTMLDivElement).style.animationDuration = `${rotationDuration * 0.5}ms`

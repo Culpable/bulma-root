@@ -1,7 +1,7 @@
 'use client'
 
 import { clsx } from 'clsx/lite'
-import { Children, type ComponentProps, type ReactNode } from 'react'
+import { Children, type ComponentProps, type ReactNode, useEffect, useRef, useState } from 'react'
 
 /**
  * Configuration for the logo marquee animation.
@@ -77,6 +77,28 @@ export function LogoMarquee({
   /** Whether to pause animation on hover */
   pauseOnHover?: boolean
 } & ComponentProps<'div'>) {
+  // Track visibility to pause animation when scrolled off-screen (performance optimisation)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(true)
+
+  // Set up IntersectionObserver to track when the marquee enters/exits the viewport.
+  // When off-screen, we pause the CSS animation to reduce GPU/compositor overhead.
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting)
+      },
+      { threshold: 0.1 }
+    )
+
+    observer.observe(container)
+
+    return () => observer.disconnect()
+  }, [])
+
   // Calculate animation duration based on speed multiplier
   const duration = MARQUEE_CONFIG.baseDuration / speed
 
@@ -88,6 +110,7 @@ export function LogoMarquee({
 
   return (
     <div
+      ref={containerRef}
       className={clsx(
         'logo-marquee-container relative w-full overflow-hidden',
         // Fade edges for smoother visual blend
@@ -105,6 +128,8 @@ export function LogoMarquee({
         )}
         style={{
           '--marquee-duration': `${duration}s`,
+          // Pause animation when off-screen to save compositor resources
+          animationPlayState: isVisible ? 'running' : 'paused',
         } as React.CSSProperties}
       >
         {duplicatedChildren}

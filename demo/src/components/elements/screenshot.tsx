@@ -1,7 +1,7 @@
 'use client'
 
 import { clsx } from 'clsx/lite'
-import { useCallback, useRef, useState, type ComponentProps, type MouseEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type ComponentProps, type MouseEvent } from 'react'
 import { Wallpaper } from './wallpaper'
 
 /**
@@ -26,6 +26,7 @@ export function Screenshot({
   className,
   enableTilt = true,
   enableReflection = false,
+  enableReveal = false,
   ...props
 }: {
   wallpaper: 'green' | 'blue' | 'purple' | 'brown'
@@ -34,10 +35,33 @@ export function Screenshot({
   enableTilt?: boolean
   /** Enable polished surface reflection effect below screenshot */
   enableReflection?: boolean
+  /** Enable progressive reveal animation on scroll (Rec D) */
+  enableReveal?: boolean
 } & Omit<ComponentProps<'div'>, 'color'>) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const revealRef = useRef<HTMLDivElement>(null)
   const [tiltStyle, setTiltStyle] = useState<React.CSSProperties>({})
   const [isHovering, setIsHovering] = useState(false)
+  const [isRevealed, setIsRevealed] = useState(!enableReveal) // Start revealed if effect is disabled
+
+  // IntersectionObserver for scroll-triggered reveal (Rec D)
+  useEffect(() => {
+    if (!enableReveal || !revealRef.current) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsRevealed(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.2 }
+    )
+
+    observer.observe(revealRef.current)
+
+    return () => observer.disconnect()
+  }, [enableReveal])
 
   /**
    * Calculate 3D tilt transformation based on mouse position.
@@ -100,46 +124,53 @@ export function Screenshot({
       className={clsx('group', enableReflection && 'screenshot-reflection', className)}
       {...props}
     >
+      {/* Progressive reveal wrapper (Rec D) */}
       <div
-        ref={containerRef}
-        onMouseMove={enableTilt ? handleMouseMove : undefined}
-        onMouseEnter={enableTilt ? handleMouseEnter : undefined}
-        onMouseLeave={enableTilt ? handleMouseLeave : undefined}
-        style={enableTilt ? tiltStyle : undefined}
-        className={clsx(
-          'relative [--padding:min(10%,--spacing(16))]',
-          // Placement-based padding
-          'group-data-[placement=bottom]:px-(--padding) group-data-[placement=bottom]:pt-(--padding)',
-          'group-data-[placement=bottom-left]:pt-(--padding) group-data-[placement=bottom-left]:pr-(--padding)',
-          'group-data-[placement=bottom-right]:pt-(--padding) group-data-[placement=bottom-right]:pl-(--padding)',
-          'group-data-[placement=top]:px-(--padding) group-data-[placement=top]:pb-(--padding)',
-          'group-data-[placement=top-left]:pr-(--padding) group-data-[placement=top-left]:pb-(--padding)',
-          'group-data-[placement=top-right]:pb-(--padding) group-data-[placement=top-right]:pl-(--padding)',
-          // Tilt effect base styles
-          enableTilt && 'transform-gpu will-change-transform'
-        )}
+        ref={revealRef}
+        data-visible={isRevealed}
+        className={clsx(enableReveal && 'screenshot-reveal')}
       >
-        {/* Glow overlay that follows cursor */}
-        {enableTilt && (
-          <div
-            className={clsx(
-              'pointer-events-none absolute inset-0 z-10 rounded-[inherit] opacity-0 transition-opacity duration-300',
-              isHovering && 'opacity-100'
-            )}
-            style={{
-              background: `radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.12) 0%, transparent 50%)`,
-            }}
-          />
-        )}
         <div
+          ref={containerRef}
+          onMouseMove={enableTilt ? handleMouseMove : undefined}
+          onMouseEnter={enableTilt ? handleMouseEnter : undefined}
+          onMouseLeave={enableTilt ? handleMouseLeave : undefined}
+          style={enableTilt ? tiltStyle : undefined}
           className={clsx(
-            '*:relative *:ring-1 *:ring-black/10',
-            'group-data-[placement=bottom]:*:rounded-t-sm group-data-[placement=bottom-left]:*:rounded-tr-sm',
-            'group-data-[placement=bottom-right]:*:rounded-tl-sm group-data-[placement=top]:*:rounded-b-sm',
-            'group-data-[placement=top-left]:*:rounded-br-sm group-data-[placement=top-right]:*:rounded-bl-sm'
+            'relative [--padding:min(10%,--spacing(16))]',
+            // Placement-based padding
+            'group-data-[placement=bottom]:px-(--padding) group-data-[placement=bottom]:pt-(--padding)',
+            'group-data-[placement=bottom-left]:pt-(--padding) group-data-[placement=bottom-left]:pr-(--padding)',
+            'group-data-[placement=bottom-right]:pt-(--padding) group-data-[placement=bottom-right]:pl-(--padding)',
+            'group-data-[placement=top]:px-(--padding) group-data-[placement=top]:pb-(--padding)',
+            'group-data-[placement=top-left]:pr-(--padding) group-data-[placement=top-left]:pb-(--padding)',
+            'group-data-[placement=top-right]:pb-(--padding) group-data-[placement=top-right]:pl-(--padding)',
+            // Tilt effect base styles
+            enableTilt && 'transform-gpu will-change-transform'
           )}
         >
-          {children}
+          {/* Glow overlay that follows cursor */}
+          {enableTilt && (
+            <div
+              className={clsx(
+                'pointer-events-none absolute inset-0 z-10 rounded-[inherit] opacity-0 transition-opacity duration-300',
+                isHovering && 'opacity-100'
+              )}
+              style={{
+                background: `radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.12) 0%, transparent 50%)`,
+              }}
+            />
+          )}
+          <div
+            className={clsx(
+              '*:relative *:ring-1 *:ring-black/10',
+              'group-data-[placement=bottom]:*:rounded-t-sm group-data-[placement=bottom-left]:*:rounded-tr-sm',
+              'group-data-[placement=bottom-right]:*:rounded-tl-sm group-data-[placement=top]:*:rounded-b-sm',
+              'group-data-[placement=top-left]:*:rounded-br-sm group-data-[placement=top-right]:*:rounded-bl-sm'
+            )}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </Wallpaper>

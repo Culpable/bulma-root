@@ -3,7 +3,6 @@
 import { clsx } from 'clsx/lite'
 import { Children, useEffect, useId, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { AnimatedCounter } from '../elements/animated-counter'
-import { DotMatrix } from '../elements/dot-matrix'
 import { Section } from '../elements/section'
 
 interface StatAnimatedProps extends ComponentProps<'div'> {
@@ -136,15 +135,6 @@ export function StatsAnimatedGraph({
 
   return (
     <Section {...props} className={clsx('relative isolate', props.className)}>
-      {/* Dot matrix background with cursor proximity effect */}
-      <DotMatrix
-        className="-z-10"
-        spacing={28}
-        baseOpacity={0.025}
-        maxOpacity={0.12}
-        effectRadius={180}
-      />
-
       <div ref={containerRef} className="relative grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
         <div className="col-span-2 grid grid-cols-2 gap-x-2 gap-y-10 sm:auto-cols-fr sm:grid-flow-col-dense">
           {animatedStats}
@@ -269,22 +259,45 @@ export function StatsAnimatedGraph({
               }}
             />
 
-            {/* Pulsing ring around the end dot */}
-            <circle
-              cx="1200"
-              cy="60"
-              r="8"
-              fill="none"
-              className={clsx(
-                'stroke-mist-500/50 dark:stroke-mist-400/50',
-                isVisible ? 'animate-[ping_2s_ease-out_infinite]' : 'opacity-0'
-              )}
-              strokeWidth="2"
-              style={{
-                animationDelay: `${graphDelay + 1600}ms`,
-              }}
-            />
           </svg>
+
+          {/* Data pulse dots that travel along graph path (Rec 8) */}
+          {isVisible && (
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                // Match the SVG positioning
+                bottom: 0,
+                left: '50%',
+                width: '150vw',
+                maxWidth: 'calc(var(--container-7xl) - var(--spacing-10) * 2)',
+                transform: 'translateX(-50%)',
+              }}
+            >
+              {/* First pulse - starts after graph draws */}
+              <div
+                className={clsx(
+                  'data-pulse',
+                  isVisible && 'active'
+                )}
+                style={{
+                  offsetPath: `path('${GRAPH_PATH}')`,
+                  animationDelay: `${graphDelay + 2000}ms`,
+                }}
+              />
+              {/* Second pulse - staggered start */}
+              <div
+                className={clsx(
+                  'data-pulse',
+                  isVisible && 'active'
+                )}
+                style={{
+                  offsetPath: `path('${GRAPH_PATH}')`,
+                  animationDelay: `${graphDelay + 4000}ms`,
+                }}
+              />
+            </div>
+          )}
         </div>
       </div>
     </Section>

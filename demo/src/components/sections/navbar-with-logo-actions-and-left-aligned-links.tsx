@@ -124,10 +124,14 @@ export function NavbarWithLogoActionsAndLeftAlignedLinks({
         scrolled && 'bg-mist-100/80 backdrop-blur-xl backdrop-saturate-150 dark:bg-mist-950/80',
         // Subtle shadow when scrolled for depth
         scrolled && 'shadow-sm shadow-mist-950/5 dark:shadow-black/20',
+        // Add navbar-scrolled class for glow effect (Rec 6)
+        scrolled && 'navbar-scrolled',
         className
       )}
       {...props}
     >
+      {/* Animated gradient glow line at bottom (Rec 6) */}
+      <div className="navbar-glow" aria-hidden="true" />
       <style>{`:root { --scroll-padding-top: 5.25rem }`}</style>
       <nav>
         <div className="mx-auto flex h-(--scroll-padding-top) max-w-7xl items-center gap-4 px-6 lg:px-10">

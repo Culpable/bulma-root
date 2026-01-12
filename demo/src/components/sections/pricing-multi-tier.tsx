@@ -110,6 +110,7 @@ export function PricingMultiTier({
   // h-full ensures wrapper fills grid cell so child Plan components align heights
   // Each plan gets its own context with the appropriate base delay for checkmarks
   // Includes depth stack effect for "pulled from deck" card entrance
+  // Includes focus isolation effect (Rec B) - hovering one card dims others
   const animatedPlans = Children.map(plans, (child, index) => {
     const delay = index * staggerDelay
 
@@ -117,7 +118,8 @@ export function PricingMultiTier({
       <div
         data-animating={isVisible}
         className={clsx(
-          'card-depth-stack h-full rounded-xl transition-all duration-600 ease-out',
+          // Base styles for animation and layout
+          'card-depth-stack pricing-focus-card h-full rounded-xl transition-all duration-600 ease-out',
           isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-[0.97]'
         )}
         style={{ transitionDelay: `${delay}ms` }}
@@ -132,9 +134,10 @@ export function PricingMultiTier({
 
   return (
     <Section {...props}>
+      {/* pricing-focus-group enables focus isolation (Rec B) - hovering one card dims siblings */}
       <div
         ref={containerRef}
-        className="grid grid-cols-1 items-stretch gap-2 sm:has-[>:nth-child(5)]:grid-cols-2 sm:max-lg:has-[>:last-child:nth-child(even)]:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none lg:has-[>:nth-child(5)]:grid-flow-row lg:has-[>:nth-child(5)]:grid-cols-3"
+        className="pricing-focus-group grid grid-cols-1 items-stretch gap-2 sm:has-[>:nth-child(5)]:grid-cols-2 sm:max-lg:has-[>:last-child:nth-child(even)]:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none lg:has-[>:nth-child(5)]:grid-flow-row lg:has-[>:nth-child(5)]:grid-cols-3"
       >
         {animatedPlans}
       </div>

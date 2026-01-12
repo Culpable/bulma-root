@@ -19,6 +19,8 @@ const DOT_CONFIG = {
   effectRadius: 150,
   // Smoothing factor for the opacity transition
   smoothing: 0.15,
+  // Idle timeout in ms - pause RAF when mouse stops moving
+  idleTimeout: 150,
 }
 
 interface DotMatrixProps extends ComponentProps<'div'> {
@@ -42,6 +44,11 @@ interface DotMatrixProps extends ComponentProps<'div'> {
  *
  * Uses Canvas for performance with many dots. Falls back to static pattern if
  * canvas is not available.
+ *
+ * Performance optimisations:
+ * - Only runs RAF loop when section is visible (IntersectionObserver)
+ * - Pauses animation when mouse stops moving (idle detection)
+ * - Renders one final "rest" frame when pausing to ensure clean state
  */
 export function DotMatrix({
   dotSize = DOT_CONFIG.dotSize,
@@ -56,10 +63,13 @@ export function DotMatrix({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number | undefined>(undefined)
+  const idleTimeoutRef = useRef<number | undefined>(undefined)
   const mouseRef = useRef({ x: -1000, y: -1000 })
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+  const [isVisible, setIsVisible] = useState(false)
+  const [isIdle, setIsIdle] = useState(true)
 
-  // Track mouse position relative to container
+  // Track mouse position relative to container and reset idle timer
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!containerRef.current) return
     const rect = containerRef.current.getBoundingClientRect()
@@ -67,12 +77,45 @@ export function DotMatrix({
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
     }
+
+    // Reset idle state - mouse is actively moving
+    setIsIdle(false)
+
+    // Clear existing idle timeout and set a new one
+    if (idleTimeoutRef.current) {
+      window.clearTimeout(idleTimeoutRef.current)
+    }
+    idleTimeoutRef.current = window.setTimeout(() => {
+      setIsIdle(true)
+    }, DOT_CONFIG.idleTimeout)
   }, [])
 
   // Reset mouse position when leaving container
   const handleMouseLeave = useCallback(() => {
     mouseRef.current = { x: -1000, y: -1000 }
+    // Clear idle timeout and mark as idle immediately
+    if (idleTimeoutRef.current) {
+      window.clearTimeout(idleTimeoutRef.current)
+    }
+    setIsIdle(true)
   }, [])
+
+  // Track visibility with IntersectionObserver - pause animation when off-screen
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container || !active) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting)
+      },
+      { threshold: 0.1 }
+    )
+
+    observer.observe(container)
+
+    return () => observer.disconnect()
+  }, [active])
 
   // Update dimensions on resize
   useEffect(() => {
@@ -105,10 +148,14 @@ export function DotMatrix({
     return () => {
       container.removeEventListener('mousemove', handleMouseMove)
       container.removeEventListener('mouseleave', handleMouseLeave)
+      // Clean up idle timeout on unmount
+      if (idleTimeoutRef.current) {
+        window.clearTimeout(idleTimeoutRef.current)
+      }
     }
   }, [handleMouseMove, handleMouseLeave, active])
 
-  // Draw dots on canvas
+  // Draw dots on canvas - only runs when visible AND not idle
   useEffect(() => {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
@@ -124,8 +171,8 @@ export function DotMatrix({
     const cols = Math.ceil(dimensions.width / spacing) + 1
     const rows = Math.ceil(dimensions.height / spacing) + 1
 
-    // Animation loop
-    const animate = () => {
+    // Draw function that renders current state
+    const drawFrame = () => {
       ctx.clearRect(0, 0, dimensions.width, dimensions.height)
 
       const mouse = mouseRef.current
@@ -162,18 +209,27 @@ export function DotMatrix({
           ctx.fill()
         }
       }
-
-      animationRef.current = requestAnimationFrame(animate)
     }
 
-    animate()
+    // Only run continuous animation loop when visible AND mouse is actively moving
+    if (isVisible && !isIdle) {
+      const animate = () => {
+        drawFrame()
+        animationRef.current = requestAnimationFrame(animate)
+      }
+      animate()
+    } else {
+      // Render one final frame at rest state (all dots at base opacity)
+      // This ensures clean appearance when animation stops
+      drawFrame()
+    }
 
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [dimensions, spacing, dotSize, baseOpacity, maxOpacity, effectRadius])
+  }, [dimensions, spacing, dotSize, baseOpacity, maxOpacity, effectRadius, isVisible, isIdle])
 
   if (!active) return null
 

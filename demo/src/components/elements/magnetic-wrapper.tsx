@@ -23,6 +23,8 @@ const MAGNETIC_CONFIG = {
   returnDuration: 400,
   // Spring easing for natural bounce-back
   springEasing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+  // Ripple animation duration (ms) - Rec C
+  rippleDuration: 500,
 }
 
 interface MagneticWrapperProps {
@@ -36,6 +38,8 @@ interface MagneticWrapperProps {
   maxOffset?: number
   /** Activation radius multiplier (default: 1.4) */
   activationRadius?: number
+  /** Enable ripple effect on magnetic field entry (default: true) - Rec C */
+  enableRipple?: boolean
 }
 
 /**
@@ -51,9 +55,13 @@ export function MagneticWrapper({
   disabled = false,
   maxOffset = MAGNETIC_CONFIG.maxOffset,
   activationRadius = MAGNETIC_CONFIG.activationRadius,
+  enableRipple = true,
 }: MagneticWrapperProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
+  const rippleRef = useRef<HTMLDivElement>(null)
   const [transform, setTransform] = useState<CSSProperties>({})
+  // Track if ripple has fired this entry to prevent multiple triggers
+  const rippleFiredRef = useRef(false)
 
   /**
    * Calculate magnetic pull based on cursor distance from element center.
@@ -89,16 +97,20 @@ export function MagneticWrapper({
 
   /**
    * Reset to original position with spring animation when cursor leaves.
+   * Also resets ripple state for next entry.
    */
   const handleMouseLeave = useCallback(() => {
     setTransform({
       transform: 'translate(0px, 0px)',
       transition: `transform ${MAGNETIC_CONFIG.returnDuration}ms ${MAGNETIC_CONFIG.springEasing}`,
     })
+    // Reset ripple state so it can fire again on next entry
+    rippleFiredRef.current = false
   }, [])
 
   /**
    * Track cursor entering the activation zone.
+   * Triggers ripple effect (Rec C) on first entry.
    */
   const handleMouseEnter = useCallback(() => {
     // Clear any lingering return transition for responsive movement
@@ -106,7 +118,23 @@ export function MagneticWrapper({
       ...prev,
       transition: 'transform 0.15s ease-out',
     }))
-  }, [])
+
+    // Trigger ripple effect on entry (Rec C)
+    if (enableRipple && rippleRef.current && !rippleFiredRef.current) {
+      rippleFiredRef.current = true
+      const ripple = rippleRef.current
+      // Remove previous animation class if present
+      ripple.classList.remove('animate')
+      // Force reflow to restart animation
+      void ripple.offsetWidth
+      // Add animation class
+      ripple.classList.add('animate')
+      // Remove animation class after completion
+      setTimeout(() => {
+        ripple.classList.remove('animate')
+      }, MAGNETIC_CONFIG.rippleDuration)
+    }
+  }, [enableRipple])
 
   if (disabled) {
     return <div className={className}>{children}</div>
@@ -119,8 +147,16 @@ export function MagneticWrapper({
       onMouseLeave={handleMouseLeave}
       onMouseEnter={handleMouseEnter}
       style={transform}
-      className={clsx('inline-block', className)}
+      className={clsx('magnetic-wrapper magnetic-ripple-container', className)}
     >
+      {/* Ripple effect element (Rec C) - animates on magnetic field entry */}
+      {enableRipple && (
+        <div
+          ref={rippleRef}
+          className="magnetic-ripple"
+          aria-hidden="true"
+        />
+      )}
       {children}
     </div>
   )

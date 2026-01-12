@@ -63,7 +63,7 @@ export function TestimonialGlass({
         aria-hidden="true"
       />
 
-      {/* Decorative quotation mark with gradient */}
+      {/* Decorative quotation mark with gradient and floating animation (Rec 7) */}
       <div
         className={clsx(
           // Position the decorative quote in the top-right corner (inside the card padding)
@@ -71,9 +71,11 @@ export function TestimonialGlass({
           'pointer-events-none absolute right-2 top-4 select-none font-serif text-7xl leading-none',
           'bg-gradient-to-br from-mist-400/10 to-mist-600/5 bg-clip-text text-transparent',
           'dark:from-white/10 dark:to-white/[0.02]',
+          // Slow floating animation that pauses on card hover
+          'quote-float',
         )}
       >
-        ”
+        "
       </div>
 
       <blockquote
@@ -149,20 +151,20 @@ export function TestimonialsGlassmorphism({
     return () => observer.disconnect()
   }, [])
 
-  // Wrap each child in animated container with depth stack effect
+  // Wrap each child in animated container with prismatic entrance effect (Rec A)
+  // Cards enter from different directions based on grid position with subtle color shift
   const animatedChildren = Children.map(children, (child, index) => {
     const delay = index * staggerDelay
 
     return (
       <div
         data-animating={isVisible}
+        data-visible={isVisible}
+        data-position={index}
         className={clsx(
-          'card-depth-stack h-full rounded-2xl transition-all duration-700 ease-out',
-          isVisible
-            ? 'opacity-100 translate-y-0 scale-100'
-            : 'opacity-0 translate-y-4 scale-[0.98]'
+          'card-depth-stack prismatic-enter h-full rounded-2xl',
         )}
-        style={{ transitionDelay: `${delay}ms` }}
+        style={{ animationDelay: `${delay}ms` }}
       >
         {child}
       </div>
