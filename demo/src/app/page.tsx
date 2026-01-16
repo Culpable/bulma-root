@@ -3,8 +3,11 @@ import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elemen
 import { Link } from '@/components/elements/link'
 import { LogoMarquee, MarqueeLogo } from '@/components/elements/logo-marquee'
 import { Screenshot } from '@/components/elements/screenshot'
+import { ScrollHighlight } from '@/components/elements/scroll-highlight'
 import { ThemePicture } from '@/components/elements/theme-picture'
 import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
+import { ChatBubbleCircleEllipsisIcon } from '@/components/icons/chat-bubble-circle-ellipsis-icon'
+import { ArrowLeftArrowRightIcon } from '@/components/icons/arrow-left-arrow-right-icon'
 import { pageMetadata } from '@/lib/metadata'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { FAQsTwoColumnAccordion, Faq } from '@/components/sections/faqs-two-column-accordion'
@@ -161,7 +164,10 @@ export default function Page() {
         }
         subheadline={
           <p>
-            Bulma helps Australian mortgage brokers get instant, source-cited answers to lender policy questions. No more digging through PDFs and portals.
+            Bulma helps Australian mortgage brokers get{' '}
+            <ScrollHighlight index={0}>instant, source-cited answers</ScrollHighlight>{' '}
+            to lender policy questions.{' '}
+            <ScrollHighlight index={1}>No more digging through PDFs and portals</ScrollHighlight>.
           </p>
         }
         cta={
@@ -331,9 +337,12 @@ export default function Page() {
         className="content-visibility-features"
         eyebrow="Built for brokers"
         headline="Everything you need to navigate lender policies with confidence."
+        stickyEyebrow
+        sectionHue="features"
         subheadline={
           <p>
-            Stop digging through PDFs and portals. Get the policy answers you need in seconds, not hours.
+            Stop digging through PDFs and portals. Get{' '}
+            <ScrollHighlight index={0} withUnderline>the policy answers you need in seconds</ScrollHighlight>, not hours.
           </p>
         }
         features={
@@ -380,6 +389,7 @@ export default function Page() {
                   />
                 </Screenshot>
               }
+              icon={<ChatBubbleCircleEllipsisIcon className="size-5" />}
               headline="Policy Q&A"
               subheadline={
                 <p>
@@ -435,6 +445,7 @@ export default function Page() {
                   />
                 </Screenshot>
               }
+              icon={<ArrowLeftArrowRightIcon className="size-5" />}
               headline="Lender Comparison"
               subheadline={
                 <p>
@@ -456,10 +467,14 @@ export default function Page() {
         className="content-visibility-stats"
         eyebrow="Trusted by brokers"
         headline="The policy assistant Australian brokers rely on."
+        stickyEyebrow
+        sectionHue="stats"
         subheadline={
           <p>
-            Bulma helps mortgage brokers across Australia find policy answers faster, match clients to the right
-            lenders, and close more deals with confidence.
+            Bulma helps mortgage brokers across Australia{' '}
+            <ScrollHighlight index={0}>find policy answers faster</ScrollHighlight>,{' '}
+            <ScrollHighlight index={1}>match clients to the right lenders</ScrollHighlight>, and{' '}
+            <ScrollHighlight index={2}>close more deals with confidence</ScrollHighlight>.
           </p>
         }
       >
@@ -471,7 +486,13 @@ export default function Page() {
         id="testimonial"
         className="content-visibility-testimonials"
         headline="What brokers are saying"
-        subheadline={<p>Hear from mortgage brokers who use Bulma every day to serve their clients better.</p>}
+        sectionHue="testimonials"
+        subheadline={
+          <p>
+            Hear from mortgage brokers who use Bulma{' '}
+            <ScrollHighlight index={0}>every day to serve their clients better</ScrollHighlight>.
+          </p>
+        }
       >
         <TestimonialGlass
           quote={
@@ -589,7 +610,7 @@ export default function Page() {
         />
       </TestimonialsGlassmorphism>
       {/* FAQs (P-3: content-visibility for deferred rendering) */}
-      <FAQsTwoColumnAccordion id="faqs" className="content-visibility-faqs" headline="Questions & Answers">
+      <FAQsTwoColumnAccordion id="faqs" className="content-visibility-faqs" headline="Questions & Answers" stickyEyebrow sectionHue="faqs">
         {homeFaqs.map((faq) => (
           <Faq key={faq.id} id={faq.id} question={faq.question} answer={faq.answer} />
         ))}
@@ -599,6 +620,8 @@ export default function Page() {
         id="pricing"
         className="content-visibility-pricing"
         headline="Simple pricing for every brokerage."
+        stickyEyebrow
+        sectionHue="pricing"
         plans={
           <>
             <Plan
@@ -667,10 +690,13 @@ export default function Page() {
         id="call-to-action"
         className="content-visibility-cta"
         headline="Ready to spend less time on policy research?"
+        sectionHue="cta"
         subheadline={
           <p>
-            Join brokers across Australia who use Bulma to answer policy questions faster, match clients to the right
-            lenders, and close more deals with confidence.
+            Join brokers across Australia who use Bulma to{' '}
+            <ScrollHighlight index={0}>answer policy questions faster</ScrollHighlight>,{' '}
+            <ScrollHighlight index={1}>match clients to the right lenders</ScrollHighlight>, and{' '}
+            <ScrollHighlight index={2}>close more deals with confidence</ScrollHighlight>.
           </p>
         }
         cta={

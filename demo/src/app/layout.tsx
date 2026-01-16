@@ -1,4 +1,5 @@
 import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
+import { HueShiftProvider } from '@/components/elements/hue-shift-provider'
 import { Main } from '@/components/elements/main'
 import {
   FooterCategory,
@@ -136,7 +137,9 @@ export default function RootLayout({
             }
           />
 
-          <Main>{children}</Main>
+          <HueShiftProvider>
+            <Main>{children}</Main>
+          </HueShiftProvider>
 
           <FooterWithNewsletterFormCategoriesAndSocialIcons
             id="footer"

@@ -125,9 +125,12 @@ export function TestimonialsGlassmorphism({
   children,
   staggerDelay = 100,
   className,
+  sectionHue,
   ...props
 }: {
   staggerDelay?: number
+  /** Section hue identifier for smooth color transitions (Recommendation 9) */
+  sectionHue?: 'hero' | 'features' | 'stats' | 'testimonials' | 'pricing' | 'faqs' | 'cta'
 } & ComponentProps<typeof Section>) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
@@ -172,7 +175,7 @@ export function TestimonialsGlassmorphism({
   })
 
   return (
-    <Section {...props} className={clsx('relative isolate', className)}>
+    <Section sectionHue={sectionHue} {...props} className={clsx('relative isolate', className)}>
       {/* Background decorative gradient blur */}
       <div
         className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"

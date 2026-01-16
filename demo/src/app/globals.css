@@ -2222,3 +2222,328 @@
   }
 }
 
+/* =============================================================================
+   RECOMMENDATION 7: ICON PATH MOTION ENTRY
+   Feature icons animate along curved bezier paths when entering viewport,
+   creating organic, premium motion instead of linear translate-up.
+
+   Uses CSS offset-path for path-following animation. ~75% browser support;
+   graceful fallback to standard translate animation on unsupported browsers.
+
+   To disable: Remove 'icon-path-motion' class from the icon wrapper element.
+   ============================================================================= */
+
+/* Curved path definitions - icons follow these bezier curves on entry */
+@keyframes icon-path-curve-up {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Fallback for browsers without offset-path support */
+@keyframes icon-path-fallback {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Base class for path motion icons */
+.icon-path-motion {
+  /* Start hidden */
+  opacity: 0;
+  /* Define the curved path - gentle arc upward */
+  offset-path: path('M 0 40 Q 10 20 20 10 T 40 0');
+  offset-rotate: 0deg;
+  offset-distance: 0%;
+}
+
+/* Variant paths for different visual directions */
+.icon-path-motion.path-left {
+  offset-path: path('M 30 40 Q 15 25 10 15 T 0 0');
+}
+
+.icon-path-motion.path-right {
+  offset-path: path('M -30 40 Q -15 25 -10 15 T 0 0');
+}
+
+.icon-path-motion.path-bounce {
+  offset-path: path('M 0 50 Q 5 20 0 10 T 0 0');
+}
+
+/* Animate when visible - uses offset-path if supported */
+.icon-path-motion[data-visible="true"] {
+  animation: icon-path-curve-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Fallback for browsers without offset-path support */
+@supports not (offset-path: path('M 0 0')) {
+  .icon-path-motion {
+    offset-path: none;
+  }
+  .icon-path-motion[data-visible="true"] {
+    animation: icon-path-fallback 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+}
+
+/* =============================================================================
+   RECOMMENDATION 8: STICKY SECTION CONTEXT LABELS
+   Section eyebrow labels become sticky at top with backdrop blur as user
+   scrolls through that section. Shows user where they are in page structure.
+
+   Uses IntersectionObserver to detect active section and CSS position: sticky.
+   Creates implicit navigation affordance without explicit nav.
+
+   To disable: Remove 'sticky-eyebrow' class from the eyebrow element wrapper.
+   ============================================================================= */
+
+/* Container must have relative positioning for sticky to work */
+.sticky-section-container {
+  position: relative;
+}
+
+/* Sticky eyebrow wrapper */
+.sticky-eyebrow {
+  position: sticky;
+  top: 64px; /* Below navbar height */
+  z-index: 5;
+  /* Start transparent */
+  background: transparent;
+  transition:
+    background-color 0.3s ease-out,
+    backdrop-filter 0.3s ease-out,
+    padding 0.3s ease-out,
+    margin 0.3s ease-out;
+}
+
+/* When stuck (detected via JS intersection), add visual treatment */
+.sticky-eyebrow[data-stuck="true"] {
+  background: oklch(96.3% 0.002 197.1 / 0.85); /* mist-100 with transparency */
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  padding: 8px 16px;
+  margin: 0 -16px;
+  border-radius: 8px;
+  /* Subtle shadow for depth */
+  box-shadow:
+    0 1px 3px oklch(14.8% 0.004 228.8 / 0.05),
+    0 4px 12px oklch(14.8% 0.004 228.8 / 0.03);
+}
+
+/* Dark mode stuck state */
+@variant dark {
+  .sticky-eyebrow[data-stuck="true"] {
+    background: oklch(14.8% 0.004 228.8 / 0.85); /* mist-950 with transparency */
+    box-shadow:
+      0 1px 3px oklch(0% 0 0 / 0.2),
+      0 4px 12px oklch(0% 0 0 / 0.15);
+  }
+}
+
+/* Active section indicator - subtle glow when this section is in view */
+.sticky-eyebrow[data-active="true"]::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 24px;
+  height: 2px;
+  background: oklch(56% 0.021 213.5); /* mist-500 */
+  border-radius: 1px;
+  animation: eyebrow-indicator-enter 0.3s ease-out forwards;
+}
+
+@keyframes eyebrow-indicator-enter {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 24px;
+    opacity: 1;
+  }
+}
+
+/* Dark mode indicator */
+@variant dark {
+  .sticky-eyebrow[data-active="true"]::after {
+    background: oklch(72.3% 0.014 214.4); /* mist-400 */
+  }
+}
+
+/* =============================================================================
+   RECOMMENDATION 9: SMOOTH HUE SHIFT BETWEEN SECTIONS
+   Background accent colors subtly shift hue (±5°) as user scrolls between
+   major sections. Creates subtle sense of journey through page.
+
+   Implemented via CSS custom property --accent-hue updated by scroll position.
+   Uses oklch color space for perceptually smooth transitions.
+
+   To disable: Don't call useHueShift hook, or remove hue-shift classes.
+   ============================================================================= */
+
+/* Base CSS custom property for hue shift - set by JS */
+:root {
+  --accent-hue-shift: 0deg;
+  --section-hue-hero: 0deg;
+  --section-hue-features: 3deg;
+  --section-hue-stats: 5deg;
+  --section-hue-testimonials: 2deg;
+  --section-hue-pricing: -2deg;
+  --section-hue-cta: 0deg;
+}
+
+/* Apply hue shift to elements that should respond */
+.hue-shift-accent {
+  filter: hue-rotate(var(--accent-hue-shift, 0deg));
+  transition: filter 0.5s ease-out;
+}
+
+/* Section-specific hue shifts - applied via data attribute */
+[data-section-hue="hero"] {
+  --local-hue: var(--section-hue-hero);
+}
+
+[data-section-hue="features"] {
+  --local-hue: var(--section-hue-features);
+}
+
+[data-section-hue="stats"] {
+  --local-hue: var(--section-hue-stats);
+}
+
+[data-section-hue="testimonials"] {
+  --local-hue: var(--section-hue-testimonials);
+}
+
+[data-section-hue="pricing"] {
+  --local-hue: var(--section-hue-pricing);
+}
+
+[data-section-hue="cta"] {
+  --local-hue: var(--section-hue-cta);
+}
+
+/* Hue-shifted gradient backgrounds for sections */
+.hue-shift-bg {
+  position: relative;
+}
+
+.hue-shift-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* Subtle gradient that responds to hue shift */
+  background: linear-gradient(
+    180deg,
+    oklch(96.3% 0.002 calc(197.1 + var(--local-hue, 0deg)) / 0) 0%,
+    oklch(96.3% 0.004 calc(197.1 + var(--local-hue, 0deg)) / 0.3) 50%,
+    oklch(96.3% 0.002 calc(197.1 + var(--local-hue, 0deg)) / 0) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+}
+
+/* Show gradient when section is active */
+.hue-shift-bg[data-hue-active="true"]::before {
+  opacity: 1;
+}
+
+/* Dark mode hue shift background */
+@variant dark {
+  .hue-shift-bg::before {
+    background: linear-gradient(
+      180deg,
+      oklch(14.8% 0.004 calc(228.8 + var(--local-hue, 0deg)) / 0) 0%,
+      oklch(14.8% 0.006 calc(228.8 + var(--local-hue, 0deg)) / 0.2) 50%,
+      oklch(14.8% 0.004 calc(228.8 + var(--local-hue, 0deg)) / 0) 100%
+    );
+  }
+}
+
+/* =============================================================================
+   RECOMMENDATION 10: INTERACTIVE TEXT HIGHLIGHT ON SCROLL
+   Key phrases/value propositions highlight with subtle glow and color
+   intensification as they pass through viewport center.
+
+   Uses IntersectionObserver with rootMargin to detect center-screen position.
+   Creates reading focus guide for important content.
+
+   To disable: Remove 'scroll-highlight' class from the text wrapper element.
+   ============================================================================= */
+
+/* Base class for scroll-highlighted text
+   Clean color-only effect without text-shadow to avoid blotchy appearance. */
+.scroll-highlight {
+  transition: color 0.5s ease-out;
+}
+
+/* Highlighted state - when text is in viewport center */
+.scroll-highlight[data-highlighted="true"] {
+  /* Richer, more saturated color */
+  color: oklch(15% 0.02 223.9);
+}
+
+/* Dark mode highlighted state */
+@variant dark {
+  .scroll-highlight[data-highlighted="true"] {
+    /* Pure bright white - clean and sharp */
+    color: oklch(100% 0 0);
+  }
+}
+
+/* Stagger animation for multiple highlights */
+.scroll-highlight[data-highlight-index="0"] { transition-delay: 0ms; }
+.scroll-highlight[data-highlight-index="1"] { transition-delay: 50ms; }
+.scroll-highlight[data-highlight-index="2"] { transition-delay: 100ms; }
+.scroll-highlight[data-highlight-index="3"] { transition-delay: 150ms; }
+
+/* Underline variant - adds animated underline on highlight */
+.scroll-highlight.with-underline {
+  position: relative;
+}
+
+.scroll-highlight.with-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    oklch(56% 0.021 213.5) 0%,
+    oklch(72.3% 0.014 214.4) 100%
+  );
+  border-radius: 1px;
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scroll-highlight.with-underline[data-highlighted="true"]::after {
+  width: 100%;
+}
+
+/* Dark mode underline */
+@variant dark {
+  .scroll-highlight.with-underline::after {
+    background: linear-gradient(
+      90deg,
+      oklch(72.3% 0.014 214.4) 0%,
+      oklch(87.2% 0.007 219.6) 100%
+    );
+  }
+}
+

@@ -99,10 +99,16 @@ export function Plan({
 export function PricingMultiTier({
   plans,
   staggerDelay = 100,
+  stickyEyebrow,
+  sectionHue,
   ...props
 }: {
   plans: ReactNode
   staggerDelay?: number
+  /** Enable sticky eyebrow behavior (Recommendation 8) */
+  stickyEyebrow?: boolean
+  /** Section hue identifier for smooth color transitions (Recommendation 9) */
+  sectionHue?: 'hero' | 'features' | 'stats' | 'testimonials' | 'pricing' | 'faqs' | 'cta'
 } & ComponentProps<typeof Section>) {
   const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
 
@@ -133,7 +139,7 @@ export function PricingMultiTier({
   })
 
   return (
-    <Section {...props}>
+    <Section stickyEyebrow={stickyEyebrow} sectionHue={sectionHue} {...props}>
       {/* pricing-focus-group enables focus isolation (Rec B) - hovering one card dims siblings */}
       <div
         ref={containerRef}

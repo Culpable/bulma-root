@@ -12,21 +12,28 @@ The animation system provides scroll-triggered entrance animations for page sect
 demo/src/
 ├── hooks/
 │   ├── use-scroll-animation.ts          # Reusable IntersectionObserver hook
-│   └── use-hero-parallax.ts             # Hero depth parallax scroll effect (NEW)
+│   ├── use-hero-parallax.ts             # Hero depth parallax scroll effect
+│   ├── use-sticky-section.ts            # Sticky eyebrow label detection (Rec 8)
+│   ├── use-hue-shift.ts                 # Section hue shift tracking (Rec 9)
+│   └── use-scroll-highlight.ts          # Viewport center text highlighting (Rec 10)
 ├── app/
 │   └── globals.css                       # CSS keyframes and utility classes
 └── components/
     ├── elements/
     │   ├── animated-counter.tsx          # Scroll-triggered number counting
-    │   ├── aurora-background.tsx         # Morphing gradient aurora background (NEW)
+    │   ├── aurora-background.tsx         # Morphing gradient aurora background
     │   ├── cursor-spotlight.tsx          # Cursor-following ambient glow
     │   ├── floating-orbs.tsx             # Ambient drifting background orbs
     │   ├── gradient-border-wrapper.tsx   # Rotating gradient CTA border
+    │   ├── hue-shift-provider.tsx        # Provider for section hue shifts (Rec 9)
+    │   ├── icon-path-motion.tsx          # Curved path icon animations (Rec 7)
     │   ├── logo-marquee.tsx              # Infinite scrolling logo display
-    │   ├── luminance-sweep.tsx           # Metallic sheen sweep on headlines (NEW)
+    │   ├── luminance-sweep.tsx           # Metallic sheen sweep on headlines
     │   ├── magnetic-wrapper.tsx          # Magnetic cursor-attraction effect
     │   ├── blur-transition-text.tsx      # Blur in/out text cycling animation
-    │   └── screenshot.tsx                # Parallax tilt implementation
+    │   ├── screenshot.tsx                # Parallax tilt implementation
+    │   ├── scroll-highlight.tsx          # Viewport center text highlighting (Rec 10)
+    │   └── sticky-eyebrow.tsx            # Sticky section labels (Rec 8)
     └── sections/
         # Home page sections
         ├── features-two-column-with-demos.tsx   # Slide left/right staggered
@@ -1852,3 +1859,290 @@ function CustomHero() {
 - **Parallax with sticky elements**: If hero contains sticky positioned children, parallax transforms may conflict. Avoid mixing sticky and parallax on same elements.
 - **Parallax max scroll distance**: Beyond 800px scroll, parallax effect caps out. This prevents excessive translation on long pages.
 - **Combined effects performance**: Running aurora + parallax + cursor spotlight simultaneously is tested but may impact low-end devices. Disable individual effects via props if needed.
+
+---
+
+## 47. Icon Path Motion Entry (Recommendation 7)
+
+`icon-path-motion.tsx::IconPathMotion` animates icons along curved bezier paths when they enter the viewport, creating organic, premium motion instead of linear translate-up animations.
+
+**Files:**
+- `demo/src/components/elements/icon-path-motion.tsx` — Wrapper component
+- `demo/src/hooks/use-scroll-animation.ts` — Visibility detection (reused)
+- `demo/src/app/globals.css` — CSS keyframes and path definitions
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `children` | `ReactNode` | — | Icon element to animate |
+| `direction` | `'up' \| 'left' \| 'right' \| 'bounce'` | `'up'` | Path direction variant |
+| `delay` | `number` | `0` | Animation delay in ms |
+| `enabled` | `boolean` | `true` | Enable/disable animation |
+| `threshold` | `number` | `0.2` | IntersectionObserver threshold |
+
+**Path directions:**
+
+| Direction | CSS Class | Path Description |
+|-----------|-----------|------------------|
+| `up` | (default) | Gentle arc upward from below |
+| `left` | `path-left` | Arc entering from the left |
+| `right` | `path-right` | Arc entering from the right |
+| `bounce` | `path-bounce` | Vertical bounce with slight overshoot |
+
+**Animation behavior:**
+- Uses CSS `offset-path` for path-following animation
+- ~75% browser support; graceful fallback to standard translate on unsupported browsers
+- 700ms duration with smooth ease-out timing
+- Starts at scale 0.8 and opacity 0, ends at scale 1 and opacity 1
+- Triggers once via IntersectionObserver
+
+**CSS Keyframe (`icon-path-curve-up`):**
+```css
+0%   { offset-distance: 0%; opacity: 0; transform: scale(0.8); }
+100% { offset-distance: 100%; opacity: 1; transform: scale(1); }
+```
+
+**Fallback Keyframe (`icon-path-fallback`):**
+```css
+0%   { opacity: 0; transform: translateY(20px) scale(0.8); }
+100% { opacity: 1; transform: translateY(0) scale(1); }
+```
+
+**Integration:**
+```tsx
+import { IconPathMotion, getIconPathDelay } from '@/components/elements/icon-path-motion'
+
+// Basic usage
+<IconPathMotion>
+  <SparklesIcon className="size-6" />
+</IconPathMotion>
+
+// With direction variant and delay
+<IconPathMotion direction="left" delay={100}>
+  <ChartIcon className="size-6" />
+</IconPathMotion>
+
+// In a feature list with staggered delays
+{features.map((feature, index) => (
+  <IconPathMotion key={index} delay={getIconPathDelay(index, 80)} direction="bounce">
+    {feature.icon}
+  </IconPathMotion>
+))}
+```
+
+**To disable:** Set `enabled={false}` on `IconPathMotion`, or remove the component wrapper entirely.
+
+---
+
+## 48. Sticky Section Context Labels (Recommendation 8)
+
+`sticky-eyebrow.tsx::StickyEyebrow` creates section eyebrow labels that become fixed at the top of the viewport with backdrop blur as the user scrolls through that section.
+
+**Files:**
+- `demo/src/components/elements/sticky-eyebrow.tsx` — Component
+- `demo/src/hooks/use-sticky-section.ts` — Sticky and active state detection
+- `demo/src/app/globals.css` — CSS styles for stuck/active states
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `children` | `ReactNode` | — | Eyebrow label text |
+| `enabled` | `boolean` | `true` | Enable/disable sticky behavior |
+| `topOffset` | `number` | `64` | Offset from viewport top (for navbar) |
+
+**Hook: `useStickySection`**
+
+| Return Value | Type | Description |
+|--------------|------|-------------|
+| `containerRef` | `RefObject` | Attach to section container |
+| `eyebrowRef` | `RefObject` | Attach to eyebrow element |
+| `isStuck` | `boolean` | Whether eyebrow is currently stuck |
+| `isActive` | `boolean` | Whether section is prominently visible |
+
+**Visual states:**
+
+| State | Appearance |
+|-------|------------|
+| Default | Transparent background, normal text |
+| Stuck | Glassmorphism (backdrop blur + semi-transparent bg), padding, rounded corners, subtle shadow |
+| Active | Animated indicator line appears below label |
+
+**CSS Classes:**
+- `.sticky-section-container` — Container with relative positioning
+- `.sticky-eyebrow` — The sticky element itself
+- `.sticky-eyebrow[data-stuck="true"]` — Glassmorphism treatment when stuck
+- `.sticky-eyebrow[data-active="true"]` — Shows indicator when section is active
+
+**Integration:**
+```tsx
+import { StickyEyebrow, StickySectionWrapper } from '@/components/elements/sticky-eyebrow'
+
+// Basic usage within a section
+<section>
+  <StickyEyebrow>Features</StickyEyebrow>
+  <h2>Our Key Features</h2>
+  <div>...content...</div>
+</section>
+
+// Using the wrapper component
+<StickySectionWrapper
+  eyebrow="Features"
+  sectionId="features"
+  sectionHue="features"
+>
+  <h2>Our Key Features</h2>
+  <FeatureGrid />
+</StickySectionWrapper>
+
+// Disabled sticky behavior
+<StickyEyebrow enabled={false}>Static Label</StickyEyebrow>
+```
+
+**To disable:** Set `enabled={false}` on `StickyEyebrow`, or remove the component and use the standard `Eyebrow` component.
+
+---
+
+## 49. Smooth Hue Shift Between Sections (Recommendation 9)
+
+`use-hue-shift.ts::useHueShift` tracks scroll position and subtly shifts accent colors as the user scrolls between major sections, creating a sense of journey through the page.
+
+**Files:**
+- `demo/src/hooks/use-hue-shift.ts` — Hook for scroll tracking
+- `demo/src/components/elements/hue-shift-provider.tsx` — Provider component
+- `demo/src/app/globals.css` — CSS custom properties and hue-shift classes
+
+**Section Hue Map:**
+
+| Section | Hue Shift |
+|---------|-----------|
+| hero | 0° (base) |
+| features | +3° |
+| stats | +5° |
+| testimonials | +2° |
+| pricing | -2° |
+| faqs | +1° |
+| cta | 0° (base) |
+
+**CSS Custom Properties:**
+- `--accent-hue-shift` — Current hue shift value (set by JS)
+- `--section-hue-{name}` — Pre-defined hue values for each section
+
+**CSS Classes:**
+- `.hue-shift-accent` — Applies `filter: hue-rotate(var(--accent-hue-shift))`
+- `.hue-shift-bg` — Applies subtle gradient background that responds to hue
+- `[data-section-hue="{name}"]` — Section identifier for tracking
+- `[data-hue-active="true"]` — Applied when section is active
+
+**Integration:**
+```tsx
+// In layout.tsx - enable hue shift tracking
+import { HueShiftProvider } from '@/components/elements/hue-shift-provider'
+
+export default function Layout({ children }) {
+  return (
+    <html>
+      <body>
+        <HueShiftProvider>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </HueShiftProvider>
+      </body>
+    </html>
+  )
+}
+
+// In page sections - add data attribute and optional class
+<section
+  data-section-hue="features"
+  className="hue-shift-bg"
+>
+  ...
+</section>
+
+// Elements that should shift color
+<div className="hue-shift-accent">
+  <GradientElement />
+</div>
+```
+
+**To disable:** Don't use `HueShiftProvider`, or set `enabled={false}` prop. Remove `hue-shift-*` classes and `data-section-hue` attributes from sections.
+
+---
+
+## 50. Interactive Text Highlight on Scroll (Recommendation 10)
+
+`scroll-highlight.tsx::ScrollHighlight` highlights key phrases with subtle glow and color intensification as they pass through the viewport center, creating a reading focus guide.
+
+**Files:**
+- `demo/src/components/elements/scroll-highlight.tsx` — Component
+- `demo/src/hooks/use-scroll-highlight.ts` — Center detection hook
+- `demo/src/app/globals.css` — CSS styles for highlight states
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `children` | `ReactNode` | — | Content to highlight |
+| `index` | `number` | `0` | Index for stagger delay |
+| `withUnderline` | `boolean` | `false` | Show animated underline on highlight |
+| `enabled` | `boolean` | `true` | Enable/disable highlighting |
+| `centerMargin` | `string` | `'40%'` | Viewport margin to define "center" zone |
+
+**Hook: `useScrollHighlight`**
+
+| Return Value | Type | Description |
+|--------------|------|-------------|
+| `ref` | `RefObject` | Attach to highlight element |
+| `isHighlighted` | `boolean` | Whether element is in viewport center |
+| `index` | `number` | Element index for staggering |
+
+**Visual behavior:**
+- Uses IntersectionObserver with `rootMargin: -40% 0px -40% 0px` to create center zone
+- Highlighted text gets:
+  - Slightly richer/darker color
+  - Subtle text shadow glow
+  - Background glow gradient
+- Optional animated underline draws from left to right
+- Staggered transition delays for multiple highlights (50ms per index)
+
+**CSS Classes:**
+- `.scroll-highlight` — Base class for highlight wrapper
+- `.scroll-highlight[data-highlighted="true"]` — Active highlight state
+- `.scroll-highlight.with-underline` — Adds animated underline variant
+- `.scroll-highlight[data-highlight-index="N"]` — Stagger delay by index
+
+**Integration:**
+```tsx
+import { ScrollHighlight, HighlightedParagraph } from '@/components/elements/scroll-highlight'
+
+// Basic usage - highlights when in viewport center
+<p>
+  Bulma helps brokers{' '}
+  <ScrollHighlight>find policy answers faster</ScrollHighlight>,
+  match clients to the right lenders, and close more deals.
+</p>
+
+// With underline effect
+<ScrollHighlight withUnderline>Key value proposition</ScrollHighlight>
+
+// Multiple highlights with stagger
+<HighlightedParagraph>
+  We provide{' '}
+  <ScrollHighlight index={0}>instant answers</ScrollHighlight>,{' '}
+  <ScrollHighlight index={1}>source citations</ScrollHighlight>, and{' '}
+  <ScrollHighlight index={2}>lender comparisons</ScrollHighlight>.
+</HighlightedParagraph>
+```
+
+**To disable:** Set `enabled={false}` on `ScrollHighlight`, or remove the component wrapper entirely.
+
+---
+
+## 51. Recommendations 7-10 Points of Error
+
+- **Icon path motion browser support**: `offset-path` has ~75% browser support. Unsupported browsers get standard translate fallback. Test in Safari/Firefox for verification.
+- **Icon path motion with transforms**: If the icon element has its own transforms, they may conflict with the path motion. Wrap icons in a clean container.
+- **Sticky eyebrow z-index**: The sticky eyebrow uses `z-index: 5`. If other elements have higher z-index, they may overlap the stuck eyebrow.
+- **Sticky eyebrow with short sections**: If a section is shorter than the viewport, the eyebrow may not have room to become "stuck". Consider minimum section heights.
+- **Hue shift filter conflicts**: The `hue-shift-accent` class applies a filter. If elements have other filters (blur, drop-shadow), combine them explicitly.
+- **Hue shift observer overhead**: The hook uses IntersectionObserver with 11 thresholds. On pages with many sections, this may impact scroll performance slightly.
+- **Scroll highlight false positives**: Elements near the viewport center threshold may flicker between highlighted/non-highlighted states. Adjust `centerMargin` if needed.
+- **Scroll highlight with dynamic content**: If content changes dynamically (e.g., expanding accordions), the highlight ref may need to be re-attached.
+- **Scroll highlight on mobile**: The center zone is based on viewport height. On very tall mobile screens, the center zone may be larger than expected.

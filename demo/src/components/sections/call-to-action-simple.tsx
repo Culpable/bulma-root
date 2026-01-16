@@ -14,17 +14,20 @@ export function CallToActionSimple({
   subheadline,
   cta,
   className,
+  sectionHue,
   ...props
 }: {
   eyebrow?: ReactNode
   headline: ReactNode
   subheadline?: ReactNode
   cta?: ReactNode
+  /** Section hue identifier for smooth color transitions (Recommendation 9) */
+  sectionHue?: 'hero' | 'features' | 'stats' | 'testimonials' | 'pricing' | 'faqs' | 'cta'
 } & ComponentProps<'section'>) {
   const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.2 })
 
   return (
-    <section ref={containerRef} className={clsx('py-16', className)} {...props}>
+    <section ref={containerRef} className={clsx('py-16', sectionHue && 'hue-shift-bg', className)} data-section-hue={sectionHue} {...props}>
       <Container className="flex flex-col gap-10">
         {/* Headline and subheadline with slide-up animation */}
         <div

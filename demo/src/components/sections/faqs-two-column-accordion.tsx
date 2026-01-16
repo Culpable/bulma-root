@@ -106,11 +106,17 @@ export function FAQsTwoColumnAccordion({
   className,
   children,
   staggerDelay = 80,
+  stickyEyebrow,
+  sectionHue,
   ...props
 }: {
   headline?: ReactNode
   subheadline?: ReactNode
   staggerDelay?: number
+  /** Enable sticky eyebrow behavior (Recommendation 8) - not used in this component */
+  stickyEyebrow?: boolean
+  /** Section hue identifier for smooth color transitions (Recommendation 9) */
+  sectionHue?: 'hero' | 'features' | 'stats' | 'testimonials' | 'pricing' | 'faqs' | 'cta'
 } & ComponentProps<'section'>) {
   const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.1 })
 
@@ -132,7 +138,7 @@ export function FAQsTwoColumnAccordion({
   })
 
   return (
-    <section className={clsx('py-16', className)} {...props}>
+    <section className={clsx('py-16', sectionHue && 'hue-shift-bg', className)} data-section-hue={sectionHue} {...props}>
       <Container className="grid grid-cols-1 gap-x-2 gap-y-8 lg:grid-cols-2">
         {/* Header with slide-in animation */}
         <div

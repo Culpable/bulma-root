@@ -2,17 +2,21 @@
 
 import { clsx } from 'clsx/lite'
 import { Children, type ComponentProps, type ReactNode } from 'react'
+import { IconPathMotion } from '../elements/icon-path-motion'
 import { Section } from '../elements/section'
 import { useScrollAnimation } from '@/hooks/use-scroll-animation'
 
 export function Feature({
   demo,
+  icon,
   headline,
   subheadline,
   cta,
   className,
 }: {
   demo: ReactNode
+  /** Optional icon that animates along curved path on scroll */
+  icon?: ReactNode
   headline: ReactNode
   subheadline: ReactNode
   cta: ReactNode
@@ -24,10 +28,21 @@ export function Feature({
       </div>
       <div className="flex flex-col gap-4 p-6 sm:p-10 lg:p-6">
         <div>
-          <h3 className="text-base/8 font-medium text-mist-950 dark:text-white">{headline}</h3>
-          <div className="mt-2 flex flex-col gap-4 text-sm/7 text-mist-700 dark:text-mist-400">{subheadline}</div>
+          <div className="flex items-start gap-3">
+            {icon && (
+              <IconPathMotion direction="bounce" className="shrink-0">
+                <div className="flex size-8 items-center justify-center rounded-lg bg-mist-950/5 text-mist-700 dark:bg-white/10 dark:text-mist-300">
+                  {icon}
+                </div>
+              </IconPathMotion>
+            )}
+            <h3 className="text-base/8 font-medium text-mist-950 dark:text-white">{headline}</h3>
+          </div>
+          <div className={clsx('mt-2 flex flex-col gap-4 text-sm/7 text-mist-700 dark:text-mist-400', icon && 'ml-11')}>
+            {subheadline}
+          </div>
         </div>
-        {cta}
+        {cta && <div className={icon ? 'ml-11' : undefined}>{cta}</div>}
       </div>
     </div>
   )
@@ -37,12 +52,18 @@ export function FeaturesTwoColumnWithDemos({
   features,
   staggerDelay = 150,
   enableHorizon = true,
+  stickyEyebrow,
+  sectionHue,
   ...props
 }: {
   features: ReactNode
   staggerDelay?: number
   /** Enable animated horizon line at section top */
   enableHorizon?: boolean
+  /** Enable sticky eyebrow behavior (Recommendation 8) */
+  stickyEyebrow?: boolean
+  /** Section hue identifier for smooth color transitions (Recommendation 9) */
+  sectionHue?: 'hero' | 'features' | 'stats' | 'testimonials' | 'pricing' | 'faqs' | 'cta'
 } & Omit<ComponentProps<typeof Section>, 'children'>) {
   const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
 
@@ -71,7 +92,7 @@ export function FeaturesTwoColumnWithDemos({
   })
 
   return (
-    <Section {...props}>
+    <Section stickyEyebrow={stickyEyebrow} sectionHue={sectionHue} {...props}>
       {/* Horizon line wrapper - draws animated accent lines at section top */}
       <div
         data-visible={isVisible}

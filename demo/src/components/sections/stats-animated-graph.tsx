@@ -70,9 +70,15 @@ const GRAPH_FILL_PATH = 'M 0 400 L 0 383 C 396 362.7936732276819, 804 264.316723
 export function StatsAnimatedGraph({
   children,
   staggerDelay = 120,
+  stickyEyebrow,
+  sectionHue,
   ...props
 }: {
   staggerDelay?: number
+  /** Enable sticky eyebrow behavior (Recommendation 8) */
+  stickyEyebrow?: boolean
+  /** Section hue identifier for smooth color transitions (Recommendation 9) */
+  sectionHue?: 'hero' | 'features' | 'stats' | 'testimonials' | 'pricing' | 'faqs' | 'cta'
 } & ComponentProps<typeof Section>) {
   const pathId = useId()
   const glowId = useId()
@@ -134,7 +140,7 @@ export function StatsAnimatedGraph({
   const graphDelay = (Children.count(children) + 1) * staggerDelay
 
   return (
-    <Section {...props} className={clsx('relative isolate', props.className)}>
+    <Section stickyEyebrow={stickyEyebrow} sectionHue={sectionHue} {...props} className={clsx('relative isolate', props.className)}>
       <div ref={containerRef} className="relative grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
         <div className="col-span-2 grid grid-cols-2 gap-x-2 gap-y-10 sm:auto-cols-fr sm:grid-flow-col-dense">
           {animatedStats}
