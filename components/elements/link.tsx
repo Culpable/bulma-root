@@ -11,7 +11,7 @@ export function Link({
   return (
     <a
       href={href}
-      className={clsx('inline-flex items-center gap-2 text-sm/7 font-medium text-mist-950 dark:text-white', className)}
+      className={clsx('inline-flex w-fit items-center gap-2 text-sm/7 font-medium text-mist-950 dark:text-white', className)}
       {...props}
     />
   )

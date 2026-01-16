@@ -11,16 +11,19 @@ The animation system provides scroll-triggered entrance animations for page sect
 ```
 demo/src/
 ├── hooks/
-│   └── use-scroll-animation.ts          # Reusable IntersectionObserver hook
+│   ├── use-scroll-animation.ts          # Reusable IntersectionObserver hook
+│   └── use-hero-parallax.ts             # Hero depth parallax scroll effect (NEW)
 ├── app/
 │   └── globals.css                       # CSS keyframes and utility classes
 └── components/
     ├── elements/
     │   ├── animated-counter.tsx          # Scroll-triggered number counting
+    │   ├── aurora-background.tsx         # Morphing gradient aurora background (NEW)
     │   ├── cursor-spotlight.tsx          # Cursor-following ambient glow
     │   ├── floating-orbs.tsx             # Ambient drifting background orbs
     │   ├── gradient-border-wrapper.tsx   # Rotating gradient CTA border
     │   ├── logo-marquee.tsx              # Infinite scrolling logo display
+    │   ├── luminance-sweep.tsx           # Metallic sheen sweep on headlines (NEW)
     │   ├── magnetic-wrapper.tsx          # Magnetic cursor-attraction effect
     │   ├── blur-transition-text.tsx      # Blur in/out text cycling animation
     │   └── screenshot.tsx                # Parallax tilt implementation
@@ -1638,3 +1641,214 @@ function Page() {
 - **Data pulse offset-path support**: The `offset-path` property has limited browser support. Falls back to no animation in unsupported browsers.
 - **FAQ glow trail timing**: The glow effect is brief (600ms). If content takes longer to expand, the glow may complete before content is fully visible.
 - **Scroll velocity sampling**: Velocity is sampled at ~50ms intervals with exponential smoothing. Rapid direction changes may not register accurately.
+
+---
+
+## 43. Aurora Hero Background (New - Premium Effect A)
+
+`aurora-background.tsx::AuroraBackground` renders ambient, morphing gradient layers that create an organic, living atmosphere in the hero section.
+
+**File:** `demo/src/components/elements/aurora-background.tsx`
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `className` | `string` | — | Additional container styles |
+| `disabled` | `boolean` | `false` | Disable the aurora effect |
+
+**Animation behavior:**
+- Three gradient layers at different blend modes (normal, soft-light, screen)
+- Each layer drifts on a different cycle (22s, 28s, 35s) for organic movement
+- Layers shift position, scale, and rotation for natural aurora effect
+- Uses 80px Gaussian blur for soft, ambient appearance
+- Fades in on mount with 1s transition
+- Pauses CSS animation when scrolled off-screen for performance
+
+**CSS Keyframes:**
+- `aurora-drift-1`: 35s cycle, primary gradient movement
+- `aurora-drift-2`: 28s cycle, secondary gradient with animation-delay stagger
+- `aurora-drift-3`: 22s cycle, accent highlight layer
+
+**Theme adaptation:**
+| Theme | Visual Effect |
+|-------|--------------|
+| Light mode | Cooler, more subtle gradients |
+| Dark mode | Brighter, more vibrant auroras |
+
+**Integration:** Currently applied inside `HeroLeftAlignedWithDemo` when `enableAurora={true}` (default).
+
+```tsx
+// Enabled by default
+<HeroLeftAlignedWithDemo
+  headline={...}
+  demo={...}
+/>
+
+// To disable
+<HeroLeftAlignedWithDemo
+  enableAurora={false}
+  headline={...}
+  demo={...}
+/>
+
+// Standalone usage
+<div className="relative">
+  <AuroraBackground />
+  <Content />
+</div>
+```
+
+**To disable:** Set `enableAurora={false}` on `HeroLeftAlignedWithDemo`, or set `disabled={true}` on `AuroraBackground` directly.
+
+---
+
+## 44. Luminance Sweep Headlines (New - Premium Effect B)
+
+`luminance-sweep.tsx::LuminanceSweep` creates a metallic sheen that sweeps across headlines when they enter the viewport, creating a premium "light catching metal" reveal effect.
+
+**File:** `demo/src/components/elements/luminance-sweep.tsx`
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `children` | `ReactNode` | — | Content to apply sweep to |
+| `text` | `string` | — | Text for sweep overlay (must match children) |
+| `className` | `string` | — | Additional wrapper styles |
+| `disabled` | `boolean` | `false` | Disable the sweep effect |
+| `delay` | `number` | `200` | Delay before triggering sweep (ms) |
+
+**Animation behavior:**
+- Single 800ms sweep triggered once via IntersectionObserver
+- Diagonal gradient sweep (105deg angle) creates metallic sheen
+- Uses `background-clip: text` with pseudo-element overlay
+- Non-destructive: original text remains visible throughout
+- Sweep overlay fades out after animation completes
+
+**CSS Keyframe (`luminance-sweep`):**
+```css
+0%   { background-position: -100% center; }
+100% { background-position: 200% center; }
+```
+
+**Theme adaptation:**
+| Theme | Sheen Color |
+|-------|-------------|
+| Light mode | Subtle white/silver gradient |
+| Dark mode | Brighter, more pronounced sheen |
+
+**Integration:** Currently applied to hero headline on home page.
+
+```tsx
+// Wrap any heading with luminance sweep
+<LuminanceSweep text="Your headline text here">
+  <Heading>Your headline text here</Heading>
+</LuminanceSweep>
+
+// With custom delay
+<LuminanceSweep text="Section Title" delay={400}>
+  <h2>Section Title</h2>
+</LuminanceSweep>
+
+// Disabled
+<LuminanceSweep text="..." disabled>
+  <Heading>...</Heading>
+</LuminanceSweep>
+```
+
+**To disable:** Set `disabled={true}` on `LuminanceSweep`, or remove the wrapper entirely.
+
+---
+
+## 45. Hero Depth Parallax (New - Premium Effect C)
+
+`use-hero-parallax.ts::useHeroParallax` provides multi-layer scroll parallax where different hero elements move at different speeds as user scrolls, creating depth perception.
+
+**File:** `demo/src/hooks/use-hero-parallax.ts`
+
+**Hook return values:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `containerRef` | `RefObject<HTMLDivElement>` | Ref for parallax container |
+| `scrollY` | `number` | Current scroll offset in pixels |
+| `isScrolling` | `boolean` | Whether user is actively scrolling |
+| `isEnabled` | `boolean` | Whether device supports parallax (non-touch) |
+
+**Configuration (`PARALLAX_CONFIG`):**
+
+| Setting | Value | Effect |
+|---------|-------|--------|
+| `maxScrollDistance` | 800 | Maximum scroll distance for parallax (px) |
+| `throttleDelay` | 16 | RAF throttle (~60fps) |
+| `scrollEndDelay` | 150 | Delay before removing will-change (ms) |
+
+**Speed factors (CSS custom property `--parallax-speed`):**
+
+| Element | Speed | Effect |
+|---------|-------|--------|
+| Background/Aurora | 0.5 | Moves slowest (furthest) |
+| Screenshot | 0.7 | Moves slower (distant) |
+| Headline | 1.0 | Baseline (normal scroll) |
+| CTA Button | 1.1 | Moves faster (closest) |
+
+**CSS classes:**
+- `.hero-parallax`: Container class, sets `--scroll-y` custom property
+- `.hero-parallax-element`: Individual parallax elements
+- `.hero-parallax-bg`: Speed 0.5 (background)
+- `.hero-parallax-screenshot`: Speed 0.7 (screenshots)
+- `.hero-parallax-headline`: Speed 1.0 (text)
+- `.hero-parallax-cta`: Speed 1.1 (buttons)
+
+**Animation behavior:**
+- CSS custom property `--scroll-y` updated on scroll via JS
+- Transform calculated: `translateY(scrollY * (1 - speed))`
+- `will-change: transform` applied only during active scroll
+- Automatically disabled on touch devices
+- Respects `prefers-reduced-motion`
+
+**Integration:** Currently applied inside `HeroLeftAlignedWithDemo` when `enableParallax={true}` (default).
+
+```tsx
+// Enabled by default
+<HeroLeftAlignedWithDemo
+  headline={...}
+  demo={...}
+/>
+
+// To disable
+<HeroLeftAlignedWithDemo
+  enableParallax={false}
+  headline={...}
+  demo={...}
+/>
+
+// Manual usage with hook
+function CustomHero() {
+  const { containerRef, isScrolling } = useHeroParallax()
+
+  return (
+    <section
+      ref={containerRef}
+      className="hero-parallax"
+      data-scrolling={isScrolling}
+    >
+      <div className="hero-parallax-element hero-parallax-screenshot">
+        <Screenshot />
+      </div>
+    </section>
+  )
+}
+```
+
+**To disable:** Set `enableParallax={false}` on `HeroLeftAlignedWithDemo`, or don't apply the `hero-parallax` classes.
+
+---
+
+## 46. Premium Effects A/B/C Points of Error
+
+- **Aurora GPU impact**: Three animated gradient layers with blur may impact performance on low-end devices. Layers pause when off-screen to mitigate.
+- **Aurora layer visibility**: At high browser zoom levels, aurora layers may become more visible than intended. Opacity is calibrated for 100% zoom.
+- **Luminance sweep text mismatch**: The `text` prop must exactly match the rendered text for the sweep overlay to align correctly. Dynamic text may cause misalignment.
+- **Luminance sweep with children changes**: If children re-render with different text after initial mount, the sweep overlay will not update.
+- **Parallax on touch**: Parallax is automatically disabled on touch devices via `(hover: hover)` media query. This is intentional for mobile UX.
+- **Parallax with sticky elements**: If hero contains sticky positioned children, parallax transforms may conflict. Avoid mixing sticky and parallax on same elements.
+- **Parallax max scroll distance**: Beyond 800px scroll, parallax effect caps out. This prevents excessive translation on long pages.
+- **Combined effects performance**: Running aurora + parallax + cursor spotlight simultaneously is tested but may impact low-end devices. Disable individual effects via props if needed.

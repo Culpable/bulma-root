@@ -13,9 +13,28 @@ import {
 import MixpanelProvider from '@/components/MixpanelProvider'
 import { siteMetadata } from '@/lib/metadata'
 import type { Metadata } from 'next'
+import { Mona_Sans, Inter } from 'next/font/google'
 import Image from 'next/image'
 import Script from 'next/script'
 import './globals.css'
+
+// Configure Mona Sans with variable width setting for display text
+// Uses --font-mona-sans variable, referenced by Tailwind theme as --font-display
+const monaSans = Mona_Sans({
+  subsets: ['latin'],
+  variable: '--font-mona-sans',
+  display: 'swap',
+  // Enable variable font axes
+  axes: ['wdth'],
+})
+
+// Configure Inter for body text
+// Uses --font-inter variable, referenced by Tailwind theme as --font-sans
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   // Title template: pages get " | Bulma" suffix; homepage uses absolute to bypass
@@ -63,18 +82,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${monaSans.variable} ${inter.variable}`} suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wdth,wght@0,112.5,200..900;1,112.5,200..900&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-          rel="stylesheet"
-        />
+        {/* Resource hints for external domains (S-1) */}
+        <link rel="dns-prefetch" href="https://app.bulma.com.au" />
+        <link rel="preconnect" href="https://api-js.mixpanel.com" />
       </head>
       <body>
         <>
@@ -94,12 +106,14 @@ export default function RootLayout({
             }
             logo={
               <NavbarLogo href="/">
+                {/* P-1: Priority for above-fold logo images */}
                 <Image
                   src="/img/logos/bulma-logo-dark.svg"
                   alt={siteLogoAlt}
                   className="dark:hidden"
                   width={40}
                   height={40}
+                  priority
                 />
                 {/* Use Tailwind's built-in `not` compound variant (not-dark:*) to invert the dark media query. */}
                 <Image
@@ -108,6 +122,7 @@ export default function RootLayout({
                   className="not-dark:hidden"
                   width={40}
                   height={40}
+                  priority
                 />
               </NavbarLogo>
             }

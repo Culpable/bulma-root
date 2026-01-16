@@ -55,7 +55,12 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
 
   // Measure the longest phrase on mount to set fixed container width
   useEffect(() => {
-    if (measureRef.current && !hasInitialized.current) {
+    if (!measureRef.current || hasInitialized.current) return
+
+    // Defer DOM measurement to the next frame to keep the effect body pure.
+    requestAnimationFrame(() => {
+      if (!measureRef.current || hasInitialized.current) return
+
       const measureEl = measureRef.current
       let maxWidth = 0
 
@@ -70,7 +75,7 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
       measureEl.textContent = phrases[0]
       setContainerWidth(Math.ceil(maxWidth))
       hasInitialized.current = true
-    }
+    })
   }, [phrases])
 
   // Track visibility so the animation pauses when the hero scrolls out of view.
@@ -96,7 +101,8 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
 
     if (!isVisible) {
       clearTimers()
-      setIsBlurred(false)
+      // Reset blur on the next frame so the effect cleanup stays side-effect-free.
+      requestAnimationFrame(() => setIsBlurred(false))
       return
     }
 

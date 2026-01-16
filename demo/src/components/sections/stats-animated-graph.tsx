@@ -259,6 +259,20 @@ export function StatsAnimatedGraph({
               }}
             />
 
+            {/* Ping effect dot - pulses 3 times then stops (performance optimisation) */}
+            {isVisible && (
+              <circle
+                cx="1200"
+                cy="60"
+                r="4"
+                className="fill-mist-600/50 dark:fill-mist-300/50 animate-[ping_2s_ease-out_3]"
+                style={{
+                  transformOrigin: '1200px 60px',
+                  animationDelay: `${graphDelay + 1400}ms`,
+                }}
+              />
+            )}
+
           </svg>
 
           {/* Data pulse dots that travel along graph path (Rec 8) */}

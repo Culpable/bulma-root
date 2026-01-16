@@ -15,7 +15,7 @@
         try {
             const url = new URL(referrer);
             return url.hostname;
-        } catch (e) {
+        } catch {
             return null;
         }
     }
@@ -187,7 +187,7 @@
                 if (typeof mp.register_once === 'function') {
                     mp.register_once(initial);
                 }
-            } catch (e) {
+            } catch {
                 // no-op: never block the page or event flow on attribution enrichment
             }
         } else if (attempts < maxAttempts) {

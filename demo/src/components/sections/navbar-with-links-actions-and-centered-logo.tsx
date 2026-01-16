@@ -2,9 +2,9 @@
 
 import { ElDialog, ElDialogPanel } from '@tailwindplus/elements/react'
 import { clsx } from 'clsx/lite'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, type ComponentProps, type ReactNode, type MouseEvent } from 'react'
+import { TransitionLink } from '@/components/elements/transition-link'
 
 /**
  * Hook to track whether user has scrolled past a threshold.
@@ -54,11 +54,11 @@ export function NavbarLink({
   href,
   className,
   ...props
-}: { href: string } & Omit<ComponentProps<'a'>, 'href'>) {
+}: ComponentProps<typeof TransitionLink>) {
   const isActive = useIsActive(href)
 
   return (
-    <Link
+    <TransitionLink
       href={href}
       className={clsx(
         'group relative inline-flex cursor-pointer items-center justify-between gap-2 text-3xl/10 font-medium lg:text-sm/7',
@@ -93,12 +93,18 @@ export function NavbarLink({
           <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
         </svg>
       </span>
-    </Link>
+    </TransitionLink>
   )
 }
 
-export function NavbarLogo({ className, href, ...props }: { href: string } & Omit<ComponentProps<'a'>, 'href'>) {
-  return <Link href={href} {...props} className={clsx('inline-flex cursor-pointer items-stretch', className)} />
+export function NavbarLogo({ className, href, ...props }: ComponentProps<typeof TransitionLink>) {
+  return (
+    <TransitionLink
+      href={href}
+      {...props}
+      className={clsx('inline-flex cursor-pointer items-stretch', className)}
+    />
+  )
 }
 
 export function NavbarWithLinksActionsAndCenteredLogo({

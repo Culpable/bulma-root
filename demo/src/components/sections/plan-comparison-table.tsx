@@ -8,6 +8,13 @@ import { CheckmarkIcon } from '../icons/checkmark-icon'
 import { MinusIcon } from '../icons/minus-icon'
 import { useScrollAnimation } from '@/hooks/use-scroll-animation'
 
+function isPlanValueRecord<Plan extends string>(
+  value: ReactNode | Record<Plan, ReactNode>,
+  plan: Plan
+): value is Record<Plan, ReactNode> {
+  return typeof value === 'object' && value !== null && plan in value
+}
+
 function FeatureGroup<Plan extends string>({
   group,
   plans,
@@ -52,10 +59,7 @@ function FeatureGroup<Plan extends string>({
             {feature.name}
           </th>
           {plans.map((plan, planIndex) => {
-            const value = ((value: any): value is Record<Plan, ReactNode> =>
-              typeof value === 'object' && value !== null && plan in value)(feature.value)
-              ? feature.value[plan]
-              : feature.value
+            const value = isPlanValueRecord(feature.value, plan) ? feature.value[plan] : feature.value
 
             return (
               <td

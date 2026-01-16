@@ -75,7 +75,7 @@ export function TestimonialGlass({
           'quote-float',
         )}
       >
-        "
+        ”
       </div>
 
       <blockquote

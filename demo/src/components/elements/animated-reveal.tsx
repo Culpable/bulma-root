@@ -7,7 +7,7 @@ import { Children, cloneElement, isValidElement, useEffect, useRef, useState, ty
  * Wrapper component that triggers staggered fade-up animations when children enter the viewport.
  *
  * Uses IntersectionObserver to detect when the container becomes visible, then applies
- * animation classes to each child with staggered delays. Respects prefers-reduced-motion.
+ * animation classes to each child with staggered delays.
  */
 export function AnimatedReveal({
   children,
@@ -29,13 +29,6 @@ export function AnimatedReveal({
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
-
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (prefersReducedMotion) {
-      setIsVisible(true)
-      return
-    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {

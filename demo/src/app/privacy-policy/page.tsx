@@ -13,10 +13,10 @@ export default function Page() {
     <>
       <DocumentCentered id="document" headline="Privacy Policy" subheadline={<p>Last updated on January 1, 2026.</p>}>
         <p>
-          Bulma Pty Ltd ("<strong>Bulma</strong>," "<strong>we</strong>," "<strong>us</strong>
-          ," or "<strong>our</strong>") respects your privacy and is committed to protecting your personal information.
+          Bulma Pty Ltd (&quot;<strong>Bulma</strong>&quot;, &quot;<strong>we</strong>&quot;, &quot;<strong>us</strong>
+          &quot;, or &quot;<strong>our</strong>&quot;) respects your privacy and is committed to protecting your personal information.
           This Privacy Policy describes, in general terms, how we collect, use, store, and protect information when you
-          interact with our websites, products, or services (collectively, the "<strong>Services</strong>"). This policy
+          interact with our websites, products, or services (collectively, the &quot;<strong>Services</strong>&quot;). This policy
           is provided for informational purposes and is intended to be a general example only.
         </p>
         <h2>Information We Collect and How We Use It</h2>
@@ -60,8 +60,8 @@ export default function Page() {
           information under applicable laws.
         </p>
         <p>
-          We may update this Privacy Policy from time to time. Any changes will be reflected by updating the "
-          <strong>Last updated</strong>" date at the top of this page. Continued use of the Services after any changes
+          We may update this Privacy Policy from time to time. Any changes will be reflected by updating the &quot;
+          <strong>Last updated</strong>&quot; date at the top of this page. Continued use of the Services after any changes
           indicates acceptance of the updated policy.
         </p>
         <p>If you have any questions about this Privacy Policy, please contact us at:</p>

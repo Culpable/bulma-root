@@ -1,11 +1,9 @@
 import { AnnouncementBadge } from '@/components/elements/announcement-badge'
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
-import { GradientBorderWrapper } from '@/components/elements/gradient-border-wrapper'
 import { Link } from '@/components/elements/link'
 import { LogoMarquee, MarqueeLogo } from '@/components/elements/logo-marquee'
-import { MagneticWrapper } from '@/components/elements/magnetic-wrapper'
 import { Screenshot } from '@/components/elements/screenshot'
-import { BlurTransitionText } from '@/components/elements/blur-transition-text'
+import { ThemePicture } from '@/components/elements/theme-picture'
 import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { pageMetadata } from '@/lib/metadata'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
@@ -22,8 +20,50 @@ import {
   websiteSchema,
 } from '@/schemas/organization-schema'
 import type { Metadata } from 'next'
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Script from 'next/script'
+
+// =============================================================================
+// DYNAMIC IMPORTS FOR ANIMATION COMPONENTS (B-2)
+// These components contain client-side animation logic. Dynamic importing
+// enables code splitting, reducing initial JS bundle by ~15-20KB (gzipped).
+// Components are SSR'd for SEO, then hydrate with interactivity on client.
+// =============================================================================
+
+// Blur transition text cycling animation - decorative, not critical for initial render
+const BlurTransitionText = dynamic(() =>
+  import('@/components/elements/blur-transition-text').then((m) => m.BlurTransitionText)
+)
+
+// Magnetic hover effect wrapper - interaction enhancement, deferred
+const MagneticWrapper = dynamic(() =>
+  import('@/components/elements/magnetic-wrapper').then((m) => m.MagneticWrapper)
+)
+
+// Rotating gradient border animation - decorative CTA enhancement
+const GradientBorderWrapper = dynamic(() =>
+  import('@/components/elements/gradient-border-wrapper').then((m) => m.GradientBorderWrapper)
+)
+
+// Metallic sheen sweep on headlines - decorative entrance animation
+const LuminanceSweep = dynamic(() =>
+  import('@/components/elements/luminance-sweep').then((m) => m.LuminanceSweep)
+)
+
+// =============================================================================
+// PRELOAD FUNCTIONS FOR ANIMATION COMPONENTS (B-3)
+// Preload on hover reduces perceived latency when user is about to interact.
+// Export for use in client components that need to trigger preloading.
+// Usage: Add onMouseEnter={preloadAnimationComponents} to CTA buttons.
+// =============================================================================
+
+export const preloadAnimationComponents = () => {
+  void import('@/components/elements/blur-transition-text')
+  void import('@/components/elements/magnetic-wrapper')
+  void import('@/components/elements/gradient-border-wrapper')
+  void import('@/components/elements/luminance-sweep')
+}
 
 // Homepage uses absolute title to bypass the " | Bulma" suffix from layout template
 export const metadata: Metadata = {
@@ -47,7 +87,7 @@ const homeFaqs = [
     id: 'faq-0',
     question: 'What can Bulma do for my brokerage?',
     answer:
-      'Bulma answers lender policy questions in seconds instead of hours. Ask questions like "<em>What lenders go to 95% LVR?</em>" or "<em>What add-backs does CBA accept?</em>" and get instant, grounded answers that cite the exact policy source. It’s like having a senior broker with encyclopaedic policy knowledge available 24/7.',
+      'Bulma answers lender policy questions in seconds instead of hours. Ask questions like “<em>What lenders go to 95% LVR?</em>” or “<em>What add-backs does CBA accept?</em>” and get instant, grounded answers that cite the exact policy source. It’s like having a senior broker with encyclopaedic policy knowledge available 24/7.',
   },
   {
     id: 'faq-1',
@@ -65,7 +105,7 @@ const homeFaqs = [
     id: 'faq-3',
     question: 'Can I compare policies across different lenders?',
     answer:
-      "Absolutely. Ask Bulma to compare policies across lenders - for example, 'Compare the big 4’s LMI requirements for 95% LVR' - and you’ll get a structured comparison highlighting key differences.",
+      "Absolutely. Ask Bulma to compare policies across lenders - for example, ‘Compare the big 4’s LMI requirements for 95% LVR’ - and you’ll get a structured comparison highlighting key differences.",
   },
   {
     id: 'faq-4',
@@ -77,7 +117,7 @@ const homeFaqs = [
     id: 'faq-5',
     question: 'Is my data secure with Bulma?',
     answer:
-      'Yes. Ask questions like "<em>Who can see my client data?</em>" or "<em>Are my queries shared with lenders?</em>" and we’ll explain the safeguards. We use enterprise-grade encryption (AES-256 at rest, TLS 1.3 in transit) and never share your queries or client information with third parties. Your conversation history is stored securely and only accessible by you.',
+      'Yes. Ask questions like “<em>Who can see my client data?</em>” or “<em>Are my queries shared with lenders?</em>” and we’ll explain the safeguards. We use enterprise-grade encryption (AES-256 at rest, TLS 1.3 in transit) and never share your queries or client information with third parties. Your conversation history is stored securely and only accessible by you.',
   },
 ]
 
@@ -107,7 +147,7 @@ export default function Page() {
         id="hero"
         eyebrow={<AnnouncementBadge href="#lenders" text="Now covering all major Australian lenders" cta="See the list" />}
         headline={
-          <>
+          <LuminanceSweep text="Your AI assistant for policy questions." delay={400}>
             Your AI assistant for{' '}
             <BlurTransitionText
               phrases={[
@@ -117,7 +157,7 @@ export default function Page() {
                 'comparing lenders.',
               ]}
             />
-          </>
+          </LuminanceSweep>
         }
         subheadline={
           <p>
@@ -128,7 +168,7 @@ export default function Page() {
           <div className="flex items-center gap-4">
             <MagneticWrapper>
               <GradientBorderWrapper>
-                <ButtonLink href="https://app.bulma.com.au/register" size="lg">
+                <ButtonLink href="https://app.bulma.com.au/register" size="lg" preloadOnHover>
                   Try Bulma free
                 </ButtonLink>
               </GradientBorderWrapper>
@@ -143,52 +183,41 @@ export default function Page() {
         }
         demo={
           <>
-            {/* Mobile/tablet screenshot */}
+            {/* Mobile/tablet screenshot (P-1, P-2, J-1: LCP image optimization with <picture>) */}
             <Screenshot className="rounded-md lg:hidden" wallpaper="blue" placement="bottom-right" enableReflection>
-              <Image
-                src="/img/screenshots/1-left-1670-top-1408.webp"
+              {/* Mobile (<768px): Uses ThemePicture to prevent downloading both dark/light variants */}
+              <ThemePicture
+                srcLight="/img/screenshots/1-left-1670-top-1408.webp"
+                srcDark="/img/screenshots/1-color-mist-left-1670-top-1408.webp"
                 alt={heroScreenshotAlt}
                 width={1670}
                 height={1408}
-                className="bg-white/75 md:hidden dark:hidden"
+                loading="eager"
+                fetchPriority="high"
+                className="md:hidden"
               />
-              <Image
-                src="/img/screenshots/1-color-mist-left-1670-top-1408.webp"
-                alt={heroScreenshotAlt}
-                width={1670}
-                height={1408}
-                className="bg-black/75 not-dark:hidden md:hidden"
-              />
-              <Image
-                src="/img/screenshots/1-left-2000-top-1408.webp"
+              {/* Tablet (768px-1023px): Uses ThemePicture for theme-aware loading */}
+              <ThemePicture
+                srcLight="/img/screenshots/1-left-2000-top-1408.webp"
+                srcDark="/img/screenshots/1-color-mist-left-2000-top-1408.webp"
                 alt={heroScreenshotAlt}
                 width={2000}
                 height={1408}
-                className="bg-white/75 max-md:hidden dark:hidden"
-              />
-              <Image
-                src="/img/screenshots/1-color-mist-left-2000-top-1408.webp"
-                alt={heroScreenshotAlt}
-                width={2000}
-                height={1408}
-                className="bg-black/75 not-dark:hidden max-md:hidden"
+                loading="eager"
+                fetchPriority="high"
+                className="max-md:hidden"
               />
             </Screenshot>
-            {/* Desktop screenshot */}
+            {/* Desktop screenshot (P-1, P-2, J-1: LCP image optimization with <picture>) */}
             <Screenshot className="rounded-lg max-lg:hidden" wallpaper="blue" placement="bottom" enableReflection>
-              <Image
-                src="/img/screenshots/1.webp"
-                alt={heroScreenshotAlt}
-                className="bg-white/75 dark:hidden"
-                width={3440}
-                height={1990}
-              />
-              <Image
-                className="bg-black/75 not-dark:hidden"
-                src="/img/screenshots/1-color-mist.webp"
+              <ThemePicture
+                srcLight="/img/screenshots/1.webp"
+                srcDark="/img/screenshots/1-color-mist.webp"
                 alt={heroScreenshotAlt}
                 width={3440}
                 height={1990}
+                loading="eager"
+                fetchPriority="high"
               />
             </Screenshot>
           </>
@@ -296,9 +325,10 @@ export default function Page() {
           </div>
         }
       />
-      {/* Features */}
+      {/* Features (P-3: content-visibility for deferred rendering) */}
       <FeaturesTwoColumnWithDemos
         id="features"
+        className="content-visibility-features"
         eyebrow="Built for brokers"
         headline="Everything you need to navigate lender policies with confidence."
         subheadline={
@@ -311,68 +341,49 @@ export default function Page() {
             <Feature
               demo={
                 <Screenshot wallpaper="purple" placement="bottom-right">
-                  <Image
-                    src="/img/screenshots/1-left-1000-top-800.webp"
+                  {/* J-1: ThemePicture prevents downloading both dark/light variants */}
+                  {/* Mobile (<640px) */}
+                  <ThemePicture
+                    srcLight="/img/screenshots/1-left-1000-top-800.webp"
+                    srcDark="/img/screenshots/1-color-mist-left-1000-top-800.webp"
                     alt={policyQaScreenshotAlt}
-                    className="bg-white/75 sm:hidden dark:hidden"
                     width={1000}
                     height={800}
+                    className="sm:hidden"
                   />
-                  <Image
-                    src="/img/screenshots/1-color-mist-left-1000-top-800.webp"
+                  {/* Tablet (640px-1023px) */}
+                  <ThemePicture
+                    srcLight="/img/screenshots/1-left-1800-top-660.webp"
+                    srcDark="/img/screenshots/1-color-mist-left-1800-top-660.webp"
                     alt={policyQaScreenshotAlt}
-                    className="bg-black/75 not-dark:hidden sm:hidden"
-                    width={1000}
-                    height={800}
-                  />
-                  <Image
-                    src="/img/screenshots/1-left-1800-top-660.webp"
-                    alt={policyQaScreenshotAlt}
-                    className="bg-white/75 max-sm:hidden lg:hidden dark:hidden"
                     width={1800}
                     height={660}
+                    className="max-sm:hidden lg:hidden"
                   />
-                  <Image
-                    src="/img/screenshots/1-color-mist-left-1800-top-660.webp"
+                  {/* Desktop-md (1024px-1279px) */}
+                  <ThemePicture
+                    srcLight="/img/screenshots/1-left-1300-top-1300.webp"
+                    srcDark="/img/screenshots/1-color-mist-left-1300-top-1300.webp"
                     alt={policyQaScreenshotAlt}
-                    className="bg-black/75 not-dark:hidden max-sm:hidden lg:hidden"
-                    width={1800}
-                    height={660}
-                  />
-                  <Image
-                    src="/img/screenshots/1-left-1300-top-1300.webp"
-                    alt={policyQaScreenshotAlt}
-                    className="bg-white/75 max-lg:hidden xl:hidden dark:hidden"
                     width={1300}
                     height={1300}
+                    className="max-lg:hidden xl:hidden"
                   />
-                  <Image
-                    src="/img/screenshots/1-color-mist-left-1300-top-1300.webp"
+                  {/* Desktop-lg (≥1280px) */}
+                  <ThemePicture
+                    srcLight="/img/screenshots/1-left-1800-top-1250.webp"
+                    srcDark="/img/screenshots/1-color-mist-left-1800-top-1250.webp"
                     alt={policyQaScreenshotAlt}
-                    className="bg-black/75 not-dark:hidden max-lg:hidden xl:hidden"
-                    width={1300}
-                    height={1300}
-                  />
-                  <Image
-                    src="/img/screenshots/1-left-1800-top-1250.webp"
-                    alt={policyQaScreenshotAlt}
-                    className="bg-white/75 max-xl:hidden dark:hidden"
                     width={1800}
                     height={1250}
-                  />
-                  <Image
-                    src="/img/screenshots/1-color-mist-left-1800-top-1250.webp"
-                    alt={policyQaScreenshotAlt}
-                    className="bg-black/75 not-dark:hidden max-xl:hidden"
-                    width={1800}
-                    height={1250}
+                    className="max-xl:hidden"
                   />
                 </Screenshot>
               }
               headline="Policy Q&A"
               subheadline={
                 <p>
-                  Ask questions the way you'd ask a colleague. Bulma retrieves current policy text and gives you
+                  Ask questions the way you&apos;d ask a colleague. Bulma retrieves current policy text and gives you
                   grounded answers with source attribution.
                 </p>
               }
@@ -385,67 +396,50 @@ export default function Page() {
             <Feature
               demo={
                 <Screenshot wallpaper="blue" placement="bottom-left">
-                  <Image
-                    src="/img/screenshots/1-right-1000-top-800.webp"
+                  {/* J-1: ThemePicture prevents downloading both dark/light variants */}
+                  {/* Mobile (<640px) */}
+                  <ThemePicture
+                    srcLight="/img/screenshots/1-right-1000-top-800.webp"
+                    srcDark="/img/screenshots/1-color-mist-right-1000-top-800.webp"
                     alt={lenderComparisonScreenshotAlt}
-                    className="bg-white/75 sm:hidden dark:hidden"
                     width={1000}
                     height={800}
+                    className="sm:hidden"
                   />
-                  <Image
-                    src="/img/screenshots/1-color-mist-right-1000-top-800.webp"
+                  {/* Tablet (640px-1023px) */}
+                  <ThemePicture
+                    srcLight="/img/screenshots/1-right-1800-top-660.webp"
+                    srcDark="/img/screenshots/1-color-mist-right-1800-top-660.webp"
                     alt={lenderComparisonScreenshotAlt}
-                    className="bg-black/75 not-dark:hidden sm:hidden"
-                    width={1000}
-                    height={800}
-                  />
-                  <Image
-                    src="/img/screenshots/1-right-1800-top-660.webp"
-                    alt={lenderComparisonScreenshotAlt}
-                    className="bg-white/75 max-sm:hidden lg:hidden dark:hidden"
                     width={1800}
                     height={660}
+                    className="max-sm:hidden lg:hidden"
                   />
-                  <Image
-                    src="/img/screenshots/1-color-mist-right-1800-top-660.webp"
+                  {/* Desktop-md (1024px-1279px) */}
+                  <ThemePicture
+                    srcLight="/img/screenshots/1-right-1300-top-1300.webp"
+                    srcDark="/img/screenshots/1-color-mist-right-1300-top-1300.webp"
                     alt={lenderComparisonScreenshotAlt}
-                    className="bg-black/75 not-dark:hidden max-sm:hidden lg:hidden"
-                    width={1800}
-                    height={660}
-                  />
-                  <Image
-                    src="/img/screenshots/1-right-1300-top-1300.webp"
-                    alt={lenderComparisonScreenshotAlt}
-                    className="bg-white/75 max-lg:hidden xl:hidden dark:hidden"
                     width={1300}
                     height={1300}
+                    className="max-lg:hidden xl:hidden"
                   />
-                  <Image
-                    src="/img/screenshots/1-color-mist-right-1300-top-1300.webp"
+                  {/* Desktop-lg (≥1280px) */}
+                  <ThemePicture
+                    srcLight="/img/screenshots/1-right-1800-top-1250.webp"
+                    srcDark="/img/screenshots/1-color-mist-right-1800-top-1250.webp"
                     alt={lenderComparisonScreenshotAlt}
-                    className="bg-black/75 not-dark:hidden max-lg:hidden xl:hidden"
-                    width={1300}
-                    height={1300}
-                  />
-                  <Image
-                    src="/img/screenshots/1-right-1800-top-1250.webp"
-                    alt={lenderComparisonScreenshotAlt}
-                    className="bg-white/75 max-xl:hidden dark:hidden"
                     width={1800}
                     height={1250}
-                  />
-                  <Image
-                    src="/img/screenshots/1-color-mist-right-1800-top-1250.webp"
-                    alt={lenderComparisonScreenshotAlt}
-                    className="bg-black/75 not-dark:hidden max-xl:hidden"
-                    width={1800}
-                    height={1250}
+                    className="max-xl:hidden"
                   />
                 </Screenshot>
               }
               headline="Lender Comparison"
               subheadline={
-                <p>Compare policies across lenders side-by-side. Find the best fit for your client's scenario in seconds.</p>
+                <p>
+                  Compare policies across lenders side-by-side. Find the best fit for your client&apos;s scenario in seconds.
+                </p>
               }
               cta={
                 <Link href="#pricing" className="group">
@@ -456,9 +450,10 @@ export default function Page() {
           </>
         }
       />
-      {/* Stats */}
+      {/* Stats (P-3: content-visibility for deferred rendering) */}
       <StatsAnimatedGraph
         id="stats"
+        className="content-visibility-stats"
         eyebrow="Trusted by brokers"
         headline="The policy assistant Australian brokers rely on."
         subheadline={
@@ -471,9 +466,10 @@ export default function Page() {
         <StatAnimated countTo={30} countSuffix="+" text="Major Australian lenders covered, with policies updated regularly." />
         <StatAnimated stat="Seconds" text="Average time to answer - compared to hours of manual research." />
       </StatsAnimatedGraph>
-      {/* Testimonials */}
+      {/* Testimonials (P-3: content-visibility for deferred rendering) */}
       <TestimonialsGlassmorphism
         id="testimonial"
+        className="content-visibility-testimonials"
         headline="What brokers are saying"
         subheadline={<p>Hear from mortgage brokers who use Bulma every day to serve their clients better.</p>}
       >
@@ -592,15 +588,16 @@ export default function Page() {
           byline="Lending Specialist, Gold Coast"
         />
       </TestimonialsGlassmorphism>
-      {/* FAQs */}
-      <FAQsTwoColumnAccordion id="faqs" headline="Questions & Answers">
+      {/* FAQs (P-3: content-visibility for deferred rendering) */}
+      <FAQsTwoColumnAccordion id="faqs" className="content-visibility-faqs" headline="Questions & Answers">
         {homeFaqs.map((faq) => (
           <Faq key={faq.id} id={faq.id} question={faq.question} answer={faq.answer} />
         ))}
       </FAQsTwoColumnAccordion>
-      {/* Pricing */}
+      {/* Pricing (P-3: content-visibility for deferred rendering) */}
       <PricingMultiTier
         id="pricing"
+        className="content-visibility-pricing"
         headline="Simple pricing for every brokerage."
         plans={
           <>
@@ -665,9 +662,10 @@ export default function Page() {
           </>
         }
       />
-      {/* Call To Action */}
+      {/* Call To Action (P-3: content-visibility for deferred rendering) */}
       <CallToActionSimple
         id="call-to-action"
+        className="content-visibility-cta"
         headline="Ready to spend less time on policy research?"
         subheadline={
           <p>
@@ -679,7 +677,7 @@ export default function Page() {
           <div className="flex items-center gap-4">
             <MagneticWrapper>
               <GradientBorderWrapper>
-                <ButtonLink href="https://app.bulma.com.au/register" size="lg">
+                <ButtonLink href="https://app.bulma.com.au/register" size="lg" preloadOnHover>
                   Try Bulma free
                 </ButtonLink>
               </GradientBorderWrapper>

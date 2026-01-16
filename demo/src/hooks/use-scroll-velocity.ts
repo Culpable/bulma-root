@@ -44,11 +44,13 @@ interface UseScrollVelocityReturn {
 export function useScrollVelocity(): UseScrollVelocityReturn {
   const [velocity, setVelocity] = useState(0)
   const lastScrollY = useRef(0)
-  const lastTime = useRef(Date.now())
+  const lastTime = useRef(0)
   const velocityRef = useRef(0)
 
   useEffect(() => {
     let rafId: number | null = null
+    lastTime.current = Date.now()
+    lastScrollY.current = window.scrollY
 
     const updateVelocity = () => {
       const currentTime = Date.now()

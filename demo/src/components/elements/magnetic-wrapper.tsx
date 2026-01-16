@@ -79,20 +79,24 @@ export function MagneticWrapper({
       const deltaX = e.clientX - centerX
       const deltaY = e.clientY - centerY
 
-      // Normalize to element dimensions for consistent feel across sizes
-      const normalizedX = deltaX / (rect.width / 2)
-      const normalizedY = deltaY / (rect.height / 2)
+      // Normalize to element dimensions and activation radius for consistent feel across sizes
+      const normalizedX = deltaX / ((rect.width / 2) * activationRadius)
+      const normalizedY = deltaY / ((rect.height / 2) * activationRadius)
+
+      // Clamp to prevent excessive translation when activation radius is smaller than 1
+      const clampedX = Math.max(-1, Math.min(1, normalizedX))
+      const clampedY = Math.max(-1, Math.min(1, normalizedY))
 
       // Apply offset with easing (stronger pull near center, capped at edges)
-      const offsetX = normalizedX * maxOffset
-      const offsetY = normalizedY * maxOffset
+      const offsetX = clampedX * maxOffset
+      const offsetY = clampedY * maxOffset
 
       setTransform({
         transform: `translate(${offsetX}px, ${offsetY}px)`,
         transition: 'transform 0.15s ease-out',
       })
     },
-    [disabled, maxOffset]
+    [activationRadius, disabled, maxOffset]
   )
 
   /**

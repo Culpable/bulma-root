@@ -1,7 +1,7 @@
 'use client'
 
 import { clsx } from 'clsx/lite'
-import { useEffect, useRef, useState, type ComponentProps } from 'react'
+import { useCallback, useEffect, useRef, useState, type ComponentProps } from 'react'
 
 /**
  * Configuration for counting animation behavior.
@@ -57,7 +57,7 @@ export function AnimatedCounter({
   const animationRef = useRef<number | null>(null)
 
   // Animate the counter from 0 to target value
-  const startAnimation = () => {
+  const startAnimation = useCallback(() => {
     if (hasAnimated) return
 
     const startTime = performance.now()
@@ -82,7 +82,7 @@ export function AnimatedCounter({
     }
 
     animationRef.current = requestAnimationFrame(animate)
-  }
+  }, [duration, hasAnimated, value])
 
   // Set up intersection observer for scroll-triggered animation
   useEffect(() => {
@@ -112,7 +112,7 @@ export function AnimatedCounter({
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [animateOnView, threshold, hasAnimated, value, duration])
+  }, [animateOnView, threshold, hasAnimated, value, duration, startAnimation])
 
   // Format the display value with proper decimals
   const formattedValue = decimals > 0

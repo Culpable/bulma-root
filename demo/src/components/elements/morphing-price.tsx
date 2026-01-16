@@ -61,29 +61,6 @@ interface MorphingDigitProps {
  * The old digit slides up and out while the new digit slides up and in.
  */
 function MorphingDigit({ from, to, delay, isAnimating }: MorphingDigitProps) {
-  const [showNew, setShowNew] = useState(!isAnimating)
-
-  useEffect(() => {
-    if (!isAnimating) {
-      setShowNew(true)
-      return
-    }
-
-    // Delay the switch to new value
-    const timer = setTimeout(() => {
-      setShowNew(true)
-    }, delay + MORPH_CONFIG.digitDuration * 0.3)
-
-    return () => clearTimeout(timer)
-  }, [isAnimating, delay])
-
-  // Reset when animation starts
-  useEffect(() => {
-    if (isAnimating) {
-      setShowNew(false)
-    }
-  }, [isAnimating])
-
   // If digits are the same, no animation needed
   if (from === to && !isAnimating) {
     return (

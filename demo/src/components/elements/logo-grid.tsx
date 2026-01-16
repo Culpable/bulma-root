@@ -25,13 +25,6 @@ export function LogoGrid({
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (prefersReducedMotion) {
-      setIsVisible(true)
-      return
-    }
-
     // Trigger animation shortly after mount (allows hero content to animate first)
     const timer = setTimeout(() => setIsVisible(true), 50)
     return () => clearTimeout(timer)

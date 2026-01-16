@@ -50,7 +50,7 @@ export default function Page() {
         subheadline={
           <p>
             Bulma helps mortgage brokers across Australia find policy answers faster, match clients to the right
-            lenders, and close more deals with confidence. We're growing every day alongside the brokers who use us.
+            lenders, and close more deals with confidence. We&apos;re growing every day alongside the brokers who use us.
           </p>
         }
       >
@@ -63,7 +63,7 @@ export default function Page() {
         quote={
           <p>
             Bulma has genuinely changed how I work. I used to dread the policy research part of complex applications.
-            Now it's the fastest part of my day.
+            Now it&apos;s the fastest part of my day.
           </p>
         }
         img={
@@ -84,8 +84,8 @@ export default function Page() {
         headline="Our team"
         subheadline={
           <p>
-            Bulma's team combines deep expertise in mortgage broking with AI and product development. We understand the
-            challenges you face because we've been there ourselves.
+            Bulma&apos;s team combines deep expertise in mortgage broking with AI and product development. We understand the
+            challenges you face because we&apos;ve been there ourselves.
           </p>
         }
       >
@@ -199,7 +199,7 @@ export default function Page() {
         id="call-to-action"
         headline="Have questions?"
         subheadline={
-          <p>We'd love to hear from you. Get in touch to learn more about how Bulma can help your brokerage.</p>
+          <p>We&apos;d love to hear from you. Get in touch to learn more about how Bulma can help your brokerage.</p>
         }
         cta={
           <div className="flex items-center gap-4">

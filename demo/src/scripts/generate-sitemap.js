@@ -7,24 +7,28 @@
  * Output: public/sitemap.xml
  */
 
-const fs = require('fs');
-const path = require('path');
-const globby = require('fast-glob');
-
-// Import configuration from sitemap.js
-const {
-  SITE_URL,
-  CORE_ROUTES,
-  EXCLUDED_ROUTES,
-  CHANGE_FREQUENCY,
-  PRIORITIES,
-} = require('../lib/sitemap');
-
 /**
  * Generate the sitemap by scanning the app directory structure
  * and creating a standardized sitemap.xml file
  */
 async function generateSitemap() {
+  const fsModule = await import('fs')
+  const pathModule = await import('path')
+  const globbyModule = await import('fast-glob')
+  const sitemapModule = await import('../lib/sitemap.js')
+
+  const fs = fsModule.default ?? fsModule
+  const path = pathModule.default ?? pathModule
+  const globby = globbyModule.default ?? globbyModule
+
+  // Import configuration from sitemap.js
+  const {
+    SITE_URL,
+    CORE_ROUTES,
+    EXCLUDED_ROUTES,
+    CHANGE_FREQUENCY,
+    PRIORITIES,
+  } = sitemapModule.default ?? sitemapModule
   console.log('Generating sitemap...');
 
   const lastModified = new Date().toISOString();

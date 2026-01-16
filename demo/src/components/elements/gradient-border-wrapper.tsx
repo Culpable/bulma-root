@@ -24,6 +24,30 @@ const GRADIENT_CONFIG = {
   shimmerDuration: 600,
 }
 
+// Light mode gradient colors
+const LIGHT_GRADIENT = `conic-gradient(
+  from var(--gradient-angle),
+  oklch(45% 0.017 213.2) 0deg,
+  oklch(56% 0.021 213.5) 60deg,
+  oklch(72.3% 0.014 214.4) 120deg,
+  oklch(56% 0.021 213.5) 180deg,
+  oklch(37.8% 0.015 216) 240deg,
+  oklch(45% 0.017 213.2) 300deg,
+  oklch(45% 0.017 213.2) 360deg
+)`
+
+// Dark mode gradient colors (lighter for visibility)
+const DARK_GRADIENT = `conic-gradient(
+  from var(--gradient-angle),
+  oklch(72.3% 0.014 214.4) 0deg,
+  oklch(87.2% 0.007 219.6) 60deg,
+  oklch(92.5% 0.005 214.3) 120deg,
+  oklch(87.2% 0.007 219.6) 180deg,
+  oklch(72.3% 0.014 214.4) 240deg,
+  oklch(56% 0.021 213.5) 300deg,
+  oklch(72.3% 0.014 214.4) 360deg
+)`
+
 interface GradientBorderWrapperProps {
   /** Content to wrap (typically a button) */
   children: ReactNode
@@ -66,6 +90,7 @@ export function GradientBorderWrapper({
   // Set up IntersectionObserver to track when the wrapper enters/exits the viewport.
   // When off-screen, we pause the CSS animation and shimmer to reduce GPU overhead.
   useEffect(() => {
+    if (disabled) return
     const wrapper = wrapperRef.current
     if (!wrapper) return
 
@@ -79,42 +104,15 @@ export function GradientBorderWrapper({
     observer.observe(wrapper)
 
     return () => observer.disconnect()
-  }, [])
-
-  if (disabled) {
-    return <>{children}</>
-  }
-
-  // Light mode gradient colors
-  const lightGradient = `conic-gradient(
-    from var(--gradient-angle),
-    oklch(45% 0.017 213.2) 0deg,
-    oklch(56% 0.021 213.5) 60deg,
-    oklch(72.3% 0.014 214.4) 120deg,
-    oklch(56% 0.021 213.5) 180deg,
-    oklch(37.8% 0.015 216) 240deg,
-    oklch(45% 0.017 213.2) 300deg,
-    oklch(45% 0.017 213.2) 360deg
-  )`
-
-  // Dark mode gradient colors (lighter for visibility)
-  const darkGradient = `conic-gradient(
-    from var(--gradient-angle),
-    oklch(72.3% 0.014 214.4) 0deg,
-    oklch(87.2% 0.007 219.6) 60deg,
-    oklch(92.5% 0.005 214.3) 120deg,
-    oklch(87.2% 0.007 219.6) 180deg,
-    oklch(72.3% 0.014 214.4) 240deg,
-    oklch(56% 0.021 213.5) 300deg,
-    oklch(72.3% 0.014 214.4) 360deg
-  )`
+  }, [disabled])
 
   // Update gradient based on dark mode
   useEffect(() => {
+    if (disabled) return
     const updateGradient = () => {
       if (!wrapperRef.current) return
       const isDark = document.documentElement.classList.contains('dark')
-      wrapperRef.current.style.background = isDark ? darkGradient : lightGradient
+      wrapperRef.current.style.background = isDark ? DARK_GRADIENT : LIGHT_GRADIENT
     }
 
     updateGradient()
@@ -124,11 +122,11 @@ export function GradientBorderWrapper({
     observer.observe(document.documentElement, { attributes: true })
 
     return () => observer.disconnect()
-  }, [])
+  }, [disabled])
 
   // Shimmer animation - triggers periodically, but only when visible
   useEffect(() => {
-    if (!shimmer || !shimmerRef.current || !isVisible) return
+    if (disabled || !shimmer || !shimmerRef.current || !isVisible) return
 
     const triggerShimmer = () => {
       if (!shimmerRef.current) return
@@ -149,7 +147,11 @@ export function GradientBorderWrapper({
       clearTimeout(initialTimeout)
       clearInterval(intervalId)
     }
-  }, [shimmer, shimmerInterval, isVisible])
+  }, [disabled, shimmer, shimmerInterval, isVisible])
+
+  if (disabled) {
+    return <>{children}</>
+  }
 
   return (
     <div
@@ -160,7 +162,7 @@ export function GradientBorderWrapper({
       )}
       style={{
         '--gradient-rotation-duration': `${rotationDuration}ms`,
-        background: lightGradient,
+        background: LIGHT_GRADIENT,
         padding: `${GRADIENT_CONFIG.borderWidth}px`,
         borderRadius: '9999px',
         animation: `gradient-border-rotate var(--gradient-rotation-duration) linear infinite`,

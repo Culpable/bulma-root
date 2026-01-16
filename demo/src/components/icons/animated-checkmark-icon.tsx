@@ -39,16 +39,21 @@ export function AnimatedCheckmarkIcon({
 
   // Trigger draw animation after delay
   useEffect(() => {
-    if (!animate) {
-      setIsDrawn(true)
-      return
-    }
+    if (!animate) return
+
+    // Reset on the next tick so toggling animate=true restarts the draw.
+    const resetTimer = setTimeout(() => {
+      setIsDrawn(false)
+    }, 0)
 
     const timer = setTimeout(() => {
       setIsDrawn(true)
     }, delay)
 
-    return () => clearTimeout(timer)
+    return () => {
+      clearTimeout(resetTimer)
+      clearTimeout(timer)
+    }
   }, [animate, delay])
 
   return (
@@ -70,7 +75,7 @@ export function AnimatedCheckmarkIcon({
         strokeLinejoin="round"
         style={{
           strokeDasharray: pathLength || 20,
-          strokeDashoffset: isDrawn ? 0 : pathLength || 20,
+          strokeDashoffset: animate ? (isDrawn ? 0 : pathLength || 20) : 0,
           transition: animate
             ? `stroke-dashoffset ${duration}ms cubic-bezier(0.22, 1, 0.36, 1)`
             : 'none',

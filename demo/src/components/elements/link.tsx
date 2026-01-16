@@ -20,8 +20,8 @@ export function Link({
     <NextLink
       href={href}
       className={clsx(
-        // Base link styling
-        'link-underline-grow inline-flex cursor-pointer items-center gap-2',
+        // Base link styling with w-fit to prevent stretching in flex containers
+        'link-underline-grow inline-flex w-fit cursor-pointer items-center gap-2',
         'text-sm/7 font-medium text-mist-950 dark:text-white',
         // Smooth color transition on hover (subtle blue tint in dark mode)
         'transition-colors duration-200 hover:text-mist-800 dark:hover:text-[oklch(95%_0.015_210)]',

@@ -307,7 +307,7 @@ export default function Page() {
         quote={
           <p>
             The Team plan paid for itself in the first week. Our whole office now uses Bulma as the first stop for any
-            policy question - it's saved us countless hours.
+            policy question - it&apos;s saved us countless hours.
           </p>
         }
         img={
@@ -333,7 +333,7 @@ export default function Page() {
         id="call-to-action"
         headline="Have more questions?"
         subheadline={
-          <p>We're happy to help. Get in touch to discuss how Bulma can work for your brokerage.</p>
+          <p>We&apos;re happy to help. Get in touch to discuss how Bulma can work for your brokerage.</p>
         }
         cta={
           <div className="flex items-center gap-4">
