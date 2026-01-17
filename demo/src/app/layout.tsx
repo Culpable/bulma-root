@@ -98,7 +98,6 @@ export default function RootLayout({
             links={
               <>
                 <NavbarLink href="/pricing">Pricing</NavbarLink>
-                <NavbarLink href="/about">About</NavbarLink>
                 <NavbarLink href="/contact">Contact</NavbarLink>
                 <NavbarLink href="https://app.bulma.com.au/login" className="sm:hidden">
                   Log in
@@ -149,12 +148,6 @@ export default function RootLayout({
                   {/* <FooterLink href="#">Features</FooterLink> */}
                   <FooterLink href="/pricing">Pricing</FooterLink>
                   {/* <FooterLink href="#">Integrations</FooterLink> */}
-                </FooterCategory>
-                <FooterCategory title="About">
-                  <FooterLink href="/about">About</FooterLink>
-                  {/* <FooterLink href="#">Careers</FooterLink> */}
-                  {/* <FooterLink href="#">Blog</FooterLink> */}
-                  {/* <FooterLink href="#">Press Kit</FooterLink> */}
                 </FooterCategory>
                 <FooterCategory title="Support">
                   {/* <FooterLink href="#">Help Center</FooterLink> */}
