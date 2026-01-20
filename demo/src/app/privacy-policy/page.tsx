@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <DocumentCentered id="document" headline="Privacy Policy" subheadline={<p>Last updated on January 1, 2026.</p>}>
+      <DocumentCentered id="document" headline="Privacy Policy" subheadline={<p>Last updated on January 20, 2026.</p>}>
         <p>
           Bulma Pty Ltd (&quot;<strong>Bulma</strong>&quot;, &quot;<strong>we</strong>&quot;, &quot;<strong>us</strong>
           &quot;, or &quot;<strong>our</strong>&quot;) respects your privacy and is committed to protecting your personal information.

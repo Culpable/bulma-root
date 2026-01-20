@@ -2265,6 +2265,8 @@
   opacity: 0;
   /* Define the curved path - gentle arc upward */
   offset-path: path('M 0 40 Q 10 20 20 10 T 40 0');
+  /* Anchor motion to top-left so the icon stays centered in its layout row */
+  offset-anchor: 0 0;
   offset-rotate: 0deg;
   offset-distance: 0%;
 }
@@ -2546,4 +2548,3 @@
     );
   }
 }
-

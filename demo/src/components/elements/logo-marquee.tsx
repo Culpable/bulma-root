@@ -1,7 +1,7 @@
 'use client'
 
 import { clsx } from 'clsx/lite'
-import { Children, cloneElement, isValidElement, type ComponentProps, type ReactNode, useEffect, useRef, useState } from 'react'
+import { Children, cloneElement, isValidElement, type ComponentProps, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 
 /**
  * Configuration for the logo marquee animation.
@@ -102,23 +102,23 @@ export function LogoMarquee({
   // Calculate animation duration based on speed multiplier
   const duration = MARQUEE_CONFIG.baseDuration / speed
 
-  // Convert children to array for duplication
-  const childArray = Children.toArray(children)
-
-  // Duplicate children to create seamless loop (need at least 2 copies).
-  // Each copy gets unique keys to avoid React duplicate key warnings.
-  const duplicatedChildren = [
-    ...childArray.map((child, index) =>
-      isValidElement(child)
-        ? cloneElement(child, { key: `marquee-a-${index}` })
-        : child
-    ),
-    ...childArray.map((child, index) =>
-      isValidElement(child)
-        ? cloneElement(child, { key: `marquee-b-${index}` })
-        : child
-    ),
-  ]
+  // Memoize the duplication - only re-compute when children change.
+  // This prevents 12+ cloneElement calls on every render (6 logos × 2 copies).
+  const duplicatedChildren = useMemo(() => {
+    const childArray = Children.toArray(children)
+    return [
+      ...childArray.map((child, index) =>
+        isValidElement(child)
+          ? cloneElement(child, { key: `marquee-a-${index}` })
+          : child
+      ),
+      ...childArray.map((child, index) =>
+        isValidElement(child)
+          ? cloneElement(child, { key: `marquee-b-${index}` })
+          : child
+      ),
+    ]
+  }, [children])
 
   return (
     <div

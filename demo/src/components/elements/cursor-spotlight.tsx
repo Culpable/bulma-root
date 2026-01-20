@@ -47,7 +47,8 @@ export function CursorSpotlight({
     const handleMouseEnter = () => setIsActive(true)
     const handleMouseLeave = () => setIsActive(false)
 
-    container.addEventListener('mousemove', handleMouseMove)
+    // Add passive flag to mousemove for better scroll/input performance
+    container.addEventListener('mousemove', handleMouseMove, { passive: true })
     container.addEventListener('mouseenter', handleMouseEnter)
     container.addEventListener('mouseleave', handleMouseLeave)
 

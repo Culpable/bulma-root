@@ -28,7 +28,7 @@ export function Feature({
       </div>
       <div className="flex flex-col gap-4 p-6 sm:p-10 lg:p-6">
         <div>
-          <div className="flex items-start gap-3">
+          <div className="flex items-center gap-3">
             {icon && (
               <IconPathMotion direction="bounce" className="shrink-0">
                 <div className="flex size-8 items-center justify-center rounded-lg bg-mist-950/5 text-mist-700 dark:bg-white/10 dark:text-mist-300">
@@ -36,7 +36,7 @@ export function Feature({
                 </div>
               </IconPathMotion>
             )}
-            <h3 className="text-base/8 font-medium text-mist-950 dark:text-white">{headline}</h3>
+            <h3 className="flex h-8 items-center text-base font-medium text-mist-950 dark:text-white">{headline}</h3>
           </div>
           <div className={clsx('mt-2 flex flex-col gap-4 text-sm/7 text-mist-700 dark:text-mist-400', icon && 'ml-11')}>
             {subheadline}

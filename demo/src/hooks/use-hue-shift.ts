@@ -3,6 +3,12 @@
 import { useEffect, useRef, useCallback } from 'react'
 
 /**
+ * IntersectionObserver threshold array - hoisted to module level to avoid
+ * recreating on every effect run.
+ */
+const HUE_SHIFT_THRESHOLDS: number[] = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+
+/**
  * Section identifiers and their corresponding hue shifts.
  * Positive values shift toward warmer colors, negative toward cooler.
  */
@@ -96,26 +102,31 @@ export function useHueShift({
     // Create intersection observer to track which section is most visible
     const observer = new IntersectionObserver(
       (entries) => {
-        // Find the visible entries and pick the one with highest ratio
-        const visibleEntries = entries
-          .filter((entry) => entry.isIntersecting && entry.target.getAttribute('data-section-hue'))
-          .map((entry) => ({
-            id: entry.target.getAttribute('data-section-hue') as string,
-            ratio: entry.intersectionRatio,
-          }))
-          .sort((a, b) => b.ratio - a.ratio)
+        // Single-pass algorithm to find most visible section
+        // Avoids filter → map → sort chain that creates intermediate arrays
+        let mostVisibleId: string | null = null
+        let maxRatio = 0
 
-        // Get the most visible section
-        const mostVisible = visibleEntries[0]
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
 
-        // Only update if this section is significantly visible
-        if (mostVisible && mostVisible.ratio > 0.2) {
-          updateHueShift(mostVisible.id)
+          const sectionId = entry.target.getAttribute('data-section-hue')
+          if (!sectionId) continue
+
+          if (entry.intersectionRatio > maxRatio) {
+            maxRatio = entry.intersectionRatio
+            mostVisibleId = sectionId
+          }
+        }
+
+        // Only update if section is significantly visible (threshold check)
+        if (mostVisibleId && maxRatio > 0.2) {
+          updateHueShift(mostVisibleId)
         }
       },
       {
-        // Multiple thresholds for smoother detection
-        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+        // Multiple thresholds for smoother detection (hoisted to module level)
+        threshold: HUE_SHIFT_THRESHOLDS,
         // Adjust root margin to favor sections near viewport center
         rootMargin: '-20% 0px -20% 0px',
       }

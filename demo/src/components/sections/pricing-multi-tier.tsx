@@ -1,7 +1,7 @@
 'use client'
 
 import { clsx } from 'clsx/lite'
-import { Children, createContext, useContext, type ComponentProps, type ReactNode } from 'react'
+import { Children, createContext, memo, useContext, useMemo, type ComponentProps, type ReactNode } from 'react'
 import { CardSpotlight } from '../elements/card-spotlight'
 import { Section } from '../elements/section'
 import { AnimatedCheckmarkIcon } from '../icons/animated-checkmark-icon'
@@ -19,6 +19,33 @@ interface PricingAnimationContextValue {
 const PricingAnimationContext = createContext<PricingAnimationContextValue>({
   isVisible: false,
   baseDelay: 0,
+})
+
+/**
+ * Wrapper component that memoizes context value to prevent cascade re-renders.
+ * When isVisible changes, only the wrapper re-renders, not all Plan children
+ * (unless their props actually changed).
+ */
+const PlanWrapper = memo(function PlanWrapper({
+  child,
+  delay,
+  isVisible,
+}: {
+  child: ReactNode
+  delay: number
+  isVisible: boolean
+}) {
+  // Memoize context value to prevent unnecessary re-renders in consumers
+  const contextValue = useMemo(
+    () => ({ isVisible, baseDelay: delay }),
+    [isVisible, delay]
+  )
+
+  return (
+    <PricingAnimationContext.Provider value={contextValue}>
+      {child}
+    </PricingAnimationContext.Provider>
+  )
 })
 
 export function Plan({
@@ -117,11 +144,13 @@ export function PricingMultiTier({
   // Each plan gets its own context with the appropriate base delay for checkmarks
   // Includes depth stack effect for "pulled from deck" card entrance
   // Includes focus isolation effect (Rec B) - hovering one card dims others
+  // Uses PlanWrapper to memoize context value and prevent cascade re-renders
   const animatedPlans = Children.map(plans, (child, index) => {
     const delay = index * staggerDelay
 
     return (
       <div
+        key={index}
         data-animating={isVisible}
         className={clsx(
           // Base styles for animation and layout
@@ -130,10 +159,8 @@ export function PricingMultiTier({
         )}
         style={{ transitionDelay: `${delay}ms` }}
       >
-        {/* Provide animation context to Plan component for checkmark staggering */}
-        <PricingAnimationContext.Provider value={{ isVisible, baseDelay: delay }}>
-          {child}
-        </PricingAnimationContext.Provider>
+        {/* PlanWrapper memoizes context value to prevent cascade re-renders */}
+        <PlanWrapper child={child} delay={delay} isVisible={isVisible} />
       </div>
     )
   })

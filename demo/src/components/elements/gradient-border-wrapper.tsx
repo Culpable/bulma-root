@@ -1,7 +1,8 @@
 'use client'
 
 import { clsx } from 'clsx/lite'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { useDarkMode } from '@/hooks/use-dark-mode'
 
 /**
  * Configuration for the animated gradient border effect.
@@ -106,23 +107,29 @@ export function GradientBorderWrapper({
     return () => observer.disconnect()
   }, [disabled])
 
-  // Update gradient based on dark mode
+  // Use shared dark mode hook (consolidates MutationObservers across all instances)
+  const isDark = useDarkMode()
+
+  // Update gradient based on dark mode - React handles updates when isDark changes
   useEffect(() => {
-    if (disabled) return
-    const updateGradient = () => {
-      if (!wrapperRef.current) return
-      const isDark = document.documentElement.classList.contains('dark')
-      wrapperRef.current.style.background = isDark ? DARK_GRADIENT : LIGHT_GRADIENT
-    }
+    if (disabled || !wrapperRef.current) return
+    wrapperRef.current.style.background = isDark ? DARK_GRADIENT : LIGHT_GRADIENT
+  }, [disabled, isDark])
 
-    updateGradient()
+  // Stable event handlers for hover speed change (avoid recreating on every render)
+  const handleMouseEnter = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.currentTarget.style.animationDuration = `${rotationDuration * 0.5}ms`
+    },
+    [rotationDuration]
+  )
 
-    // Watch for dark mode changes
-    const observer = new MutationObserver(updateGradient)
-    observer.observe(document.documentElement, { attributes: true })
-
-    return () => observer.disconnect()
-  }, [disabled])
+  const handleMouseLeave = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.currentTarget.style.animationDuration = `${rotationDuration}ms`
+    },
+    [rotationDuration]
+  )
 
   // Shimmer animation - triggers periodically, but only when visible
   useEffect(() => {
@@ -169,12 +176,8 @@ export function GradientBorderWrapper({
         // Pause animation when off-screen to save GPU/compositor resources
         animationPlayState: isVisible ? 'running' : 'paused',
       } as React.CSSProperties}
-      onMouseEnter={(e) => {
-        ;(e.currentTarget as HTMLDivElement).style.animationDuration = `${rotationDuration * 0.5}ms`
-      }}
-      onMouseLeave={(e) => {
-        ;(e.currentTarget as HTMLDivElement).style.animationDuration = `${rotationDuration}ms`
-      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {/* Inner content with solid background to reveal border */}
       <div className="relative z-10 overflow-hidden rounded-full bg-mist-100 dark:bg-mist-950">

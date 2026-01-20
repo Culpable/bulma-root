@@ -142,7 +142,8 @@ export function DotMatrix({
     const container = containerRef.current
     if (!container || !active) return
 
-    container.addEventListener('mousemove', handleMouseMove)
+    // Add passive flag to mousemove for better scroll/input performance
+    container.addEventListener('mousemove', handleMouseMove, { passive: true })
     container.addEventListener('mouseleave', handleMouseLeave)
 
     return () => {
@@ -177,6 +178,10 @@ export function DotMatrix({
 
       const mouse = mouseRef.current
 
+      // Cache dark mode check ONCE per frame (was inside inner loop = ~60k DOM lookups/sec)
+      const isDark = document.documentElement.classList.contains('dark')
+      const baseColor = isDark ? '255, 255, 255' : '0, 0, 0'
+
       // Draw each dot
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
@@ -197,11 +202,8 @@ export function DotMatrix({
             opacity = baseOpacity + (maxOpacity - baseOpacity) * eased
           }
 
-          // Detect dark mode from document
-          const isDark = document.documentElement.classList.contains('dark')
-          const dotColor = isDark
-            ? `rgba(255, 255, 255, ${opacity})`
-            : `rgba(0, 0, 0, ${opacity})`
+          // Use cached color values (dark mode check moved outside loop)
+          const dotColor = `rgba(${baseColor}, ${opacity})`
 
           ctx.beginPath()
           ctx.arc(x, y, dotSize, 0, Math.PI * 2)

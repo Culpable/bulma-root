@@ -64,6 +64,24 @@ const GRAPH_PATH = 'M 0 383 C 396 362.7936732276819, 804 264.31672304481856, 120
 const GRAPH_FILL_PATH = 'M 0 400 L 0 383 C 396 362.7936732276819, 804 264.31672304481856, 1200 60 L 1200 60 L 1200 400 Z'
 
 /**
+ * Static grid lines for the graph - hoisted to module level to avoid
+ * recreating 14 objects on every render.
+ */
+const GRID_LINES = Array.from({ length: 14 }, (_, i) => {
+  const x = (i / 13) * 1199 + 0.5
+  return (
+    <line
+      key={i}
+      x1={x}
+      y1="400"
+      x2={x}
+      y2="0"
+      vectorEffect="non-scaling-stroke"
+    />
+  )
+})
+
+/**
  * Stats section with animated SVG graph that draws itself on scroll.
  * Features path animation using stroke-dasharray/dashoffset technique.
  */
@@ -199,19 +217,7 @@ export function StatsAnimatedGraph({
               strokeDasharray="4 3"
               clipPath={`url(#${pathId})`}
             >
-              {Array.from({ length: 14 }, (_, i) => {
-                const x = (i / 13) * 1199 + 0.5
-                return (
-                  <line
-                    key={i}
-                    x1={x}
-                    y1="400"
-                    x2={x}
-                    y2="0"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                )
-              })}
+              {GRID_LINES}
             </g>
 
             {/* Glow effect behind the main line - fades in after line draws */}

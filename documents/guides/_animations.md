@@ -1894,6 +1894,7 @@ function CustomHero() {
 - 700ms duration with smooth ease-out timing
 - Starts at scale 0.8 and opacity 0, ends at scale 1 and opacity 1
 - Triggers once via IntersectionObserver
+- Sets `offset-anchor: 0 0` to keep the icon visually centered with its heading during motion
 
 **CSS Keyframe (`icon-path-curve-up`):**
 ```css
