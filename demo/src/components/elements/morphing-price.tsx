@@ -14,6 +14,8 @@ const MORPH_CONFIG = {
   digitStagger: 40,
   // Easing function for the morph (spring-like overshoot)
   easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+  // Match digit line-height to wrapper height to prevent glyph clipping across fonts.
+  digitLineHeight: 1.2,
 }
 
 /**
@@ -135,8 +137,11 @@ export function MorphingPrice({
   value,
   animate = true,
   className,
+  style,
   ...props
 }: MorphingPriceProps) {
+  // Treat non-numeric prices (e.g., "Custom") as plain text to avoid per-character spacing.
+  const hasDigits = /\d/.test(value)
   const [displayValue, setDisplayValue] = useState(value)
   const [prevValue, setPrevValue] = useState(value)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -147,6 +152,19 @@ export function MorphingPrice({
     // Clean up any pending animation timeout
     if (animationTimeoutRef.current) {
       clearTimeout(animationTimeoutRef.current)
+    }
+
+    // Render non-numeric prices as-is to avoid digit-slot layout quirks.
+    if (!hasDigits) {
+      setDisplayValue(value)
+      setPrevValue(value)
+      setIsAnimating(false)
+      prevValueRef.current = value
+      return () => {
+        if (animationTimeoutRef.current) {
+          clearTimeout(animationTimeoutRef.current)
+        }
+      }
     }
 
     if (value === prevValueRef.current) return
@@ -182,7 +200,16 @@ export function MorphingPrice({
         clearTimeout(animationTimeoutRef.current)
       }
     }
-  }, [value, animate])
+  }, [value, animate, hasDigits])
+
+  // Render non-numeric prices as standard text.
+  if (!hasDigits) {
+    return (
+      <span className={clsx('inline-flex items-baseline tabular-nums', className)} style={style} {...props}>
+        {value}
+      </span>
+    )
+  }
 
   // Parse current and previous prices
   const currentParsed = useMemo(() => parsePrice(displayValue), [displayValue])
@@ -197,6 +224,7 @@ export function MorphingPrice({
   return (
     <span
       className={clsx('inline-flex items-baseline tabular-nums', className)}
+      style={{ lineHeight: MORPH_CONFIG.digitLineHeight, ...style }}
       {...props}
     >
       {/* Currency symbol / prefix */}

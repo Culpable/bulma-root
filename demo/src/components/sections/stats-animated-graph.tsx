@@ -1,9 +1,16 @@
 'use client'
 
 import { clsx } from 'clsx/lite'
-import { Children, useEffect, useId, useRef, useState, type ComponentProps, type ReactNode } from 'react'
-import { AnimatedCounter } from '../elements/animated-counter'
+import dynamic from 'next/dynamic'
+import { Children, useEffect, useId, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { Section } from '../elements/section'
+
+// Dynamic import for AnimatedCounter - not needed for initial paint since it only
+// renders after user scrolls to the stats section. SSR enabled for SEO (renders "0").
+const AnimatedCounter = dynamic(
+  () => import('../elements/animated-counter').then((m) => m.AnimatedCounter),
+  { ssr: true }
+)
 
 interface StatAnimatedProps extends ComponentProps<'div'> {
   /** Static text or ReactNode to display as the stat */
@@ -137,22 +144,27 @@ export function StatsAnimatedGraph({
     return () => observer.disconnect()
   }, [])
 
-  // Wrap each stat child with staggered animation
-  const animatedStats = Children.map(children, (child, index) => {
-    const delay = index * staggerDelay
+  // Wrap each stat child with staggered animation.
+  // Memoized to prevent recreating inline style objects on every render.
+  const animatedStats = useMemo(
+    () =>
+      Children.map(children, (child, index) => {
+        const delay = index * staggerDelay
 
-    return (
-      <div
-        className={clsx(
-          'transition-all duration-700 ease-out',
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        )}
-        style={{ transitionDelay: `${delay}ms` }}
-      >
-        {child}
-      </div>
-    )
-  })
+        return (
+          <div
+            className={clsx(
+              'transition-all duration-700 ease-out',
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            )}
+            style={{ transitionDelay: `${delay}ms` }}
+          >
+            {child}
+          </div>
+        )
+      }),
+    [children, staggerDelay, isVisible]
+  )
 
   // Calculate animation delay for the graph (after stats finish)
   const graphDelay = (Children.count(children) + 1) * staggerDelay

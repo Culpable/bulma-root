@@ -53,7 +53,10 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
     }
   }
 
-  // Measure the longest phrase on mount to set fixed container width
+  // Measure the longest phrase on mount to set fixed container width.
+  // Measures in-place to inherit correct font styling from parent context.
+  // Note: With ~4 phrases this causes 4 reflows, which is acceptable for
+  // a one-time initialization that runs once on mount.
   useEffect(() => {
     if (!measureRef.current || hasInitialized.current) return
 

@@ -132,7 +132,7 @@ The codebase already correctly uses `next/dynamic` for:
 
 ---
 
-### 5.2 Code-Split AnimatedCounter Component
+### ~~5.2 Code-Split AnimatedCounter Component~~ ✅ **COMPLETED**
 
 **Severity:** 🟡 MEDIUM
 **Impact:** ~3KB bundle reduction
@@ -401,7 +401,7 @@ const duplicatedChildren = useMemo(() => {
 
 ---
 
-### 6.3 🟠 HIGH: Memoize StatsAnimatedGraph Children Mapping
+### ~~6.3 🟠 HIGH: Memoize StatsAnimatedGraph Children Mapping~~ ✅ **COMPLETED**
 
 **Severity:** 🟠 HIGH
 **Impact:** Prevents inline style objects recreation
@@ -527,7 +527,7 @@ This eliminates the JavaScript entirely and uses pure CSS, which is more perform
 
 ---
 
-### 6.5 🟡 MEDIUM: useScrollHighlights Returns New Array Every Render
+### ~~6.5 🟡 MEDIUM: useScrollHighlights Returns New Array Every Render~~ ✅ **COMPLETED**
 
 **Severity:** 🟡 MEDIUM
 **Impact:** All ScrollHighlight consumers re-render on any highlight change
@@ -965,7 +965,7 @@ const observer = new IntersectionObserver(
 
 ---
 
-### 8.2 🟡 MEDIUM: BlurTransitionText Sequential Measurement
+### ~~8.2 🟡 MEDIUM: BlurTransitionText Sequential Measurement~~ ❌ **SKIPPED/NOT APPLICABLE**
 
 **Severity:** 🟡 MEDIUM
 **Impact:** Reduces layout thrashing during initialization
@@ -1116,12 +1116,12 @@ container.addEventListener('mouseleave', handleMouseLeave)
 | 🟠 P1 | 9.1 | Add passive event listeners | High | Low | cursor-spotlight.tsx, dot-matrix.tsx | ✅ COMPLETED |
 | 🟠 P1 | 7.3 | Hoist static grid lines | High | Low | stats-animated-graph.tsx | ✅ COMPLETED |
 | 🟠 P1 | 8.1 | Optimize useHueShift sorting | High | Medium | use-hue-shift.ts | ✅ COMPLETED |
-| 🟡 P2 | 6.3 | Memoize StatsAnimatedGraph children | Medium | Low | stats-animated-graph.tsx | |
+| 🟡 P2 | 6.3 | Memoize StatsAnimatedGraph children | Medium | Low | stats-animated-graph.tsx | ✅ COMPLETED |
 | 🟡 P2 | 6.4 | useCallback for GradientBorderWrapper handlers | Medium | Low | gradient-border-wrapper.tsx | ✅ COMPLETED |
 | 🟡 P2 | 7.4 | Hoist threshold arrays | Medium | Low | use-hue-shift.ts, others | ✅ COMPLETED |
-| 🟢 P3 | 5.2 | Code-split AnimatedCounter | Low | Medium | stats-animated-graph.tsx, page.tsx | |
-| 🟢 P3 | 6.5 | Memoize useScrollHighlights return | Low | Low | use-scroll-highlight.ts | |
-| 🟢 P3 | 8.2 | Batch BlurTransitionText measurements | Low | Medium | blur-transition-text.tsx | |
+| 🟢 P3 | 5.2 | Code-split AnimatedCounter | Low | Medium | stats-animated-graph.tsx, page.tsx | ✅ COMPLETED |
+| 🟢 P3 | 6.5 | Memoize useScrollHighlights return | Low | Low | use-scroll-highlight.ts | ✅ COMPLETED |
+| 🟢 P3 | 8.2 | Batch BlurTransitionText measurements | Low | Medium | blur-transition-text.tsx | ❌ SKIPPED (loses font context) |
 
 ### 10.2 Estimated Total Effort
 

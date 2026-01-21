@@ -36,8 +36,11 @@ export function LogoGrid({
         if (!isValidElement(child)) return child
 
         const delay = baseDelay + index * staggerDelay
+        // Preserve keys (or provide a stable fallback) to avoid React list warnings.
+        const elementKey = child.key ?? `logo-${index}`
 
         return cloneElement(child as React.ReactElement<{ className?: string; style?: React.CSSProperties; 'data-animate'?: string }>, {
+          key: elementKey,
           className: clsx((child.props as { className?: string }).className, 'animate-fade-up'),
           style: {
             ...(child.props as { style?: React.CSSProperties }).style,

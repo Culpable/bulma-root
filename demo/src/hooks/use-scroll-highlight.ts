@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 /**
  * Configuration for scroll highlight behavior
@@ -153,11 +153,17 @@ export function useScrollHighlights(
     }
   }, [count, options.enabled, options.centerMargin])
 
-  return refs.current.map((_, index) => ({
-    ref: (el: HTMLElement | null) => {
-      refs.current[index] = el
-    },
-    isHighlighted: highlightedStates[index],
-    index,
-  }))
+  // Memoize the return value to prevent creating new array/objects on every render.
+  // Only recomputes when highlightedStates changes.
+  return useMemo(
+    () =>
+      refs.current.map((_, index) => ({
+        ref: (el: HTMLElement | null) => {
+          refs.current[index] = el
+        },
+        isHighlighted: highlightedStates[index],
+        index,
+      })),
+    [highlightedStates]
+  )
 }
