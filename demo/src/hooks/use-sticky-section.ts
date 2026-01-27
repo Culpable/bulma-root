@@ -17,6 +17,8 @@ interface UseStickyOptions {
  * Detects when a section eyebrow is "stuck" at the top of the viewport
  * and when the section is the active/visible section.
  *
+ * Uses RAF throttling to prevent layout thrashing from multiple scroll listeners.
+ *
  * @param options - Configuration options
  * @returns Object with ref, stuck state, and active state
  *
@@ -41,14 +43,19 @@ export function useStickySection({
   const containerRef = useRef<HTMLElement>(null)
   // Ref for the eyebrow element
   const eyebrowRef = useRef<HTMLDivElement>(null)
+  // RAF reference for throttling
+  const rafRef = useRef<number | null>(null)
+  // Cache previous values to avoid unnecessary state updates
+  const prevStuckRef = useRef(false)
+  const prevActiveRef = useRef(false)
 
   // Track if eyebrow is currently stuck
   const [isStuck, setIsStuck] = useState(false)
   // Track if this section is the active/visible section
   const [isActive, setIsActive] = useState(false)
 
-  // Handle stuck detection using scroll position
-  const handleScroll = useCallback(() => {
+  // Core calculation logic - separated from scroll handler for RAF throttling
+  const calculateStickyState = useCallback(() => {
     const container = containerRef.current
     const eyebrow = eyebrowRef.current
     if (!container || !eyebrow) return
@@ -71,26 +78,49 @@ export function useStickySection({
       sectionBottom > topOffset + 50
 
     // Eyebrow is stuck if it's at sticky position and section is in view
-    setIsStuck(isAtStickyPosition && sectionInView && sectionTop < topOffset)
+    const newIsStuck = isAtStickyPosition && sectionInView && sectionTop < topOffset
 
     // Section is active if it's the most prominent section in viewport
     const sectionVisibleHeight = Math.min(sectionBottom, viewportHeight) -
       Math.max(sectionTop, topOffset)
     const sectionVisibleRatio = sectionVisibleHeight / containerRect.height
+    const newIsActive = sectionVisibleRatio > 0.3 && sectionTop < viewportHeight * 0.5
 
-    setIsActive(sectionVisibleRatio > 0.3 && sectionTop < viewportHeight * 0.5)
+    // Only update state if values actually changed (prevents unnecessary re-renders)
+    if (newIsStuck !== prevStuckRef.current) {
+      prevStuckRef.current = newIsStuck
+      setIsStuck(newIsStuck)
+    }
+    if (newIsActive !== prevActiveRef.current) {
+      prevActiveRef.current = newIsActive
+      setIsActive(newIsActive)
+    }
   }, [topOffset, stuckThreshold])
+
+  // RAF-throttled scroll handler
+  const handleScroll = useCallback(() => {
+    // Skip if RAF already scheduled
+    if (rafRef.current !== null) return
+
+    rafRef.current = requestAnimationFrame(() => {
+      calculateStickyState()
+      rafRef.current = null
+    })
+  }, [calculateStickyState])
 
   useEffect(() => {
     // Add scroll listener with passive flag for performance
     window.addEventListener('scroll', handleScroll, { passive: true })
-    // Initial check
-    handleScroll()
+    // Initial check (direct call, not throttled)
+    calculateStickyState()
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current)
+      }
     }
-  }, [handleScroll])
+  }, [handleScroll, calculateStickyState])
 
   return {
     containerRef,

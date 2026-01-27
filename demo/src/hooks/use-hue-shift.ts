@@ -5,8 +5,12 @@ import { useEffect, useRef, useCallback } from 'react'
 /**
  * IntersectionObserver threshold array - hoisted to module level to avoid
  * recreating on every effect run.
+ *
+ * Reduced from 11 thresholds to 3 for performance. The hue shift only needs
+ * to detect "entering", "prominent", and "exiting" states - fine-grained
+ * thresholds caused excessive callback invocations during scroll.
  */
-const HUE_SHIFT_THRESHOLDS: number[] = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+const HUE_SHIFT_THRESHOLDS: number[] = [0, 0.3, 0.6]
 
 /**
  * Section identifiers and their corresponding hue shifts.

@@ -42,8 +42,11 @@ const PARALLAX_CONFIG = {
  */
 export function useHeroParallax() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [scrollY, setScrollY] = useState(0)
+  // scrollY stored in ref instead of state - not used for rendering, only for CSS property
+  const scrollYRef = useRef(0)
   const [isScrolling, setIsScrolling] = useState(false)
+  // Track previous isScrolling to avoid redundant state updates
+  const isScrollingRef = useRef(false)
   const scrollEndTimerRef = useRef<NodeJS.Timeout | null>(null)
   const rafRef = useRef<number | null>(null)
   const lastScrollRef = useRef(0)
@@ -52,11 +55,9 @@ export function useHeroParallax() {
   const [supportsHover, setSupportsHover] = useState(true)
 
   useEffect(() => {
-    // Check for touch device
+    // Check for touch device (matchMedia result is synchronous)
     const mediaQuery = window.matchMedia('(hover: hover)')
-    requestAnimationFrame(() => {
-      setSupportsHover(mediaQuery.matches)
-    })
+    setSupportsHover(mediaQuery.matches)
 
     const handleChange = (e: MediaQueryListEvent) => {
       setSupportsHover(e.matches)
@@ -97,7 +98,7 @@ export function useHeroParallax() {
       // Only apply parallax when hero is in view
       if (containerTop > window.innerHeight || rect.bottom < 0) {
         // Hero is not in view, reset
-        setScrollY(0)
+        scrollYRef.current = 0
         updateScrollProperty(0)
         return
       }
@@ -108,15 +109,18 @@ export function useHeroParallax() {
         PARALLAX_CONFIG.maxScrollDistance
       )
 
-      // Only update if value changed significantly (reduces repaints)
+      // Only update CSS property if value changed significantly (reduces repaints)
       if (Math.abs(scrollOffset - lastScrollRef.current) > 0.5) {
         lastScrollRef.current = scrollOffset
-        setScrollY(scrollOffset)
+        scrollYRef.current = scrollOffset
         updateScrollProperty(scrollOffset)
       }
 
-      // Mark as scrolling
-      setIsScrolling(true)
+      // Mark as scrolling - only update state if transitioning from false to true
+      if (!isScrollingRef.current) {
+        isScrollingRef.current = true
+        setIsScrolling(true)
+      }
 
       // Clear existing scroll end timer
       if (scrollEndTimerRef.current) {
@@ -125,6 +129,7 @@ export function useHeroParallax() {
 
       // Set scroll end timer
       scrollEndTimerRef.current = setTimeout(() => {
+        isScrollingRef.current = false
         setIsScrolling(false)
       }, PARALLAX_CONFIG.scrollEndDelay)
     })
@@ -152,8 +157,8 @@ export function useHeroParallax() {
   return {
     /** Ref to attach to the parallax container */
     containerRef,
-    /** Current scroll offset in pixels */
-    scrollY,
+    /** Current scroll offset in pixels (read from ref, not state - doesn't trigger re-renders) */
+    scrollY: scrollYRef.current,
     /** Whether user is actively scrolling */
     isScrolling,
     /** Whether device supports parallax (non-touch) */

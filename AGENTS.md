@@ -143,6 +143,7 @@ System architecture documentation (IMPORTANT):
 | Component | Path (documents/guides) | Purpose |
 |-----------|-------------------------|---------|
 | **Animations** | [`_animations.md`](documents/guides/_animations.md) | Animation system conventions, motion principles, and implementation rules for the marketing site |
+| **Demo Video** | [`_demo-video.md`](documents/guides/_demo-video.md) | Remotion video project for marketing demo (`video/bulma-demo/`) |
 
 IMPORTANT: You MUST read the appropriate documentation above when working with any of the systems mentioned.
 

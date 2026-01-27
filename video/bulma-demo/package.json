@@ -1,0 +1,23 @@
+{
+  "name": "bulma-demo",
+  "version": "1.0.0",
+  "description": "Bulma AI Mortgage Broker Assistant Demo Video",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx remotion studio",
+    "build": "npx remotion render BulmaDemoVideo out/bulma-demo.mp4",
+    "upgrade": "npx remotion upgrade"
+  },
+  "keywords": ["remotion", "video", "bulma", "mortgage", "ai"],
+  "author": "Bulma",
+  "license": "ISC",
+  "dependencies": {
+    "@remotion/cli": "^4.0.407",
+    "@remotion/transitions": "^4.0.407",
+    "@types/react": "^19.2.9",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "remotion": "^4.0.407",
+    "typescript": "^5.9.3"
+  }
+}

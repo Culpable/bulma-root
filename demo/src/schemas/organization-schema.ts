@@ -91,6 +91,11 @@ export type FaqEntry = {
   answer: string
 }
 
+// Regex patterns for HTML stripping (hoisted to module level for reuse).
+// String.replace() handles lastIndex reset internally, so global flags are safe here.
+const HTML_TAG_REGEX = /<[^>]*>/g
+const WHITESPACE_REGEX = /\s+/g
+
 /**
  * Strip HTML tags from a string and normalize whitespace.
  *
@@ -99,8 +104,8 @@ export type FaqEntry = {
  */
 function toPlainText(value: string) {
   // Remove any HTML tags (e.g. "<em>") and collapse whitespace for cleaner schema output.
-  const withoutTags = value.replace(/<[^>]*>/g, ' ')
-  return withoutTags.replace(/\s+/g, ' ').trim()
+  const withoutTags = value.replace(HTML_TAG_REGEX, ' ')
+  return withoutTags.replace(WHITESPACE_REGEX, ' ').trim()
 }
 
 /**

@@ -3,27 +3,54 @@
 import { ElDialog, ElDialogPanel } from '@tailwindplus/elements/react'
 import { clsx } from 'clsx/lite'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState, type ComponentProps, type ReactNode, type MouseEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type ComponentProps, type ReactNode, type MouseEvent } from 'react'
 import { TransitionLink } from '@/components/elements/transition-link'
 
 /**
  * Hook to track whether user has scrolled past a threshold.
  * Returns true when scrollY exceeds the threshold.
+ *
+ * Performance optimised:
+ * - RAF throttled to max 60 checks/sec
+ * - State de-duplicated to only update on value change
  */
 function useScrolled(threshold = 20) {
   const [scrolled, setScrolled] = useState(false)
+  // Track RAF and previous value to avoid redundant updates
+  const rafRef = useRef<number | null>(null)
+  const scrolledRef = useRef(false)
+
+  const updateScrolledState = useCallback(() => {
+    const isScrolled = window.scrollY > threshold
+    // Only update state when value actually changes
+    if (isScrolled !== scrolledRef.current) {
+      scrolledRef.current = isScrolled
+      setScrolled(isScrolled)
+    }
+  }, [threshold])
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > threshold)
+      // RAF throttling - skip if already scheduled
+      if (rafRef.current !== null) return
+
+      rafRef.current = requestAnimationFrame(() => {
+        updateScrolledState()
+        rafRef.current = null
+      })
     }
 
-    // Check initial state
-    handleScroll()
+    // Check initial state (direct call, not throttled)
+    updateScrolledState()
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [threshold])
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current)
+      }
+    }
+  }, [updateScrolledState])
 
   return scrolled
 }

@@ -6,14 +6,16 @@ import { useEffect, useRef, useState } from 'react'
  * Configuration for scroll velocity tracking.
  */
 const VELOCITY_CONFIG = {
-  // Sampling interval for velocity calculation (ms)
-  sampleInterval: 50,
+  // Interval for decay steps (ms)
+  decayInterval: 50,
   // Decay factor for velocity smoothing (0-1, lower = smoother)
   decayFactor: 0.8,
   // Threshold for "fast" scrolling (px/s)
   fastThreshold: 800,
   // Threshold for "slow" scrolling (px/s)
   slowThreshold: 200,
+  // Minimum velocity threshold to stop decay loop
+  minVelocity: 1,
 }
 
 /**
@@ -37,6 +39,10 @@ interface UseScrollVelocityReturn {
  * - --scroll-velocity: Current velocity in px/s
  * - --scroll-intensity: Multiplier (1 = normal, >1 = fast, <1 = slow)
  *
+ * Performance optimised:
+ * - Decay loop only runs when velocity > 0 (stops when idle)
+ * - Uses timeout-based decay instead of continuous setInterval
+ *
  * Returns velocity, intensity level, and intensity multiplier.
  *
  * To disable: Don't use this hook, or don't apply velocity-responsive classes.
@@ -46,11 +52,56 @@ export function useScrollVelocity(): UseScrollVelocityReturn {
   const lastScrollY = useRef(0)
   const lastTime = useRef(0)
   const velocityRef = useRef(0)
+  // Track decay timeout to cancel on new scroll or cleanup
+  const decayTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  // Track if decay loop is running to avoid duplicates
+  const isDecayingRef = useRef(false)
 
   useEffect(() => {
     let rafId: number | null = null
     lastTime.current = Date.now()
     lastScrollY.current = window.scrollY
+
+    // Update CSS custom properties helper
+    const updateCSSProperties = (vel: number) => {
+      const intensity = getIntensityMultiplier(vel)
+      document.documentElement.style.setProperty(
+        '--scroll-velocity',
+        String(Math.round(vel))
+      )
+      document.documentElement.style.setProperty(
+        '--scroll-intensity',
+        String(intensity.toFixed(2))
+      )
+    }
+
+    // Decay velocity to zero - runs only when needed, stops when velocity reaches 0
+    const startDecayLoop = () => {
+      // Prevent duplicate decay loops
+      if (isDecayingRef.current) return
+      isDecayingRef.current = true
+
+      const decay = () => {
+        if (velocityRef.current > VELOCITY_CONFIG.minVelocity) {
+          // Continue decaying
+          velocityRef.current *= VELOCITY_CONFIG.decayFactor
+          setVelocity(velocityRef.current)
+          updateCSSProperties(velocityRef.current)
+          // Schedule next decay step
+          decayTimeoutRef.current = setTimeout(decay, VELOCITY_CONFIG.decayInterval)
+        } else {
+          // Velocity reached zero - stop decay loop
+          velocityRef.current = 0
+          setVelocity(0)
+          updateCSSProperties(0)
+          isDecayingRef.current = false
+          decayTimeoutRef.current = null
+        }
+      }
+
+      // Start first decay step
+      decayTimeoutRef.current = setTimeout(decay, VELOCITY_CONFIG.decayInterval)
+    }
 
     const updateVelocity = () => {
       const currentTime = Date.now()
@@ -68,21 +119,21 @@ export function useScrollVelocity(): UseScrollVelocityReturn {
           instantVelocity * (1 - VELOCITY_CONFIG.decayFactor)
 
         setVelocity(velocityRef.current)
-
-        // Update CSS custom properties on :root
-        const intensity = getIntensityMultiplier(velocityRef.current)
-        document.documentElement.style.setProperty(
-          '--scroll-velocity',
-          String(Math.round(velocityRef.current))
-        )
-        document.documentElement.style.setProperty(
-          '--scroll-intensity',
-          String(intensity.toFixed(2))
-        )
+        updateCSSProperties(velocityRef.current)
       }
 
       lastScrollY.current = currentScrollY
       lastTime.current = currentTime
+
+      // Cancel any pending decay timeout since we're actively scrolling
+      if (decayTimeoutRef.current !== null) {
+        clearTimeout(decayTimeoutRef.current)
+        decayTimeoutRef.current = null
+        isDecayingRef.current = false
+      }
+
+      // Start decay loop (will begin after scrolling stops)
+      startDecayLoop()
     }
 
     const handleScroll = () => {
@@ -97,33 +148,11 @@ export function useScrollVelocity(): UseScrollVelocityReturn {
     // Set up scroll listener with passive option for performance
     window.addEventListener('scroll', handleScroll, { passive: true })
 
-    // Decay velocity to zero when not scrolling
-    const decayInterval = setInterval(() => {
-      if (velocityRef.current > 1) {
-        velocityRef.current *= VELOCITY_CONFIG.decayFactor
-        setVelocity(velocityRef.current)
-
-        // Update CSS custom properties
-        const intensity = getIntensityMultiplier(velocityRef.current)
-        document.documentElement.style.setProperty(
-          '--scroll-velocity',
-          String(Math.round(velocityRef.current))
-        )
-        document.documentElement.style.setProperty(
-          '--scroll-intensity',
-          String(intensity.toFixed(2))
-        )
-      } else if (velocityRef.current !== 0) {
-        velocityRef.current = 0
-        setVelocity(0)
-        document.documentElement.style.setProperty('--scroll-velocity', '0')
-        document.documentElement.style.setProperty('--scroll-intensity', '1')
-      }
-    }, VELOCITY_CONFIG.sampleInterval)
-
     return () => {
       window.removeEventListener('scroll', handleScroll)
-      clearInterval(decayInterval)
+      if (decayTimeoutRef.current !== null) {
+        clearTimeout(decayTimeoutRef.current)
+      }
       if (rafId !== null) {
         cancelAnimationFrame(rafId)
       }

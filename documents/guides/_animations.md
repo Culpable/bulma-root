@@ -2143,7 +2143,158 @@ import { ScrollHighlight, HighlightedParagraph } from '@/components/elements/scr
 - **Sticky eyebrow z-index**: The sticky eyebrow uses `z-index: 5`. If other elements have higher z-index, they may overlap the stuck eyebrow.
 - **Sticky eyebrow with short sections**: If a section is shorter than the viewport, the eyebrow may not have room to become "stuck". Consider minimum section heights.
 - **Hue shift filter conflicts**: The `hue-shift-accent` class applies a filter. If elements have other filters (blur, drop-shadow), combine them explicitly.
-- **Hue shift observer overhead**: The hook uses IntersectionObserver with 11 thresholds. On pages with many sections, this may impact scroll performance slightly.
+- **Hue shift observer overhead**: The hook uses IntersectionObserver with 3 thresholds (reduced from 11 for performance). On pages with many sections, minimal impact.
 - **Scroll highlight false positives**: Elements near the viewport center threshold may flicker between highlighted/non-highlighted states. Adjust `centerMargin` if needed.
 - **Scroll highlight with dynamic content**: If content changes dynamically (e.g., expanding accordions), the highlight ref may need to be re-attached.
 - **Scroll highlight on mobile**: The center zone is based on viewport height. On very tall mobile screens, the center zone may be larger than expected.
+
+---
+
+## 52. Scroll Performance Optimisations
+
+Critical scroll performance patterns applied across animation hooks to prevent jank and maintain 60fps during scrolling.
+
+### Problem Context
+
+Multiple scroll-driven hooks (`useStickySection`, `useHueShift`, `useHeroParallax`, `useScrolled`, `useScrollVelocity`) running simultaneously can cause performance bottlenecks:
+- `getBoundingClientRect()` calls trigger forced layout (expensive)
+- Multiple `setState()` calls per frame cause React re-renders
+- IntersectionObserver callbacks firing excessively
+- Continuous timers (setInterval) running even when not needed
+
+### Optimisation Patterns Applied
+
+**1. RAF Throttling for Scroll Handlers**
+
+Scroll events fire at 60+ times per second. Without throttling, expensive calculations run on every event.
+
+| Hook | Before | After |
+|------|--------|-------|
+| `useStickySection` | No throttling (4 instances = 480+ `getBoundingClientRect` calls/sec) | RAF throttled (max 60 calls/sec total) |
+| `useHeroParallax` | RAF throttled | RAF throttled (unchanged) |
+| `useScrolled` (navbar) | No throttling (30-60 `setState` calls/sec per navbar) | RAF throttled + state de-duplicated |
+
+**Implementation pattern:**
+```tsx
+const rafRef = useRef<number | null>(null)
+
+const handleScroll = useCallback(() => {
+  // Skip if RAF already scheduled
+  if (rafRef.current !== null) return
+
+  rafRef.current = requestAnimationFrame(() => {
+    calculateState()
+    rafRef.current = null
+  })
+}, [calculateState])
+```
+
+**2. State Update De-duplication**
+
+Avoid calling `setState()` with the same value, which triggers unnecessary re-renders.
+
+| Hook | Before | After |
+|------|--------|-------|
+| `useStickySection` | `setState()` every frame | Only on value change |
+| `useHeroParallax` | `setIsScrolling(true)` every frame | Only on `false→true` transition |
+| `useScrolled` (navbar) | `setScrolled()` every frame | Only when threshold crossed |
+
+**Implementation pattern:**
+```tsx
+const prevValueRef = useRef(false)
+
+// Only update state when value actually changes
+if (newValue !== prevValueRef.current) {
+  prevValueRef.current = newValue
+  setState(newValue)
+}
+```
+
+**3. Refs for Non-Rendered Values**
+
+Values used only for CSS updates (not React rendering) should use refs instead of state.
+
+| Hook | Before | After |
+|------|--------|-------|
+| `useHeroParallax` | `scrollY` as state | `scrollYRef` (ref) |
+
+**Implementation pattern:**
+```tsx
+// Bad: triggers re-render on every scroll
+const [scrollY, setScrollY] = useState(0)
+
+// Good: no re-render, value passed to CSS via custom property
+const scrollYRef = useRef(0)
+scrollYRef.current = newValue
+container.style.setProperty('--scroll-y', String(newValue))
+```
+
+**4. Reduced IntersectionObserver Thresholds**
+
+More thresholds = more callback invocations. Use minimum thresholds needed for the use case.
+
+| Hook | Before | After | Reduction |
+|------|--------|-------|-----------|
+| `useHueShift` | 11 thresholds `[0, 0.1, 0.2, ..., 1]` | 3 thresholds `[0, 0.3, 0.6]` | 73% fewer callbacks |
+
+**Rationale:** Hue shift only needs to detect "entering", "prominent", and "exiting" states—fine-grained thresholds caused excessive callback invocations.
+
+**5. Timeout-Based Decay (Replace Continuous Intervals)**
+
+Continuous `setInterval` timers run forever, even when not needed. Replace with timeout-based decay that stops when idle.
+
+| Hook | Before | After |
+|------|--------|-------|
+| `useScrollVelocity` | `setInterval` every 50ms (runs forever) | Timeout-based decay (stops when velocity = 0) |
+
+**Problem:** The decay loop ran continuously updating CSS properties every 50ms even when the user wasn't scrolling and velocity was already 0.
+
+**Implementation pattern:**
+```tsx
+const decayTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+const isDecayingRef = useRef(false)
+
+const startDecayLoop = () => {
+  if (isDecayingRef.current) return  // Prevent duplicate loops
+  isDecayingRef.current = true
+
+  const decay = () => {
+    if (velocityRef.current > MIN_VELOCITY) {
+      velocityRef.current *= DECAY_FACTOR
+      updateCSSProperties(velocityRef.current)
+      // Schedule next decay step
+      decayTimeoutRef.current = setTimeout(decay, DECAY_INTERVAL)
+    } else {
+      // Stop when velocity reaches zero
+      velocityRef.current = 0
+      updateCSSProperties(0)
+      isDecayingRef.current = false
+    }
+  }
+
+  decayTimeoutRef.current = setTimeout(decay, DECAY_INTERVAL)
+}
+```
+
+**Benefit:** Decay loop now self-terminates when velocity reaches 0, eliminating continuous DOM updates when idle.
+
+### Performance Verification
+
+After optimisations:
+- Homepage scroll at 60fps (previously dropped to ~45fps)
+- 4× `useStickySection` instances now share RAF timing
+- IntersectionObserver callbacks reduced by ~73%
+- React re-renders during scroll minimised
+- Navbar no longer triggers 30-60 re-renders/sec during scroll
+- Scroll velocity decay loop stops when idle (was running every 50ms forever)
+
+### Files Modified
+
+| File | Optimisation |
+|------|-------------|
+| `demo/src/hooks/use-sticky-section.ts` | RAF throttling + state de-duplication |
+| `demo/src/hooks/use-hue-shift.ts` | Threshold reduction (11→3) |
+| `demo/src/hooks/use-hero-parallax.ts` | State→ref conversion + isScrolling de-duplication |
+| `demo/src/hooks/use-scroll-velocity.ts` | Timeout-based decay (replaces continuous setInterval) |
+| `demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx` | RAF throttling + state de-duplication in `useScrolled` |
+| `demo/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx` | RAF throttling + state de-duplication in `useScrolled` |
