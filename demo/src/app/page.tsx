@@ -6,9 +6,8 @@ import { Screenshot } from '@/components/elements/screenshot'
 import { ScrollHighlight } from '@/components/elements/scroll-highlight'
 import { ThemePicture } from '@/components/elements/theme-picture'
 import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
-import { ChatBubbleCircleEllipsisIcon } from '@/components/icons/chat-bubble-circle-ellipsis-icon'
 import { ArrowLeftArrowRightIcon } from '@/components/icons/arrow-left-arrow-right-icon'
-import { pageMetadata } from '@/lib/metadata'
+import { ChatBubbleCircleEllipsisIcon } from '@/components/icons/chat-bubble-circle-ellipsis-icon'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { FAQsTwoColumnAccordion, Faq } from '@/components/sections/faqs-two-column-accordion'
 import { Feature, FeaturesTwoColumnWithDemos } from '@/components/sections/features-two-column-with-demos'
@@ -16,16 +15,19 @@ import { HeroLeftAlignedWithDemo } from '@/components/sections/hero-left-aligned
 import { Plan, PricingMultiTier } from '@/components/sections/pricing-multi-tier'
 import { StatAnimated, StatsAnimatedGraph } from '@/components/sections/stats-animated-graph'
 import { TestimonialGlass, TestimonialsGlassmorphism } from '@/components/sections/testimonials-glassmorphism'
+import { pageMetadata } from '@/lib/metadata'
 import {
   buildFaqPageSchema,
   organizationSchema,
   softwareApplicationSchema,
   websiteSchema,
+  type FaqEntry,
 } from '@/schemas/organization-schema'
 import type { Metadata } from 'next'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Script from 'next/script'
+import type { ReactNode } from 'react'
 
 // =============================================================================
 // DYNAMIC IMPORTS FOR ANIMATION COMPONENTS (B-2)
@@ -36,23 +38,19 @@ import Script from 'next/script'
 
 // Blur transition text cycling animation - decorative, not critical for initial render
 const BlurTransitionText = dynamic(() =>
-  import('@/components/elements/blur-transition-text').then((m) => m.BlurTransitionText)
+  import('@/components/elements/blur-transition-text').then((m) => m.BlurTransitionText),
 )
 
 // Magnetic hover effect wrapper - interaction enhancement, deferred
-const MagneticWrapper = dynamic(() =>
-  import('@/components/elements/magnetic-wrapper').then((m) => m.MagneticWrapper)
-)
+const MagneticWrapper = dynamic(() => import('@/components/elements/magnetic-wrapper').then((m) => m.MagneticWrapper))
 
 // Rotating gradient border animation - decorative CTA enhancement
 const GradientBorderWrapper = dynamic(() =>
-  import('@/components/elements/gradient-border-wrapper').then((m) => m.GradientBorderWrapper)
+  import('@/components/elements/gradient-border-wrapper').then((m) => m.GradientBorderWrapper),
 )
 
 // Metallic sheen sweep on headlines - decorative entrance animation
-const LuminanceSweep = dynamic(() =>
-  import('@/components/elements/luminance-sweep').then((m) => m.LuminanceSweep)
-)
+const LuminanceSweep = dynamic(() => import('@/components/elements/luminance-sweep').then((m) => m.LuminanceSweep))
 
 // =============================================================================
 // PRELOAD FUNCTIONS FOR ANIMATION COMPONENTS (B-3)
@@ -85,6 +83,56 @@ const lenderComparisonScreenshotAlt = homeAlt('Bulma lender policy comparison vi
 const homeLenderLogoAlt = homeAlt('Australian lender logo')
 const homeTestimonialAlt = (name: string) => homeAlt(`Portrait of ${name}`)
 
+const bulmaCoveredLenders = [
+  'Adelaide Bank',
+  'Advantedge',
+  'AFG',
+  'AMP Bank',
+  'ANZ',
+  'Athena',
+  'Auswide Bank',
+  'Bank Australia',
+  'Bank of Queensland',
+  'Bank of Sydney',
+  'Bankwest',
+  'Bendigo Bank',
+  'Beyond Bank',
+  'Bluestone',
+  'Commonwealth Bank',
+  'Firstmac',
+  'Great Southern Bank',
+  'Heritage Bank',
+  'ING',
+  'Keystart',
+  'La Trobe Financial',
+  'Liberty Financial',
+  'MA Money',
+  'ME Bank',
+  'Macquarie',
+  'MyState',
+  'NAB',
+  'Pepper Money',
+  'Police & Nurses',
+  'RedZed',
+  'Resimac',
+  'St George',
+  'Suncorp',
+  'Teachers Mutual Bank',
+  'UBank',
+  'Westpac',
+]
+
+const bulmaCoveredLendersAnswer = `Bulma currently has policy coverage for ${bulmaCoveredLenders.length} lenders: ${bulmaCoveredLenders.join(
+  ', ',
+)}. We update this list as new lender policies are added and refreshed.`
+
+type HomeFaq = {
+  id: string
+  question: string
+  answer: ReactNode
+  schemaAnswer?: string
+}
+
 const homeFaqs = [
   {
     id: 'faq-0',
@@ -99,16 +147,26 @@ const homeFaqs = [
       'ChatGPT can make up policy details that sound plausible but don’t exist — a risk you can’t afford when advising clients. Bulma is different: every answer draws directly from current lender policy documents, and we show you the exact source (lender, policy category, last updated date) so you can verify it. You get the speed of AI with the reliability your clients expect.',
   },
   {
-    id: 'faq-2',
+    id: 'lenders',
     question: 'Which lenders does Bulma cover?',
-    answer:
-      'Bulma covers all major Australian lenders including the big four banks, plus a growing list of second-tier lenders and non-bank lenders. We regularly update our policy database to reflect the latest changes.',
+    answer: (
+      <>
+        <p>Bulma currently has policy coverage for the following lenders:</p>
+        <ul className="mt-3 list-disc space-y-1 pl-5">
+          {bulmaCoveredLenders.map((lender) => (
+            <li key={lender}>{lender}</li>
+          ))}
+        </ul>
+        <p className="mt-3">We update this list as new lender policies are added and refreshed.</p>
+      </>
+    ),
+    schemaAnswer: bulmaCoveredLendersAnswer,
   },
   {
     id: 'faq-3',
     question: 'Can I compare policies across different lenders?',
     answer:
-      "Absolutely. Ask Bulma to compare policies across lenders - for example, ‘Compare the big 4’s LMI requirements for 95% LVR’ - and you’ll get a structured comparison highlighting key differences.",
+      'Absolutely. Ask Bulma to compare policies across lenders - for example, ‘Compare the big 4’s LMI requirements for 95% LVR’ - and you’ll get a structured comparison highlighting key differences.',
   },
   {
     id: 'faq-4',
@@ -122,7 +180,12 @@ const homeFaqs = [
     answer:
       'Yes. Ask questions like “<em>Who can see my client data?</em>” or “<em>Are my queries shared with lenders?</em>” and we’ll explain the safeguards. We use enterprise-grade encryption (AES-256 at rest, TLS 1.3 in transit) and never share your queries or client information with third parties. Your conversation history is stored securely and only accessible by you.',
   },
-]
+] satisfies HomeFaq[]
+
+const homeStructuredFaqs: FaqEntry[] = homeFaqs.map((faq) => ({
+  question: faq.question,
+  answer: faq.schemaAnswer ?? (typeof faq.answer === 'string' ? faq.answer : ''),
+}))
 
 const homeStructuredData = [
   organizationSchema,
@@ -131,7 +194,7 @@ const homeStructuredData = [
   buildFaqPageSchema({
     path: '/',
     name: 'Bulma FAQs',
-    faqs: homeFaqs,
+    faqs: homeStructuredFaqs,
   }),
 ]
 
@@ -148,25 +211,21 @@ export default function Page() {
       {/* Hero */}
       <HeroLeftAlignedWithDemo
         id="hero"
-        eyebrow={<AnnouncementBadge href="#lenders" text="Now covering all major Australian lenders" cta="See the list" />}
+        eyebrow={
+          <AnnouncementBadge href="#lenders" text="Now covering all major Australian lenders" cta="See the list" />
+        }
         headline={
           <LuminanceSweep text="Your AI assistant for policy questions." delay={400}>
             Your AI assistant for{' '}
             <BlurTransitionText
-              phrases={[
-                'policy questions.',
-                'planning scenarios.',
-                'credit preparation.',
-                'comparing lenders.',
-              ]}
+              phrases={['policy questions.', 'planning scenarios.', 'credit preparation.', 'comparing lenders.']}
             />
           </LuminanceSweep>
         }
         subheadline={
           <p>
             Bulma helps Australian mortgage brokers get{' '}
-            <ScrollHighlight index={0}>instant, source-cited answers</ScrollHighlight>{' '}
-            to lender policy questions.{' '}
+            <ScrollHighlight index={0}>instant, source-cited answers</ScrollHighlight> to lender policy questions.{' '}
             <ScrollHighlight index={1}>No more digging through PDFs and portals</ScrollHighlight>.
           </p>
         }
@@ -229,7 +288,7 @@ export default function Page() {
           </>
         }
         footer={
-          <div id="lenders">
+          <div id="lender-logos">
             <LogoMarquee speed={0.8}>
               <MarqueeLogo>
                 <Image
@@ -342,7 +401,10 @@ export default function Page() {
         subheadline={
           <p>
             Stop digging through PDFs and portals. Get{' '}
-            <ScrollHighlight index={0} withUnderline>the policy answers you need in seconds</ScrollHighlight>, not hours.
+            <ScrollHighlight index={0} withUnderline>
+              the policy answers you need in seconds
+            </ScrollHighlight>
+            , not hours.
           </p>
         }
         features={
@@ -449,7 +511,8 @@ export default function Page() {
               headline="Lender Comparison"
               subheadline={
                 <p>
-                  Compare policies across lenders side-by-side. Find the best fit for your client&apos;s scenario in seconds.
+                  Compare policies across lenders side-by-side. Find the best fit for your client&apos;s scenario in
+                  seconds.
                 </p>
               }
               cta={
@@ -478,7 +541,11 @@ export default function Page() {
           </p>
         }
       >
-        <StatAnimated countTo={30} countSuffix="+" text="Major Australian lenders covered, with policies updated regularly." />
+        <StatAnimated
+          countTo={30}
+          countSuffix="+"
+          text="Major Australian lenders covered, with policies updated regularly."
+        />
         <StatAnimated stat="Seconds" text="Average time to answer - compared to hours of manual research." />
       </StatsAnimatedGraph>
       {/* Testimonials (P-3: content-visibility for deferred rendering) */}
@@ -610,7 +677,13 @@ export default function Page() {
         />
       </TestimonialsGlassmorphism>
       {/* FAQs (P-3: content-visibility for deferred rendering) */}
-      <FAQsTwoColumnAccordion id="faqs" className="content-visibility-faqs" headline="Questions & Answers" stickyEyebrow sectionHue="faqs">
+      <FAQsTwoColumnAccordion
+        id="faqs"
+        className="content-visibility-faqs"
+        headline="Questions & Answers"
+        stickyEyebrow
+        sectionHue="faqs"
+      >
         {homeFaqs.map((faq) => (
           <Faq key={faq.id} id={faq.id} question={faq.question} answer={faq.answer} />
         ))}
