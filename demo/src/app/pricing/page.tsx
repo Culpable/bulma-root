@@ -6,7 +6,7 @@ import { CallToActionSimpleCentered } from '@/components/sections/call-to-action
 import { FAQsAccordion, Faq } from '@/components/sections/faqs-accordion'
 import { PlanComparisonTable } from '@/components/sections/plan-comparison-table'
 import { Plan, PricingHeroMultiTier } from '@/components/sections/pricing-hero-multi-tier'
-import { TestimonialTwoColumnWithLargePhoto } from '@/components/sections/testimonial-two-column-with-large-photo'
+// import { TestimonialTwoColumnWithLargePhoto } from '@/components/sections/testimonial-two-column-with-large-photo'
 import { buildFaqPageSchema } from '@/schemas/organization-schema'
 import type { Metadata } from 'next'
 import Image from 'next/image'
@@ -21,7 +21,7 @@ const pricingSeoAltContext =
   'Bulma pricing for Australian mortgage brokerages with transparent plans and a free trial'
 const pricingAlt = (text: string) => `${text} - ${pricingSeoAltContext}`
 const pricingLenderLogoAlt = pricingAlt('Australian lender logo')
-const pricingTestimonialAlt = pricingAlt('Portrait of Jake Miller')
+// const pricingTestimonialAlt = pricingAlt('Portrait of Jake Miller')
 
 const pricingFaqs = [
   {
@@ -302,6 +302,7 @@ export default function Page() {
         ]}
       />
       {/* Testimonial */}
+      {/*
       <TestimonialTwoColumnWithLargePhoto
         id="testimonial"
         quote={
@@ -322,6 +323,7 @@ export default function Page() {
         name="Jake Miller"
         byline="Principal Broker, Adelaide"
       />
+      */}
       {/* FAQs */}
       <FAQsAccordion id="faqs" headline="Questions & Answers">
         {pricingFaqs.map((faq) => (
