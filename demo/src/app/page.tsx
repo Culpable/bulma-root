@@ -1,7 +1,7 @@
 import { AnnouncementBadge } from '@/components/elements/announcement-badge'
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
+import { Eyebrow } from '@/components/elements/eyebrow'
 import { Link } from '@/components/elements/link'
-import { LogoMarquee, MarqueeLogo } from '@/components/elements/logo-marquee'
 import { Screenshot } from '@/components/elements/screenshot'
 import { ScrollHighlight } from '@/components/elements/scroll-highlight'
 import { ThemePicture } from '@/components/elements/theme-picture'
@@ -80,7 +80,6 @@ const homeAlt = (text: string) => `${text} - ${homeSeoAltContext}`
 const heroScreenshotAlt = homeAlt('Bulma policy Q&A interface screenshot')
 const policyQaScreenshotAlt = homeAlt('Bulma policy answers with source attribution')
 const lenderComparisonScreenshotAlt = homeAlt('Bulma lender policy comparison view')
-const homeLenderLogoAlt = homeAlt('Australian lender logo')
 const homeTestimonialAlt = (name: string) => homeAlt(`Portrait of ${name}`)
 
 const bulmaCoveredLenders = [
@@ -125,6 +124,56 @@ const bulmaCoveredLenders = [
 const bulmaCoveredLendersAnswer = `Bulma currently has policy coverage for ${bulmaCoveredLenders.length} lenders: ${bulmaCoveredLenders.join(
   ', ',
 )}. We update this list as new lender policies are added and refreshed.`
+
+// Ordered roughly by Australian market capitalisation for the hero "Supported Lenders"
+// display under the headline. The Big 5 majors lead (CBA, Westpac, NAB, ANZ, Macquarie),
+// followed by tier-2 majors and major-bank subsidiaries, customer-owned and regional
+// banks, non-bank specialist lenders, and finally aggregator/wholesale/government-backed
+// channels. Keep in sync with `bulmaCoveredLenders` (alphabetical list rendered in the
+// FAQ) when adding or removing lenders so both views stay aligned.
+const supportedLendersByMarketCap = [
+  // Big 5 majors
+  'Commonwealth Bank',
+  'Westpac',
+  'NAB',
+  'ANZ',
+  'Macquarie',
+  // Tier-2 majors and major-bank subsidiaries
+  'Bankwest',
+  'Bank of Queensland',
+  'Bendigo Bank',
+  'Suncorp',
+  'ING',
+  'AMP Bank',
+  'St George',
+  'UBank',
+  'ME Bank',
+  'Adelaide Bank',
+  // Customer-owned and smaller regional banks
+  'Bank Australia',
+  'Heritage Bank',
+  'Great Southern Bank',
+  'Beyond Bank',
+  'Auswide Bank',
+  'Bank of Sydney',
+  'MyState',
+  'Police & Nurses',
+  'Teachers Mutual Bank',
+  // Non-bank and specialist lenders
+  'Liberty Financial',
+  'Pepper Money',
+  'Resimac',
+  'Firstmac',
+  'La Trobe Financial',
+  'Bluestone',
+  'Athena',
+  'MA Money',
+  'RedZed',
+  // Wholesale, aggregator and government-backed channels
+  'Advantedge',
+  'AFG',
+  'Keystart',
+]
 
 type HomeFaq = {
   id: string
@@ -288,105 +337,27 @@ export default function Page() {
           </>
         }
         footer={
-          <div id="lender-logos">
-            <LogoMarquee speed={0.8}>
-              <MarqueeLogo>
-                <Image
-                  src="/img/logos/9-color-black-height-32.svg"
-                  className="dark:hidden"
-                  alt={homeLenderLogoAlt}
-                  width={51}
-                  height={32}
-                />
-                <Image
-                  src="/img/logos/9-color-white-height-32.svg"
-                  className="not-dark:hidden"
-                  alt={homeLenderLogoAlt}
-                  width={51}
-                  height={32}
-                />
-              </MarqueeLogo>
-              <MarqueeLogo>
-                <Image
-                  src="/img/logos/10-color-black-height-32.svg"
-                  className="dark:hidden"
-                  alt={homeLenderLogoAlt}
-                  width={70}
-                  height={32}
-                />
-                <Image
-                  src="/img/logos/10-color-white-height-32.svg"
-                  className="not-dark:hidden"
-                  alt={homeLenderLogoAlt}
-                  width={70}
-                  height={32}
-                />
-              </MarqueeLogo>
-              <MarqueeLogo>
-                <Image
-                  src="/img/logos/11-color-black-height-32.svg"
-                  className="dark:hidden"
-                  alt={homeLenderLogoAlt}
-                  width={100}
-                  height={32}
-                />
-                <Image
-                  src="/img/logos/11-color-white-height-32.svg"
-                  className="not-dark:hidden"
-                  alt={homeLenderLogoAlt}
-                  width={100}
-                  height={32}
-                />
-              </MarqueeLogo>
-              <MarqueeLogo>
-                <Image
-                  src="/img/logos/12-color-black-height-32.svg"
-                  className="dark:hidden"
-                  alt={homeLenderLogoAlt}
-                  width={85}
-                  height={32}
-                />
-                <Image
-                  src="/img/logos/12-color-white-height-32.svg"
-                  className="not-dark:hidden"
-                  alt={homeLenderLogoAlt}
-                  width={85}
-                  height={32}
-                />
-              </MarqueeLogo>
-              <MarqueeLogo>
-                <Image
-                  src="/img/logos/13-color-black-height-32.svg"
-                  className="dark:hidden"
-                  alt={homeLenderLogoAlt}
-                  width={75}
-                  height={32}
-                />
-                <Image
-                  src="/img/logos/13-color-white-height-32.svg"
-                  className="not-dark:hidden"
-                  alt={homeLenderLogoAlt}
-                  width={75}
-                  height={32}
-                />
-              </MarqueeLogo>
-              <MarqueeLogo>
-                <Image
-                  src="/img/logos/8-color-black-height-32.svg"
-                  className="dark:hidden"
-                  alt={homeLenderLogoAlt}
-                  width={85}
-                  height={32}
-                />
-                <Image
-                  src="/img/logos/8-color-white-height-32.svg"
-                  className="not-dark:hidden"
-                  alt={homeLenderLogoAlt}
-                  width={85}
-                  height={32}
-                />
-              </MarqueeLogo>
-            </LogoMarquee>
+          // Hero "Supported Lenders" display: a static, market-cap-ordered list of
+          // lender names rendered as text-based brand markers. The data lives in
+          // `supportedLendersByMarketCap` above, so swapping individual names back
+          // to logos later is straightforward - replace the rendered text below
+          // with `<Image>` (or restore the previous `LogoMarquee`/`MarqueeLogo`
+          // block from version control) without touching any other hero markup.
+          <div id="supported-lenders" className="flex flex-col items-center gap-6">
+            <Eyebrow className="text-center">Supported Lenders</Eyebrow>
+            <ul
+              aria-label="Lenders supported by Bulma, ordered by market capitalisation"
+              className="flex max-w-5xl flex-wrap items-center justify-center gap-x-5 gap-y-2 sm:gap-x-7 sm:gap-y-3"
+            >
+              {supportedLendersByMarketCap.map((lender) => (
+                <li
+                  key={lender}
+                  className="text-sm font-semibold tracking-tight text-mist-700 transition-colors hover:text-mist-950 sm:text-base dark:text-mist-400 dark:hover:text-white"
+                >
+                  {lender}
+                </li>
+              ))}
+            </ul>
           </div>
         }
       />
