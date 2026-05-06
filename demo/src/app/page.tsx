@@ -1,9 +1,9 @@
 import { AnnouncementBadge } from '@/components/elements/announcement-badge'
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
-import { Eyebrow } from '@/components/elements/eyebrow'
 import { Link } from '@/components/elements/link'
 import { Screenshot } from '@/components/elements/screenshot'
 import { ScrollHighlight } from '@/components/elements/scroll-highlight'
+import { SupportedLendersField } from '@/components/elements/supported-lenders-field'
 import { ThemePicture } from '@/components/elements/theme-picture'
 import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { ArrowLeftArrowRightIcon } from '@/components/icons/arrow-left-arrow-right-icon'
@@ -16,6 +16,7 @@ import { Plan, PricingMultiTier } from '@/components/sections/pricing-multi-tier
 import { StatAnimated, StatsAnimatedGraph } from '@/components/sections/stats-animated-graph'
 import { TestimonialGlass, TestimonialsGlassmorphism } from '@/components/sections/testimonials-glassmorphism'
 import { pageMetadata } from '@/lib/metadata'
+import { bulmaCoveredLenders, bulmaCoveredLendersAnswer } from '@/lib/supported-lenders'
 import {
   buildFaqPageSchema,
   organizationSchema,
@@ -81,99 +82,6 @@ const heroScreenshotAlt = homeAlt('Bulma policy Q&A interface screenshot')
 const policyQaScreenshotAlt = homeAlt('Bulma policy answers with source attribution')
 const lenderComparisonScreenshotAlt = homeAlt('Bulma lender policy comparison view')
 const homeTestimonialAlt = (name: string) => homeAlt(`Portrait of ${name}`)
-
-const bulmaCoveredLenders = [
-  'Adelaide Bank',
-  'Advantedge',
-  'AFG',
-  'AMP Bank',
-  'ANZ',
-  'Athena',
-  'Auswide Bank',
-  'Bank Australia',
-  'Bank of Queensland',
-  'Bank of Sydney',
-  'Bankwest',
-  'Bendigo Bank',
-  'Beyond Bank',
-  'Bluestone',
-  'Commonwealth Bank',
-  'Firstmac',
-  'Great Southern Bank',
-  'Heritage Bank',
-  'ING',
-  'Keystart',
-  'La Trobe Financial',
-  'Liberty Financial',
-  'MA Money',
-  'ME Bank',
-  'Macquarie',
-  'MyState',
-  'NAB',
-  'Pepper Money',
-  'Police & Nurses',
-  'RedZed',
-  'Resimac',
-  'St George',
-  'Suncorp',
-  'Teachers Mutual Bank',
-  'UBank',
-  'Westpac',
-]
-
-const bulmaCoveredLendersAnswer = `Bulma currently has policy coverage for ${bulmaCoveredLenders.length} lenders: ${bulmaCoveredLenders.join(
-  ', ',
-)}. We update this list as new lender policies are added and refreshed.`
-
-// Ordered roughly by Australian market capitalisation for the hero "Supported Lenders"
-// display under the headline. The Big 5 majors lead (CBA, Westpac, NAB, ANZ, Macquarie),
-// followed by tier-2 majors and major-bank subsidiaries, customer-owned and regional
-// banks, non-bank specialist lenders, and finally aggregator/wholesale/government-backed
-// channels. Keep in sync with `bulmaCoveredLenders` (alphabetical list rendered in the
-// FAQ) when adding or removing lenders so both views stay aligned.
-const supportedLendersByMarketCap = [
-  // Big 5 majors
-  'Commonwealth Bank',
-  'Westpac',
-  'NAB',
-  'ANZ',
-  'Macquarie',
-  // Tier-2 majors and major-bank subsidiaries
-  'Bankwest',
-  'Bank of Queensland',
-  'Bendigo Bank',
-  'Suncorp',
-  'ING',
-  'AMP Bank',
-  'St George',
-  'UBank',
-  'ME Bank',
-  'Adelaide Bank',
-  // Customer-owned and smaller regional banks
-  'Bank Australia',
-  'Heritage Bank',
-  'Great Southern Bank',
-  'Beyond Bank',
-  'Auswide Bank',
-  'Bank of Sydney',
-  'MyState',
-  'Police & Nurses',
-  'Teachers Mutual Bank',
-  // Non-bank and specialist lenders
-  'Liberty Financial',
-  'Pepper Money',
-  'Resimac',
-  'Firstmac',
-  'La Trobe Financial',
-  'Bluestone',
-  'Athena',
-  'MA Money',
-  'RedZed',
-  // Wholesale, aggregator and government-backed channels
-  'Advantedge',
-  'AFG',
-  'Keystart',
-]
 
 type HomeFaq = {
   id: string
@@ -261,7 +169,11 @@ export default function Page() {
       <HeroLeftAlignedWithDemo
         id="hero"
         eyebrow={
-          <AnnouncementBadge href="#lenders" text="Now covering all major Australian lenders" cta="See the list" />
+          <AnnouncementBadge
+            href="#supported-lenders"
+            text="Now covering all major Australian lenders"
+            cta="See the list"
+          />
         }
         headline={
           <LuminanceSweep text="Your AI assistant for policy questions." delay={400}>
@@ -336,30 +248,7 @@ export default function Page() {
             </Screenshot>
           </>
         }
-        footer={
-          // Hero "Supported Lenders" display: a static, market-cap-ordered list of
-          // lender names rendered as text-based brand markers. The data lives in
-          // `supportedLendersByMarketCap` above, so swapping individual names back
-          // to logos later is straightforward - replace the rendered text below
-          // with `<Image>` (or restore the previous `LogoMarquee`/`MarqueeLogo`
-          // block from version control) without touching any other hero markup.
-          <div id="supported-lenders" className="flex flex-col items-center gap-6">
-            <Eyebrow className="text-center">Supported Lenders</Eyebrow>
-            <ul
-              aria-label="Lenders supported by Bulma, ordered by market capitalisation"
-              className="flex max-w-5xl flex-wrap items-center justify-center gap-x-5 gap-y-2 sm:gap-x-7 sm:gap-y-3"
-            >
-              {supportedLendersByMarketCap.map((lender) => (
-                <li
-                  key={lender}
-                  className="text-sm font-semibold tracking-tight text-mist-700 transition-colors hover:text-mist-950 sm:text-base dark:text-mist-400 dark:hover:text-white"
-                >
-                  {lender}
-                </li>
-              ))}
-            </ul>
-          </div>
-        }
+        footer={<SupportedLendersField />}
       />
       {/* Features (P-3: content-visibility for deferred rendering) */}
       <FeaturesTwoColumnWithDemos

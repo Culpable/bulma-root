@@ -1,7 +1,9 @@
-# Supported Lenders Visual Redesign Plan
+# ~~Supported Lenders Visual Redesign Plan~~ ✅ **DONE**
 
 <important_note>
+
 > **Scope correction:** This plan is only for the **Supported Lenders** list shown in the attached reference: the dark hero-footer section with the centered "Supported Lenders" eyebrow and the multi-row text list of lender names.
+
 </important_note>
 
 ## 1. Goal
@@ -177,8 +179,8 @@ Add a compact readout below the list to make the interaction feel concrete.
 Readout behaviour:
 
 - Reserve a stable line-height below the list so the layout never jumps.
-- At rest, show a quiet summary such as `36 lenders covered across major banks, regional banks, specialists, and channels.`
-- When active, show the selected lender and its group, for example `Commonwealth Bank · Major bank · Policy coverage active`.
+- At rest, show a quiet summary such as `36 lender policies indexed across major banks, regional banks, specialists, and channels.`
+- When active, show the selected lender and its group, for example `Commonwealth Bank - Major bank - Coverage active`.
 - Use `aria-live="polite"` for updates.
 - Keep the readout visually subordinate to the lender names.
 
@@ -258,7 +260,7 @@ Rules:
 
 ## 6. Implementation Plan
 
-### Step 1: Create Shared Lender Data
+### ~~Step 1: Create Shared Lender Data~~
 
 Objective: Make the lender data expressive enough to drive the visual design.
 
@@ -268,7 +270,7 @@ Objective: Make the lender data expressive enough to drive the visual design.
 - Export hero-order names and alphabetical FAQ names from this module.
 - Update `page.tsx` to import the shared data.
 
-### Step 2: Build The Visual Component
+### ~~Step 2: Build The Visual Component~~
 
 Objective: Replace the current inline list with a designed component.
 
@@ -279,7 +281,7 @@ Objective: Replace the current inline list with a designed component.
 - Add active and peer data attributes for styling.
 - Keep the initial render complete and readable before effects run.
 
-### Step 3: Add Ledger Surface CSS
+### ~~Step 3: Add Ledger Surface CSS~~
 
 Objective: Make the resting state visibly premium before interaction.
 
@@ -290,7 +292,7 @@ Objective: Make the resting state visibly premium before interaction.
 - Add a one-time entrance cascade with opacity, filter, and translate.
 - Keep the cascade fast and restrained so the list feels precise.
 
-### Step 4: Add Active And Peer Styling
+### ~~Step 4: Add Active And Peer Styling~~
 
 Objective: Make focus and selection visually obvious.
 
@@ -300,7 +302,7 @@ Objective: Make focus and selection visually obvious.
 - Tune active scale separately for mobile and desktop.
 - Ensure active names do not collide with adjacent names.
 
-### Step 5: Add Pointer Proximity
+### ~~Step 5: Add Pointer Proximity~~
 
 Objective: Make the field respond like an inspectable coverage surface.
 
@@ -312,7 +314,7 @@ Objective: Make the field respond like an inspectable coverage surface.
 - Set active lender only when the nearest item passes the proximity threshold.
 - Reset proximity values on pointer leave while preserving explicit click/tap selection.
 
-### Step 6: Add Keyboard And Touch Selection
+### ~~Step 6: Add Keyboard And Touch Selection~~
 
 Objective: Make the visual upgrade work outside desktop hover.
 
@@ -321,7 +323,7 @@ Objective: Make the visual upgrade work outside desktop hover.
 - Use the same active styles for pointer, keyboard, and touch.
 - Keep the last selected lender visible until another lender is selected or focus moves intentionally.
 
-### Step 7: Integrate In The Hero Footer
+### ~~Step 7: Integrate In The Hero Footer~~
 
 Objective: Replace the current inline footer list with the redesigned field.
 
@@ -330,7 +332,7 @@ Objective: Replace the current inline footer list with the redesigned field.
 - Update the announcement badge href to `#supported-lenders`.
 - Keep the FAQ lender answer backed by the shared data module.
 
-### Step 8: Update Animation Documentation
+### ~~Step 8: Update Animation Documentation~~
 
 Objective: Keep architecture documentation aligned with the new animation behaviour.
 
@@ -392,3 +394,126 @@ Objective: Keep architecture documentation aligned with the new animation behavi
 - The most important change is typography and composition, then active focus, then data/readout support.
 - Direct DOM style writes are intentional for proximity values; React state should only drive selected lender identity and readout content.
 - If the field feels too busy, reduce background surface contrast first, then proximity radius, then active scale.
+
+---
+
+## 9. Final Post-Review Decisions
+
+User review after implementation changed the final direction:
+
+- Keep the existing lender order; do not alphabetise the visual list.
+- Do not show lender categories, including labels such as `Major bank`, `Tier-2 bank`, `Regional bank`, `Specialist lender`, or `Policy channel`.
+- Do not vary lender size, weight, colour, or opacity based on the lender or its category.
+- Do not show a selected-lender readout, status pip, policy-count copy, freshness copy, or fabricated metadata under the list.
+- Remove the card-like panel background, row-band ledger surface, vignette, and heavy inset treatment because they looked out of place against the hero.
+- Keep only the centred `Supported Lenders` eyebrow, the multi-row lender names, the subtle top/bottom hairlines, and the pointer aperture.
+- Make the active state self-contained: the active lender turns white, brightens, lifts slightly, and shows an underline beam while every non-active lender fades back.
+- Fix the active-state specificity bug by excluding `[data-active='true']`, `:hover`, and `:focus-visible` from the dimming selector. Without this, `.supported-lenders-field[data-has-active='true'] .supported-lenders-field__button` had higher specificity than the active selector and dimmed the active lender.
+
+---
+
+## Implemented Solution
+
+### Files Touched
+
+- `demo/src/lib/supported-lenders.ts` (Created)
+  - Added `SupportedLender` and `SupportedLenderVisualTier` types.
+  - Added `SUPPORTED_LENDERS` as the canonical lender metadata source with `name`, `slug`, `group`, `shortGroup`, `visualTier`, `heroOrder`, and `faqOrder`.
+  - Exported `supportedLendersByMarketCap`, `bulmaCoveredLenders`, and `bulmaCoveredLendersAnswer` from the same source so hero, FAQ, and schema copy stay aligned.
+
+- `demo/src/components/elements/supported-lenders-field.tsx` (Created)
+  - Added `SupportedLendersField`, a client component that renders all 36 lender names as static HTML buttons.
+  - Added pointer-fine proximity tracking with one parent-level `pointermove` listener on `.supported-lenders-field__list`, IntersectionObserver viewport gating, ResizeObserver cache invalidation, and RAF-throttled DOM style writes.
+  - Added keyboard focus, click selection, and touch-style pointer selection that pin the active lender visually without rendering any selected-lender readout.
+  - Removed peer/category grouping from the visual component: the rendered buttons no longer include `data-lender-tier`, `data-lender-group`, or `data-peer`, and `aria-label` uses only the lender name.
+
+- `demo/src/app/globals.css` (Updated)
+  - Added the `SUPPORTED LENDERS FIELD` CSS section with hairline section bounds, a pointer aperture, unified lender typography, active underline beam, and responsive mobile active scale.
+  - Post-review tuning removed the heavy panel fill, row-band treatment, category-specific styles, peer clarity, selected-lender readout, readout rule, and status mark.
+  - Increased the `Supported Lenders` eyebrow size and contrast after review feedback that it was too small against the lender names.
+  - Fixed the active-state specificity bug by excluding active, hover, and focus-visible buttons from the dimming selector so the active lender remains bright while non-active lenders fade.
+  - Animated only opacity, filter, transform, colour, and CSS custom properties for this feature.
+  - Used breakpoint-based font sizes rather than viewport-scaled font sizing.
+
+- `demo/src/app/page.tsx` (Updated)
+  - Replaced the inline hero footer lender list with `<SupportedLendersField />`.
+  - Updated the announcement badge href from `#lenders` to `#supported-lenders`.
+  - Imported FAQ lender names and schema answer from `demo/src/lib/supported-lenders.ts`.
+
+- `documents/guides/_animations.md` (Updated)
+  - Added `supported-lenders-field.tsx` and `supported-lenders.ts` to the animation system file structure.
+  - Added `Supported Lenders Field` documentation covering component path, data path, CSS ownership, pointer gate, IntersectionObserver gating, RAF throttling, CSS variables, keyboard/touch fallback, and verification requirements.
+
+- `documents/todo/hero_interactive_enhancements_plan.md` (Updated)
+  - Struck through Steps 1-8 after completion.
+  - Updated the first heading to completed status.
+  - Added final post-review decisions and this `Implemented Solution` section for review context.
+  - Moved the completed plan to `documents/learnings/hero_interactive_enhancements_plan.md`.
+
+### Behavioural Deltas
+
+- The hero footer lender list is now a compact supported-lenders field with a centred eyebrow, 36 text buttons, subtle top/bottom hairlines, and no card-like panel fill.
+- All lenders render with the same resting size, weight, colour, and opacity; there is no visible category or tier treatment.
+- The field keeps the existing lender order from `supportedLendersByMarketCap`; no alphabetical visual reorder was introduced.
+- Pointer movement on fine-pointer devices activates the nearest lender, writes proximity values directly to CSS variables, and resets pointer-only values on pointer leave.
+- Click, tap, and keyboard focus pin the active lender visually without rendering any readout line below the list.
+- The active lender now turns white, brightens, lifts slightly, and shows the underline beam while non-active lenders fade back through a selector that excludes active, hover, and focus-visible buttons.
+- The FAQ list and schema answer now share the same canonical data source as the hero field while preserving the existing FAQ lender order.
+
+### Validation Outcomes
+
+- Captured before screenshots:
+  - Desktop: `/Users/sacino/.codex/skills/dev-browser/tmp/bulma-supported-lenders-before-desktop-viewport.png`
+  - Mobile: `/Users/sacino/.codex/skills/dev-browser/tmp/bulma-supported-lenders-before-mobile-viewport.png`
+
+- Captured after screenshots:
+  - Desktop resting: `/Users/sacino/.codex/skills/dev-browser/tmp/bulma-supported-lenders-after-desktop-rest.png`
+  - Desktop active: `/Users/sacino/.codex/skills/dev-browser/tmp/bulma-supported-lenders-after-desktop-active.png`
+  - Wide desktop resting: `/Users/sacino/.codex/skills/dev-browser/tmp/bulma-supported-lenders-after-wide-rest.png`
+  - Mobile active: `/Users/sacino/.codex/skills/dev-browser/tmp/bulma-supported-lenders-after-mobile-active.png`
+  - Post-review tuned desktop viewport: `/Users/sacino/.codex/skills/dev-browser/tmp/bulma-supported-lenders-final-desktop-viewport.png`
+  - Post-review tuned desktop active: `/Users/sacino/.codex/skills/dev-browser/tmp/bulma-supported-lenders-final-desktop-active.png`
+  - Post-review tuned mobile viewport: `/Users/sacino/.codex/skills/dev-browser/tmp/bulma-supported-lenders-final-mobile-viewport.png`
+  - Final post-cleanup desktop viewport: `/Users/sacino/.codex/skills/dev-browser/tmp/bulma-supported-lenders-final2-desktop-viewport.png`
+  - Final post-cleanup desktop active: `/Users/sacino/.codex/skills/dev-browser/tmp/bulma-supported-lenders-final2-desktop-active.png`
+  - Final post-cleanup mobile active: `/Users/sacino/.codex/skills/dev-browser/tmp/bulma-supported-lenders-final2-mobile-active.png`
+
+- Automated checks:
+  - `npx prettier --write src/app/page.tsx src/app/globals.css src/components/elements/supported-lenders-field.tsx src/lib/supported-lenders.ts ../documents/todo/hero_interactive_enhancements_plan.md` passed.
+  - `npx eslint src/app/page.tsx src/components/elements/supported-lenders-field.tsx src/lib/supported-lenders.ts` passed.
+  - Final targeted `npx eslint src/components/elements/supported-lenders-field.tsx` passed after removing the readout and peer/category rendering.
+  - Final `npm run build` passed and regenerated the static export.
+  - `demo/out/index.html` contains the Supported Lenders field and lender names in the static HTML output.
+  - `demo/out/index.html` no longer contains `supported-lenders-field__readout`, `supported-lenders-field__status-mark`, `data-lender-tier`, `data-peer`, `Major bank`, `Tier-2 bank`, `Regional bank`, `Specialist lender`, `Policy channel`, `Policy coverage active`, `Coverage active`, or `policies indexed`.
+
+- Visual and interaction checks with `dev-browser` on the running demo app at `http://localhost:3001`:
+  - Desktop rendered 36 lender buttons with no horizontal overflow.
+  - Wide desktop stayed as a deliberate multi-row field instead of stretching into a single-line strip.
+  - Mobile wrapped lender names cleanly with no horizontal overflow.
+  - Announcement badge scrolled to `#supported-lenders`.
+  - Pointer movement activated the nearest lender without rendering a readout or category text.
+  - Fast pointer movement across all rows ended on the nearest final lender without observed flicker.
+  - Pointer leave reset pointer-only proximity values while preserving explicit click/tap selections.
+  - Post-review desktop viewport measured `1088px` field width, no horizontal overflow, and no selected-lender readout under the names.
+  - Final desktop active state rendered 36 uniform buttons with no category labels and no horizontal overflow.
+  - Final mobile active state rendered 36 uniform buttons with no category labels and no horizontal overflow.
+  - Click selection persisted the active visual state after pointer leave.
+  - Keyboard focus activated the focused lender with the same visual treatment as pointer hover.
+  - Touch-style pointer selection activated the tapped lender with the same visual treatment as pointer hover.
+  - Final active-state diagnosis confirmed the previous dim selector had higher specificity than the active selector; the selector was changed to dim only non-active, non-hovered, and non-focused buttons.
+  - Runtime listener instrumentation observed one `pointermove` listener on `.supported-lenders-field__list`; additional pointer listeners came from the browser/dev tooling environment, not this field.
+
+- Performance check:
+  - Chrome trace while moving across the lender list recorded 72 pointer events.
+  - Maximum traced `pointermove` event work was `0.082ms`, below the 16.7ms frame budget.
+
+### Skipped Or Blocked Checks
+
+- Full `npm run lint` was attempted but remains blocked by pre-existing unrelated lint errors outside this implementation:
+  - `demo/src/components/elements/morphing-price.tsx`
+  - `demo/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx`
+  - `demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx`
+  - `demo/src/hooks/use-hero-parallax.ts`
+  - `demo/src/hooks/use-scroll-highlight.ts`
+  - `demo/src/hooks/use-sticky-section.ts`
+- AGENTS.md requires testing and iteration before completion; targeted lint, production build, generated HTML inspection, browser screenshots, interaction checks, and performance trace were completed to validate the changed files while leaving unrelated repository lint debt untouched.

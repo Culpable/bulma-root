@@ -16,6 +16,8 @@ demo/src/
 │   ├── use-sticky-section.ts            # Sticky eyebrow label detection (Rec 8)
 │   ├── use-hue-shift.ts                 # Section hue shift tracking (Rec 9)
 │   └── use-scroll-highlight.ts          # Viewport center text highlighting (Rec 10)
+├── lib/
+│   └── supported-lenders.ts             # Canonical lender metadata for hero field + FAQ answer
 ├── app/
 │   └── globals.css                       # CSS keyframes and utility classes
 └── components/
@@ -33,7 +35,8 @@ demo/src/
     │   ├── blur-transition-text.tsx      # Blur in/out text cycling animation
     │   ├── screenshot.tsx                # Parallax tilt implementation
     │   ├── scroll-highlight.tsx          # Viewport center text highlighting (Rec 10)
-    │   └── sticky-eyebrow.tsx            # Sticky section labels (Rec 8)
+    │   ├── sticky-eyebrow.tsx            # Sticky section labels (Rec 8)
+    │   └── supported-lenders-field.tsx   # Pointer-driven lender coverage ledger
     └── sections/
         # Home page sections
         ├── features-two-column-with-demos.tsx   # Slide left/right staggered
@@ -2298,3 +2301,54 @@ After optimisations:
 | `demo/src/hooks/use-scroll-velocity.ts` | Timeout-based decay (replaces continuous setInterval) |
 | `demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx` | RAF throttling + state de-duplication in `useScrolled` |
 | `demo/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx` | RAF throttling + state de-duplication in `useScrolled` |
+
+---
+
+## 53. Supported Lenders Field
+
+`supported-lenders-field.tsx::SupportedLendersField` renders the homepage hero footer as an interactive supported-lenders field. It keeps all lender names in the static HTML output and adds pointer, keyboard, and touch interaction after hydration.
+
+**Files:**
+
+- `demo/src/components/elements/supported-lenders-field.tsx`
+- `demo/src/lib/supported-lenders.ts`
+- `demo/src/app/globals.css`
+- `demo/src/app/page.tsx`
+
+**Data model:**
+
+- `SUPPORTED_LENDERS` is the canonical lender metadata source.
+- `supportedLendersByMarketCap` sorts profiles by `heroOrder` for the hero ledger.
+- `bulmaCoveredLenders` sorts profiles by `faqOrder` for the FAQ list.
+- `bulmaCoveredLendersAnswer` generates the FAQ schema answer from `bulmaCoveredLenders`.
+- Each lender profile includes `name`, `slug`, `group`, `shortGroup`, `visualTier`, and `heroOrder`; `faqOrder` preserves the existing FAQ sequence.
+
+**Pointer behaviour:**
+
+- Pointer proximity is gated with `window.matchMedia('(pointer: fine)')`.
+- One `pointermove` listener attaches to `.supported-lenders-field__list` only while `#supported-lenders` intersects the viewport.
+- `IntersectionObserver` starts and stops pointer work; `ResizeObserver` invalidates cached lender centres after wrapping or text metric changes.
+- Pointer work is RAF-throttled. Each frame writes `--lender-pointer-x`, `--lender-pointer-y`, `--lender-pointer-opacity`, `--lender-proximity`, `--lender-proximity-brightness`, and `--lender-proximity-lift` directly to DOM styles.
+- React state tracks only the active slug used for active styling; proximity values do not trigger React renders.
+
+**Visual states:**
+
+- Resting state uses the hero background with subtle hairline bounds, pointer aperture support, and uniform lender typography. There is no selected-lender readout and no market/category/tier visual treatment.
+- Active state brightens the selected lender, applies a small lift and scale within the row, and adds a centre-grown underline. Non-active lenders fade back through a dimming selector that excludes `[data-active='true']`, `:hover`, and `:focus-visible` so the active lender is not dimmed by a higher-specificity parent selector.
+- Pointer leave resets proximity variables and returns to the last explicit click or touch selection.
+- Keyboard focus and touch-style pointer selection use the same active visual state as pointer proximity.
+
+**CSS ownership:**
+
+- `globals.css` contains the `SUPPORTED LENDERS FIELD` section.
+- The field animates only `transform`, `opacity`, `filter`, colour, and CSS custom properties.
+- Responsive font sizing uses breakpoints instead of viewport-scaling font expressions.
+- Active scale is smaller on mobile to prevent collisions.
+
+**Verification requirements:**
+
+- Run `npm run build` in `demo/` and confirm `demo/out/index.html` contains the lender names.
+- Run targeted ESLint for `src/app/page.tsx`, `src/components/elements/supported-lenders-field.tsx`, and `src/lib/supported-lenders.ts` when full-project lint is blocked by unrelated lint debt.
+- Visually verify desktop, wide desktop, and mobile layouts with `dev-browser`.
+- Check announcement badge scrolling, pointer tracking, pointer leave reset, click persistence, keyboard focus, touch-style selection, and horizontal overflow.
+- Record a short performance trace while moving across the list; pointer event work should remain below the 16.7ms frame budget.
