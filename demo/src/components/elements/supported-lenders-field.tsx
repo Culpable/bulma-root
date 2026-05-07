@@ -4,7 +4,6 @@ import { supportedLendersByMarketCap, type SupportedLender } from '@/lib/support
 import { clsx } from 'clsx/lite'
 import type { CSSProperties, FocusEvent as ReactFocusEvent, PointerEvent as ReactPointerEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
-import { Eyebrow } from './eyebrow'
 
 const POINTER_RADIUS = 132
 const ACTIVE_PROXIMITY_THRESHOLD = 0.48
@@ -254,9 +253,26 @@ export function SupportedLendersField({ lenders = supportedLendersByMarketCap }:
       onBlur={handleFieldBlur}
     >
       <div className="supported-lenders-field__surface">
-        <Eyebrow id="supported-lenders-heading" className="supported-lenders-field__heading">
-          Supported Lenders
-        </Eyebrow>
+        {/* Editorial chapter-marker heading: flanking gradient hairlines bracket a
+            tiny outlined diamond ornament on each side of the gradient-filled
+            label, giving the section a refined institutional cue without
+            competing with the lender names below. The id stays on the outer
+            element so aria-labelledby continues to resolve. */}
+        <div id="supported-lenders-heading" className="supported-lenders-field__heading">
+          <span className="supported-lenders-field__heading-rule" aria-hidden="true" />
+          <span className="supported-lenders-field__heading-ornament" aria-hidden="true">
+            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="0.9" strokeLinejoin="round">
+              <path d="M5 0.8 L9.2 5 L5 9.2 L0.8 5 Z" />
+            </svg>
+          </span>
+          <span className="supported-lenders-field__heading-text">Supported Lenders</span>
+          <span className="supported-lenders-field__heading-ornament" aria-hidden="true">
+            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="0.9" strokeLinejoin="round">
+              <path d="M5 0.8 L9.2 5 L5 9.2 L0.8 5 Z" />
+            </svg>
+          </span>
+          <span className="supported-lenders-field__heading-rule" aria-hidden="true" />
+        </div>
 
         <ul
           ref={listRef}

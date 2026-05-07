@@ -2333,6 +2333,7 @@ After optimisations:
 
 **Visual states:**
 
+- The heading uses a static editorial chapter-marker structure: mirrored hairline rules, decorative SVG diamond ornaments, and gradient-filled uppercase label text. The outer heading element keeps the `supported-lenders-heading` id so `aria-labelledby` continues to name the field.
 - Resting state uses the hero background with subtle hairline bounds, pointer aperture support, and uniform lender typography. There is no selected-lender readout and no market/category/tier visual treatment.
 - Active state brightens the selected lender, applies a small lift and scale within the row, and adds a centre-grown underline. Non-active lenders fade back through a dimming selector that excludes `[data-active='true']`, `:hover`, and `:focus-visible` so the active lender is not dimmed by a higher-specificity parent selector.
 - Pointer leave resets proximity variables and returns to the last explicit click or touch selection.
@@ -2341,7 +2342,7 @@ After optimisations:
 **CSS ownership:**
 
 - `globals.css` contains the `SUPPORTED LENDERS FIELD` section.
-- The field animates only `transform`, `opacity`, `filter`, colour, and CSS custom properties.
+- The field animates only `transform`, `opacity`, `filter`, colour, and CSS custom properties; the heading marker uses the same `supported-lender-enter` keyframes as the lender reveal.
 - Responsive font sizing uses breakpoints instead of viewport-scaling font expressions.
 - Active scale is smaller on mobile to prevent collisions.
 
