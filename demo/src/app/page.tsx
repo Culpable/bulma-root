@@ -564,7 +564,8 @@ export default function Page() {
               subheadline={<p>For individual brokers getting started</p>}
               features={[
                 'Unlimited policy questions',
-                'All major lenders covered',
+                <Link key="lenders" href="#lenders">Policy coverage across 35+ lenders</Link>,
+                'Cross-lender comparisons',
                 'Source attribution on every answer',
                 'Conversation history',
                 'Email support',
@@ -585,7 +586,6 @@ export default function Page() {
               features={[
                 'Everything in Solo',
                 'Up to 5 team members',
-                'Cross-lender comparisons',
                 'Priority support',
                 'Team usage analytics',
                 'Shared conversation history',

@@ -88,7 +88,8 @@ export default function Page() {
               subheadline={<p>For individual brokers getting started</p>}
               features={[
                 'Unlimited policy questions',
-                'All major lenders covered',
+                <a href="/#lenders" className="underline underline-offset-2">Policy coverage across 35+ lenders</a>,
+                'Cross-lender comparisons',
                 'Source attribution on every answer',
                 'Conversation history',
                 'Email support',
@@ -109,7 +110,6 @@ export default function Page() {
               features={[
                 'Everything in Solo',
                 'Up to 5 team members',
-                'Cross-lender comparisons',
                 'Priority support',
                 'Team usage analytics',
                 'Shared conversation history',
@@ -251,13 +251,10 @@ export default function Page() {
             title: 'Policy Q&A',
             features: [
               { name: 'Unlimited policy questions', value: true },
-              { name: 'All major lenders covered', value: true },
+              { name: 'Policy coverage across 35+ lenders', value: true },
               { name: 'Source attribution', value: true },
               { name: 'Conversation history', value: true },
-              {
-                name: 'Cross-lender comparisons',
-                value: { Solo: false, Team: true, Enterprise: true },
-              },
+              { name: 'Cross-lender comparisons', value: true },
             ],
           },
           {
