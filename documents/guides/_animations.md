@@ -2306,7 +2306,7 @@ After optimisations:
 
 ## 53. Supported Lenders Field
 
-`supported-lenders-field.tsx::SupportedLendersField` renders the homepage hero footer as an interactive supported-lenders field. It keeps all lender names in the static HTML output and adds pointer, keyboard, and touch interaction after hydration.
+`supported-lenders-field.tsx::SupportedLendersField` renders the homepage hero footer and pricing-page footer as an interactive supported-lenders field. It keeps all lender names in the static HTML output and adds pointer, keyboard, and touch interaction after hydration.
 
 **Files:**
 
@@ -2314,6 +2314,7 @@ After optimisations:
 - `demo/src/lib/supported-lenders.ts`
 - `demo/src/app/globals.css`
 - `demo/src/app/page.tsx`
+- `demo/src/app/pricing/page.tsx`
 
 **Data model:**
 
@@ -2338,6 +2339,7 @@ After optimisations:
 - Active state brightens the selected lender, applies a small lift and scale within the row, and adds a centre-grown underline. Non-active lenders fade back through a dimming selector that excludes `[data-active='true']`, `:hover`, and `:focus-visible` so the active lender is not dimmed by a higher-specificity parent selector.
 - Pointer leave resets proximity variables and returns to the last explicit click or touch selection.
 - Keyboard focus and touch-style pointer selection use the same active visual state as pointer proximity.
+- The pricing page passes `appearance="light"` so the field can sit transparently in the pricing footer. In dark colour-scheme mode, that light variant reuses the homepage white/mist resting text, bright white hover/active state, pointer aperture, heading marker, underline, and focus outline so the pricing block remains visually seamless with the dark pricing background.
 
 **CSS ownership:**
 
@@ -2345,6 +2347,7 @@ After optimisations:
 - The field animates only `transform`, `opacity`, `filter`, colour, and CSS custom properties; the heading marker uses the same `supported-lender-enter` keyframes as the lender reveal.
 - Responsive font sizing uses breakpoints instead of viewport-scaling font expressions.
 - Active scale is smaller on mobile to prevent collisions.
+- `.supported-lenders-field--light` owns the light-page colour treatment, while its `prefers-color-scheme: dark` overrides must match the default homepage field values for lender text, hover/active opacity, underline, and heading marker colours.
 
 **Verification requirements:**
 

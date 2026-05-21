@@ -11,6 +11,7 @@ const DEFAULT_POINTER_POSITION = '50%'
 
 type SupportedLendersFieldProps = {
   lenders?: SupportedLender[]
+  appearance?: 'dark' | 'light'
 }
 
 type LenderMetric = {
@@ -20,14 +21,16 @@ type LenderMetric = {
   y: number
 }
 
-
 // Hero-footer "Supported Lenders" field. Every lender renders at the same size,
 // weight, colour and opacity — no per-tier visual hierarchy and no per-tier text
 // anywhere in the visible UI. There is no readout/caption beneath the names: the
 // active state is conveyed entirely by the lender's own treatment (lift,
 // brightness, underline beam) so we don't have to write copy that would either
 // repeat the lender name or fake metadata we don't actually have.
-export function SupportedLendersField({ lenders = supportedLendersByMarketCap }: SupportedLendersFieldProps) {
+export function SupportedLendersField({
+  lenders = supportedLendersByMarketCap,
+  appearance = 'dark',
+}: SupportedLendersFieldProps) {
   const fieldRef = useRef<HTMLElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
   const lenderButtonRefs = useRef(new Map<string, HTMLButtonElement>())
@@ -247,7 +250,7 @@ export function SupportedLendersField({ lenders = supportedLendersByMarketCap }:
     <section
       ref={fieldRef}
       id="supported-lenders"
-      className="supported-lenders-field"
+      className={clsx('supported-lenders-field', appearance === 'light' && 'supported-lenders-field--light')}
       aria-labelledby="supported-lenders-heading"
       data-has-active={hasActive ? 'true' : 'false'}
       onBlur={handleFieldBlur}
@@ -274,11 +277,7 @@ export function SupportedLendersField({ lenders = supportedLendersByMarketCap }:
           <span className="supported-lenders-field__heading-rule" aria-hidden="true" />
         </div>
 
-        <ul
-          ref={listRef}
-          aria-label="Lenders supported by Bulma"
-          className="supported-lenders-field__list"
-        >
+        <ul ref={listRef} aria-label="Lenders supported by Bulma" className="supported-lenders-field__list">
           {lenders.map((lender, index) => {
             // Every lender shares the same resting style. Only state distinction
             // is "active" (one lender) vs. "all others when something is active"

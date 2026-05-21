@@ -264,6 +264,23 @@
   pointer-events: none;
 }
 
+.supported-lenders-field--light {
+  color: var(--color-mist-950);
+}
+
+.supported-lenders-field--light .supported-lenders-field__surface {
+  border-block-color: rgba(35, 47, 64, 0.08);
+}
+
+.supported-lenders-field--light .supported-lenders-field__surface::after {
+  background: radial-gradient(
+    circle 190px at var(--lender-pointer-x) var(--lender-pointer-y),
+    rgba(36, 58, 66, 0.095),
+    rgba(36, 58, 66, 0.04) 34%,
+    transparent 68%
+  );
+}
+
 .supported-lenders-field__heading {
   /* Editorial chapter-marker layout. The heading is a centred row composed of:
      [hairline-rule] [diamond] [label] [diamond] [hairline-rule]
@@ -299,6 +316,14 @@
   background: linear-gradient(90deg, rgba(220, 237, 241, 0.5), transparent);
 }
 
+.supported-lenders-field--light .supported-lenders-field__heading-rule {
+  background: linear-gradient(90deg, transparent, rgba(35, 47, 64, 0.34));
+}
+
+.supported-lenders-field--light .supported-lenders-field__heading-rule:last-child {
+  background: linear-gradient(90deg, rgba(35, 47, 64, 0.34), transparent);
+}
+
 .supported-lenders-field__heading-ornament {
   /* Tiny outlined diamond ornaments flank the label as refined editorial cues.
      Outlined (not filled) so they read as a delicate hairline glyph in keeping
@@ -316,6 +341,10 @@
   width: 100%;
   height: 100%;
   display: block;
+}
+
+.supported-lenders-field--light .supported-lenders-field__heading-ornament {
+  color: rgba(35, 47, 64, 0.48);
 }
 
 .supported-lenders-field__heading-text {
@@ -345,6 +374,18 @@
   /* Faint shadow gives the label lift against the gradient hero without
      looking like a glow effect. */
   filter: drop-shadow(0 1px 6px rgba(184, 230, 238, 0.12));
+}
+
+.supported-lenders-field--light .supported-lenders-field__heading-text {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 25, 31, 0.92) 0%,
+    rgba(36, 58, 66, 0.82) 48%,
+    rgba(20, 25, 31, 0.92) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: none;
 }
 
 .supported-lenders-field__list {
@@ -401,6 +442,11 @@
   white-space: nowrap;
 }
 
+.supported-lenders-field--light .supported-lenders-field__button {
+  color: rgba(35, 47, 64, 0.78);
+  opacity: 0.86;
+}
+
 .supported-lenders-field__button::after {
   content: '';
   position: absolute;
@@ -415,6 +461,10 @@
   transition:
     opacity 170ms ease-out,
     transform 170ms ease-out;
+}
+
+.supported-lenders-field--light .supported-lenders-field__button::after {
+  background: linear-gradient(90deg, transparent, rgba(35, 47, 64, 0.72), transparent);
 }
 
 /* When any lender is active (pointer / focus / click), every NON-active lender
@@ -441,6 +491,85 @@
 .supported-lenders-field__button:focus-visible {
   outline: 1px solid rgba(220, 242, 247, 0.58);
   outline-offset: 0.38rem;
+}
+
+.supported-lenders-field--light .supported-lenders-field__button:hover,
+.supported-lenders-field--light .supported-lenders-field__button:focus-visible,
+.supported-lenders-field--light .supported-lenders-field__button[data-active='true'] {
+  color: var(--color-mist-950);
+}
+
+.supported-lenders-field--light .supported-lenders-field__button:focus-visible {
+  outline-color: rgba(35, 47, 64, 0.42);
+}
+
+@media (prefers-color-scheme: dark) {
+  .supported-lenders-field--light {
+    color: white;
+  }
+
+  .supported-lenders-field--light .supported-lenders-field__surface {
+    border-block-color: rgba(209, 231, 236, 0.08);
+  }
+
+  .supported-lenders-field--light .supported-lenders-field__surface::after {
+    background: radial-gradient(
+      circle 190px at var(--lender-pointer-x) var(--lender-pointer-y),
+      rgba(184, 230, 238, 0.13),
+      rgba(184, 230, 238, 0.055) 34%,
+      transparent 68%
+    );
+  }
+
+  .supported-lenders-field--light .supported-lenders-field__heading-rule {
+    background: linear-gradient(90deg, transparent, rgba(220, 237, 241, 0.5));
+  }
+
+  .supported-lenders-field--light .supported-lenders-field__heading-rule:last-child {
+    background: linear-gradient(90deg, rgba(220, 237, 241, 0.5), transparent);
+  }
+
+  .supported-lenders-field--light .supported-lenders-field__heading-ornament {
+    color: rgba(220, 237, 241, 0.6);
+  }
+
+  .supported-lenders-field--light .supported-lenders-field__heading-text {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.96) 0%,
+      rgba(196, 232, 240, 0.86) 48%,
+      rgba(232, 246, 250, 0.96) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    filter: drop-shadow(0 1px 6px rgba(184, 230, 238, 0.12));
+  }
+
+  .supported-lenders-field--light .supported-lenders-field__button {
+    color: rgba(232, 244, 248, 0.94);
+    opacity: 0.84;
+  }
+
+  .supported-lenders-field--light .supported-lenders-field__button::after {
+    background: linear-gradient(90deg, transparent, rgba(222, 246, 250, 0.92), transparent);
+  }
+
+  .supported-lenders-field--light .supported-lenders-field__button:hover,
+  .supported-lenders-field--light .supported-lenders-field__button:focus-visible,
+  .supported-lenders-field--light .supported-lenders-field__button[data-active='true'] {
+    color: white;
+    opacity: 1;
+  }
+
+  .supported-lenders-field--light .supported-lenders-field__button:focus-visible {
+    outline-color: rgba(220, 242, 247, 0.58);
+  }
+}
+
+.supported-lenders-field--light .supported-lenders-field__button:hover,
+.supported-lenders-field--light .supported-lenders-field__button:focus-visible,
+.supported-lenders-field--light .supported-lenders-field__button[data-active='true'] {
+  opacity: 1;
 }
 
 .supported-lenders-field__button[data-active='true'] {

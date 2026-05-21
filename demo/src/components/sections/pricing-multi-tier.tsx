@@ -1,11 +1,43 @@
 'use client'
 
+import { useScrollAnimation } from '@/hooks/use-scroll-animation'
 import { clsx } from 'clsx/lite'
-import { Children, createContext, memo, useContext, useMemo, type ComponentProps, type ReactNode } from 'react'
+import {
+  Children,
+  createContext,
+  memo,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  type ComponentProps,
+  type ReactNode,
+} from 'react'
 import { CardSpotlight } from '../elements/card-spotlight'
 import { Section } from '../elements/section'
 import { AnimatedCheckmarkIcon } from '../icons/animated-checkmark-icon'
-import { useScrollAnimation } from '@/hooks/use-scroll-animation'
+
+interface PricingOptionContextValue<T extends string = string> {
+  selectedOption: T
+  options: readonly T[]
+}
+
+const PricingOptionContext = createContext<PricingOptionContextValue>({
+  selectedOption: '',
+  options: [],
+})
+
+interface PlanPrices {
+  [option: string]: ReactNode
+}
+
+interface PlanPeriods {
+  [option: string]: ReactNode
+}
+
+interface PlanBonuses {
+  [option: string]: ReactNode
+}
 
 /**
  * Context to pass animation state from PricingMultiTier to Plan components.
@@ -20,6 +52,67 @@ const PricingAnimationContext = createContext<PricingAnimationContextValue>({
   isVisible: false,
   baseDelay: 0,
 })
+
+function GiftIcon(props: ComponentProps<'svg'>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} aria-hidden="true" {...props}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M20 12v7.25A1.75 1.75 0 0 1 18.25 21H5.75A1.75 1.75 0 0 1 4 19.25V12m16 0H4m16 0v-1.75A2.25 2.25 0 0 0 17.75 8H6.25A2.25 2.25 0 0 0 4 10.25V12m8 9V8m0 0H9.25A2.75 2.75 0 1 1 12 5.25V8Zm0 0h2.75A2.75 2.75 0 1 0 12 5.25V8Z"
+      />
+    </svg>
+  )
+}
+
+function PricingBonusTeaser({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex items-start gap-2 rounded-lg border border-mist-950/10 bg-white/70 px-3 py-2.5 text-sm/6 text-mist-700 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-mist-300">
+      <GiftIcon className="mt-0.5 size-4 shrink-0 text-mist-950 dark:text-white" />
+      <div>{children}</div>
+    </div>
+  )
+}
+
+function PricingOptionToggle<T extends string>({
+  options,
+  selectedIndex,
+  onSelect,
+}: {
+  options: readonly T[]
+  selectedIndex: number
+  onSelect: (index: number) => void
+}) {
+  return (
+    <div
+      role="tablist"
+      aria-label="Pricing options"
+      className="inline-flex w-fit items-center gap-1 rounded-full bg-mist-950/5 p-1 dark:bg-white/5"
+    >
+      {options.map((option, index) => {
+        const isSelected = selectedIndex === index
+
+        return (
+          <button
+            key={option}
+            type="button"
+            role="tab"
+            aria-selected={isSelected}
+            onClick={() => onSelect(index)}
+            className={clsx(
+              'rounded-full px-4 py-1 text-sm/7 font-medium transition-colors duration-200',
+              isSelected
+                ? 'bg-mist-950 text-white shadow-sm dark:bg-white dark:text-mist-950'
+                : 'text-mist-950 hover:bg-mist-950/5 dark:text-white dark:hover:bg-white/10',
+            )}
+          >
+            {option}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
 
 /**
  * Wrapper component that memoizes context value to prevent cascade re-renders.
@@ -36,39 +129,44 @@ const PlanWrapper = memo(function PlanWrapper({
   isVisible: boolean
 }) {
   // Memoize context value to prevent unnecessary re-renders in consumers
-  const contextValue = useMemo(
-    () => ({ isVisible, baseDelay: delay }),
-    [isVisible, delay]
-  )
+  const contextValue = useMemo(() => ({ isVisible, baseDelay: delay }), [isVisible, delay])
 
-  return (
-    <PricingAnimationContext.Provider value={contextValue}>
-      {child}
-    </PricingAnimationContext.Provider>
-  )
+  return <PricingAnimationContext.Provider value={contextValue}>{child}</PricingAnimationContext.Provider>
 })
 
 export function Plan({
   name,
   price,
+  prices,
   period,
+  periods,
   subheadline,
   badge,
   features,
+  bonus,
+  bonuses,
+  bonusPrompt,
   cta,
   featured = false,
   className,
 }: {
   name: ReactNode
-  price: ReactNode
+  price?: ReactNode
+  prices?: PlanPrices
   period?: ReactNode
+  periods?: PlanPeriods | ReactNode
   subheadline: ReactNode
   badge?: ReactNode
   features: ReactNode[]
+  bonus?: ReactNode
+  bonuses?: PlanBonuses
+  bonusPrompt?: ReactNode
   cta: ReactNode
   /** Whether this is the featured/recommended plan (adds ambient glow) */
   featured?: boolean
 } & ComponentProps<'div'>) {
+  const { selectedOption } = useContext(PricingOptionContext)
+
   // Get animation context for staggered checkmark reveals
   const { isVisible, baseDelay } = useContext(PricingAnimationContext)
 
@@ -77,12 +175,19 @@ export function Plan({
   // Start checkmark animations after the card has faded in (300ms base)
   const checkmarkBaseDelay = baseDelay + 300
 
+  const currentPrice = prices && selectedOption ? (prices[selectedOption] ?? Object.values(prices)[0]) : price
+  const currentBonus = bonuses && selectedOption ? bonuses[selectedOption] : bonus
+  const resolvedPeriod =
+    periods && typeof periods === 'object'
+      ? ((periods as PlanPeriods)[selectedOption] ?? Object.values(periods as PlanPeriods)[0])
+      : (periods ?? period)
+
   return (
     <CardSpotlight featured={featured} className="h-full">
       <div
         className={clsx(
           // h-full ensures Plan fills its container for equal height alignment in grids
-          'flex h-full flex-col justify-between gap-6 rounded-xl bg-mist-950/2.5 p-6 sm:items-start dark:bg-white/5',
+          'flex h-full flex-col gap-6 rounded-xl bg-mist-950/2.5 p-6 sm:items-start dark:bg-white/5',
           // Hover lift effect with smooth transition
           'transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:shadow-mist-950/5 dark:hover:shadow-black/20',
           className,
@@ -99,8 +204,8 @@ export function Plan({
             <h3 className="text-2xl/8 tracking-tight text-mist-950 dark:text-white">{name}</h3>
           </div>
           <p className="mt-1 inline-flex gap-1 text-base/7">
-            <span className="text-mist-950 dark:text-white">{price}</span>
-            {period && <span className="text-mist-500 dark:text-mist-500">{period}</span>}
+            <span className="text-mist-950 dark:text-white">{currentPrice}</span>
+            {resolvedPeriod && <span className="text-mist-500 dark:text-mist-500">{resolvedPeriod}</span>}
           </p>
           <div className="mt-4 flex flex-col gap-4 text-sm/6 text-mist-700 dark:text-mist-400">{subheadline}</div>
           <ul className="mt-4 space-y-2 text-sm/6 text-mist-700 dark:text-mist-400">
@@ -117,27 +222,59 @@ export function Plan({
             ))}
           </ul>
         </div>
-        {cta}
+        <div className="mt-auto flex w-full flex-col gap-6 self-stretch">
+          {currentBonus ? (
+            <PricingBonusTeaser>{currentBonus}</PricingBonusTeaser>
+          ) : bonusPrompt ? (
+            <PricingBonusTeaser>{bonusPrompt}</PricingBonusTeaser>
+          ) : null}
+          {cta}
+        </div>
       </div>
     </CardSpotlight>
   )
 }
 
-export function PricingMultiTier({
+export function PricingMultiTier<T extends string = string>({
   plans,
+  options,
+  optionCallout,
   staggerDelay = 100,
   stickyEyebrow,
   sectionHue,
+  cta,
   ...props
 }: {
   plans: ReactNode
+  options?: readonly T[]
+  optionCallout?: ReactNode
   staggerDelay?: number
   /** Enable sticky eyebrow behavior (Recommendation 8) */
   stickyEyebrow?: boolean
   /** Section hue identifier for smooth color transitions (Recommendation 9) */
   sectionHue?: 'hero' | 'features' | 'stats' | 'testimonials' | 'pricing' | 'faqs' | 'cta'
 } & ComponentProps<typeof Section>) {
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const selectedOption = options?.[selectedIndex] ?? ('' as T)
   const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
+
+  const handleSelect = useCallback((index: number) => {
+    setSelectedIndex(index)
+  }, [])
+
+  const sectionCta =
+    options || optionCallout || cta ? (
+      <div className="flex flex-col gap-4">
+        {cta}
+        {options && <PricingOptionToggle options={options} selectedIndex={selectedIndex} onSelect={handleSelect} />}
+        {optionCallout && (
+          <div className="flex max-w-sm items-center gap-2 rounded-lg border border-mist-950/10 bg-white/70 px-4 py-2 text-sm/6 font-medium text-mist-700 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-mist-300">
+            <GiftIcon className="size-4 shrink-0 text-mist-950 dark:text-white" />
+            <div>{optionCallout}</div>
+          </div>
+        )}
+      </div>
+    ) : undefined
 
   // Wrap each plan child with staggered animation from left to right
   // h-full ensures wrapper fills grid cell so child Plan components align heights
@@ -155,7 +292,7 @@ export function PricingMultiTier({
         className={clsx(
           // Base styles for animation and layout
           'card-depth-stack pricing-focus-card h-full rounded-xl transition-all duration-600 ease-out',
-          isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-[0.97]'
+          isVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-8 scale-[0.97] opacity-0',
         )}
         style={{ transitionDelay: `${delay}ms` }}
       >
@@ -166,14 +303,16 @@ export function PricingMultiTier({
   })
 
   return (
-    <Section stickyEyebrow={stickyEyebrow} sectionHue={sectionHue} {...props}>
-      {/* pricing-focus-group enables focus isolation (Rec B) - hovering one card dims siblings */}
-      <div
-        ref={containerRef}
-        className="pricing-focus-group grid grid-cols-1 items-stretch gap-2 sm:has-[>:nth-child(5)]:grid-cols-2 sm:max-lg:has-[>:last-child:nth-child(even)]:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none lg:has-[>:nth-child(5)]:grid-flow-row lg:has-[>:nth-child(5)]:grid-cols-3"
-      >
-        {animatedPlans}
-      </div>
-    </Section>
+    <PricingOptionContext.Provider value={{ selectedOption, options: options ?? [] }}>
+      <Section stickyEyebrow={stickyEyebrow} sectionHue={sectionHue} cta={sectionCta} {...props}>
+        {/* pricing-focus-group enables focus isolation (Rec B) - hovering one card dims siblings */}
+        <div
+          ref={containerRef}
+          className="pricing-focus-group grid grid-cols-1 items-stretch gap-2 sm:has-[>:nth-child(5)]:grid-cols-2 sm:max-lg:has-[>:last-child:nth-child(even)]:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none lg:has-[>:nth-child(5)]:grid-flow-row lg:has-[>:nth-child(5)]:grid-cols-3"
+        >
+          {animatedPlans}
+        </div>
+      </Section>
+    </PricingOptionContext.Provider>
   )
 }

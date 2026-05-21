@@ -1,5 +1,6 @@
 'use client'
 
+import { useScrollAnimation } from '@/hooks/use-scroll-animation'
 import { clsx } from 'clsx/lite'
 import React, {
   Children,
@@ -18,7 +19,6 @@ import { Heading } from '../elements/heading'
 import { MorphingPrice } from '../elements/morphing-price'
 import { Text } from '../elements/text'
 import { AnimatedCheckmarkIcon } from '../icons/animated-checkmark-icon'
-import { useScrollAnimation } from '@/hooks/use-scroll-animation'
 
 // =============================================================================
 // PRICING OPTION CONTEXT
@@ -76,11 +76,7 @@ interface ElasticTabToggleProps<T extends string> {
  * Elastic tab toggle with sliding pill indicator.
  * Features spring physics animation with overshoot and settle effect.
  */
-function ElasticTabToggle<T extends string>({
-  options,
-  selectedIndex,
-  onSelect,
-}: ElasticTabToggleProps<T>) {
+function ElasticTabToggle<T extends string>({ options, selectedIndex, onSelect }: ElasticTabToggleProps<T>) {
   const [pillStyle, setPillStyle] = useState<React.CSSProperties>({})
   const [isAnimating, setIsAnimating] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -178,6 +174,43 @@ interface PlanPeriods {
   [option: string]: ReactNode
 }
 
+interface PlanBonuses {
+  [option: string]: ReactNode
+}
+
+function GiftIcon(props: ComponentProps<'svg'>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} aria-hidden="true" {...props}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M20 12v7.25A1.75 1.75 0 0 1 18.25 21H5.75A1.75 1.75 0 0 1 4 19.25V12m16 0H4m16 0v-1.75A2.25 2.25 0 0 0 17.75 8H6.25A2.25 2.25 0 0 0 4 10.25V12m8 9V8m0 0H9.25A2.75 2.75 0 1 1 12 5.25V8Zm0 0h2.75A2.75 2.75 0 1 0 12 5.25V8Z"
+      />
+    </svg>
+  )
+}
+
+function PricingBonusPanel({ children }: { children: ReactNode }) {
+  return (
+    <div className="overflow-hidden rounded-lg border border-mist-950/10 bg-white/70 shadow-sm dark:border-white/10 dark:bg-white/5">
+      <div className="flex items-center gap-2 border-b border-mist-950/10 bg-mist-950/5 px-3 py-2 dark:border-white/10 dark:bg-white/10">
+        <GiftIcon className="size-4 shrink-0 text-mist-950 dark:text-white" />
+        <p className="text-xs/5 font-semibold tracking-wide text-mist-950 dark:text-white">Bonuses</p>
+      </div>
+      <div className="px-3 py-3 text-sm/6 text-mist-700 dark:text-mist-300">{children}</div>
+    </div>
+  )
+}
+
+function PricingBonusPrompt({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex items-start gap-2 rounded-lg border border-mist-950/10 bg-mist-950/5 px-3 py-2.5 text-sm/6 text-mist-700 dark:border-white/10 dark:bg-white/5 dark:text-mist-300">
+      <GiftIcon className="mt-0.5 size-4 shrink-0 text-mist-950 dark:text-white" />
+      <div>{children}</div>
+    </div>
+  )
+}
+
 export function Plan<T extends string = string>({
   name,
   prices,
@@ -185,6 +218,8 @@ export function Plan<T extends string = string>({
   subheadline,
   badge,
   features,
+  bonuses,
+  bonusPrompt,
   cta,
   featured = false,
   className,
@@ -201,6 +236,10 @@ export function Plan<T extends string = string>({
   badge?: ReactNode
   /** List of features included in the plan */
   features: ReactNode[]
+  /** Bonus content keyed by the active pricing option, usually Yearly */
+  bonuses?: PlanBonuses
+  /** Prompt to show when the active option has no full bonus panel */
+  bonusPrompt?: ReactNode
   /** Call-to-action button */
   cta: ReactNode
   /** Whether this is the featured/recommended plan (adds ambient glow) */
@@ -218,18 +257,19 @@ export function Plan<T extends string = string>({
 
   // Get the price for the current option (fallback to first price if option not found)
   const currentPrice = prices[selectedOption] ?? Object.values(prices)[0] ?? ''
+  const currentBonus = bonuses?.[selectedOption]
 
   // Resolve period - can be a static value or an object with per-option values
   const resolvedPeriod =
     periods && typeof periods === 'object' && !React.isValidElement(periods)
-      ? (periods as PlanPeriods)[selectedOption] ?? Object.values(periods as PlanPeriods)[0]
+      ? ((periods as PlanPeriods)[selectedOption] ?? Object.values(periods as PlanPeriods)[0])
       : periods
 
   return (
     <CardSpotlight featured={featured} className="h-full">
       <div
         className={clsx(
-          'flex h-full flex-col justify-between gap-6 rounded-xl bg-mist-950/2.5 p-6 sm:items-start dark:bg-white/5',
+          'flex h-full flex-col gap-6 rounded-xl bg-mist-950/2.5 p-6 sm:items-start dark:bg-white/5',
           // Hover lift effect with smooth transition
           'transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:shadow-mist-950/5 dark:hover:shadow-black/20',
           className,
@@ -265,7 +305,14 @@ export function Plan<T extends string = string>({
             ))}
           </ul>
         </div>
-        {cta}
+        <div className="mt-auto flex w-full flex-col gap-6 self-stretch">
+          {currentBonus ? (
+            <PricingBonusPanel>{currentBonus}</PricingBonusPanel>
+          ) : bonusPrompt ? (
+            <PricingBonusPrompt>{bonusPrompt}</PricingBonusPrompt>
+          ) : null}
+          {cta}
+        </div>
       </div>
     </CardSpotlight>
   )
@@ -283,6 +330,7 @@ export function PricingHeroMultiTier<T extends string>({
   subheadline,
   options,
   plans,
+  optionCallout,
   footer,
   staggerDelay = 100,
   className,
@@ -295,6 +343,8 @@ export function PricingHeroMultiTier<T extends string>({
   options: readonly T[]
   /** Plan components to render - these persist across option changes for smooth animation */
   plans: ReactNode
+  /** Small callout displayed near the pricing option selector */
+  optionCallout?: ReactNode
   footer?: ReactNode
   /** Delay between each plan card's entrance animation (ms) */
   staggerDelay?: number
@@ -352,6 +402,12 @@ export function PricingHeroMultiTier<T extends string>({
             </Text>
             {/* Enhanced tab toggle with elastic sliding pill indicator */}
             <ElasticTabToggle options={options} selectedIndex={selectedIndex} onSelect={handleSelect} />
+            {optionCallout && (
+              <div className="flex max-w-sm items-center gap-2 rounded-lg border border-mist-950/10 bg-white/70 px-4 py-2 text-sm/6 font-medium text-mist-700 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-mist-300">
+                <GiftIcon className="size-4 shrink-0 text-mist-950 dark:text-white" />
+                <div>{optionCallout}</div>
+              </div>
+            )}
           </div>
 
           {/* Plan cards - persistent across option changes for smooth price morphing */}

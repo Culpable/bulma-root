@@ -39,6 +39,7 @@ Git commit guidelines are documented in `.cursor/rules/git-commit-message-format
 
 <frontend_design>
 - For pricing card grids, always enforce equal heights by pairing `items-stretch` on the grid with `h-full` on each plan card, and verify visually.
+- When reusing a visual component from one page on another page, verify visual parity against the source page in every relevant colour scheme and interaction state. Do not stop at layout/background matching: compare computed text colour, opacity, hover, focus, active states, underline/accent colours, and wrapper/background integration. If a new variant class is added for the destination page, confirm it does not unintentionally override the source component’s dark-mode or hover behaviour.
 
 <animation_standards>
 **NEVER add `prefers-reduced-motion` checks or similar accessibility media query conditionals to animation code.** Animations must work consistently for all users, so do not gate/short-circuit IntersectionObserver setup with accessibility or timing conditionals (including `requestAnimationFrame` wrappers).

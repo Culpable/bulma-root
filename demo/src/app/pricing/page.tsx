@@ -1,15 +1,15 @@
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
-import { Logo, LogoGrid } from '@/components/elements/logo-grid'
+import { SupportedLendersField } from '@/components/elements/supported-lenders-field'
 import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
-import { pageMetadata } from '@/lib/metadata'
 import { CallToActionSimpleCentered } from '@/components/sections/call-to-action-simple-centered'
 import { FAQsAccordion, Faq } from '@/components/sections/faqs-accordion'
 import { PlanComparisonTable } from '@/components/sections/plan-comparison-table'
 import { Plan, PricingHeroMultiTier } from '@/components/sections/pricing-hero-multi-tier'
+import { pageMetadata } from '@/lib/metadata'
 // import { TestimonialTwoColumnWithLargePhoto } from '@/components/sections/testimonial-two-column-with-large-photo'
 import { buildFaqPageSchema } from '@/schemas/organization-schema'
 import type { Metadata } from 'next'
-import Image from 'next/image'
+import NextLink from 'next/link'
 import Script from 'next/script'
 
 export const metadata: Metadata = {
@@ -17,10 +17,8 @@ export const metadata: Metadata = {
   description: pageMetadata.pricing.description,
 }
 
-const pricingSeoAltContext =
-  'Bulma pricing for Australian mortgage brokerages with transparent plans and a free trial'
-const pricingAlt = (text: string) => `${text} - ${pricingSeoAltContext}`
-const pricingLenderLogoAlt = pricingAlt('Australian lender logo')
+// const pricingSeoAltContext = 'Bulma pricing for Australian mortgage brokerages with transparent plans and a free trial'
+// const pricingAlt = (text: string) => `${text} - ${pricingSeoAltContext}`
 // const pricingTestimonialAlt = pricingAlt('Portrait of Jake Miller')
 
 const pricingFaqs = [
@@ -58,6 +56,20 @@ const pricingStructuredData = buildFaqPageSchema({
 
 // Period labels for each pricing option
 const pricingPeriods = { Monthly: '/month', Yearly: '/year' }
+const trackMyTrailPricingUrl = 'https://trackmytrail.com.au/?utm_source=bulma.com.au&utm_page=pricing'
+
+function TrackMyTrailLink({ children = 'Track My Trail' }: { children?: string }) {
+  return (
+    <a
+      href={trackMyTrailPricingUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="font-medium text-mist-950 underline underline-offset-2 dark:text-white"
+    >
+      {children}
+    </a>
+  )
+}
 
 export default function Page() {
   return (
@@ -79,6 +91,7 @@ export default function Page() {
           </p>
         }
         options={['Monthly', 'Yearly']}
+        optionCallout={<p>Get 2 months free on a yearly plan.</p>}
         plans={
           <>
             <Plan
@@ -88,12 +101,29 @@ export default function Page() {
               subheadline={<p>For individual brokers getting started</p>}
               features={[
                 'Unlimited policy questions',
-                <a href="/#lenders" className="underline underline-offset-2">Policy coverage across 35+ lenders</a>,
+                <span key="lenders">
+                  Policy coverage across{' '}
+                  <NextLink href="/#lenders" className="underline underline-offset-2">
+                    35+ lenders
+                  </NextLink>
+                </span>,
                 'Cross-lender comparisons',
                 'Source attribution on every answer',
                 'Conversation history',
                 'Email support',
               ]}
+              bonuses={{
+                Yearly: (
+                  <p>
+                    Free 1 month of <TrackMyTrailLink /> for yearly Solo signups.
+                  </p>
+                ),
+              }}
+              bonusPrompt={
+                <p>
+                  Switch to yearly billing to unlock a <TrackMyTrailLink /> signup bonus.
+                </p>
+              }
               cta={
                 <SoftButtonLink href="https://app.bulma.com.au/register" size="lg">
                   Start free trial
@@ -114,6 +144,18 @@ export default function Page() {
                 'Team usage analytics',
                 'Shared conversation history',
               ]}
+              bonuses={{
+                Yearly: (
+                  <p>
+                    Free 3 months of <TrackMyTrailLink /> for yearly Team signups.
+                  </p>
+                ),
+              }}
+              bonusPrompt={
+                <p>
+                  Switch to yearly billing to unlock a <TrackMyTrailLink /> signup bonus.
+                </p>
+              }
               cta={
                 <ButtonLink href="https://app.bulma.com.au/register" size="lg">
                   Start free trial
@@ -133,6 +175,18 @@ export default function Page() {
                 'Custom integrations',
                 'Volume discounts',
               ]}
+              bonuses={{
+                Yearly: (
+                  <p>
+                    Custom <TrackMyTrailLink /> subscription bonus arranged with your rollout.
+                  </p>
+                ),
+              }}
+              bonusPrompt={
+                <p>
+                  Switch to yearly billing to unlock a <TrackMyTrailLink /> signup bonus.
+                </p>
+              }
               cta={
                 <SoftButtonLink href="/contact" size="lg">
                   Contact sales
@@ -142,104 +196,109 @@ export default function Page() {
           </>
         }
         footer={
-          <LogoGrid>
-            <Logo>
-              <Image
-                src="/img/logos/9-color-black-height-32.svg"
-                className="dark:hidden"
-                alt={pricingLenderLogoAlt}
-                width={51}
-                height={32}
-              />
-              <Image
-                src="/img/logos/9-color-white-height-32.svg"
-                className="not-dark:hidden"
-                alt={pricingLenderLogoAlt}
-                width={51}
-                height={32}
-              />
-            </Logo>
-            <Logo>
-              <Image
-                src="/img/logos/10-color-black-height-32.svg"
-                className="dark:hidden"
-                alt={pricingLenderLogoAlt}
-                width={70}
-                height={32}
-              />
-              <Image
-                src="/img/logos/10-color-white-height-32.svg"
-                className="not-dark:hidden"
-                alt={pricingLenderLogoAlt}
-                width={70}
-                height={32}
-              />
-            </Logo>
-            <Logo>
-              <Image
-                src="/img/logos/11-color-black-height-32.svg"
-                className="dark:hidden"
-                alt={pricingLenderLogoAlt}
-                width={100}
-                height={32}
-              />
-              <Image
-                src="/img/logos/11-color-white-height-32.svg"
-                className="not-dark:hidden"
-                alt={pricingLenderLogoAlt}
-                width={100}
-                height={32}
-              />
-            </Logo>
-            <Logo>
-              <Image
-                src="/img/logos/12-color-black-height-32.svg"
-                className="dark:hidden"
-                alt={pricingLenderLogoAlt}
-                width={85}
-                height={32}
-              />
-              <Image
-                src="/img/logos/12-color-white-height-32.svg"
-                className="not-dark:hidden"
-                alt={pricingLenderLogoAlt}
-                width={85}
-                height={32}
-              />
-            </Logo>
-            <Logo>
-              <Image
-                src="/img/logos/13-color-black-height-32.svg"
-                className="dark:hidden"
-                alt={pricingLenderLogoAlt}
-                width={75}
-                height={32}
-              />
-              <Image
-                src="/img/logos/13-color-white-height-32.svg"
-                className="not-dark:hidden"
-                alt={pricingLenderLogoAlt}
-                width={75}
-                height={32}
-              />
-            </Logo>
-            <Logo>
-              <Image
-                src="/img/logos/8-color-black-height-32.svg"
-                className="dark:hidden"
-                alt={pricingLenderLogoAlt}
-                width={85}
-                height={32}
-              />
-              <Image
-                src="/img/logos/8-color-white-height-32.svg"
-                className="not-dark:hidden"
-                alt={pricingLenderLogoAlt}
-                width={85}
-                height={32}
-              />
-            </Logo>
-          </LogoGrid>
+          <>
+            {/*
+            <LogoGrid>
+              <Logo>
+                <Image
+                  src="/img/logos/9-color-black-height-32.svg"
+                  className="dark:hidden"
+                  alt={pricingLenderLogoAlt}
+                  width={51}
+                  height={32}
+                />
+                <Image
+                  src="/img/logos/9-color-white-height-32.svg"
+                  className="not-dark:hidden"
+                  alt={pricingLenderLogoAlt}
+                  width={51}
+                  height={32}
+                />
+              </Logo>
+              <Logo>
+                <Image
+                  src="/img/logos/10-color-black-height-32.svg"
+                  className="dark:hidden"
+                  alt={pricingLenderLogoAlt}
+                  width={70}
+                  height={32}
+                />
+                <Image
+                  src="/img/logos/10-color-white-height-32.svg"
+                  className="not-dark:hidden"
+                  alt={pricingLenderLogoAlt}
+                  width={70}
+                  height={32}
+                />
+              </Logo>
+              <Logo>
+                <Image
+                  src="/img/logos/11-color-black-height-32.svg"
+                  className="dark:hidden"
+                  alt={pricingLenderLogoAlt}
+                  width={100}
+                  height={32}
+                />
+                <Image
+                  src="/img/logos/11-color-white-height-32.svg"
+                  className="not-dark:hidden"
+                  alt={pricingLenderLogoAlt}
+                  width={100}
+                  height={32}
+                />
+              </Logo>
+              <Logo>
+                <Image
+                  src="/img/logos/12-color-black-height-32.svg"
+                  className="dark:hidden"
+                  alt={pricingLenderLogoAlt}
+                  width={85}
+                  height={32}
+                />
+                <Image
+                  src="/img/logos/12-color-white-height-32.svg"
+                  className="not-dark:hidden"
+                  alt={pricingLenderLogoAlt}
+                  width={85}
+                  height={32}
+                />
+              </Logo>
+              <Logo>
+                <Image
+                  src="/img/logos/13-color-black-height-32.svg"
+                  className="dark:hidden"
+                  alt={pricingLenderLogoAlt}
+                  width={75}
+                  height={32}
+                />
+                <Image
+                  src="/img/logos/13-color-white-height-32.svg"
+                  className="not-dark:hidden"
+                  alt={pricingLenderLogoAlt}
+                  width={75}
+                  height={32}
+                />
+              </Logo>
+              <Logo>
+                <Image
+                  src="/img/logos/8-color-black-height-32.svg"
+                  className="dark:hidden"
+                  alt={pricingLenderLogoAlt}
+                  width={85}
+                  height={32}
+                />
+                <Image
+                  src="/img/logos/8-color-white-height-32.svg"
+                  className="not-dark:hidden"
+                  alt={pricingLenderLogoAlt}
+                  width={85}
+                  height={32}
+                />
+              </Logo>
+            </LogoGrid>
+            */}
+            <SupportedLendersField appearance="light" />
+          </>
         }
       />
       {/* Plan Comparison Table */}
@@ -331,9 +390,7 @@ export default function Page() {
       <CallToActionSimpleCentered
         id="call-to-action"
         headline="Have more questions?"
-        subheadline={
-          <p>We&apos;re happy to help. Get in touch to discuss how Bulma can work for your brokerage.</p>
-        }
+        subheadline={<p>We&apos;re happy to help. Get in touch to discuss how Bulma can work for your brokerage.</p>}
         cta={
           <div className="flex items-center gap-4">
             <ButtonLink href="/contact" size="lg">

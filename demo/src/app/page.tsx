@@ -82,6 +82,21 @@ const heroScreenshotAlt = homeAlt('Bulma policy Q&A interface screenshot')
 const policyQaScreenshotAlt = homeAlt('Bulma policy answers with source attribution')
 const lenderComparisonScreenshotAlt = homeAlt('Bulma lender policy comparison view')
 const homeTestimonialAlt = (name: string) => homeAlt(`Portrait of ${name}`)
+const trackMyTrailHomePricingUrl = 'https://trackmytrail.com.au/?utm_source=bulma.com.au&utm_page=home_pricing'
+const homePricingPeriods = { Monthly: '/mo', Yearly: '/year' }
+
+function TrackMyTrailHomeLink({ children = 'Track My Trail' }: { children?: string }) {
+  return (
+    <a
+      href={trackMyTrailHomePricingUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="font-medium text-mist-950 underline underline-offset-2 dark:text-white"
+    >
+      {children}
+    </a>
+  )
+}
 
 type HomeFaq = {
   id: string
@@ -553,23 +568,43 @@ export default function Page() {
         id="pricing"
         className="content-visibility-pricing"
         headline="Simple pricing for every brokerage."
+        options={['Monthly', 'Yearly']}
+        optionCallout={
+          <p>
+            Yearly signups include <TrackMyTrailHomeLink /> bonuses.
+          </p>
+        }
         stickyEyebrow
         sectionHue="pricing"
         plans={
           <>
             <Plan
               name="Solo"
-              price="$49"
-              period="/mo"
+              prices={{ Monthly: '$49', Yearly: '$490' }}
+              periods={homePricingPeriods}
               subheadline={<p>For individual brokers getting started</p>}
               features={[
                 'Unlimited policy questions',
-                <Link key="lenders" href="#lenders">Policy coverage across 35+ lenders</Link>,
+                <span key="lenders">
+                  Policy coverage across <Link href="#lenders">35+ lenders</Link>
+                </span>,
                 'Cross-lender comparisons',
                 'Source attribution on every answer',
                 'Conversation history',
                 'Email support',
               ]}
+              bonuses={{
+                Yearly: (
+                  <p>
+                    Free 1 month of <TrackMyTrailHomeLink /> for yearly Solo signups.
+                  </p>
+                ),
+              }}
+              bonusPrompt={
+                <p>
+                  Switch to yearly billing to unlock a <TrackMyTrailHomeLink /> signup bonus.
+                </p>
+              }
               cta={
                 <SoftButtonLink href="https://app.bulma.com.au/register" size="lg">
                   Start free trial
@@ -578,8 +613,8 @@ export default function Page() {
             />
             <Plan
               name="Team"
-              price="$99"
-              period="/mo"
+              prices={{ Monthly: '$99', Yearly: '$990' }}
+              periods={homePricingPeriods}
               subheadline={<p>For growing brokerages with multiple users</p>}
               badge="Most popular"
               featured={true}
@@ -590,6 +625,18 @@ export default function Page() {
                 'Team usage analytics',
                 'Shared conversation history',
               ]}
+              bonuses={{
+                Yearly: (
+                  <p>
+                    Free 3 months of <TrackMyTrailHomeLink /> for yearly Team signups.
+                  </p>
+                ),
+              }}
+              bonusPrompt={
+                <p>
+                  Switch to yearly billing to unlock a <TrackMyTrailHomeLink /> signup bonus.
+                </p>
+              }
               cta={
                 <ButtonLink href="https://app.bulma.com.au/register" size="lg">
                   Start free trial
@@ -598,8 +645,8 @@ export default function Page() {
             />
             <Plan
               name="Enterprise"
-              price="Custom"
-              period=""
+              prices={{ Monthly: 'Custom', Yearly: 'Custom' }}
+              periods=""
               subheadline={<p>For aggregators and large brokerages</p>}
               features={[
                 'Everything in Team',
@@ -609,6 +656,18 @@ export default function Page() {
                 'Custom integrations',
                 'Volume discounts',
               ]}
+              bonuses={{
+                Yearly: (
+                  <p>
+                    Custom <TrackMyTrailHomeLink /> subscription bonus arranged with your rollout.
+                  </p>
+                ),
+              }}
+              bonusPrompt={
+                <p>
+                  Switch to yearly billing to unlock a <TrackMyTrailHomeLink /> signup bonus.
+                </p>
+              }
               cta={
                 <SoftButtonLink href="/contact" size="lg">
                   Contact sales
