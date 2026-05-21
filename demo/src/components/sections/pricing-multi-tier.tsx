@@ -264,11 +264,11 @@ export function PricingMultiTier<T extends string = string>({
 
   const sectionCta =
     options || optionCallout || cta ? (
-      <div className="flex flex-col gap-4">
+      <div className="flex w-full flex-col items-center gap-4 text-center">
         {cta}
         {options && <PricingOptionToggle options={options} selectedIndex={selectedIndex} onSelect={handleSelect} />}
         {optionCallout && (
-          <div className="flex max-w-sm items-center gap-2 rounded-lg border border-mist-950/10 bg-white/70 px-4 py-2 text-sm/6 font-medium text-mist-700 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-mist-300">
+          <div className="flex max-w-sm items-center justify-center gap-2 rounded-lg border border-mist-950/10 bg-white/70 px-4 py-2 text-sm/6 font-medium text-mist-700 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-mist-300">
             <GiftIcon className="size-4 shrink-0 text-mist-950 dark:text-white" />
             <div>{optionCallout}</div>
           </div>
@@ -304,7 +304,13 @@ export function PricingMultiTier<T extends string = string>({
 
   return (
     <PricingOptionContext.Provider value={{ selectedOption, options: options ?? [] }}>
-      <Section stickyEyebrow={stickyEyebrow} sectionHue={sectionHue} cta={sectionCta} {...props}>
+      <Section
+        stickyEyebrow={stickyEyebrow}
+        sectionHue={sectionHue}
+        cta={sectionCta}
+        headerClassName={sectionCta ? '!max-w-none' : undefined}
+        {...props}
+      >
         {/* pricing-focus-group enables focus isolation (Rec B) - hovering one card dims siblings */}
         <div
           ref={containerRef}

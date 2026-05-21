@@ -10,6 +10,7 @@ export function Section({
   headline,
   subheadline,
   cta,
+  headerClassName,
   className,
   children,
   stickyEyebrow = false,
@@ -20,6 +21,7 @@ export function Section({
   headline?: ReactNode
   subheadline?: ReactNode
   cta?: ReactNode
+  headerClassName?: string
   /** Enable sticky eyebrow behavior (Recommendation 8) */
   stickyEyebrow?: boolean
   /** Section hue identifier for smooth color transitions (Recommendation 9) */
@@ -33,7 +35,7 @@ export function Section({
     >
       <Container className="flex flex-col gap-10 sm:gap-16">
         {headline && (
-          <div className="flex max-w-2xl flex-col gap-6">
+          <div className={clsx('flex max-w-2xl flex-col gap-6', headerClassName)}>
             <div className="flex flex-col gap-2">
               {eyebrow && (
                 stickyEyebrow ? (
