@@ -3,6 +3,7 @@ import Link from 'next/link'
 import type { ComponentProps, ReactNode } from 'react'
 import { Container } from '../elements/container'
 import { AnimatedArrowIcon } from '../icons/animated-arrow-icon'
+import { FooterWordmark } from './footer-wordmark'
 
 export function FooterCategory({ title, children, ...props }: { title: ReactNode } & ComponentProps<'div'>) {
   return (
@@ -18,7 +19,11 @@ export function FooterCategory({ title, children, ...props }: { title: ReactNode
 export function FooterLink({ href, className, ...props }: { href: string } & Omit<ComponentProps<'a'>, 'href'>) {
   return (
     <li className={clsx('text-mist-700 dark:text-mist-400', className)}>
-      <Link href={href} className="cursor-pointer" {...props} />
+      <Link
+        href={href}
+        className="inline-flex cursor-pointer transition-[color,transform] duration-200 ease-out hover:translate-x-0.5 hover:text-mist-950 focus-visible:translate-x-0.5 focus-visible:text-mist-950 focus-visible:outline-none dark:hover:text-white dark:focus-visible:text-white"
+        {...props}
+      />
     </li>
   )
 }
@@ -57,16 +62,11 @@ export function SocialLink({
       target="_blank"
       rel={rel}
       aria-label={name}
-      className={clsx(
-        'group cursor-pointer text-mist-950 dark:text-white',
-        className
-      )}
+      className={clsx('group cursor-pointer text-mist-950 dark:text-white', className)}
       {...props}
     >
       {/* Wrap children in animated container */}
-      <span className={clsx('inline-flex size-6', animationClass)}>
-        {children}
-      </span>
+      <span className={clsx('inline-flex size-6', animationClass)}>{children}</span>
     </Link>
   )
 }
@@ -128,8 +128,8 @@ export function FooterWithNewsletterFormCategoriesAndSocialIcons({
 
   return (
     <footer className={clsx('pt-16', className)} {...props}>
-      <div className="bg-mist-950/2.5 py-16 text-mist-950 dark:bg-white/5 dark:text-white">
-        <Container className="flex flex-col gap-16">
+      <div className="relative isolate overflow-hidden bg-mist-950/2.5 py-16 text-mist-950 dark:bg-white/5 dark:text-white">
+        <Container className="relative z-10 flex flex-col gap-16">
           <div
             className={clsx(
               'grid grid-cols-1 gap-x-6 gap-y-16 text-sm/7',
@@ -146,6 +146,7 @@ export function FooterWithNewsletterFormCategoriesAndSocialIcons({
             {socialLinks && <div className="flex items-center gap-4 sm:gap-10">{socialLinks}</div>}
           </div>
         </Container>
+        <FooterWordmark />
       </div>
     </footer>
   )

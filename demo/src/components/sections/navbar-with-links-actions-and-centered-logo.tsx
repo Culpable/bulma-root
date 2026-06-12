@@ -1,10 +1,10 @@
 'use client'
 
+import { TransitionLink } from '@/components/elements/transition-link'
 import { ElDialog, ElDialogPanel } from '@tailwindplus/elements/react'
 import { clsx } from 'clsx/lite'
 import { usePathname } from 'next/navigation'
-import { useCallback, useEffect, useRef, useState, type ComponentProps, type ReactNode, type MouseEvent } from 'react'
-import { TransitionLink } from '@/components/elements/transition-link'
+import { useCallback, useEffect, useRef, useState, type ComponentProps, type MouseEvent, type ReactNode } from 'react'
 
 /**
  * Hook to track whether user has scrolled past a threshold.
@@ -30,7 +30,7 @@ function useScrolled(threshold = 20) {
   }, [threshold])
 
   useEffect(() => {
-    const handleScroll = () => {
+    const scheduleScrolledStateUpdate = () => {
       // RAF throttling - skip if already scheduled
       if (rafRef.current !== null) return
 
@@ -40,12 +40,12 @@ function useScrolled(threshold = 20) {
       })
     }
 
-    // Check initial state (direct call, not throttled)
-    updateScrolledState()
+    // Schedule the initial check outside the effect body to avoid a synchronous state cascade.
+    scheduleScrolledStateUpdate()
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('scroll', scheduleScrolledStateUpdate, { passive: true })
     return () => {
-      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('scroll', scheduleScrolledStateUpdate)
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current)
       }
@@ -76,12 +76,7 @@ function useIsActive(href: string) {
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
-export function NavbarLink({
-  children,
-  href,
-  className,
-  ...props
-}: ComponentProps<typeof TransitionLink>) {
+export function NavbarLink({ children, href, className, ...props }: ComponentProps<typeof TransitionLink>) {
   const isActive = useIsActive(href)
 
   return (
@@ -126,11 +121,7 @@ export function NavbarLink({
 
 export function NavbarLogo({ className, href, ...props }: ComponentProps<typeof TransitionLink>) {
   return (
-    <TransitionLink
-      href={href}
-      {...props}
-      className={clsx('inline-flex cursor-pointer items-stretch', className)}
-    />
+    <TransitionLink href={href} {...props} className={clsx('inline-flex cursor-pointer items-stretch', className)} />
   )
 }
 
@@ -146,6 +137,31 @@ export function NavbarWithLinksActionsAndCenteredLogo({
   actions: ReactNode
 } & ComponentProps<'header'>) {
   const scrolled = useScrolled(20)
+  const mobileMenuDialogRef = useRef<HTMLDialogElement>(null)
+
+  const openMobileMenu = () => {
+    const dialog = mobileMenuDialogRef.current
+    if (!dialog) return
+
+    if (typeof dialog.showModal === 'function') {
+      dialog.showModal()
+      return
+    }
+
+    dialog.setAttribute('open', '')
+  }
+
+  const closeMobileMenu = () => {
+    const dialog = mobileMenuDialogRef.current
+    if (!dialog) return
+
+    if (dialog.open && typeof dialog.close === 'function') {
+      dialog.close()
+      return
+    }
+
+    dialog.removeAttribute('open')
+  }
 
   // Close the mobile dialog when a navigation link is clicked so it doesn't block the viewport.
   const handleMobileMenuLinkClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -153,10 +169,7 @@ export function NavbarWithLinksActionsAndCenteredLogo({
     const link = target?.closest('a')
     if (!link) return
 
-    const dialog = event.currentTarget.closest('dialog')
-    if (dialog instanceof HTMLDialogElement && dialog.open) {
-      dialog.close()
-    }
+    closeMobileMenu()
   }
 
   return (
@@ -169,7 +182,7 @@ export function NavbarWithLinksActionsAndCenteredLogo({
         scrolled && 'bg-mist-100/80 backdrop-blur-xl backdrop-saturate-150 dark:bg-mist-950/80',
         // Subtle shadow when scrolled for depth
         scrolled && 'shadow-sm shadow-mist-950/5 dark:shadow-black/20',
-        className
+        className,
       )}
       {...props}
     >
@@ -185,6 +198,7 @@ export function NavbarWithLinksActionsAndCenteredLogo({
               command="show-modal"
               commandfor="mobile-menu"
               aria-label="Toggle menu"
+              onClick={openMobileMenu}
               className="inline-flex cursor-pointer rounded-full p-1.5 text-mist-950 hover:bg-mist-950/10 lg:hidden dark:text-white dark:hover:bg-white/10"
             >
               <svg viewBox="0 0 24 24" fill="currentColor" className="size-6">
@@ -199,13 +213,14 @@ export function NavbarWithLinksActionsAndCenteredLogo({
         </div>
 
         <ElDialog className="lg:hidden">
-          <dialog id="mobile-menu" className="backdrop:bg-transparent">
-            <ElDialogPanel className="fixed inset-0 bg-mist-100 px-6 py-6 lg:px-10 dark:bg-mist-950">
+          <dialog ref={mobileMenuDialogRef} id="mobile-menu" className="mobile-menu-dialog backdrop:bg-transparent">
+            <ElDialogPanel className="mobile-menu-panel fixed inset-0 overflow-y-auto bg-mist-100/90 px-6 py-6 backdrop-blur-xl backdrop-saturate-150 lg:px-10 dark:bg-mist-950/90">
               <div className="flex justify-end">
                 <button
                   command="close"
                   commandfor="mobile-menu"
                   aria-label="Toggle menu"
+                  onClick={closeMobileMenu}
                   className="inline-flex cursor-pointer rounded-full p-1.5 text-mist-950 hover:bg-mist-950/10 dark:text-white dark:hover:bg-white/10"
                 >
                   <svg
@@ -214,13 +229,13 @@ export function NavbarWithLinksActionsAndCenteredLogo({
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="size-6"
+                    className="mobile-menu-close-icon size-6"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
-              <div className="mt-6 flex flex-col gap-6" onClick={handleMobileMenuLinkClick}>
+              <div className="mobile-menu-links mt-6 flex flex-col gap-6" onClick={handleMobileMenuLinkClick}>
                 {links}
               </div>
             </ElDialogPanel>

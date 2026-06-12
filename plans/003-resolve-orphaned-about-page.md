@@ -1,0 +1,167 @@
+# Plan 003: Resolve the orphaned /about page (default: retire it)
+
+> **Executor instructions**: Follow this plan step by step. Run every
+> verification command and confirm the expected result before moving to the
+> next step. If anything in the "STOP conditions" section occurs, stop and
+> report — do not improvise. When done, update the status row for this plan
+> in `plans/README.md` — unless a reviewer dispatched you and told you they
+> maintain the index.
+>
+> **Drift check (run first)**: `git diff --stat e308003..HEAD -- demo/src/app/about demo/src/lib/sitemap.js demo/src/lib/metadata.ts demo/src/app/layout.tsx documents/guides/_animations.md`
+> If any in-scope file changed since this plan was written, compare the
+> "Current state" excerpts against the live code before proceeding; on a
+> mismatch, treat it as a STOP condition.
+
+## Status
+
+- **Priority**: P2
+- **Effort**: S
+- **Risk**: LOW (page is already unreachable from the site; removal is on a branch for review)
+- **Depends on**: none
+- **Category**: direction
+- **Planned at**: commit `e308003`, 2026-06-12
+
+## Why this matters
+
+The site ships a complete About page (`/about`: hero, stats, testimonial, team grid, CTA) that is in a broken half-state:
+
+1. **No inbound links.** Commit `ef4385f` ("Removed 'About' links from navigation menus to simplify the site structure") deleted every nav reference; the current `demo/src/app/layout.tsx` navbar and footer contain no link to `/about` (verified at `e308003`).
+2. **Still indexed.** `/about/` remains in the sitemap's `CORE_ROUTES`, so search engines are invited to a page no visitor can find.
+3. **Unpublishable content.** The team grid lists verbatim Tailwind template placeholder people — "Leslie Alexander", "Michael Foster", "Dries Vincent", "Lindsay Walton", "Tom Cook", "Whitney Francis", "Leonard Wu" (`demo/src/app/about/page.tsx:102-193`). This page was never localized for Bulma, which is consistent with why its links were removed.
+
+Search traffic landing on a fictional team page is a trust liability for a product selling to compliance-minded mortgage brokers. The default path (A) finishes the decision the nav-removal commit started: retire the page entirely. The alternative path (B, owner-gated) reworks it with real content and relinks it — that path cannot proceed without owner-supplied team/company copy, so it is documented but not the default.
+
+## Current state
+
+Repo facts: only runnable app is `demo/` (Next.js 16 App Router, static export — note GitHub Pages static export means **no server redirects are possible**; a deleted route 404s).
+
+Relevant files:
+
+- `demo/src/app/about/page.tsx` — the full page. Imports sections `HeroLeftAlignedWithPhoto`, `StatsAnimatedGraph`, `TeamFourColumnGrid`, `TestimonialTwoColumnWithLargePhoto`, `CallToActionSimple`. Team grid with placeholder names at lines 92–193.
+- `demo/src/lib/sitemap.js:18-24`:
+
+  ```js
+  const CORE_ROUTES = [
+    '/',
+    '/about/',
+    '/pricing/',
+    '/contact/',
+    '/privacy-policy/',
+  ];
+  ```
+
+  Important: `demo/src/scripts/generate-sitemap.js` ALSO auto-discovers every `src/app/**/page.tsx` (lines 49–66), so removing `/about/` from `CORE_ROUTES` alone does NOT remove it from the sitemap — the route directory itself must be deleted (path A) or the route added to `EXCLUDED_ROUTES` (insufficient on its own, since the page would still be live and indexable).
+
+- `demo/src/lib/metadata.ts:48-52` — the `about` entry in `pageMetadata`:
+
+  ```ts
+  about: {
+    title: 'About',
+    description:
+      'Learn about Bulma and our mission to help Australian mortgage brokers work smarter with AI-powered policy assistance.',
+  },
+  ```
+
+- `demo/src/app/layout.tsx:96-166` — navbar (Pricing, Contact, Log in) and footer (Product/Support/Legal categories); no About link anywhere.
+- `documents/guides/_animations.md` — contains an "About Page" subsection under "Animation Types by Section" (around line 98). Doc-sync rules in `AGENTS.md` require updating this guide when the page it documents is removed.
+
+Conventions: comments in imperative mood; commit style per `.cursor/rules/git-commit-message-format.mdc`.
+
+## Commands you will need
+
+| Purpose | Command | Expected on success |
+|---------|---------|---------------------|
+| Typecheck | `cd demo && npx tsc --noEmit` | exit 0 |
+| Lint | `cd demo && npm run lint` | **baseline at `e308003` is 12 problems (11 errors, 1 warning)** — gate is "no NEW problems" |
+| Build + sitemap | `cd demo && npm run build` | exit 0; regenerates tracked `demo/public/sitemap.xml` — commit it for THIS plan (route set changes) |
+| Dev server | `cd demo && npm run dev` | http://localhost:3000 |
+
+## Scope
+
+**In scope — Path A (default: retire)**:
+
+- `demo/src/app/about/` (delete the directory)
+- `demo/src/lib/sitemap.js` (remove `'/about/'` from `CORE_ROUTES`)
+- `demo/src/lib/metadata.ts` (remove the `about` entry)
+- `demo/public/sitemap.xml` (regenerated by build)
+- `documents/guides/_animations.md` (remove/annotate the About Page animation subsection)
+- `plans/README.md` (status row)
+
+**Out of scope (both paths)**:
+
+- The section components the about page imports (`team-four-column-grid.tsx`, `hero-left-aligned-with-photo.tsx`, etc.) — they may be unused after deletion but other template pages and the root `components/`/`pages/` trees reference these patterns; leave dead-component cleanup to a separate tech-debt pass.
+- `demo/public/img/photos/` and avatar images — possibly shared; do not delete assets.
+- Homepage testimonials (also stylized personas) — established marketing practice on this site, owner's call, not this plan.
+- The `/404` page and `not-found.tsx`.
+
+## Git workflow
+
+- Branch: `advisor/003-about-page`.
+- Commit style per `.cursor/rules/git-commit-message-format.mdc` (summary sentence + numbered per-file list).
+- Do NOT push or open a PR unless the operator instructed it. Deleting a routed page is the kind of change the owner must see in review — say so in the commit body.
+
+## Steps (Path A — default)
+
+### Step 1: Delete the route
+
+Delete the directory `demo/src/app/about/` (single file: `page.tsx`).
+
+**Verify**: `cd demo && npx tsc --noEmit` → exit 0 (nothing imports the page); `grep -rn '"/about"\|/about/' demo/src --include='*.tsx' --include='*.ts'` → no matches in app code (matches inside `node_modules` or this plans/ directory don't count).
+
+### Step 2: Remove sitemap and metadata entries
+
+- In `demo/src/lib/sitemap.js`, delete the `'/about/'` line from `CORE_ROUTES`.
+- In `demo/src/lib/metadata.ts`, delete the `about` entry from `pageMetadata` (keep the object shape valid — no dangling commas).
+
+**Verify**: `cd demo && npx tsc --noEmit` → exit 0.
+
+### Step 3: Build and confirm de-indexing inputs
+
+```bash
+cd demo && npm run build
+```
+
+**Verify**: exit 0; `grep -c "about" demo/public/sitemap.xml` → 0; `ls demo/out/ | grep about` → no output (no exported about page); `grep -c "<loc>" demo/public/sitemap.xml` → 4 (home, pricing, contact, privacy-policy — 6 if Plan 002 already landed).
+
+### Step 4: Sync the animations guide
+
+In `documents/guides/_animations.md`, remove the "About Page" subsection under "Animation Types by Section" (it documents animations for a page that no longer exists). Do not touch any other section of the guide.
+
+**Verify**: `grep -n "About Page" documents/guides/_animations.md` → no matches.
+
+## Path B (alternative — rework and relink; owner-gated)
+
+Only execute if the operator explicitly chose Path B and supplied real team/company content. Steps in brief: replace the placeholder `TeamMember` entries in `demo/src/app/about/page.tsx:92-193` with owner-provided people (or delete the `TeamFourColumnGrid` section entirely); reconcile the stats section with the homepage equivalents (`demo/src/app/page.tsx:419-424`); add a footer link in `demo/src/app/layout.tsx` (new `FooterCategory title="Company"` with `<FooterLink href="/about">About</FooterLink>`, placed before the Legal category); keep `/about/` in `CORE_ROUTES`. Without owner content, Path B is a STOP, not an improvisation target.
+
+## Test plan
+
+No test suite exists in this repo; gates are typecheck, lint baseline, build output, and the sitemap/grep checks per step.
+
+## Done criteria (Path A)
+
+ALL must hold:
+
+- [ ] `demo/src/app/about/` does not exist
+- [ ] `cd demo && npx tsc --noEmit` exits 0
+- [ ] `cd demo && npm run lint` reports no problems beyond the 12-problem baseline
+- [ ] `cd demo && npm run build` exits 0
+- [ ] `grep -c "about" demo/public/sitemap.xml` → 0, and no `demo/out/about/` in the export
+- [ ] `grep -n "About Page" documents/guides/_animations.md` → no matches
+- [ ] No files outside the in-scope list modified (`git status`)
+- [ ] Branch `advisor/003-about-page`, not pushed
+- [ ] `plans/README.md` status row updated
+
+## STOP conditions
+
+Stop and report back (do not improvise) if:
+
+- An inbound link to `/about` exists somewhere in `demo/src` after all (contradicts the orphan finding — re-check before deleting).
+- The team names at `demo/src/app/about/page.tsx:92-193` are no longer the template placeholders listed above (someone localized the page since `e308003` — the retire rationale collapses; report and recommend Path B).
+- Deleting the page breaks the build or typecheck (something unexpectedly imports it).
+- The operator's instructions indicate Path B but no real team/company content was provided.
+
+## Maintenance notes
+
+- External links or search results pointing at bulma.com.au/about/ will 404 after deployment (static hosting, no redirects). The page was unlinked internally, so exposure is minimal; if the owner wants a soft landing, a follow-up could add a meta-refresh stub at `/about` pointing home — deferred because it re-creates the route this plan removes.
+- Reviewer should scrutinize: that nothing else regressed in the sitemap, and whether any marketing campaign or external profile (e.g. social bios) links to /about before approving.
+- If Bulma later wants a real About/company page, Path B plus this plan's "Current state" excerpts are the starting point; the deleted page remains recoverable from git history at `e308003`.

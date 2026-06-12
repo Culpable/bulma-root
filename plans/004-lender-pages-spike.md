@@ -1,0 +1,195 @@
+# Plan 004: Spike — per-lender landing pages from the SUPPORTED_LENDERS ledger
+
+> **Executor instructions**: This is a DESIGN/SPIKE plan, not a build-everything
+> plan. The deliverables are a design report, ONE prototype page on a branch,
+> and a list of open questions for the owner. Do not build all 36 pages. Follow
+> the steps in order, run every verification command, and honor the STOP
+> conditions. When done, update the status row for this plan in
+> `plans/README.md` — unless a reviewer dispatched you and told you they
+> maintain the index.
+>
+> **Drift check (run first)**: `git diff --stat e308003..HEAD -- demo/src/lib/supported-lenders.ts demo/src/scripts/generate-sitemap.js demo/src/lib/sitemap.js demo/src/app demo/src/schemas/organization-schema.ts demo/next.config.ts`
+> If any in-scope file changed since this plan was written, compare the
+> "Current state" excerpts against the live code before proceeding; on a
+> mismatch, treat it as a STOP condition.
+
+## Status
+
+- **Priority**: P2
+- **Effort**: M (spike); full rollout estimated L and owner-gated
+- **Risk**: MED — programmatic pages risk thin content; the spike exists to de-risk before committing
+- **Depends on**: none (but coordinate with Plan 001 — both touch the homepage's neighbourhood; rebase whichever lands second)
+- **Category**: direction
+- **Planned at**: commit `e308003`, 2026-06-12
+
+## Why this matters
+
+Lender coverage is this site's central marketing hook: the hero announcement badge says "Now covering all major Australian lenders", the hero renders an interactive 36-lender field, an FAQ lists every covered lender with FAQPage JSON-LD, and the Solo plan's headline feature is "Policy coverage across 35+ lenders". Yet the only indexable lender content on the entire site is one FAQ entry. Meanwhile `demo/src/lib/supported-lenders.ts` already maintains a canonical ledger of 36 lenders with **URL-ready slugs** (`commonwealth-bank`, `pepper-money`, …) that are currently used only as DOM ref keys.
+
+Per-lender pages (`/lenders/commonwealth-bank/` etc.) would target the long-tail searches brokers actually make ("CBA casual income policy", "Pepper Money self-employed requirements") and give the 36-lender claim a crawlable surface. The architecture makes this disproportionately cheap — static export with `generateStaticParams`, an existing sitemap generator, existing metadata and JSON-LD builders, existing section components. The open risk is **content**: templated pages with no unique per-lender substance get ignored or penalized by search engines. This spike produces the route/sitemap/schema design, one real prototype page, and the content-strategy questions the owner must answer before a rollout is justified.
+
+## Current state
+
+Repo facts:
+
+- Only runnable app: `demo/` (Next.js 16 App Router). `demo/next.config.ts`: `output: 'export'`, `trailingSlash: true` — dynamic routes REQUIRE `generateStaticParams` and everything pre-renders at build time.
+- Routes today: `/`, `/about`, `/contact`, `/pricing`, `/privacy-policy`, `/404`. No `/lenders` anything.
+
+Relevant files:
+
+- `demo/src/lib/supported-lenders.ts` — the canonical ledger. Shape (lines 1–11, 22–31):
+
+  ```ts
+  export type SupportedLender = {
+    name: string
+    slug: string
+    group: string            // e.g. 'Major banks'
+    shortGroup: string       // e.g. 'Major bank'
+    visualTier: SupportedLenderVisualTier  // 'major' | 'tier2' | 'regional' | 'specialist' | 'channel'
+    heroOrder: number
+    faqOrder: number
+  }
+
+  export const SUPPORTED_LENDERS = [
+    { name: 'Commonwealth Bank', slug: 'commonwealth-bank', group: 'Major banks', shortGroup: 'Major bank', visualTier: 'major', heroOrder: 1, faqOrder: 15 },
+    // ... 36 entries total
+  ] satisfies SupportedLender[]
+  ```
+
+  Exports: `supportedLendersByMarketCap`, `bulmaCoveredLenders` (names sorted by `faqOrder`), `bulmaCoveredLendersAnswer` (FAQ schema string). Today, slugs are consumed only by `demo/src/components/elements/supported-lenders-field.tsx` as Map keys for button refs (lines 225–238) — no routing use.
+
+- `demo/src/scripts/generate-sitemap.js` — **the sitemap trap**. It globs `src/app/**/page.tsx` and string-converts file paths to URLs (lines 49–91). A dynamic route file `src/app/lenders/[slug]/page.tsx` would therefore emit a literal, broken `https://bulma.com.au/lenders/[slug]/` entry. It cannot import the TS ledger (the script is plain Node run as `next build && node src/scripts/generate-sitemap.js` — note it runs AFTER `next build`, so `demo/out/` already exists when it runs). Fix options to evaluate in the spike:
+  - (a) glob `out/lenders/*/index.html` post-build to enumerate the real exported lender URLs (works because of the build order; zero data duplication), plus exclude the literal `[slug]` path from the page glob;
+  - (b) move/mirror the slug list into `demo/src/lib/sitemap.js` (CJS) — duplicates the ledger, drifts;
+  - (c) per-lender literal page files generated by a script — no `[slug]` route at all, but 36 files to manage.
+  Recommendation to validate: (a).
+- `demo/src/lib/metadata.ts` — `pageMetadata` map + layout title template (`%s | Bulma`); per-lender pages would build titles like `CBA Lender Policy Coverage`-style strings programmatically rather than adding 36 static entries.
+- `demo/src/schemas/organization-schema.ts` — `buildFaqPageSchema({ path, name, faqs })` builds FAQPage JSON-LD for any route (strips HTML, skips empty entries); `organizationSchema` provides the publisher entity. Use per lender page; consider adding a `BreadcrumbList` builder in the spike design.
+- `demo/src/app/page.tsx:188-191` — announcement badge linking to `#supported-lenders`; FAQ entry `id: 'lenders'` (lines 122–136) renders `bulmaCoveredLenders` as a plain `<ul>` — the natural internal-link source to lender pages.
+- `documents/_app_description.md` — product description with the policy category taxonomy (Income & Employment, Servicing, Credit History, Loan Purpose, Security, LMI & Guarantees, Genuine Savings, Documentation) and example question phrasing per category — the raw material for per-lender "what you can ask" content.
+- Exemplar page structure: `demo/src/app/pricing/page.tsx` and `demo/src/app/page.tsx` show the section-composition convention (Script tag with JSON-LD array, section components from `@/components/sections`, metadata export).
+
+Conventions: comments in imperative mood; two blank lines between top-level functions; **never add `prefers-reduced-motion` gating to animation code** (AGENTS.md); pricing-card grids need `items-stretch`/`h-full` if any pricing-like grid is used.
+
+## Commands you will need
+
+| Purpose | Command | Expected on success |
+|---------|---------|---------------------|
+| Typecheck | `cd demo && npx tsc --noEmit` | exit 0 |
+| Lint | `cd demo && npm run lint` | **baseline at `e308003` is 12 problems (11 errors, 1 warning)** — gate is "no NEW problems" |
+| Build + sitemap | `cd demo && npm run build` | exit 0; regenerates tracked `demo/public/sitemap.xml` — on the spike branch this WILL contain the prototype URL; that is fine on the branch, flagged in the report |
+| Dev server | `cd demo && npm run dev` | http://localhost:3000 |
+
+## Scope
+
+**In scope** (spike branch only):
+
+- `demo/src/app/lenders/[slug]/page.tsx` (create — prototype)
+- `demo/src/scripts/generate-sitemap.js` and `demo/src/lib/sitemap.js` (prototype the chosen sitemap fix)
+- `demo/src/lib/metadata.ts` (only if a helper is genuinely needed for programmatic titles)
+- `plans/004-findings.md` (create — the spike report; see Step 5)
+- `plans/README.md` (status row)
+
+**Out of scope**:
+
+- Building more than ONE lender's content.
+- `demo/src/components/elements/supported-lenders-field.tsx` — linking the hero buttons to lender pages is a Phase-2 question recorded in the report, not a spike change (it's a carefully tuned animated component; see `documents/guides/_animations.md`).
+- The homepage FAQ list, pricing copy, `supported-lenders.ts` ledger itself.
+- Any change to `next.config.ts`.
+
+## Git workflow
+
+- Branch: `advisor/004-lender-pages-spike`.
+- Commit style per `.cursor/rules/git-commit-message-format.mdc`.
+- Do NOT push or open a PR; the branch is a reviewable artifact referenced by the report.
+
+## Steps
+
+### Step 1: Validate the route mechanics
+
+Create a minimal `demo/src/app/lenders/[slug]/page.tsx` exporting `generateStaticParams` from `SUPPORTED_LENDERS` slugs **restricted to one slug for the spike** (`commonwealth-bank`) so the branch never ships 36 stub pages:
+
+```ts
+import { SUPPORTED_LENDERS } from '@/lib/supported-lenders'
+
+const SPIKE_SLUGS = ['commonwealth-bank']
+
+export function generateStaticParams() {
+  return SUPPORTED_LENDERS.filter((lender) => SPIKE_SLUGS.includes(lender.slug)).map((lender) => ({ slug: lender.slug }))
+}
+```
+
+Add `export const dynamicParams = false` (required behaviour under static export — unknown slugs must 404 at build, not runtime).
+
+**Verify**: `cd demo && npm run build` → exit 0; `ls demo/out/lenders/` → exactly `commonwealth-bank`; `cat demo/public/sitemap.xml | grep lenders` → observe the broken `[slug]` literal entry (confirms the sitemap trap before Step 3 fixes it).
+
+### Step 2: Build the prototype page content (Commonwealth Bank only)
+
+Compose the page from existing primitives (`Section`/`Container`/`Heading`/`Text`/`Eyebrow` from `@/components/elements`, FAQ section from `@/components/sections/faqs-accordion` or `faqs-two-column-accordion`), following the structure of `demo/src/app/page.tsx`:
+
+1. **Hero**: lender name + `shortGroup` chip ("Major bank"), one-paragraph value statement ("Ask Bulma anything about Commonwealth Bank lending policy…"), CTA to `https://app.bulma.com.au/register`.
+2. **"What you can ask" section**: 4–6 example questions for THIS lender drawn from the category taxonomy in `documents/_app_description.md` (e.g. "What's CBA's policy on casual PAYG income?", "Can CBA accept 10% genuine savings from a gift?") — written naturally per lender, not string-templated `"What's {name}'s policy on X"` for all 36 (the templated version is exactly the thin-content failure mode; say so in the report).
+3. **Coverage transparency block**: what coverage means (current policy text, source attribution, last-updated visibility), reusing the framing already published in the homepage FAQ.
+4. **FAQ block** (3–4 entries) wired into `buildFaqPageSchema({ path: '/lenders/commonwealth-bank', … })`, plus `organizationSchema` in the same JSON-LD `<Script>` array pattern as `demo/src/app/page.tsx:176-182`.
+5. **Metadata**: programmatic `generateMetadata` producing title/description from the lender record (suffix template applies automatically).
+6. **Disclaimer line**: research tool, not credit advice — reuse the wording from the homepage FAQ `faq-4` (`demo/src/app/page.tsx:144-148`).
+
+**Verify**: `cd demo && npx tsc --noEmit` → exit 0; `npm run dev` → http://localhost:3000/lenders/commonwealth-bank/ renders correctly in light and dark mode; JSON-LD validates (paste into https://validator.schema.org or check structure manually: FAQPage with non-empty mainEntity).
+
+### Step 3: Prototype the sitemap fix
+
+Implement option (a) unless investigation disproves it: in `generate-sitemap.js`, exclude `src/app/**/[*]/**` from the page glob and add a post-build pass that globs `out/lenders/*/index.html` into URLs. Keep the script CommonJS, comment in imperative mood.
+
+**Verify**: `cd demo && npm run build` → `grep lenders demo/public/sitemap.xml` shows `https://bulma.com.au/lenders/commonwealth-bank/` and NO `[slug]` literal; `grep -c "<loc>" demo/public/sitemap.xml` → previous count + 1.
+
+### Step 4: Lint and scope check
+
+**Verify**: `cd demo && npm run lint` → no problems beyond the 12 baseline; `git status` → only in-scope files modified.
+
+### Step 5: Write the spike report
+
+Create `plans/004-findings.md` containing, information-dense:
+
+- **Route design** as validated (dynamic `[slug]` + `generateStaticParams` + `dynamicParams=false`), with the build-output evidence.
+- **Sitemap strategy** chosen, with the rejected options and why.
+- **Content template** (the Step 2 section structure) and the per-lender authoring cost estimate (time per page at prototype quality).
+- **Internal linking plan** (recommend: FAQ lender `<ul>` items become links; hero `supported-lenders-field` buttons gain hrefs in Phase 2; a `/lenders/` hub page question below).
+- **Rollout recommendation** (e.g. top 10 by `heroOrder` first, measure impressions in Search Console, then expand).
+- **Open questions for the owner**, numbered with lettered options per repo convention, including at least:
+  1. Content source per lender — A) marketing writes from the product's policy category coverage, B) product exports real "most-asked questions" per lender, C) generic template (not recommended), D) Other: ____
+  2. Hub page — A) add `/lenders/` index and repoint the announcement badge from `#supported-lenders`, B) lender pages only, C) Other: ____
+  3. Rollout size — A) top 10 lenders, B) all 36, C) majors only (5), D) Other: ____
+  4. Whether naming lenders this prominently needs a trademark/compliance once-over (the FAQ already names all 36, so precedent exists).
+
+**Verify**: `ls plans/004-findings.md` → exists; every open question has lettered options.
+
+## Test plan
+
+No test suite exists in this repo; gates are typecheck, lint baseline, build-output assertions, and JSON-LD validation as specified per step.
+
+## Done criteria
+
+ALL must hold:
+
+- [ ] Branch `advisor/004-lender-pages-spike` contains exactly one prototype lender page; `ls demo/out/lenders/` → `commonwealth-bank` only
+- [ ] `cd demo && npx tsc --noEmit` exits 0
+- [ ] `cd demo && npm run lint` reports no problems beyond the 12-problem baseline
+- [ ] `cd demo && npm run build` exits 0; sitemap contains the prototype URL and no `[slug]` literal
+- [ ] `plans/004-findings.md` exists with route design, sitemap decision, content template, rollout recommendation, and lettered open questions
+- [ ] No files outside the in-scope list modified (`git status`)
+- [ ] Branch not pushed; `plans/README.md` status row updated
+
+## STOP conditions
+
+Stop and report back (do not improvise) if:
+
+- `generateStaticParams` + `output: 'export'` fails to build the dynamic route on this Next.js version (record the exact error in the report — option (c), generated literal page files, becomes the fallback design).
+- `supported-lenders.ts` no longer matches the excerpt (ledger restructured since `e308003`).
+- The sitemap fix requires restructuring `generate-sitemap.js` beyond the glob+post-build pass (e.g. converting it to TS/ESM) — that's a tooling change the owner should approve first.
+- You cannot write credible Commonwealth Bank example questions from `documents/_app_description.md` without inventing specific policy claims (never fabricate actual policy positions like LVR numbers or income rules — example *questions* are fine, asserted *answers* are not).
+
+## Maintenance notes
+
+- If the rollout proceeds, the ledger in `supported-lenders.ts` becomes load-bearing for routes: adding/removing a lender adds/removes a public URL. Removing one later means a 404 on static hosting (no redirects) — the findings report should note this in the rollout section.
+- Reviewer should scrutinize: the prototype's content quality (would a broker landing here from search find it useful?), and that no actual lender policy positions are asserted anywhere on the page.
+- Deferred deliberately: hub page, hero-field linking, per-lender OG images, Search Console measurement plan — all Phase 2, contingent on owner answers to the open questions.

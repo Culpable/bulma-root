@@ -1,7 +1,9 @@
+'use client'
+
 import { ElDialog, ElDialogPanel } from '@tailwindplus/elements/react'
 import { clsx } from 'clsx/lite'
 import Link from 'next/link'
-import type { ComponentProps, ReactNode } from 'react'
+import { useRef, type ComponentProps, type ReactNode } from 'react'
 
 export function NavbarLink({
   children,
@@ -43,6 +45,32 @@ export function NavbarWithLogoActionsAndCenteredLinks({
   logo: ReactNode
   actions: ReactNode
 } & ComponentProps<'header'>) {
+  const mobileMenuDialogRef = useRef<HTMLDialogElement>(null)
+
+  const openMobileMenu = () => {
+    const dialog = mobileMenuDialogRef.current
+    if (!dialog) return
+
+    if (typeof dialog.showModal === 'function') {
+      dialog.showModal()
+      return
+    }
+
+    dialog.setAttribute('open', '')
+  }
+
+  const closeMobileMenu = () => {
+    const dialog = mobileMenuDialogRef.current
+    if (!dialog) return
+
+    if (dialog.open && typeof dialog.close === 'function') {
+      dialog.close()
+      return
+    }
+
+    dialog.removeAttribute('open')
+  }
+
   return (
     <header className={clsx('sticky top-0 z-10 bg-mist-100 dark:bg-mist-950', className)} {...props}>
       <style>{`:root { --scroll-padding-top: 5.25rem }`}</style>
@@ -57,6 +85,7 @@ export function NavbarWithLogoActionsAndCenteredLinks({
               command="show-modal"
               commandfor="mobile-menu"
               aria-label="Toggle menu"
+              onClick={openMobileMenu}
               className="inline-flex cursor-pointer rounded-full p-1.5 text-mist-950 hover:bg-mist-950/10 lg:hidden dark:text-white dark:hover:bg-white/10"
             >
               <svg viewBox="0 0 24 24" fill="currentColor" className="size-6">
@@ -71,13 +100,14 @@ export function NavbarWithLogoActionsAndCenteredLinks({
         </div>
 
         <ElDialog className="lg:hidden">
-          <dialog id="mobile-menu" className="backdrop:bg-transparent">
-            <ElDialogPanel className="fixed inset-0 bg-mist-100 px-6 py-6 lg:px-10 dark:bg-mist-950">
+          <dialog ref={mobileMenuDialogRef} id="mobile-menu" className="mobile-menu-dialog backdrop:bg-transparent">
+            <ElDialogPanel className="mobile-menu-panel fixed inset-0 overflow-y-auto bg-mist-100/90 px-6 py-6 backdrop-blur-xl backdrop-saturate-150 lg:px-10 dark:bg-mist-950/90">
               <div className="flex justify-end">
                 <button
                   command="close"
                   commandfor="mobile-menu"
                   aria-label="Toggle menu"
+                  onClick={closeMobileMenu}
                   className="inline-flex cursor-pointer rounded-full p-1.5 text-mist-950 hover:bg-mist-950/10 dark:text-white dark:hover:bg-white/10"
                 >
                   <svg
@@ -86,13 +116,13 @@ export function NavbarWithLogoActionsAndCenteredLinks({
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="size-6"
+                    className="mobile-menu-close-icon size-6"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
-              <div className="mt-6 flex flex-col gap-6">{links}</div>
+              <div className="mobile-menu-links mt-6 flex flex-col gap-6">{links}</div>
             </ElDialogPanel>
           </dialog>
         </ElDialog>

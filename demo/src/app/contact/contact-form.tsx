@@ -1,8 +1,10 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/elements/button'
+import { AnimatedCheckmarkIcon } from '@/components/icons/animated-checkmark-icon'
 import analytics from '@/lib/analytics'
+import { clsx } from 'clsx/lite'
+import { useState, type FormEvent } from 'react'
 
 // Define the Formspree form ID placeholder so it can be swapped once provided.
 const FORMSPREE_FORM_ID = 'xojvwybl'
@@ -15,6 +17,15 @@ const FORMSPREE_ACTION = `https://formspree.io/f/${FORMSPREE_FORM_ID}`
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState({ success: false, error: null as string | null })
+  const hasSubmitFeedback = submitStatus.success || Boolean(submitStatus.error)
+
+  function handleFormChange() {
+    if (!hasSubmitFeedback) {
+      return
+    }
+
+    setSubmitStatus({ success: false, error: null })
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -93,7 +104,7 @@ export function ContactForm() {
   }
 
   return (
-    <div className="h-full rounded-3xl bg-white/70 p-8 shadow-sm ring-1 ring-mist-950/10 dark:bg-white/5 dark:ring-white/10">
+    <div className="contact-form-card h-full rounded-3xl bg-white/70 p-8 shadow-sm ring-1 ring-mist-950/10 dark:bg-white/5 dark:ring-white/10">
       {/* Frame the form intent to make it clear what information is needed. */}
       <div>
         <h2 className="text-2xl/8 font-medium tracking-tight text-mist-950 dark:text-white">Send a message</h2>
@@ -103,10 +114,19 @@ export function ContactForm() {
       </div>
 
       {/* Collect core contact fields while keeping the form compact and scannable. */}
-      <form action={FORMSPREE_ACTION} method="POST" className="mt-6 space-y-5" onSubmit={handleSubmit}>
+      <form
+        action={FORMSPREE_ACTION}
+        method="POST"
+        className="mt-6 space-y-5"
+        onChange={handleFormChange}
+        onSubmit={handleSubmit}
+      >
         <input type="hidden" name="form_source" value="contact_page" />
-        <div>
-          <label htmlFor="contact-name" className="text-sm/6 font-semibold text-mist-950 dark:text-white">
+        <div className="contact-field">
+          <label
+            htmlFor="contact-name"
+            className="contact-field__label text-sm/6 font-semibold text-mist-600 dark:text-mist-400"
+          >
             Name
           </label>
           <input
@@ -115,13 +135,16 @@ export function ContactForm() {
             type="text"
             autoComplete="name"
             required
-            className="mt-2 w-full rounded-2xl border border-mist-200 bg-white px-4 py-3 text-base/7 text-mist-950 placeholder:text-mist-400 shadow-sm focus:border-mist-950 focus:outline-none focus:ring-4 focus:ring-mist-950/10 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-mist-500 dark:focus:border-white dark:focus:ring-white/10"
+            className="contact-input mt-2 w-full rounded-2xl border border-mist-200 bg-white px-4 py-3 text-base/7 text-mist-950 shadow-sm placeholder:text-mist-400 focus:border-mist-950 focus:ring-4 focus:ring-mist-950/10 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-mist-500 dark:focus:border-white dark:focus:ring-white/10"
             placeholder="Alex Broker"
           />
         </div>
 
-        <div>
-          <label htmlFor="contact-email" className="text-sm/6 font-semibold text-mist-950 dark:text-white">
+        <div className="contact-field">
+          <label
+            htmlFor="contact-email"
+            className="contact-field__label text-sm/6 font-semibold text-mist-600 dark:text-mist-400"
+          >
             Work email
           </label>
           <input
@@ -130,13 +153,16 @@ export function ContactForm() {
             type="email"
             autoComplete="email"
             required
-            className="mt-2 w-full rounded-2xl border border-mist-200 bg-white px-4 py-3 text-base/7 text-mist-950 placeholder:text-mist-400 shadow-sm focus:border-mist-950 focus:outline-none focus:ring-4 focus:ring-mist-950/10 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-mist-500 dark:focus:border-white dark:focus:ring-white/10"
+            className="contact-input mt-2 w-full rounded-2xl border border-mist-200 bg-white px-4 py-3 text-base/7 text-mist-950 shadow-sm placeholder:text-mist-400 focus:border-mist-950 focus:ring-4 focus:ring-mist-950/10 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-mist-500 dark:focus:border-white dark:focus:ring-white/10"
             placeholder="alex@brokerage.com.au"
           />
         </div>
 
-        <div>
-          <label htmlFor="contact-message" className="text-sm/6 font-semibold text-mist-950 dark:text-white">
+        <div className="contact-field">
+          <label
+            htmlFor="contact-message"
+            className="contact-field__label text-sm/6 font-semibold text-mist-600 dark:text-mist-400"
+          >
             How can we help?
           </label>
           <textarea
@@ -144,26 +170,46 @@ export function ContactForm() {
             name="message"
             rows={4}
             required
-            className="mt-2 w-full rounded-2xl border border-mist-200 bg-white px-4 py-3 text-base/7 text-mist-950 placeholder:text-mist-400 shadow-sm focus:border-mist-950 focus:outline-none focus:ring-4 focus:ring-mist-950/10 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-mist-500 dark:focus:border-white dark:focus:ring-white/10"
+            className="contact-input mt-2 w-full rounded-2xl border border-mist-200 bg-white px-4 py-3 text-base/7 text-mist-950 shadow-sm placeholder:text-mist-400 focus:border-mist-950 focus:ring-4 focus:ring-mist-950/10 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-mist-500 dark:focus:border-white dark:focus:ring-white/10"
             placeholder="Tell us about the policy questions or workflows you want to improve."
           />
         </div>
 
         {submitStatus.error && (
-          <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm/6 text-rose-700">
+          <p
+            role="alert"
+            className="contact-status contact-status--error rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm/6 text-rose-700"
+          >
             {submitStatus.error}
           </p>
         )}
 
         {submitStatus.success && (
-          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm/6 text-emerald-700">
+          <p
+            role="status"
+            className="contact-status contact-status--success faq-spring-content rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm/6 text-emerald-700"
+          >
             Message sent successfully. We&#39;ll get back to you soon.
           </p>
         )}
 
         <div className="pt-2">
-          <Button type="submit" size="lg" disabled={isSubmitting} className="disabled:cursor-not-allowed disabled:opacity-70">
-            {isSubmitting ? 'Sending...' : 'Send message'}
+          <Button
+            type="submit"
+            size="lg"
+            disabled={isSubmitting}
+            aria-label={isSubmitting ? 'Sending message' : submitStatus.success ? 'Message sent' : 'Send message'}
+            aria-busy={isSubmitting}
+            className={clsx(
+              'contact-submit-button disabled:cursor-wait',
+              isSubmitting && 'contact-submit-button--submitting',
+              submitStatus.success && !isSubmitting && 'contact-submit-button--success',
+            )}
+          >
+            <span className="contact-submit-button__label">Send message</span>
+            <span className="contact-submit-button__check" aria-hidden="true">
+              <AnimatedCheckmarkIcon animate={submitStatus.success && !isSubmitting} className="size-4" />
+            </span>
           </Button>
         </div>
       </form>

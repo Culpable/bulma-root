@@ -2356,3 +2356,50 @@ After optimisations:
 - Visually verify desktop, wide desktop, and mobile layouts with `dev-browser`.
 - Check announcement badge scrolling, pointer tracking, pointer leave reset, click persistence, keyboard focus, touch-style selection, and horizontal overflow.
 - Record a short performance trace while moving across the list; pointer event work should remain below the 16.7ms frame budget.
+
+---
+
+## 54. Premium Polish Round 2 Surface Animations
+
+Footer, mobile navigation, contact form, and global fit-and-finish effects extend the animation system to site chrome and conversion surfaces without adding scroll listeners or dependencies.
+
+**Files:**
+
+- `demo/src/components/sections/footer-wordmark.tsx::FooterWordmark`
+- `demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx::FooterWithNewsletterFormCategoriesAndSocialIcons`
+- `demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx::FooterLink`
+- `demo/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx::NavbarWithLinksActionsAndCenteredLogo`
+- `demo/src/components/sections/navbar-with-logo-actions-and-centered-links.tsx::NavbarWithLogoActionsAndCenteredLinks`
+- `demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx::NavbarWithLogoActionsAndLeftAlignedLinks`
+- `demo/src/app/contact/contact-form.tsx::ContactForm`
+- `demo/src/components/elements/text.tsx::Text`
+- `demo/src/app/globals.css`
+
+**Footer wordmark:**
+
+- `FooterWordmark` is the only client component added to the footer. It observes the absolute wordmark with `useScrollAnimation` and sets `data-visible="true"` once the cropped text enters the viewport.
+- `globals.css` owns `.footer-wordmark`, `.footer-wordmark__text`, and `footer-wordmark-sweep`. The wordmark uses the Mona Sans display variable, `clamp(5.25rem, 14vw, 18rem)`, `letter-spacing: 0`, gradient-clipped transparent text, and parent `overflow-hidden` to crop the lower edge.
+- The sweep is a one-time `background-position` and `opacity` animation on the text pseudo-element. Footer links now transition only `color` and `transform` for the 200ms hover/focus translate treatment.
+
+**Mobile menu:**
+
+- The three demo navbar variants add explicit open/close handlers around the native `dialog#mobile-menu`; this keeps the menu reliable in browsers that do not honour `command="show-modal"` while preserving `dialog[open]` as the CSS trigger.
+- `globals.css` owns `.mobile-menu-dialog`, `.mobile-menu-panel`, `.mobile-menu-links`, `.mobile-menu-close-icon`, and the `mobile-menu-panel-enter`, `mobile-menu-link-enter`, and `mobile-menu-close-enter` keyframes.
+- The panel uses the navbar glass surface (`bg-mist-100/90` or `bg-mist-950/90`, `backdrop-blur-xl`, `backdrop-saturate-150`) and animates via `opacity` plus `transform`. Links rise with 60ms staggered delays through `dialog[open] .mobile-menu-links > *`; no JS timeline or scroll listener drives the choreography.
+
+**Contact form:**
+
+- `ContactForm` keeps the existing `isSubmitting` and `submitStatus` state, resets feedback on form edits, and applies state classes instead of adding a new animation dependency.
+- `globals.css` owns `.contact-form-card`, `.contact-field`, `.contact-input`, `.contact-status`, `.contact-submit-button`, and `contact-submit-spin`.
+- Focus glow is a card pseudo-element activated by `:focus-within`; labels tint through `.contact-field:has(:is(input, textarea):focus)`. Submit state morphs the fixed-width button into a circular spinner with a conic-gradient mask, then into `AnimatedCheckmarkIcon` when `submitStatus.success` resolves. The success panel reuses `.faq-spring-content`.
+
+**Global polish:**
+
+- `globals.css` now defines branded `::selection`, `scrollbar-color`, WebKit scrollbar styling, themed form `caret-color`, heading `text-wrap: balance`, and body-copy `text-wrap: pretty`.
+- `Text` includes `text-pretty` so the shared copy primitive participates even when it renders a `div` rather than a paragraph.
+
+**Points of error:**
+
+- The footer wordmark observer threshold is intentionally low (`0.01`) with a positive bottom root margin so the sweep triggers on mobile, where only the cropped lower wordmark may enter the viewport.
+- Do not remove the explicit navbar open/close handlers unless the supported browser set reliably supports `command` and `commandfor` on dialog controls.
+- The contact submit success choreography depends on the Formspree request resolving successfully; browser visual tests should mock or avoid the external submission unless a real test message is explicitly authorised.

@@ -26,9 +26,76 @@
     background-color: var(--color-mist-100);
     --scroll-padding-top: 0;
     scroll-padding-top: var(--scroll-padding-top);
+    scrollbar-color: var(--color-mist-400) var(--color-mist-100);
+    scrollbar-width: thin;
 
     @variant dark {
       background-color: var(--color-mist-950);
+      scrollbar-color: var(--color-mist-600) var(--color-mist-950);
+    }
+  }
+
+  ::selection {
+    background: var(--color-mist-300);
+    color: var(--color-mist-950);
+  }
+
+  @variant dark {
+    ::selection {
+      background: var(--color-mist-950);
+      color: var(--color-mist-300);
+    }
+  }
+
+  :where(h1, h2, h3, h4, h5, h6) {
+    text-wrap: balance;
+  }
+
+  :where(p, li, blockquote, dd, .text-pretty) {
+    text-wrap: pretty;
+  }
+
+  :where(input, textarea, select) {
+    caret-color: var(--color-mist-950);
+  }
+
+  @variant dark {
+    :where(input, textarea, select) {
+      caret-color: var(--color-mist-200);
+    }
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--color-mist-100);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: color-mix(in oklch, var(--color-mist-500) 62%, transparent);
+    border: 3px solid var(--color-mist-100);
+    border-radius: 9999px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklch, var(--color-mist-600) 72%, transparent);
+  }
+
+  @variant dark {
+    *::-webkit-scrollbar-track {
+      background: var(--color-mist-950);
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background: color-mix(in oklch, var(--color-mist-500) 74%, transparent);
+      border-color: var(--color-mist-950);
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+      background: color-mix(in oklch, var(--color-mist-400) 82%, transparent);
     }
   }
 
@@ -693,6 +760,150 @@
   animation: faq-spring-open 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
+/* =============================================================================
+   CONTACT FORM SUBMIT CHOREOGRAPHY
+   Focus glow, label focus tint, spinner morph, and checkmark resolution for the
+   contact conversion form.
+   ============================================================================= */
+
+.contact-form-card {
+  position: relative;
+  isolation: isolate;
+  transition:
+    background-color 220ms ease-out,
+    box-shadow 220ms ease-out,
+    transform 220ms ease-out;
+}
+
+.contact-form-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow:
+    0 0 0 1px oklch(45% 0.017 213.2 / 0.16),
+    0 24px 68px -36px oklch(45% 0.017 213.2 / 0.36);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease-out;
+}
+
+.contact-form-card:focus-within::before {
+  opacity: 1;
+}
+
+@variant dark {
+  .contact-form-card::before {
+    box-shadow:
+      0 0 0 1px oklch(87.2% 0.007 219.6 / 0.18),
+      0 24px 68px -36px oklch(87.2% 0.007 219.6 / 0.22);
+  }
+}
+
+.contact-field__label {
+  transition: color 180ms ease-out;
+}
+
+.contact-field:has(:is(input, textarea):focus) .contact-field__label {
+  color: var(--color-mist-950);
+}
+
+@variant dark {
+  .contact-field:has(:is(input, textarea):focus) .contact-field__label {
+    color: white;
+  }
+}
+
+.contact-input {
+  transition:
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out,
+    background-color 180ms ease-out;
+}
+
+.contact-status {
+  transform-origin: top left;
+}
+
+.contact-submit-button {
+  --contact-submit-spinner-color: rgba(255, 255, 255, 0.96);
+  position: relative;
+  width: 8.75rem;
+  min-width: 8.75rem;
+  overflow: hidden;
+  transition:
+    width 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    min-width 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    padding-inline 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 180ms ease-out,
+    color 180ms ease-out,
+    box-shadow 180ms ease-out;
+}
+
+@variant dark {
+  .contact-submit-button {
+    --contact-submit-spinner-color: var(--color-mist-950);
+  }
+}
+
+.contact-submit-button__label {
+  opacity: 1;
+  transition:
+    opacity 160ms ease-out,
+    transform 160ms ease-out;
+}
+
+.contact-submit-button__check {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(0.72);
+  transition:
+    opacity 180ms ease-out,
+    transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.contact-submit-button--submitting,
+.contact-submit-button--success {
+  width: 3rem;
+  min-width: 3rem;
+  padding-inline: 0;
+}
+
+.contact-submit-button--submitting .contact-submit-button__label,
+.contact-submit-button--success .contact-submit-button__label {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.contact-submit-button--success .contact-submit-button__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.contact-submit-button--submitting::after {
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 9999px;
+  background: conic-gradient(from 90deg, transparent 0 24%, var(--contact-submit-spinner-color) 30% 100%);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+  transform: translate(-50%, -50%);
+  animation: contact-submit-spin 720ms linear infinite;
+}
+
+@keyframes contact-submit-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
 /* Icon rotation with spring overshoot */
 .faq-icon-spring {
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -1216,6 +1427,116 @@
 /* Dark mode - use white for clear visibility against dark backgrounds */
 :is(.dark .link-underline-grow)::after {
   background: white;
+}
+
+/* =============================================================================
+   MONUMENTAL FOOTER WORDMARK
+   Oversized footer signature with gradient-clipped type and a one-time luminance
+   pan when the footer enters the viewport.
+   ============================================================================= */
+
+@keyframes footer-wordmark-sweep {
+  0% {
+    background-position: -100% center;
+    opacity: 0;
+  }
+  14% {
+    opacity: 1;
+  }
+  74% {
+    opacity: 1;
+  }
+  100% {
+    background-position: 200% center;
+    opacity: 0;
+  }
+}
+
+.footer-wordmark {
+  position: absolute;
+  right: 0;
+  bottom: clamp(-2.5rem, -2vw, -0.75rem);
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+  text-align: center;
+  user-select: none;
+}
+
+.footer-wordmark__text {
+  position: relative;
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(5.25rem, 14vw, 18rem);
+  font-variation-settings: 'wdth' 112.5;
+  font-weight: 850;
+  line-height: 0.72;
+  letter-spacing: 0;
+  background: linear-gradient(
+    180deg,
+    oklch(92.5% 0.005 214.3 / 0.2) 0%,
+    oklch(72.3% 0.014 214.4 / 0.12) 46%,
+    oklch(72.3% 0.014 214.4 / 0) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.footer-wordmark__text::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 36%,
+    oklch(87.2% 0.007 219.6 / 0.18) 45%,
+    oklch(98.7% 0.002 197.1 / 0.5) 50%,
+    oklch(87.2% 0.007 219.6 / 0.18) 56%,
+    transparent 66%,
+    transparent 100%
+  );
+  background-position: -100% center;
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0;
+}
+
+.footer-wordmark[data-visible='true'] .footer-wordmark__text::after {
+  animation: footer-wordmark-sweep 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@variant dark {
+  .footer-wordmark__text {
+    background: linear-gradient(
+      180deg,
+      oklch(98.7% 0.002 197.1 / 0.18) 0%,
+      oklch(87.2% 0.007 219.6 / 0.1) 46%,
+      oklch(87.2% 0.007 219.6 / 0) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .footer-wordmark__text::after {
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 36%,
+      oklch(92.5% 0.005 214.3 / 0.2) 45%,
+      oklch(98.7% 0.002 197.1 / 0.56) 50%,
+      oklch(92.5% 0.005 214.3 / 0.2) 56%,
+      transparent 66%,
+      transparent 100%
+    );
+    background-position: -100% center;
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
 }
 
 /* =============================================================================
@@ -1980,6 +2301,112 @@
       oklch(87.2% 0.007 219.6 / 0.2) 100%
     );
     background-size: 200% 100%;
+  }
+}
+
+/* =============================================================================
+   MOBILE MENU ENTRANCE CHOREOGRAPHY
+   Native dialog open-state animation for the mobile navigation sheet.
+   ============================================================================= */
+
+@keyframes mobile-menu-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes mobile-menu-link-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobile-menu-close-enter {
+  from {
+    transform: rotate(-90deg) scale(0.88);
+  }
+  to {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.mobile-menu-dialog {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.mobile-menu-dialog::backdrop {
+  background: transparent;
+}
+
+.mobile-menu-panel {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.58) inset,
+    0 24px 80px rgba(15, 23, 42, 0.12);
+  opacity: 0;
+  transform: translateY(-8px) scale(0.985);
+  transform-origin: top center;
+}
+
+.mobile-menu-dialog[open] .mobile-menu-panel {
+  animation: mobile-menu-panel-enter 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.mobile-menu-links > * {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+.mobile-menu-dialog[open] .mobile-menu-links > * {
+  animation: mobile-menu-link-enter 260ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.mobile-menu-dialog[open] .mobile-menu-links > :nth-child(1) {
+  animation-delay: 60ms;
+}
+
+.mobile-menu-dialog[open] .mobile-menu-links > :nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.mobile-menu-dialog[open] .mobile-menu-links > :nth-child(3) {
+  animation-delay: 180ms;
+}
+
+.mobile-menu-dialog[open] .mobile-menu-links > :nth-child(n + 4) {
+  animation-delay: 240ms;
+}
+
+.mobile-menu-close-icon {
+  transform-origin: center;
+}
+
+.mobile-menu-dialog[open] .mobile-menu-close-icon {
+  animation: mobile-menu-close-enter 220ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@variant dark {
+  .mobile-menu-panel {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.08) inset,
+      0 24px 80px rgba(0, 0, 0, 0.34);
   }
 }
 
