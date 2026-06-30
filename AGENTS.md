@@ -41,6 +41,26 @@ Git commit guidelines are documented in `.cursor/rules/git-commit-message-format
 - For pricing card grids, always enforce equal heights by pairing `items-stretch` on the grid with `h-full` on each plan card, and verify visually.
 - When reusing a visual component from one page on another page, verify visual parity against the source page in every relevant colour scheme and interaction state. Do not stop at layout/background matching: compare computed text colour, opacity, hover, focus, active states, underline/accent colours, and wrapper/background integration. If a new variant class is added for the destination page, confirm it does not unintentionally override the source component’s dark-mode or hover behaviour.
 
+<hash_navigation_rules>
+- Preserve the homepage FAQ deep link `#lenders`. It intentionally targets the `Which lenders does Bulma cover?` FAQ item (`id="lenders"`) and `Faq` auto-opens the disclosure when the hash matches.
+- Do not replace `#lenders` or `/#lenders` links with `#supported-lenders` unless the user explicitly asks to change the destination from the FAQ answer to the visual supported-lenders field.
+- The supported-lenders field anchor is `#supported-lenders`; use it only when the intended destination is the lender-name field itself, not the FAQ that opens and explains lender coverage.
+- When editing FAQ hash navigation, verify both direct `/#lenders` page loads and same-page `#lenders` link clicks because routed hash updates must still open the FAQ disclosure.
+</hash_navigation_rules>
+
+<contact_form_rules>
+- Preserve the contact form field contract unless the user explicitly requests a field model change.
+- The contact form fields are: hidden `form_source`, `name`, `email`, and `message`.
+- Frontend improvements may change layout, styling, focus states, loading states, error states, success states, analytics loading, and fallback behaviour, but must not add, remove, rename, or repurpose contact form fields without explicit approval.
+</contact_form_rules>
+
+<pricing_module_parity_rules>
+- Keep the homepage pricing module (`/`, `demo/src/app/page.tsx`) visually and verbally aligned with the pricing-page module (`/pricing`, `demo/src/app/pricing/page.tsx`); treat `/pricing` as the source of truth unless the user explicitly asks for a different homepage variant.
+- The annual option callout must use the exact text `Get 2 months free on a yearly plan.` in both pricing modules.
+- When changing plan-card pricing copy, savings notes, bonus wording, bonus panel presentation, plan feature wording, CTA labels, or pricing-card shared components, update and verify both modules together.
+- Verify pricing-card parity at `1440x900` and `390x900` in light and dark modes, including Monthly and Yearly states, equal-height cards, bonus panel/prompt states, text wrapping, hover/focus styling where relevant, and horizontal overflow.
+</pricing_module_parity_rules>
+
 <animation_standards>
 **NEVER add `prefers-reduced-motion`, `@media (prefers-reduced-motion: reduce)`, `matchMedia('(prefers-reduced-motion: reduce)')`, or similar accessibility media-query conditionals to animation code.** Animations must work consistently for all users, so do not gate, disable, pause, short-circuit, or skip animation setup based on reduced-motion preferences.
 - Do not remove, simplify, or rewrite existing marketing-site animations unless the user explicitly asks for that exact animation change. Performance work must preserve the intended animation design, timing, and interaction model.

@@ -111,8 +111,8 @@ export function useStickySection({
   useEffect(() => {
     // Add scroll listener with passive flag for performance
     window.addEventListener('scroll', handleScroll, { passive: true })
-    // Initial check (direct call, not throttled)
-    calculateStickyState()
+    // Schedule the initial check through the same RAF path used during scroll.
+    handleScroll()
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
@@ -120,7 +120,7 @@ export function useStickySection({
         cancelAnimationFrame(rafRef.current)
       }
     }
-  }, [handleScroll, calculateStickyState])
+  }, [handleScroll])
 
   return {
     containerRef,

@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/elements/button'
 import { AnimatedCheckmarkIcon } from '@/components/icons/animated-checkmark-icon'
-import analytics from '@/lib/analytics'
 import { clsx } from 'clsx/lite'
 import { useState, type FormEvent } from 'react'
 
@@ -10,6 +9,15 @@ import { useState, type FormEvent } from 'react'
 const FORMSPREE_FORM_ID = 'xojvwybl'
 // Build the Formspree action URL from the form ID.
 const FORMSPREE_ACTION = `https://formspree.io/f/${FORMSPREE_FORM_ID}`
+
+async function trackContactAnalytics(track: (analytics: typeof import('@/lib/analytics').default) => void) {
+  try {
+    const { default: analytics } = await import('@/lib/analytics')
+    track(analytics)
+  } catch {
+    // Keep form submission independent from analytics loading or ad-blocker failures.
+  }
+}
 
 /**
  * Render a lightweight contact form for broker enquiries.
@@ -77,14 +85,16 @@ export function ContactForm() {
         name: typeof nameValue === 'string' ? nameValue : '',
       }
 
-      analytics.trackFormSubmissionWithIdentification(
-        'Contact Form',
-        {
-          ...trackingData,
-          status: 'success',
-        },
-        userInfo,
-      )
+      void trackContactAnalytics((analytics) => {
+        analytics.trackFormSubmissionWithIdentification(
+          'Contact Form',
+          {
+            ...trackingData,
+            status: 'success',
+          },
+          userInfo,
+        )
+      })
 
       form.reset()
     } catch (error) {
@@ -94,9 +104,11 @@ export function ContactForm() {
         error: 'Sorry, your message failed to send. Please email us directly at solutions@bulma.com.au.',
       })
 
-      analytics.track('Form Error', {
-        form_name: 'Contact Form',
-        error_type: 'submission_failed',
+      void trackContactAnalytics((analytics) => {
+        analytics.track('Form Error', {
+          form_name: 'Contact Form',
+          error_type: 'submission_failed',
+        })
       })
     } finally {
       setIsSubmitting(false)
@@ -193,6 +205,12 @@ export function ContactForm() {
           </p>
         )}
 
+        {isSubmitting && (
+          <p role="status" className="contact-status rounded-2xl border border-mist-950/10 bg-mist-950/5 px-4 py-3 text-sm/6 text-mist-700 dark:border-white/10 dark:bg-white/5 dark:text-mist-300">
+            Sending your message securely...
+          </p>
+        )}
+
         <div className="pt-2">
           <Button
             type="submit"
@@ -206,7 +224,9 @@ export function ContactForm() {
               submitStatus.success && !isSubmitting && 'contact-submit-button--success',
             )}
           >
-            <span className="contact-submit-button__label">Send message</span>
+            <span className="contact-submit-button__label">
+              {isSubmitting ? 'Sending' : submitStatus.success ? 'Sent' : 'Send message'}
+            </span>
             <span className="contact-submit-button__check" aria-hidden="true">
               <AnimatedCheckmarkIcon animate={submitStatus.success && !isSubmitting} className="size-4" />
             </span>

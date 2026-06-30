@@ -19,6 +19,7 @@ import { Heading } from '../elements/heading'
 import { MorphingPrice } from '../elements/morphing-price'
 import { Text } from '../elements/text'
 import { AnimatedCheckmarkIcon } from '../icons/animated-checkmark-icon'
+import { PricingBonusPanel, PricingBonusPrompt, PricingOptionCallout, PricingPriceNote } from './pricing-card-shared'
 
 // =============================================================================
 // PRICING OPTION CONTEXT
@@ -178,43 +179,16 @@ interface PlanBonuses {
   [option: string]: ReactNode
 }
 
-function GiftIcon(props: ComponentProps<'svg'>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} aria-hidden="true" {...props}>
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M20 12v7.25A1.75 1.75 0 0 1 18.25 21H5.75A1.75 1.75 0 0 1 4 19.25V12m16 0H4m16 0v-1.75A2.25 2.25 0 0 0 17.75 8H6.25A2.25 2.25 0 0 0 4 10.25V12m8 9V8m0 0H9.25A2.75 2.75 0 1 1 12 5.25V8Zm0 0h2.75A2.75 2.75 0 1 0 12 5.25V8Z"
-      />
-    </svg>
-  )
-}
-
-function PricingBonusPanel({ children }: { children: ReactNode }) {
-  return (
-    <div className="overflow-hidden rounded-lg border border-mist-950/10 bg-white/70 shadow-sm dark:border-white/10 dark:bg-white/5">
-      <div className="flex items-center gap-2 border-b border-mist-950/10 bg-mist-950/5 px-3 py-2 dark:border-white/10 dark:bg-white/10">
-        <GiftIcon className="size-4 shrink-0 text-mist-950 dark:text-white" />
-        <p className="text-xs/5 font-semibold tracking-wide text-mist-950 dark:text-white">Bonuses</p>
-      </div>
-      <div className="px-3 py-3 text-sm/6 text-mist-700 dark:text-mist-300">{children}</div>
-    </div>
-  )
-}
-
-function PricingBonusPrompt({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex items-start gap-2 rounded-lg border border-mist-950/10 bg-mist-950/5 px-3 py-2.5 text-sm/6 text-mist-700 dark:border-white/10 dark:bg-white/5 dark:text-mist-300">
-      <GiftIcon className="mt-0.5 size-4 shrink-0 text-mist-950 dark:text-white" />
-      <div>{children}</div>
-    </div>
-  )
+interface PlanPriceNotes {
+  [option: string]: ReactNode
 }
 
 export function Plan<T extends string = string>({
   name,
   prices,
   periods,
+  priceNote,
+  priceNotes,
   subheadline,
   badge,
   features,
@@ -230,6 +204,10 @@ export function Plan<T extends string = string>({
   prices: PlanPrices
   /** Period label for each option: { Monthly: '/month', Yearly: '/year' } or static string */
   periods?: PlanPeriods | ReactNode
+  /** Supporting price note for static pricing cards */
+  priceNote?: ReactNode
+  /** Supporting price note keyed by the active billing option */
+  priceNotes?: PlanPriceNotes
   /** Short description of the plan */
   subheadline: ReactNode
   /** Optional badge (e.g., "Most popular") */
@@ -257,7 +235,9 @@ export function Plan<T extends string = string>({
 
   // Get the price for the current option (fallback to first price if option not found)
   const currentPrice = prices[selectedOption] ?? Object.values(prices)[0] ?? ''
+  const currentPriceNote = priceNotes?.[selectedOption] ?? priceNote
   const currentBonus = bonuses?.[selectedOption]
+  const renderedFeatures = Children.toArray(features)
 
   // Resolve period - can be a static value or an object with per-option values
   const resolvedPeriod =
@@ -286,13 +266,14 @@ export function Plan<T extends string = string>({
             <h3 className="text-2xl/8 tracking-tight text-mist-950 dark:text-white">{name}</h3>
           </div>
           {/* Price with morphing animation on option change */}
-          <p className="mt-1 inline-flex items-baseline gap-1 text-base/7">
+          <p className="mt-1 flex flex-wrap items-baseline gap-y-1 text-base/7">
             <MorphingPrice value={currentPrice} className="text-mist-950 dark:text-white" />
-            {resolvedPeriod && <span className="text-mist-500 dark:text-mist-500">{resolvedPeriod}</span>}
+            {resolvedPeriod && <span className="ml-1 text-mist-500 dark:text-mist-500">{resolvedPeriod}</span>}
+            {currentPriceNote && <PricingPriceNote>{currentPriceNote}</PricingPriceNote>}
           </p>
           <div className="mt-4 flex flex-col gap-4 text-sm/6 text-mist-700 dark:text-mist-400">{subheadline}</div>
           <ul className="mt-4 space-y-2 text-sm/6 text-mist-700 dark:text-mist-400">
-            {features.map((feature, index) => (
+            {renderedFeatures.map((feature, index) => (
               <li key={index} className="flex gap-4">
                 <AnimatedCheckmarkIcon
                   animate={isVisible}
@@ -365,9 +346,11 @@ export function PricingHeroMultiTier<T extends string>({
   // Includes focus isolation effect - hovering one card dims others
   const animatedPlans = Children.map(plans, (child, index) => {
     const delay = 300 + index * staggerDelay
+    const planKey = React.isValidElement(child) && child.key != null ? child.key : index
 
     return (
       <div
+        key={planKey}
         data-animating={isVisible}
         className={clsx(
           // Base styles for animation and layout
@@ -402,12 +385,7 @@ export function PricingHeroMultiTier<T extends string>({
             </Text>
             {/* Enhanced tab toggle with elastic sliding pill indicator */}
             <ElasticTabToggle options={options} selectedIndex={selectedIndex} onSelect={handleSelect} />
-            {optionCallout && (
-              <div className="flex max-w-sm items-center gap-2 rounded-lg border border-mist-950/10 bg-white/70 px-4 py-2 text-sm/6 font-medium text-mist-700 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-mist-300">
-                <GiftIcon className="size-4 shrink-0 text-mist-950 dark:text-white" />
-                <div>{optionCallout}</div>
-              </div>
-            )}
+            {optionCallout && <PricingOptionCallout>{optionCallout}</PricingOptionCallout>}
           </div>
 
           {/* Plan cards - persistent across option changes for smooth price morphing */}

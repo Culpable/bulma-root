@@ -3,6 +3,11 @@ import mixpanel from 'mixpanel-browser'
 // Mixpanel project token - hardcoded for reliability
 const MIXPANEL_TOKEN = 'd6d41f4f948512ee3e388559f7b1686e'
 const isDevelopment = process.env.NODE_ENV === 'development'
+let mixpanelInitialized = false
+
+function publishMixpanelReady() {
+  window.dispatchEvent(new CustomEvent('bulma:mixpanel-ready', { detail: { mixpanel } }))
+}
 
 /**
  * Initialize Mixpanel with Session Replay and Heatmaps configuration.
@@ -12,8 +17,13 @@ export const initMixpanel = () => {
     if (typeof window !== 'undefined') {
       window.mixpanelLoaded = false
       window.mixpanelDisabled = true
+      window.dispatchEvent(new CustomEvent('bulma:mixpanel-disabled'))
     }
-    console.info('Mixpanel disabled in development environment.')
+    return
+  }
+
+  if (mixpanelInitialized) {
+    publishMixpanelReady()
     return
   }
 
@@ -22,7 +32,7 @@ export const initMixpanel = () => {
     track_pageview: false,
     persistence: 'cookie',
     cross_subdomain_cookie: true,
-    record_sessions_percent: 100,
+    record_sessions_percent: 20,
     record_heatmap_data: true,
     record_block_selector: '',
     record_mask_text_selector: '.sensitive-data',
@@ -34,6 +44,8 @@ export const initMixpanel = () => {
   // Explicitly expose mixpanel instance globally for referral tracking
   window.mixpanel = mixpanel
   window.mixpanelLoaded = true
+  mixpanelInitialized = true
+  publishMixpanelReady()
 }
 
 /**

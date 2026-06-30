@@ -16,7 +16,7 @@ import { Plan, PricingMultiTier } from '@/components/sections/pricing-multi-tier
 import { StatAnimated, StatsAnimatedGraph } from '@/components/sections/stats-animated-graph'
 import { TestimonialGlass, TestimonialsGlassmorphism } from '@/components/sections/testimonials-glassmorphism'
 import { pageMetadata } from '@/lib/metadata'
-import { bulmaCoveredLenders, bulmaCoveredLendersAnswer } from '@/lib/supported-lenders'
+import { bulmaCoveredLenderCount, bulmaCoveredLenders, bulmaCoveredLendersAnswer } from '@/lib/supported-lenders'
 import {
   buildFaqPageSchema,
   organizationSchema,
@@ -83,7 +83,7 @@ const policyQaScreenshotAlt = homeAlt('Bulma policy answers with source attribut
 const lenderComparisonScreenshotAlt = homeAlt('Bulma lender policy comparison view')
 const homeTestimonialAlt = (name: string) => homeAlt(`Portrait of ${name}`)
 const trackMyTrailHomePricingUrl = 'https://trackmytrail.com.au/?utm_source=bulma.com.au&utm_page=home_pricing'
-const homePricingPeriods = { Monthly: '/mo', Yearly: '/year' }
+const homePricingPeriods = { Monthly: '/month', Yearly: '/year' }
 
 function TrackMyTrailHomeLink({ children = 'Track My Trail' }: { children?: string }) {
   return (
@@ -206,17 +206,17 @@ export default function Page() {
           </p>
         }
         cta={
-          <div className="flex items-center gap-4">
-            <MagneticWrapper>
-              <GradientBorderWrapper>
-                <ButtonLink href="https://app.bulma.com.au/register" size="lg" preloadOnHover>
+          <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4">
+            <MagneticWrapper className="w-full sm:w-auto">
+              <GradientBorderWrapper className="w-full sm:w-auto">
+                <ButtonLink href="https://app.bulma.com.au/register" size="lg" className="w-full sm:w-auto" preloadOnHover>
                   Try Bulma free
                 </ButtonLink>
               </GradientBorderWrapper>
             </MagneticWrapper>
 
-            <MagneticWrapper>
-              <PlainButtonLink href="/contact" size="lg" className="group">
+            <MagneticWrapper className="w-full sm:w-auto">
+              <PlainButtonLink href="/contact" size="lg" className="group w-full sm:w-auto">
                 See it in action <AnimatedArrowIcon className="-mr-1 ml-1.5" />
               </PlainButtonLink>
             </MagneticWrapper>
@@ -263,7 +263,7 @@ export default function Page() {
             </Screenshot>
           </>
         }
-        footer={<SupportedLendersField />}
+        footer={<SupportedLendersField appearance="light" />}
       />
       {/* Features (P-3: content-visibility for deferred rendering) */}
       <FeaturesTwoColumnWithDemos
@@ -335,8 +335,8 @@ export default function Page() {
                 </p>
               }
               cta={
-                <Link href="#pricing" className="group">
-                  Learn more <AnimatedArrowIcon className="-mr-1 ml-1.5" />
+                <Link href="/contact" className="group">
+                  Book a walkthrough <AnimatedArrowIcon className="-mr-1 ml-1.5" />
                 </Link>
               }
             />
@@ -391,8 +391,8 @@ export default function Page() {
                 </p>
               }
               cta={
-                <Link href="#pricing" className="group">
-                  Learn more <AnimatedArrowIcon className="-mr-1 ml-1.5" />
+                <Link href="#supported-lenders" className="group">
+                  See covered lenders <AnimatedArrowIcon className="-mr-1 ml-1.5" />
                 </Link>
               }
             />
@@ -417,8 +417,7 @@ export default function Page() {
         }
       >
         <StatAnimated
-          countTo={30}
-          countSuffix="+"
+          countTo={bulmaCoveredLenderCount}
           text="Major Australian lenders covered, with policies updated regularly."
         />
         <StatAnimated stat="Seconds" text="Average time to answer - compared to hours of manual research." />
@@ -567,42 +566,48 @@ export default function Page() {
       <PricingMultiTier
         id="pricing"
         className="content-visibility-pricing"
-        headline="Simple pricing for every brokerage."
-        options={['Monthly', 'Yearly']}
-        optionCallout={
+        headline="Simple pricing for every brokerage"
+        subheadline={
           <p>
-            Yearly signups include <TrackMyTrailHomeLink /> bonuses.
+            Choose the plan that fits your team. All plans include unlimited policy questions and full lender coverage.
           </p>
         }
+        options={['Monthly', 'Yearly']}
+        optionCallout={<p>Get 2 months free on a yearly plan.</p>}
         stickyEyebrow
         sectionHue="pricing"
         plans={
           <>
             <Plan
+              key="solo"
               name="Solo"
               prices={{ Monthly: '$49', Yearly: '$490' }}
               periods={homePricingPeriods}
+              priceNotes={{
+                Monthly: 'Switch yearly to save $98',
+                Yearly: 'Save $98 compared with monthly',
+              }}
               subheadline={<p>For individual brokers getting started</p>}
               features={[
-                'Unlimited policy questions',
+                <span key="policy-questions">Unlimited policy questions</span>,
                 <span key="lenders">
-                  Policy coverage across <Link href="#lenders">35+ lenders</Link>
+                  Policy coverage across <Link key="lender-count-link" href="#lenders">{bulmaCoveredLenderCount} lenders</Link>
                 </span>,
-                'Cross-lender comparisons',
-                'Source attribution on every answer',
-                'Conversation history',
-                'Email support',
+                <span key="comparisons">Cross-lender comparisons</span>,
+                <span key="source-attribution">Source attribution on every answer</span>,
+                <span key="conversation-history">Conversation history</span>,
+                <span key="email-support">Email support</span>,
               ]}
               bonuses={{
                 Yearly: (
                   <p>
-                    Free 1 month of <TrackMyTrailHomeLink /> for yearly Solo signups.
+                    Free 1 month of <TrackMyTrailHomeLink key="track-my-trail" /> for yearly Solo signups.
                   </p>
                 ),
               }}
               bonusPrompt={
                 <p>
-                  Switch to yearly billing to unlock a <TrackMyTrailHomeLink /> signup bonus.
+                  Switch to yearly billing to unlock a <TrackMyTrailHomeLink key="track-my-trail" /> signup bonus.
                 </p>
               }
               cta={
@@ -612,29 +617,34 @@ export default function Page() {
               }
             />
             <Plan
+              key="team"
               name="Team"
               prices={{ Monthly: '$99', Yearly: '$990' }}
               periods={homePricingPeriods}
+              priceNotes={{
+                Monthly: 'Switch yearly to save $198',
+                Yearly: 'Save $198 compared with monthly',
+              }}
               subheadline={<p>For growing brokerages with multiple users</p>}
               badge="Most popular"
               featured={true}
               features={[
-                'Everything in Solo',
-                'Up to 5 team members',
-                'Priority support',
-                'Team usage analytics',
-                'Shared conversation history',
+                <span key="solo-features">Everything in Solo</span>,
+                <span key="team-members">Up to 5 team members</span>,
+                <span key="priority-support">Priority support</span>,
+                <span key="usage-analytics">Team usage analytics</span>,
+                <span key="shared-history">Shared conversation history</span>,
               ]}
               bonuses={{
                 Yearly: (
                   <p>
-                    Free 3 months of <TrackMyTrailHomeLink /> for yearly Team signups.
+                    Free 3 months of <TrackMyTrailHomeLink key="track-my-trail" /> for yearly Team signups.
                   </p>
                 ),
               }}
               bonusPrompt={
                 <p>
-                  Switch to yearly billing to unlock a <TrackMyTrailHomeLink /> signup bonus.
+                  Switch to yearly billing to unlock a <TrackMyTrailHomeLink key="track-my-trail" /> signup bonus.
                 </p>
               }
               cta={
@@ -644,30 +654,19 @@ export default function Page() {
               }
             />
             <Plan
+              key="enterprise"
               name="Enterprise"
               prices={{ Monthly: 'Custom', Yearly: 'Custom' }}
               periods=""
               subheadline={<p>For aggregators and large brokerages</p>}
               features={[
-                'Everything in Team',
-                'Unlimited team members',
-                'Custom lender coverage',
-                'Dedicated account manager',
-                'Custom integrations',
-                'Volume discounts',
+                <span key="team-features">Everything in Team</span>,
+                <span key="unlimited-members">Unlimited team members</span>,
+                <span key="custom-lender-coverage">Custom lender coverage</span>,
+                <span key="account-manager">Dedicated account manager</span>,
+                <span key="custom-integrations">Custom integrations</span>,
+                <span key="volume-discounts">Volume discounts</span>,
               ]}
-              bonuses={{
-                Yearly: (
-                  <p>
-                    Custom <TrackMyTrailHomeLink /> subscription bonus arranged with your rollout.
-                  </p>
-                ),
-              }}
-              bonusPrompt={
-                <p>
-                  Switch to yearly billing to unlock a <TrackMyTrailHomeLink /> signup bonus.
-                </p>
-              }
               cta={
                 <SoftButtonLink href="/contact" size="lg">
                   Contact sales
@@ -692,17 +691,17 @@ export default function Page() {
           </p>
         }
         cta={
-          <div className="flex items-center gap-4">
-            <MagneticWrapper>
-              <GradientBorderWrapper>
-                <ButtonLink href="https://app.bulma.com.au/register" size="lg" preloadOnHover>
+          <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4">
+            <MagneticWrapper className="w-full sm:w-auto">
+              <GradientBorderWrapper className="w-full sm:w-auto">
+                <ButtonLink href="https://app.bulma.com.au/register" size="lg" className="w-full sm:w-auto" preloadOnHover>
                   Try Bulma free
                 </ButtonLink>
               </GradientBorderWrapper>
             </MagneticWrapper>
 
-            <MagneticWrapper>
-              <PlainButtonLink href="/contact" size="lg" className="group">
+            <MagneticWrapper className="w-full sm:w-auto">
+              <PlainButtonLink href="/contact" size="lg" className="group w-full sm:w-auto">
                 Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
               </PlainButtonLink>
             </MagneticWrapper>

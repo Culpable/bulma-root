@@ -760,6 +760,12 @@
   animation: faq-spring-open 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
+/* Ensure routed hash links reveal FAQ items even when the section entrance observer has not fired. */
+.faq-target-visible:has([data-hash-target='true']) {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* =============================================================================
    CONTACT FORM SUBMIT CHOREOGRAPHY
    Focus glow, label focus tint, spinner morph, and checkmark resolution for the
@@ -805,12 +811,12 @@
   transition: color 180ms ease-out;
 }
 
-.contact-field:has(:is(input, textarea):focus) .contact-field__label {
+.contact-field:has(:is(input, textarea, select):focus) .contact-field__label {
   color: var(--color-mist-950);
 }
 
 @variant dark {
-  .contact-field:has(:is(input, textarea):focus) .contact-field__label {
+  .contact-field:has(:is(input, textarea, select):focus) .contact-field__label {
     color: white;
   }
 }

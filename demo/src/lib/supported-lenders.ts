@@ -354,6 +354,8 @@ export const bulmaCoveredLenders = [...SUPPORTED_LENDERS]
   .sort((first, second) => first.faqOrder - second.faqOrder)
   .map((lender) => lender.name)
 
+export const bulmaCoveredLenderCount = bulmaCoveredLenders.length
+
 export const bulmaCoveredLendersAnswer = `Bulma currently has policy coverage for ${bulmaCoveredLenders.length} lenders: ${bulmaCoveredLenders.join(
   ', ',
 )}. We update this list as new lender policies are added and refreshed.`

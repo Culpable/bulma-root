@@ -1,7 +1,7 @@
 'use client'
 
 import { clsx } from 'clsx/lite'
-import { useCallback, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { BorderBeam } from './border-beam'
 
 interface CardSpotlightProps {
@@ -33,20 +33,54 @@ export function CardSpotlight({
   className,
 }: CardSpotlightProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const spotlightRef = useRef<HTMLDivElement>(null)
+  const frameRef = useRef<number | null>(null)
+  const pointerRef = useRef({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
 
-  // Track mouse position relative to the card
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    setPosition({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    })
+  useEffect(() => {
+    return () => {
+      if (frameRef.current !== null) {
+        window.cancelAnimationFrame(frameRef.current)
+      }
+    }
   }, [])
 
+  const applySpotlightFrame = useCallback(() => {
+    frameRef.current = null
+
+    const container = containerRef.current
+    const spotlight = spotlightRef.current
+    if (!container || !spotlight) return
+
+    const rect = container.getBoundingClientRect()
+    const x = pointerRef.current.x - rect.left - size / 2
+    const y = pointerRef.current.y - rect.top - size / 2
+
+    spotlight.style.transform = `translate3d(${x}px, ${y}px, 0)`
+  }, [size])
+
+  // Track mouse position relative to the card
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      pointerRef.current = { x: e.clientX, y: e.clientY }
+
+      if (frameRef.current === null) {
+        frameRef.current = window.requestAnimationFrame(applySpotlightFrame)
+      }
+    },
+    [applySpotlightFrame]
+  )
+
   const handleMouseEnter = useCallback(() => setIsHovering(true), [])
-  const handleMouseLeave = useCallback(() => setIsHovering(false), [])
+  const handleMouseLeave = useCallback(() => {
+    setIsHovering(false)
+
+    if (frameRef.current !== null) {
+      window.cancelAnimationFrame(frameRef.current)
+      frameRef.current = null
+    }
+  }, [])
 
   return (
     <div
@@ -66,13 +100,12 @@ export function CardSpotlight({
         aria-hidden="true"
       >
         <div
-          className="absolute transition-transform duration-75 ease-out"
+          ref={spotlightRef}
+          className="absolute top-0 left-0 transition-transform duration-75 ease-out"
           style={{
             width: size,
             height: size,
-            left: position.x,
-            top: position.y,
-            transform: 'translate(-50%, -50%)',
+            transform: 'translate3d(-9999px, -9999px, 0)',
             // Radial gradient using mist palette colors
             // Light mode: cool blue-gray glow
             // Dark mode: softer, warmer glow

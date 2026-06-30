@@ -1,6 +1,7 @@
 import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
 import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { pageMetadata } from '@/lib/metadata'
+import { bulmaCoveredLenderCount } from '@/lib/supported-lenders'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { HeroLeftAlignedWithPhoto } from '@/components/sections/hero-left-aligned-with-photo'
 import { StatAnimated, StatsAnimatedGraph } from '@/components/sections/stats-animated-graph'
@@ -54,7 +55,10 @@ export default function Page() {
           </p>
         }
       >
-        <StatAnimated stat="30+" text="Major Australian lenders covered, with policies updated regularly." />
+        <StatAnimated
+          countTo={bulmaCoveredLenderCount}
+          text="Major Australian lenders covered, with policies updated regularly."
+        />
         <StatAnimated stat="Seconds" text="Average time to answer - compared to hours of manual research." />
       </StatsAnimatedGraph>
       {/* Testimonial */}
@@ -202,12 +206,12 @@ export default function Page() {
           <p>We&apos;d love to hear from you. Get in touch to learn more about how Bulma can help your brokerage.</p>
         }
         cta={
-          <div className="flex items-center gap-4">
-            <ButtonLink href="/contact" size="lg">
+          <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4">
+            <ButtonLink href="/contact" size="lg" className="w-full sm:w-auto">
               Contact us
             </ButtonLink>
 
-            <PlainButtonLink href="/contact" size="lg" className="group">
+            <PlainButtonLink href="/contact" size="lg" className="group w-full sm:w-auto">
               Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
             </PlainButtonLink>
           </div>

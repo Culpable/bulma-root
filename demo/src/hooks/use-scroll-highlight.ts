@@ -157,13 +157,13 @@ export function useScrollHighlights(
   // Only recomputes when highlightedStates changes.
   return useMemo(
     () =>
-      refs.current.map((_, index) => ({
+      Array.from({ length: count }, (_, index) => ({
         ref: (el: HTMLElement | null) => {
           refs.current[index] = el
         },
         isHighlighted: highlightedStates[index],
         index,
       })),
-    [highlightedStates]
+    [count, highlightedStates]
   )
 }

@@ -147,18 +147,22 @@ export function MorphingPrice({
   const [isAnimating, setIsAnimating] = useState(false)
   const prevValueRef = useRef(value)
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const updateFrameRef = useRef<number | null>(null)
 
   useEffect(() => {
     // Clean up any pending animation timeout
     if (animationTimeoutRef.current) {
       clearTimeout(animationTimeoutRef.current)
+      animationTimeoutRef.current = null
+    }
+
+    if (updateFrameRef.current) {
+      cancelAnimationFrame(updateFrameRef.current)
+      updateFrameRef.current = null
     }
 
     // Render non-numeric prices as-is to avoid digit-slot layout quirks.
     if (!hasDigits) {
-      setDisplayValue(value)
-      setPrevValue(value)
-      setIsAnimating(false)
       prevValueRef.current = value
       return () => {
         if (animationTimeoutRef.current) {
@@ -170,49 +174,57 @@ export function MorphingPrice({
     if (value === prevValueRef.current) return
 
     if (animate) {
-      // Store the previous value before updating
-      setPrevValue(prevValueRef.current)
-      setIsAnimating(true)
-
-      // Update display value immediately so new digits can animate in
-      setDisplayValue(value)
+      const previousValue = /\d/.test(prevValueRef.current) ? prevValueRef.current : value
 
       // Calculate total animation duration
       const { digits: newDigits } = parsePrice(value)
-      const { digits: oldDigits } = parsePrice(prevValueRef.current)
+      const { digits: oldDigits } = parsePrice(previousValue)
       const maxDigits = Math.max(newDigits.length, oldDigits.length)
       const totalDuration = MORPH_CONFIG.digitDuration + (maxDigits * MORPH_CONFIG.digitStagger)
 
-      // Reset animation state after all digits have animated
-      animationTimeoutRef.current = setTimeout(() => {
-        setIsAnimating(false)
-      }, totalDuration + 50)
+      updateFrameRef.current = requestAnimationFrame(() => {
+        // Store the previous value before updating.
+        setPrevValue(previousValue)
+        setIsAnimating(true)
+
+        // Update display value so new digits can animate in.
+        setDisplayValue(value)
+
+        // Reset animation state after all digits have animated.
+        animationTimeoutRef.current = setTimeout(() => {
+          setIsAnimating(false)
+        }, totalDuration + 50)
+
+        updateFrameRef.current = null
+      })
 
       prevValueRef.current = value
     } else {
-      setDisplayValue(value)
-      setPrevValue(value)
+      updateFrameRef.current = requestAnimationFrame(() => {
+        setDisplayValue(value)
+        setPrevValue(value)
+        setIsAnimating(false)
+        updateFrameRef.current = null
+      })
+
       prevValueRef.current = value
     }
 
     return () => {
       if (animationTimeoutRef.current) {
         clearTimeout(animationTimeoutRef.current)
+        animationTimeoutRef.current = null
+      }
+
+      if (updateFrameRef.current) {
+        cancelAnimationFrame(updateFrameRef.current)
+        updateFrameRef.current = null
       }
     }
   }, [value, animate, hasDigits])
 
-  // Render non-numeric prices as standard text.
-  if (!hasDigits) {
-    return (
-      <span className={clsx('inline-flex items-baseline tabular-nums', className)} style={style} {...props}>
-        {value}
-      </span>
-    )
-  }
-
   // Parse current and previous prices
-  const currentParsed = useMemo(() => parsePrice(displayValue), [displayValue])
+  const currentParsed = useMemo(() => parsePrice(hasDigits ? displayValue : value), [displayValue, hasDigits, value])
   const prevParsed = useMemo(() => parsePrice(prevValue), [prevValue])
 
   // Pad digits to equal length for smooth transitions
@@ -220,6 +232,15 @@ export function MorphingPrice({
     () => padDigits(prevParsed.digits, currentParsed.digits),
     [prevParsed.digits, currentParsed.digits]
   )
+
+  // Render non-numeric prices as standard text after all hooks have been called.
+  if (!hasDigits) {
+    return (
+      <span className={clsx('inline-flex items-baseline tabular-nums', className)} style={style} {...props}>
+        {value}
+      </span>
+    )
+  }
 
   return (
     <span

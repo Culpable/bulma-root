@@ -3,9 +3,8 @@
 import { clsx } from 'clsx/lite'
 import {
   useCallback,
+  useEffect,
   useRef,
-  useState,
-  type CSSProperties,
   type MouseEvent,
   type ReactNode,
 } from 'react'
@@ -59,9 +58,17 @@ export function MagneticWrapper({
 }: MagneticWrapperProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const rippleRef = useRef<HTMLDivElement>(null)
-  const [transform, setTransform] = useState<CSSProperties>({})
+  const rippleTimeoutRef = useRef<number | null>(null)
   // Track if ripple has fired this entry to prevent multiple triggers
   const rippleFiredRef = useRef(false)
+
+  useEffect(() => {
+    return () => {
+      if (rippleTimeoutRef.current !== null) {
+        window.clearTimeout(rippleTimeoutRef.current)
+      }
+    }
+  }, [])
 
   /**
    * Calculate magnetic pull based on cursor distance from element center.
@@ -71,7 +78,8 @@ export function MagneticWrapper({
     (e: MouseEvent<HTMLDivElement>) => {
       if (disabled || !wrapperRef.current) return
 
-      const rect = wrapperRef.current.getBoundingClientRect()
+      const wrapper = wrapperRef.current
+      const rect = wrapper.getBoundingClientRect()
       const centerX = rect.left + rect.width / 2
       const centerY = rect.top + rect.height / 2
 
@@ -91,10 +99,8 @@ export function MagneticWrapper({
       const offsetX = clampedX * maxOffset
       const offsetY = clampedY * maxOffset
 
-      setTransform({
-        transform: `translate(${offsetX}px, ${offsetY}px)`,
-        transition: 'transform 0.15s ease-out',
-      })
+      wrapper.style.transform = `translate(${offsetX}px, ${offsetY}px)`
+      wrapper.style.transition = 'transform 0.15s ease-out'
     },
     [activationRadius, disabled, maxOffset]
   )
@@ -104,10 +110,11 @@ export function MagneticWrapper({
    * Also resets ripple state for next entry.
    */
   const handleMouseLeave = useCallback(() => {
-    setTransform({
-      transform: 'translate(0px, 0px)',
-      transition: `transform ${MAGNETIC_CONFIG.returnDuration}ms ${MAGNETIC_CONFIG.springEasing}`,
-    })
+    if (wrapperRef.current) {
+      wrapperRef.current.style.transform = 'translate(0px, 0px)'
+      wrapperRef.current.style.transition = `transform ${MAGNETIC_CONFIG.returnDuration}ms ${MAGNETIC_CONFIG.springEasing}`
+    }
+
     // Reset ripple state so it can fire again on next entry
     rippleFiredRef.current = false
   }, [])
@@ -118,10 +125,9 @@ export function MagneticWrapper({
    */
   const handleMouseEnter = useCallback(() => {
     // Clear any lingering return transition for responsive movement
-    setTransform((prev) => ({
-      ...prev,
-      transition: 'transform 0.15s ease-out',
-    }))
+    if (wrapperRef.current) {
+      wrapperRef.current.style.transition = 'transform 0.15s ease-out'
+    }
 
     // Trigger ripple effect on entry (Rec C)
     if (enableRipple && rippleRef.current && !rippleFiredRef.current) {
@@ -134,8 +140,13 @@ export function MagneticWrapper({
       // Add animation class
       ripple.classList.add('animate')
       // Remove animation class after completion
-      setTimeout(() => {
+      if (rippleTimeoutRef.current !== null) {
+        window.clearTimeout(rippleTimeoutRef.current)
+      }
+
+      rippleTimeoutRef.current = window.setTimeout(() => {
         ripple.classList.remove('animate')
+        rippleTimeoutRef.current = null
       }, MAGNETIC_CONFIG.rippleDuration)
     }
   }, [enableRipple])
@@ -150,7 +161,6 @@ export function MagneticWrapper({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onMouseEnter={handleMouseEnter}
-      style={transform}
       className={clsx('magnetic-wrapper magnetic-ripple-container', className)}
     >
       {/* Ripple effect element (Rec C) - animates on magnetic field entry */}

@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-The animation system provides scroll-triggered entrance animations for page sections and a 3D parallax tilt effect for screenshots. Animations use CSS transitions controlled by React state via IntersectionObserver, with no external animation libraries required.
+The animation system provides scroll-triggered entrance animations for page sections and a 3D parallax tilt effect for screenshots. Scroll-triggered visibility still uses React state via IntersectionObserver, while high-frequency pointer effects write transform and CSS-variable updates directly through refs and `requestAnimationFrame` to avoid render loops. No external animation libraries are required.
 
 ---
 
@@ -114,6 +114,8 @@ const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
 
 All animations use `transition-all` with `ease-out` timing. Duration ranges from 500ms to 1500ms, with longer timings reserved for graph draw and glow effects.
 
+FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with `data-hash-target="true"`, so direct or routed hash deep links such as `#lenders` remain visible even when navigation lands below the section header that normally triggers the staggered entrance animation.
+
 ---
 
 ## 5. Parallax Tilt Effect
@@ -131,8 +133,9 @@ All animations use `transition-all` with `ease-out` timing. Duration ranges from
 
 **Behavior:**
 - `handleMouseMove` calculates cursor position relative to element center, maps to rotation angles
+- Pointer movement is batched with `requestAnimationFrame` and writes `transform`, `--mouse-x`, and `--mouse-y` directly to the screenshot wrapper
 - `handleMouseLeave` resets transform with smooth transition
-- Glow overlay follows cursor using CSS custom properties `--mouse-x` and `--mouse-y`
+- React state only tracks hover/reveal state, not per-frame pointer coordinates
 - Disable via `enableTilt={false}` prop
 
 ---
@@ -151,7 +154,8 @@ All animations use `transition-all` with `ease-out` timing. Duration ranges from
 
 **Behavior:**
 - Tracks mouse position via `mousemove` event listener on container
-- Position state updates spotlight `left`/`top` coordinates
+- Pointer movement is batched with `requestAnimationFrame` and writes `translate3d(...)` directly to the glow layer refs
+- React state only tracks whether the spotlight is active for fade in/out
 - Fades in/out on `mouseenter`/`mouseleave` (500ms transition)
 - Movement easing: 150ms `ease-out` on transform
 
@@ -195,6 +199,7 @@ All animations use `transition-all` with `ease-out` timing. Duration ranges from
 
 **Behavior:**
 - `handleMouseMove` calculates cursor offset from element center, applies proportional translation
+- Pointer movement writes `transform` and `transition` directly to the wrapper element instead of updating React state per frame
 - `handleMouseLeave` resets with spring easing (400ms, overshoots then settles)
 - Movement easing: 150ms `ease-out` for responsive tracking
 

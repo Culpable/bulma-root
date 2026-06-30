@@ -6,6 +6,7 @@ import { FAQsAccordion, Faq } from '@/components/sections/faqs-accordion'
 import { PlanComparisonTable } from '@/components/sections/plan-comparison-table'
 import { Plan, PricingHeroMultiTier } from '@/components/sections/pricing-hero-multi-tier'
 import { pageMetadata } from '@/lib/metadata'
+import { bulmaCoveredLenderCount } from '@/lib/supported-lenders'
 // import { TestimonialTwoColumnWithLargePhoto } from '@/components/sections/testimonial-two-column-with-large-photo'
 import { buildFaqPageSchema } from '@/schemas/organization-schema'
 import type { Metadata } from 'next'
@@ -95,33 +96,38 @@ export default function Page() {
         plans={
           <>
             <Plan
+              key="solo"
               name="Solo"
               prices={{ Monthly: '$49', Yearly: '$490' }}
               periods={pricingPeriods}
+              priceNotes={{
+                Monthly: 'Switch yearly to save $98',
+                Yearly: 'Save $98 compared with monthly',
+              }}
               subheadline={<p>For individual brokers getting started</p>}
               features={[
-                'Unlimited policy questions',
+                <span key="policy-questions">Unlimited policy questions</span>,
                 <span key="lenders">
                   Policy coverage across{' '}
-                  <NextLink href="/#lenders" className="underline underline-offset-2">
-                    35+ lenders
+                  <NextLink key="lender-count-link" href="/#lenders" className="underline underline-offset-2">
+                    {bulmaCoveredLenderCount} lenders
                   </NextLink>
                 </span>,
-                'Cross-lender comparisons',
-                'Source attribution on every answer',
-                'Conversation history',
-                'Email support',
+                <span key="comparisons">Cross-lender comparisons</span>,
+                <span key="source-attribution">Source attribution on every answer</span>,
+                <span key="conversation-history">Conversation history</span>,
+                <span key="email-support">Email support</span>,
               ]}
               bonuses={{
                 Yearly: (
                   <p>
-                    Free 1 month of <TrackMyTrailLink /> for yearly Solo signups.
+                    Free 1 month of <TrackMyTrailLink key="track-my-trail" /> for yearly Solo signups.
                   </p>
                 ),
               }}
               bonusPrompt={
                 <p>
-                  Switch to yearly billing to unlock a <TrackMyTrailLink /> signup bonus.
+                  Switch to yearly billing to unlock a <TrackMyTrailLink key="track-my-trail" /> signup bonus.
                 </p>
               }
               cta={
@@ -131,29 +137,34 @@ export default function Page() {
               }
             />
             <Plan
+              key="team"
               name="Team"
               prices={{ Monthly: '$99', Yearly: '$990' }}
               periods={pricingPeriods}
+              priceNotes={{
+                Monthly: 'Switch yearly to save $198',
+                Yearly: 'Save $198 compared with monthly',
+              }}
               subheadline={<p>For growing brokerages with multiple users</p>}
               badge="Most popular"
               featured={true}
               features={[
-                'Everything in Solo',
-                'Up to 5 team members',
-                'Priority support',
-                'Team usage analytics',
-                'Shared conversation history',
+                <span key="solo-features">Everything in Solo</span>,
+                <span key="team-members">Up to 5 team members</span>,
+                <span key="priority-support">Priority support</span>,
+                <span key="usage-analytics">Team usage analytics</span>,
+                <span key="shared-history">Shared conversation history</span>,
               ]}
               bonuses={{
                 Yearly: (
                   <p>
-                    Free 3 months of <TrackMyTrailLink /> for yearly Team signups.
+                    Free 3 months of <TrackMyTrailLink key="track-my-trail" /> for yearly Team signups.
                   </p>
                 ),
               }}
               bonusPrompt={
                 <p>
-                  Switch to yearly billing to unlock a <TrackMyTrailLink /> signup bonus.
+                  Switch to yearly billing to unlock a <TrackMyTrailLink key="track-my-trail" /> signup bonus.
                 </p>
               }
               cta={
@@ -163,30 +174,19 @@ export default function Page() {
               }
             />
             <Plan
+              key="enterprise"
               name="Enterprise"
               prices={{ Monthly: 'Custom', Yearly: 'Custom' }}
               periods=""
               subheadline={<p>For aggregators and large brokerages</p>}
               features={[
-                'Everything in Team',
-                'Unlimited team members',
-                'Custom lender coverage',
-                'Dedicated account manager',
-                'Custom integrations',
-                'Volume discounts',
+                <span key="team-features">Everything in Team</span>,
+                <span key="unlimited-members">Unlimited team members</span>,
+                <span key="custom-lender-coverage">Custom lender coverage</span>,
+                <span key="account-manager">Dedicated account manager</span>,
+                <span key="custom-integrations">Custom integrations</span>,
+                <span key="volume-discounts">Volume discounts</span>,
               ]}
-              bonuses={{
-                Yearly: (
-                  <p>
-                    Custom <TrackMyTrailLink /> subscription bonus arranged with your rollout.
-                  </p>
-                ),
-              }}
-              bonusPrompt={
-                <p>
-                  Switch to yearly billing to unlock a <TrackMyTrailLink /> signup bonus.
-                </p>
-              }
               cta={
                 <SoftButtonLink href="/contact" size="lg">
                   Contact sales
@@ -303,14 +303,14 @@ export default function Page() {
       />
       {/* Plan Comparison Table */}
       <PlanComparisonTable
-        id="pricing"
+        id="plan-comparison"
         plans={['Solo', 'Team', 'Enterprise']}
         features={[
           {
             title: 'Policy Q&A',
             features: [
               { name: 'Unlimited policy questions', value: true },
-              { name: 'Policy coverage across 35+ lenders', value: true },
+              { name: `Policy coverage across ${bulmaCoveredLenderCount} lenders`, value: true },
               { name: 'Source attribution', value: true },
               { name: 'Conversation history', value: true },
               { name: 'Cross-lender comparisons', value: true },
@@ -392,12 +392,12 @@ export default function Page() {
         headline="Have more questions?"
         subheadline={<p>We&apos;re happy to help. Get in touch to discuss how Bulma can work for your brokerage.</p>}
         cta={
-          <div className="flex items-center gap-4">
-            <ButtonLink href="/contact" size="lg">
+          <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4">
+            <ButtonLink href="/contact" size="lg" className="w-full sm:w-auto">
               Contact sales
             </ButtonLink>
 
-            <PlainButtonLink href="/contact" size="lg" className="group">
+            <PlainButtonLink href="/contact" size="lg" className="group w-full sm:w-auto">
               Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
             </PlainButtonLink>
           </div>

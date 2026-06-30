@@ -16,6 +16,7 @@ import {
 import { CardSpotlight } from '../elements/card-spotlight'
 import { Section } from '../elements/section'
 import { AnimatedCheckmarkIcon } from '../icons/animated-checkmark-icon'
+import { PricingBonusPanel, PricingBonusPrompt, PricingOptionCallout, PricingPriceNote } from './pricing-card-shared'
 
 interface PricingOptionContextValue<T extends string = string> {
   selectedOption: T
@@ -39,6 +40,10 @@ interface PlanBonuses {
   [option: string]: ReactNode
 }
 
+interface PlanPriceNotes {
+  [option: string]: ReactNode
+}
+
 /**
  * Context to pass animation state from PricingMultiTier to Plan components.
  * Allows checkmarks to animate in sync with card visibility.
@@ -52,27 +57,6 @@ const PricingAnimationContext = createContext<PricingAnimationContextValue>({
   isVisible: false,
   baseDelay: 0,
 })
-
-function GiftIcon(props: ComponentProps<'svg'>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} aria-hidden="true" {...props}>
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M20 12v7.25A1.75 1.75 0 0 1 18.25 21H5.75A1.75 1.75 0 0 1 4 19.25V12m16 0H4m16 0v-1.75A2.25 2.25 0 0 0 17.75 8H6.25A2.25 2.25 0 0 0 4 10.25V12m8 9V8m0 0H9.25A2.75 2.75 0 1 1 12 5.25V8Zm0 0h2.75A2.75 2.75 0 1 0 12 5.25V8Z"
-      />
-    </svg>
-  )
-}
-
-function PricingBonusTeaser({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex items-start gap-2 rounded-lg border border-mist-950/10 bg-white/70 px-3 py-2.5 text-sm/6 text-mist-700 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-mist-300">
-      <GiftIcon className="mt-0.5 size-4 shrink-0 text-mist-950 dark:text-white" />
-      <div>{children}</div>
-    </div>
-  )
-}
 
 function PricingOptionToggle<T extends string>({
   options,
@@ -140,6 +124,8 @@ export function Plan({
   prices,
   period,
   periods,
+  priceNote,
+  priceNotes,
   subheadline,
   badge,
   features,
@@ -155,6 +141,8 @@ export function Plan({
   prices?: PlanPrices
   period?: ReactNode
   periods?: PlanPeriods | ReactNode
+  priceNote?: ReactNode
+  priceNotes?: PlanPriceNotes
   subheadline: ReactNode
   badge?: ReactNode
   features: ReactNode[]
@@ -176,7 +164,9 @@ export function Plan({
   const checkmarkBaseDelay = baseDelay + 300
 
   const currentPrice = prices && selectedOption ? (prices[selectedOption] ?? Object.values(prices)[0]) : price
+  const currentPriceNote = priceNotes && selectedOption ? priceNotes[selectedOption] : priceNote
   const currentBonus = bonuses && selectedOption ? bonuses[selectedOption] : bonus
+  const renderedFeatures = Children.toArray(features)
   const resolvedPeriod =
     periods && typeof periods === 'object'
       ? ((periods as PlanPeriods)[selectedOption] ?? Object.values(periods as PlanPeriods)[0])
@@ -203,13 +193,14 @@ export function Plan({
 
             <h3 className="text-2xl/8 tracking-tight text-mist-950 dark:text-white">{name}</h3>
           </div>
-          <p className="mt-1 inline-flex gap-1 text-base/7">
+          <p className="mt-1 flex flex-wrap items-baseline gap-y-1 text-base/7">
             <span className="text-mist-950 dark:text-white">{currentPrice}</span>
-            {resolvedPeriod && <span className="text-mist-500 dark:text-mist-500">{resolvedPeriod}</span>}
+            {resolvedPeriod && <span className="ml-1 text-mist-500 dark:text-mist-500">{resolvedPeriod}</span>}
+            {currentPriceNote && <PricingPriceNote>{currentPriceNote}</PricingPriceNote>}
           </p>
           <div className="mt-4 flex flex-col gap-4 text-sm/6 text-mist-700 dark:text-mist-400">{subheadline}</div>
           <ul className="mt-4 space-y-2 text-sm/6 text-mist-700 dark:text-mist-400">
-            {features.map((feature, index) => (
+            {renderedFeatures.map((feature, index) => (
               <li key={index} className="flex gap-4">
                 <AnimatedCheckmarkIcon
                   animate={isVisible}
@@ -224,9 +215,9 @@ export function Plan({
         </div>
         <div className="mt-auto flex w-full flex-col gap-6 self-stretch">
           {currentBonus ? (
-            <PricingBonusTeaser>{currentBonus}</PricingBonusTeaser>
+            <PricingBonusPanel>{currentBonus}</PricingBonusPanel>
           ) : bonusPrompt ? (
-            <PricingBonusTeaser>{bonusPrompt}</PricingBonusTeaser>
+            <PricingBonusPrompt>{bonusPrompt}</PricingBonusPrompt>
           ) : null}
           {cta}
         </div>
@@ -267,12 +258,7 @@ export function PricingMultiTier<T extends string = string>({
       <div className="flex w-full flex-col items-center gap-4 text-center">
         {cta}
         {options && <PricingOptionToggle options={options} selectedIndex={selectedIndex} onSelect={handleSelect} />}
-        {optionCallout && (
-          <div className="flex max-w-sm items-center justify-center gap-2 rounded-lg border border-mist-950/10 bg-white/70 px-4 py-2 text-sm/6 font-medium text-mist-700 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-mist-300">
-            <GiftIcon className="size-4 shrink-0 text-mist-950 dark:text-white" />
-            <div>{optionCallout}</div>
-          </div>
-        )}
+        {optionCallout && <PricingOptionCallout>{optionCallout}</PricingOptionCallout>}
       </div>
     ) : undefined
 

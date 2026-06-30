@@ -21,6 +21,7 @@ export function Faq({
   const buttonRef = useRef<HTMLButtonElement | null>(null)
   // Track open state for glow trail effect (Rec 9)
   const [isOpen, setIsOpen] = useState(false)
+  const [isHashTarget, setIsHashTarget] = useState(false)
 
   // Handle toggle to track open state
   const handleToggle = useCallback(() => {
@@ -31,10 +32,15 @@ export function Faq({
     const normalizedHash = `#${faqId}`
     let retryCount = 0
     let retryTimer: ReturnType<typeof setTimeout> | null = null
+    let clickTimers: ReturnType<typeof setTimeout>[] = []
 
     // Open the matching FAQ when the current URL hash targets this item.
     const openWhenHashMatches = () => {
-      if (window.location.hash !== normalizedHash) {
+      const hashMatches = window.location.hash === normalizedHash
+
+      setIsHashTarget((current) => (current === hashMatches ? current : hashMatches))
+
+      if (!hashMatches) {
         return
       }
 
@@ -53,15 +59,45 @@ export function Faq({
       }
     }
 
+    const queueHashCheck = () => {
+      clickTimers.forEach((timer) => clearTimeout(timer))
+
+      clickTimers = [0, 50, 150, 350].map((delay) => setTimeout(openWhenHashMatches, delay))
+    }
+
+    const handleDocumentClick = (event: MouseEvent) => {
+      const target = event.target instanceof Element ? event.target : null
+      const anchor = target?.closest<HTMLAnchorElement>('a[href]')
+
+      if (!anchor) {
+        return
+      }
+
+      const targetUrl = new URL(anchor.href, window.location.href)
+
+      if (!targetUrl.hash || targetUrl.origin !== window.location.origin) {
+        return
+      }
+
+      // NextLink can update same-page hashes after the click event and without a native hashchange event.
+      queueHashCheck()
+    }
+
     openWhenHashMatches()
+    window.addEventListener('click', handleDocumentClick, true)
     window.addEventListener('hashchange', openWhenHashMatches)
+    window.addEventListener('popstate', openWhenHashMatches)
 
     return () => {
       if (retryTimer) {
         clearTimeout(retryTimer)
       }
 
+      clickTimers.forEach((timer) => clearTimeout(timer))
+
+      window.removeEventListener('click', handleDocumentClick, true)
       window.removeEventListener('hashchange', openWhenHashMatches)
+      window.removeEventListener('popstate', openWhenHashMatches)
     }
   }, [faqId])
 
@@ -75,7 +111,7 @@ export function Faq({
   const renderedAnswer = typeof answer === 'string' ? <div dangerouslySetInnerHTML={{ __html: answer }} /> : answer
 
   return (
-    <div id={faqId} {...props}>
+    <div id={faqId} data-hash-target={isHashTarget ? 'true' : undefined} {...props}>
       <button
         type="button"
         ref={buttonRef}
@@ -160,6 +196,8 @@ export function FAQsTwoColumnAccordion({
     return (
       <div
         className={clsx(
+          // Keep hash-targeted FAQ items visible when deep links land below the section animation sentinel.
+          'faq-target-visible',
           'transition-all duration-500 ease-out',
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0',
         )}

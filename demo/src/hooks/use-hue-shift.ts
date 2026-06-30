@@ -94,12 +94,14 @@ export function useHueShift({
   useEffect(() => {
     if (!enabled) return
 
+    const observedSections = sectionElementsRef.current
+
     // Find all sections with data-section-hue attribute
     const sectionElements = document.querySelectorAll('[data-section-hue]')
     sectionElements.forEach((element) => {
       const sectionId = element.getAttribute('data-section-hue')
       if (sectionId && sections.includes(sectionId)) {
-        sectionElementsRef.current.set(sectionId, element)
+        observedSections.set(sectionId, element)
       }
     })
 
@@ -137,7 +139,7 @@ export function useHueShift({
     )
 
     // Observe all section elements
-    sectionElementsRef.current.forEach((element) => {
+    observedSections.forEach((element) => {
       observer.observe(element)
     })
 
@@ -149,7 +151,7 @@ export function useHueShift({
 
     return () => {
       observer.disconnect()
-      sectionElementsRef.current.clear()
+      observedSections.clear()
       // Reset hue shift on cleanup
       document.documentElement.style.removeProperty('--accent-hue-shift')
     }

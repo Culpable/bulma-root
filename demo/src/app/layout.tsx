@@ -15,7 +15,6 @@ import MixpanelProvider from '@/components/MixpanelProvider'
 import { siteMetadata } from '@/lib/metadata'
 import type { Metadata } from 'next'
 import { Mona_Sans, Inter } from 'next/font/google'
-import Image from 'next/image'
 import Script from 'next/script'
 import './globals.css'
 
@@ -87,11 +86,11 @@ export default function RootLayout({
       <head>
         {/* Resource hints for external domains (S-1) */}
         <link rel="dns-prefetch" href="https://app.bulma.com.au" />
-        <link rel="preconnect" href="https://api-js.mixpanel.com" />
+        <link rel="dns-prefetch" href="https://api-js.mixpanel.com" />
       </head>
       <body>
         <>
-          <Script id="referral-tracking" src="/scripts/referral-tracking.js" strategy="afterInteractive" />
+          <Script id="referral-tracking" src="/scripts/referral-tracking.js" strategy="lazyOnload" />
           <MixpanelProvider />
           <NavbarWithLinksActionsAndCenteredLogo
             id="navbar"
@@ -106,24 +105,15 @@ export default function RootLayout({
             }
             logo={
               <NavbarLogo href="/">
-                {/* P-1: Priority for above-fold logo images */}
-                <Image
-                  src="/img/logos/bulma-logo-dark.svg"
-                  alt={siteLogoAlt}
-                  className="dark:hidden"
-                  width={40}
-                  height={40}
-                  priority
-                />
-                {/* Use Tailwind's built-in `not` compound variant (not-dark:*) to invert the dark media query. */}
-                <Image
-                  src="/img/logos/bulma-logo-light.svg"
-                  alt={siteLogoAlt}
-                  className="not-dark:hidden"
-                  width={40}
-                  height={40}
-                  priority
-                />
+                <picture>
+                  <source
+                    srcSet="/img/logos/bulma-logo-light.svg"
+                    media="(prefers-color-scheme: dark)"
+                    width={40}
+                    height={40}
+                  />
+                  <img src="/img/logos/bulma-logo-dark.svg" alt={siteLogoAlt} width={40} height={40} />
+                </picture>
               </NavbarLogo>
             }
             actions={

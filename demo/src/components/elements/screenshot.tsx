@@ -40,7 +40,8 @@ export function Screenshot({
 } & Omit<ComponentProps<'div'>, 'color'>) {
   const containerRef = useRef<HTMLDivElement>(null)
   const revealRef = useRef<HTMLDivElement>(null)
-  const [tiltStyle, setTiltStyle] = useState<React.CSSProperties>({})
+  const frameRef = useRef<number | null>(null)
+  const pointerRef = useRef({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
   const [isRevealed, setIsRevealed] = useState(!enableReveal) // Start revealed if effect is disabled
 
@@ -63,6 +64,40 @@ export function Screenshot({
     return () => observer.disconnect()
   }, [enableReveal])
 
+  useEffect(() => {
+    return () => {
+      if (frameRef.current !== null) {
+        window.cancelAnimationFrame(frameRef.current)
+      }
+    }
+  }, [])
+
+  const applyTiltFrame = useCallback(() => {
+    frameRef.current = null
+
+    const container = containerRef.current
+    if (!enableTilt || !container) return
+
+    const rect = container.getBoundingClientRect()
+    const { x, y } = pointerRef.current
+
+    // Write transform and glow variables directly so rich tilt stays smooth
+    // without forcing a React render for each pointer event.
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    const mouseX = (x - centerX) / (rect.width / 2)
+    const mouseY = (y - centerY) / (rect.height / 2)
+    const rotateX = -mouseY * TILT_CONFIG.maxRotation
+    const rotateY = mouseX * TILT_CONFIG.maxRotation
+    const glowX = ((x - rect.left) / rect.width) * 100
+    const glowY = ((y - rect.top) / rect.height) * 100
+
+    container.style.transition = 'transform 0.1s ease-out'
+    container.style.transform = `perspective(${TILT_CONFIG.perspective}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${TILT_CONFIG.hoverScale})`
+    container.style.setProperty('--mouse-x', `${glowX}%`)
+    container.style.setProperty('--mouse-y', `${glowY}%`)
+  }, [enableTilt])
+
   /**
    * Calculate 3D tilt transformation based on mouse position.
    * Maps cursor position to rotation angles for parallax effect.
@@ -71,30 +106,13 @@ export function Screenshot({
     (e: MouseEvent<HTMLDivElement>) => {
       if (!enableTilt || !containerRef.current) return
 
-      const rect = containerRef.current.getBoundingClientRect()
+      pointerRef.current = { x: e.clientX, y: e.clientY }
 
-      // Calculate cursor position relative to element center (normalized -1 to 1)
-      const centerX = rect.left + rect.width / 2
-      const centerY = rect.top + rect.height / 2
-      const mouseX = (e.clientX - centerX) / (rect.width / 2)
-      const mouseY = (e.clientY - centerY) / (rect.height / 2)
-
-      // Convert to rotation angles (inverted for natural tilt direction)
-      // X-axis rotation based on Y position, Y-axis rotation based on X position
-      const rotateX = -mouseY * TILT_CONFIG.maxRotation
-      const rotateY = mouseX * TILT_CONFIG.maxRotation
-
-      // Calculate glow position as percentage
-      const glowX = ((e.clientX - rect.left) / rect.width) * 100
-      const glowY = ((e.clientY - rect.top) / rect.height) * 100
-
-      setTiltStyle({
-        transform: `perspective(${TILT_CONFIG.perspective}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${TILT_CONFIG.hoverScale})`,
-        '--mouse-x': `${glowX}%`,
-        '--mouse-y': `${glowY}%`,
-      } as React.CSSProperties)
+      if (frameRef.current === null) {
+        frameRef.current = window.requestAnimationFrame(applyTiltFrame)
+      }
     },
-    [enableTilt]
+    [applyTiltFrame, enableTilt]
   )
 
   /**
@@ -102,10 +120,16 @@ export function Screenshot({
    */
   const handleMouseLeave = useCallback(() => {
     setIsHovering(false)
-    setTiltStyle({
-      transform: `perspective(${TILT_CONFIG.perspective}px) rotateX(0deg) rotateY(0deg) scale(1)`,
-      transition: `transform ${TILT_CONFIG.resetDuration}ms ease-out`,
-    })
+
+    if (frameRef.current !== null) {
+      window.cancelAnimationFrame(frameRef.current)
+      frameRef.current = null
+    }
+
+    if (containerRef.current) {
+      containerRef.current.style.transition = `transform ${TILT_CONFIG.resetDuration}ms ease-out`
+      containerRef.current.style.transform = `perspective(${TILT_CONFIG.perspective}px) rotateX(0deg) rotateY(0deg) scale(1)`
+    }
   }, [])
 
   /**
@@ -114,7 +138,9 @@ export function Screenshot({
   const handleMouseEnter = useCallback(() => {
     setIsHovering(true)
     // Clear the reset transition so movement feels responsive
-    setTiltStyle((prev) => ({ ...prev, transition: 'transform 0.1s ease-out' }))
+    if (containerRef.current) {
+      containerRef.current.style.transition = 'transform 0.1s ease-out'
+    }
   }, [])
 
   return (
@@ -135,7 +161,14 @@ export function Screenshot({
           onMouseMove={enableTilt ? handleMouseMove : undefined}
           onMouseEnter={enableTilt ? handleMouseEnter : undefined}
           onMouseLeave={enableTilt ? handleMouseLeave : undefined}
-          style={enableTilt ? tiltStyle : undefined}
+          style={
+            enableTilt
+              ? ({
+                  '--mouse-x': '50%',
+                  '--mouse-y': '50%',
+                } as React.CSSProperties)
+              : undefined
+          }
           className={clsx(
             'relative [--padding:min(10%,--spacing(16))]',
             // Placement-based padding

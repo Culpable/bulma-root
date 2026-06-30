@@ -97,6 +97,9 @@ export function PlanComparisonTable<const Plan extends string>({
   plans,
   features,
   className,
+  id,
+  title = 'Compare plan features',
+  description = 'Scan the exact feature differences before choosing a plan.',
   ...props
 }: {
   plans: Plan[]
@@ -104,18 +107,30 @@ export function PlanComparisonTable<const Plan extends string>({
     title: ReactNode
     features: { name: ReactNode; value: ReactNode | Record<Plan, ReactNode> }[]
   }[]
+  title?: ReactNode
+  description?: ReactNode
 } & ComponentProps<'section'>) {
   const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.1 })
+  const sectionId = id ?? 'plan-comparison'
+  const headingId = `${sectionId}-heading`
 
   return (
-    <section ref={containerRef} className={clsx('py-16', className)} {...props}>
+    <section ref={containerRef} id={sectionId} aria-labelledby={headingId} className={clsx('py-16', className)} {...props}>
       <Container>
+        <div className="mb-8 max-w-2xl">
+          <h2 id={headingId} className="text-2xl/8 font-medium tracking-tight text-mist-950 dark:text-white">
+            {title}
+          </h2>
+          <p className="mt-2 text-sm/6 text-mist-700 dark:text-mist-400">{description}</p>
+        </div>
+
         <table
           className={clsx(
             'w-full border-collapse text-left text-sm/5 transition-all duration-700 ease-out max-sm:hidden',
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
           )}
         >
+          <caption className="sr-only">Feature comparison across Bulma plans</caption>
           <colgroup>
             <col className="w-2/5" />
             {plans.map((plan) => (
@@ -149,12 +164,14 @@ export function PlanComparisonTable<const Plan extends string>({
           )}
         >
           <ElTabGroup>
-            <ElTabList className="flex gap-6">
+            <ElTabList className="flex gap-3 rounded-xl bg-mist-950/5 p-1 dark:bg-white/5">
               {plans.map((plan) => (
                 <button
                   key={plan}
+                  id={`${sectionId}-${plan}-tab`}
+                  aria-controls={`${sectionId}-${plan}-panel`}
                   type="button"
-                  className="relative -mb-px flex-1 cursor-pointer border-b border-b-transparent px-2 py-6 text-sm/5 font-medium text-mist-500 aria-selected:border-mist-950 aria-selected:text-mist-950 dark:aria-selected:border-white dark:aria-selected:text-white"
+                  className="relative flex-1 cursor-pointer rounded-lg px-2 py-3 text-sm/5 font-medium text-mist-500 transition-colors duration-200 aria-selected:bg-white aria-selected:text-mist-950 aria-selected:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mist-950/40 dark:aria-selected:bg-white/10 dark:aria-selected:text-white dark:focus-visible:ring-white/50"
                 >
                   {plan}
                 </button>
@@ -162,7 +179,13 @@ export function PlanComparisonTable<const Plan extends string>({
             </ElTabList>
             <ElTabPanels>
               {plans.map((plan) => (
-                <table key={plan} className="w-full border-collapse text-left text-sm/5">
+                <table
+                  key={plan}
+                  id={`${sectionId}-${plan}-panel`}
+                  aria-labelledby={`${sectionId}-${plan}-tab`}
+                  className="mt-5 w-full border-collapse text-left text-sm/5"
+                >
+                  <caption className="sr-only">{plan} feature details</caption>
                   <colgroup>
                     <col className="w-3/4" />
                     <col className="w-1/4" />

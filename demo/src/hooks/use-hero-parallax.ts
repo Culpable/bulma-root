@@ -17,7 +17,7 @@ const PARALLAX_CONFIG = {
 
 /**
  * Hook that provides scroll-based parallax transformation for hero elements.
- * Returns a ref to attach to the parallax container and the current scroll position.
+ * Returns a ref to attach to the parallax container and active-scroll state.
  *
  * The hook:
  * - Tracks scroll position and updates CSS custom property --scroll-y
@@ -28,7 +28,7 @@ const PARALLAX_CONFIG = {
  * Usage:
  * ```tsx
  * function Hero() {
- *   const { containerRef, scrollY, isScrolling } = useHeroParallax()
+ *   const { containerRef, isScrolling } = useHeroParallax()
  *
  *   return (
  *     <div ref={containerRef} className="hero-parallax">
@@ -42,8 +42,6 @@ const PARALLAX_CONFIG = {
  */
 export function useHeroParallax() {
   const containerRef = useRef<HTMLDivElement>(null)
-  // scrollY stored in ref instead of state - not used for rendering, only for CSS property
-  const scrollYRef = useRef(0)
   const [isScrolling, setIsScrolling] = useState(false)
   // Track previous isScrolling to avoid redundant state updates
   const isScrollingRef = useRef(false)
@@ -57,14 +55,19 @@ export function useHeroParallax() {
   useEffect(() => {
     // Check for touch device (matchMedia result is synchronous)
     const mediaQuery = window.matchMedia('(hover: hover)')
-    setSupportsHover(mediaQuery.matches)
+    const initialFrame = requestAnimationFrame(() => {
+      setSupportsHover(mediaQuery.matches)
+    })
 
     const handleChange = (e: MediaQueryListEvent) => {
       setSupportsHover(e.matches)
     }
 
     mediaQuery.addEventListener('change', handleChange)
-    return () => mediaQuery.removeEventListener('change', handleChange)
+    return () => {
+      cancelAnimationFrame(initialFrame)
+      mediaQuery.removeEventListener('change', handleChange)
+    }
   }, [])
 
   // Update CSS custom property on container
@@ -98,7 +101,6 @@ export function useHeroParallax() {
       // Only apply parallax when hero is in view
       if (containerTop > window.innerHeight || rect.bottom < 0) {
         // Hero is not in view, reset
-        scrollYRef.current = 0
         updateScrollProperty(0)
         return
       }
@@ -112,7 +114,6 @@ export function useHeroParallax() {
       // Only update CSS property if value changed significantly (reduces repaints)
       if (Math.abs(scrollOffset - lastScrollRef.current) > 0.5) {
         lastScrollRef.current = scrollOffset
-        scrollYRef.current = scrollOffset
         updateScrollProperty(scrollOffset)
       }
 
@@ -157,8 +158,6 @@ export function useHeroParallax() {
   return {
     /** Ref to attach to the parallax container */
     containerRef,
-    /** Current scroll offset in pixels (read from ref, not state - doesn't trigger re-renders) */
-    scrollY: scrollYRef.current,
     /** Whether user is actively scrolling */
     isScrolling,
     /** Whether device supports parallax (non-touch) */
