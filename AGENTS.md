@@ -43,9 +43,63 @@ Git commit guidelines are documented in `.cursor/rules/git-commit-message-format
 
 <animation_standards>
 **NEVER add `prefers-reduced-motion` checks or similar accessibility media query conditionals to animation code.** Animations must work consistently for all users, so do not gate/short-circuit IntersectionObserver setup with accessibility or timing conditionals (including `requestAnimationFrame` wrappers).
+- Do not remove, simplify, or rewrite existing marketing-site animations unless the user explicitly asks for that exact animation change. Performance work must preserve the intended animation design, timing, and interaction model.
+- Treat scroll-triggered, hover, focus, cursor-following, parallax, counter, blur-transition, gradient-border, and ambient-motion components as user-facing behaviour. Any change to these systems requires browser verification.
+- When modifying animation code, read `documents/guides/_animations.md` before making changes and compare the implementation against that guide before reporting completion.
+- Preserve animation behaviour across desktop and mobile. Verify trigger timing, final state, console output, and visible layout stability in both viewports.
+- Do not hard-code animation behaviour to pass a single viewport or screenshot. Implement general logic that works across valid viewport sizes, route states, and repeated visits.
 </animation_standards>
 </frontend_design>
 </code_standards>
+
+<testing_rules>
+
+<validation_commands>
+Required validation before reporting completion:
+- `cd demo && npm run lint` - ESLint checks for the runnable Next.js app. Must pass with zero errors.
+- `cd demo && npm run build` - Production static export build plus sitemap generation. Must complete without errors.
+- Run targeted tests when a task adds a test file or when a relevant test command exists. This project currently has no `npm test` script and no configured Playwright suite.
+- If a required command cannot run because of missing dependencies, environment issues, or unrelated pre-existing failures, report the command, the exact failure summary, and the residual risk.
+</validation_commands>
+
+<dev_server_policy>
+LOCAL DEV SERVER POLICY (CRITICAL):
+- The only runnable app is `demo/`; do not run Next.js commands from the repo root.
+- Default dev URL for browser verification is `http://localhost:3001`.
+- The matching start command is `cd demo && npm run dev -- -p 3001`, which aligns with `.vscode/launch.json`.
+- Before any `dev-browser`, `agent-browser`, or manual browser testing, check whether `http://localhost:3001` is already serving the Bulma demo app.
+- If port `3001` is already serving the Bulma demo app, reuse it.
+- If port `3001` is not running, start it with `cd demo && npm run dev -- -p 3001`, wait for the URL to respond, then proceed.
+- If port `3001` is occupied by another service, start the demo on the next available port and state the URL used in the final validation summary.
+- For frontend UI verification, use `dev-browser` by default. Use `agent-browser` when the task needs more complex browser automation. Use Playwright only when browser automation is explicitly requested or when a Playwright suite is added.
+- Follow `.cursor/rules/dev-browser.mdc` whenever browser verification, screenshots, visual analysis, or UI interaction checks are required.
+</dev_server_policy>
+
+<ui_verification>
+VALIDATION GATE (CRITICAL):
+- Frontend behaviour changes require browser verification via `dev-browser` or `agent-browser`, unless the user explicitly says they will test the UI themselves.
+- Frontend behaviour includes rendering, layout, animation, scrolling, hover/focus/active states, loading/error/empty states, conditional visibility, navigation, forms, CTAs, pricing cards, screenshots, and page-level interactions.
+- A UI-affecting task is not complete until required automated checks and required browser checks pass.
+- If a required browser check is skipped, the final response must state the skipped check, the reason, and the residual risk.
+- The final response for UI-affecting tasks must include a validation summary covering automated checks, browser scenarios, viewport coverage, and outcomes.
+
+Responsive verification viewports:
+- Desktop: `1440x900`.
+- Mobile: `390x900`.
+
+Browser verification requirements:
+- Open every changed route or relevant page state.
+- Verify changed interactions directly instead of relying only on code inspection.
+- Check for horizontal overflow, console errors, page errors, clipped text, overlapping elements, and offscreen changed elements.
+- Capture screenshots using absolute filesystem paths when visual evidence is useful or when investigating a visual issue.
+- Analyse screenshots with specific evidence about the target elements. Do not use generic confirmations such as "looks good" or "appears correct" without explaining what was checked.
+
+IMPORTANT:
+- This project currently has no configured Playwright suite or Playwright npm script.
+- Keep browser verification focused on the active local demo URL and document which pages and interactions were checked.
+</ui_verification>
+
+</testing_rules>
 
 <code_architecture>
 Split distinct functionalities into separate modules and files, keeping code modular and focused
@@ -238,6 +292,7 @@ Here is a high level overview of the folder structure:
 ├── .cursor/                                    # Cursor IDE configuration
 │   ├── plans/                                  # Implementation plan documents
 │   └── rules/                                  # Cursor rules for code assistance
+│       ├── dev-browser.mdc                     # Browser verification and screenshot analysis rules
 │       ├── git-commit-message-format.mdc       # Git commit message conventions
 │       └── documentation-guidelines.mdc        # Documentation standards
 ├── .github/

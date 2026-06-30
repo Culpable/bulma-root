@@ -1,0 +1,113 @@
+---
+description: Use for dev-browser or agent-browser verification of Bulma marketing-site UI, animation, interaction, and responsive changes.
+globs: 
+alwaysApply: false
+---
+# Dev Browser Verification Rule
+
+## Scope
+
+Use this rule whenever a task needs browser verification for the Bulma marketing site, including:
+
+- Rendering, layout, styling, responsive, or content visibility changes.
+- Animation, scroll-trigger, hover, focus, active, loading, error, empty, or conditional UI behaviour.
+- Navigation, link, form, CTA, pricing-card, screenshot, hero, footer, or page-level interaction changes.
+- Visual parity checks when reusing components across pages or colour schemes.
+
+Do not use this rule for documentation-only edits, dependency-only maintenance, or non-UI code paths unless the task creates a user-visible browser effect.
+
+## Local Server Policy
+
+- The runnable app is `demo/`; the root is not a runnable Next.js app.
+- Default dev URL: `http://localhost:3001`.
+- Start command: `cd demo && npm run dev -- -p 3001`.
+- Before browser verification, check whether `http://localhost:3001` responds.
+- If port `3001` is already occupied by the correct Bulma demo server, reuse it.
+- If port `3001` is occupied by another service, start the demo on the next available port with `cd demo && npm run dev -- -p <port>` and state the URL used.
+- Wait for the page to respond before opening `dev-browser` or `agent-browser`.
+
+## Validation Gate
+
+Frontend behaviour changes are not complete until browser checks pass, unless the user explicitly says they will test the UI themselves.
+
+Required checks for UI-affecting work:
+
+- Open every changed route or page state in the browser.
+- Verify the changed interaction or animation directly.
+- Test desktop viewport `1440x900`.
+- Test mobile viewport `390x900`.
+- Check for horizontal overflow.
+- Check browser console errors and page errors.
+- Check that changed text does not overlap, clip, wrap poorly, or obscure adjacent content.
+- Save screenshots with absolute filesystem paths when visual evidence is useful or when investigating a visual issue.
+
+If a required browser check is skipped, the final response must state:
+
+- The skipped check.
+- The reason it was skipped.
+- The residual risk.
+
+## Screenshot Description Protocol
+
+After every screenshot capture, provide a focused analysis. Do not write generic confirmations such as "looks good", "appears correct", or "seems fine" without evidence.
+
+Focus only on:
+
+1. Elements directly related to the current request.
+2. Elements that changed or should have changed.
+3. Visible issues or discrepancies.
+4. Interactive elements the user needs to work with.
+
+Use this structure when screenshots are part of the work:
+
+```text
+## Screenshot Analysis - [Task Context]
+
+### 1. Target Element Assessment
+- Element A: [Precise description including position, size, colour, and state]
+- Element B: [Current state vs expected state]
+- Element C: [Visible discrepancy, if any]
+
+### 2. Text Content Verification
+- Primary text: [exact relevant text]
+- Labels/buttons being tested: [exact relevant labels]
+- Error or success messages: [exact relevant messages]
+
+### 3. Visual Measurements
+- Target component dimensions: [width]px x [height]px, where relevant
+- Spacing or alignment: [specific task-relevant finding]
+- Responsive behaviour: [desktop/mobile comparison]
+
+### 4. Task Completion Check
+- Requirement A: PASS/FAIL - [evidence]
+- Requirement B: PASS/FAIL - [evidence]
+- Requirement C: PASS/FAIL - [evidence]
+
+### 5. Issues Found
+- Issue 1: [specific issue and location]
+- Issue 2: [specific issue and location]
+
+### 6. Next Steps
+- [specific fix needed, or "No further changes needed"]
+```
+
+Use ASCII diagrams only when they clarify a layout issue, spacing issue, overlap, responsive shift, or component positioning problem.
+
+## Animation Checks
+
+For animation changes:
+
+- Verify the animation starts, progresses, and completes as intended.
+- Verify scroll-triggered animations at both desktop and mobile sizes.
+- Verify hover and focus states where animation responds to pointer or keyboard interaction.
+- Check that animations do not depend on `prefers-reduced-motion` branches, accessibility media queries, timing short-circuits, or `requestAnimationFrame` wrappers that bypass expected motion.
+- Confirm console output has no animation-related runtime errors.
+
+## Final Response Requirement
+
+For UI-affecting tasks, include a concise validation summary:
+
+- Automated checks run and result.
+- Browser routes and interactions checked.
+- Desktop/mobile viewport coverage.
+- Any skipped checks and residual risk.
