@@ -129,12 +129,14 @@ export function NavbarWithLinksActionsAndCenteredLogo({
   links,
   logo,
   actions,
+  mobileActions,
   className,
   ...props
 }: {
   links: ReactNode
   logo: ReactNode
   actions: ReactNode
+  mobileActions?: ReactNode
 } & ComponentProps<'header'>) {
   const scrolled = useScrolled(20)
   const mobileMenuDialogRef = useRef<HTMLDialogElement>(null)
@@ -142,6 +144,10 @@ export function NavbarWithLinksActionsAndCenteredLogo({
   const openMobileMenu = () => {
     const dialog = mobileMenuDialogRef.current
     if (!dialog) return
+
+    if (dialog.open) {
+      return
+    }
 
     if (typeof dialog.showModal === 'function') {
       dialog.showModal()
@@ -176,6 +182,7 @@ export function NavbarWithLinksActionsAndCenteredLogo({
     <header
       className={clsx(
         'sticky top-0 z-10 transition-all duration-300',
+        'relative',
         // Base background - solid when at top
         !scrolled && 'bg-mist-100 dark:bg-mist-950',
         // Glassmorphism when scrolled - semi-transparent with blur
@@ -195,9 +202,7 @@ export function NavbarWithLinksActionsAndCenteredLogo({
             <div className="flex shrink-0 items-center gap-5">{actions}</div>
 
             <button
-              command="show-modal"
-              commandfor="mobile-menu"
-              aria-label="Toggle menu"
+              aria-label="Open menu"
               onClick={openMobileMenu}
               className="inline-flex cursor-pointer rounded-full p-1.5 text-mist-950 hover:bg-mist-950/10 lg:hidden dark:text-white dark:hover:bg-white/10"
             >
@@ -214,12 +219,16 @@ export function NavbarWithLinksActionsAndCenteredLogo({
 
         <ElDialog className="lg:hidden">
           <dialog ref={mobileMenuDialogRef} id="mobile-menu" className="mobile-menu-dialog backdrop:bg-transparent">
-            <ElDialogPanel className="mobile-menu-panel fixed inset-0 overflow-y-auto bg-mist-100/90 px-6 py-6 backdrop-blur-xl backdrop-saturate-150 lg:px-10 dark:bg-mist-950/90">
+            <ElDialogPanel
+              aria-labelledby="mobile-menu-title"
+              className="mobile-menu-panel fixed inset-0 flex min-h-dvh flex-col overflow-y-auto bg-mist-100/90 px-6 py-6 backdrop-blur-xl backdrop-saturate-150 lg:px-10 dark:bg-mist-950/90"
+            >
+              <h2 id="mobile-menu-title" className="sr-only">
+                Mobile navigation
+              </h2>
               <div className="flex justify-end">
                 <button
-                  command="close"
-                  commandfor="mobile-menu"
-                  aria-label="Toggle menu"
+                  aria-label="Close menu"
                   onClick={closeMobileMenu}
                   className="inline-flex cursor-pointer rounded-full p-1.5 text-mist-950 hover:bg-mist-950/10 dark:text-white dark:hover:bg-white/10"
                 >
@@ -238,10 +247,16 @@ export function NavbarWithLinksActionsAndCenteredLogo({
               <div className="mobile-menu-links mt-6 flex flex-col gap-6" onClick={handleMobileMenuLinkClick}>
                 {links}
               </div>
+              {mobileActions && (
+                <div className="mobile-menu-actions mt-auto grid gap-3 pt-10" onClick={handleMobileMenuLinkClick}>
+                  {mobileActions}
+                </div>
+              )}
             </ElDialogPanel>
           </dialog>
         </ElDialog>
       </nav>
+      <span className="navbar-glow" aria-hidden="true" />
     </header>
   )
 }

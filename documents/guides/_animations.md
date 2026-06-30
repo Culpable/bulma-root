@@ -1468,6 +1468,7 @@ Animated gradient glow line along navbar bottom edge when scrolled, adding life 
 **Files:**
 - `demo/src/app/globals.css` — Glow keyframes and classes
 - `demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx` — Glow integration
+- `demo/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx` — Glow integration for the active site layout
 
 **Animation behavior:**
 - Glow line appears when navbar is scrolled (glassmorphism state)
@@ -2388,15 +2389,15 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 
 **Mobile menu:**
 
-- The three demo navbar variants add explicit open/close handlers around the native `dialog#mobile-menu`; this keeps the menu reliable in browsers that do not honour `command="show-modal"` while preserving `dialog[open]` as the CSS trigger.
+- `NavbarWithLinksActionsAndCenteredLogo`, the active app navbar, uses explicit React open/close handlers around the native `dialog#mobile-menu`; this keeps the menu reliable without combining native command attributes with manual `showModal()` calls, while preserving `dialog[open]` as the CSS trigger.
 - `globals.css` owns `.mobile-menu-dialog`, `.mobile-menu-panel`, `.mobile-menu-links`, `.mobile-menu-close-icon`, and the `mobile-menu-panel-enter`, `mobile-menu-link-enter`, and `mobile-menu-close-enter` keyframes.
-- The panel uses the navbar glass surface (`bg-mist-100/90` or `bg-mist-950/90`, `backdrop-blur-xl`, `backdrop-saturate-150`) and animates via `opacity` plus `transform`. Links rise with 60ms staggered delays through `dialog[open] .mobile-menu-links > *`; no JS timeline or scroll listener drives the choreography.
+- The panel uses the navbar glass surface (`bg-mist-100/90` or `bg-mist-950/90`, `backdrop-blur-xl`, `backdrop-saturate-150`) and animates via `opacity` plus `transform`. Links rise with 60ms staggered delays through `dialog[open] .mobile-menu-links > *`; pinned `.mobile-menu-actions` sit at the bottom of the flex panel without their own JS timeline.
 
 **Contact form:**
 
 - `ContactForm` keeps the existing `isSubmitting` and `submitStatus` state, resets feedback on form edits, and applies state classes instead of adding a new animation dependency.
 - `globals.css` owns `.contact-form-card`, `.contact-field`, `.contact-input`, `.contact-status`, `.contact-submit-button`, and `contact-submit-spin`.
-- Focus glow is a card pseudo-element activated by `:focus-within`; labels tint through `.contact-field:has(:is(input, textarea):focus)`. Submit state morphs the fixed-width button into a circular spinner with a conic-gradient mask, then into `AnimatedCheckmarkIcon` when `submitStatus.success` resolves. The success panel reuses `.faq-spring-content`.
+- Focus glow is a card pseudo-element activated by `:focus-within`; labels tint through `.contact-field:has(:is(input, textarea):focus)`. Submit state morphs the fixed-width button into a circular spinner with a conic-gradient mask, then into `AnimatedCheckmarkIcon` when `submitStatus.success` resolves. The success panel reuses `.faq-spring-content`; failed submissions set `data-recovery="true"` on each `.contact-field` so field hints enter with the same spring timing.
 
 **Global polish:**
 
@@ -2406,5 +2407,5 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 **Points of error:**
 
 - The footer wordmark observer threshold is intentionally low (`0.01`) with a positive bottom root margin so the sweep triggers on mobile, where only the cropped lower wordmark may enter the viewport.
-- Do not remove the explicit navbar open/close handlers unless the supported browser set reliably supports `command` and `commandfor` on dialog controls.
+- Do not mix explicit navbar open/close handlers with `command="show-modal"` and `command="close"` on the same dialog controls because that can issue duplicate native dialog commands.
 - The contact submit success choreography depends on the Formspree request resolving successfully; browser visual tests should mock or avoid the external submission unless a real test message is explicitly authorised.

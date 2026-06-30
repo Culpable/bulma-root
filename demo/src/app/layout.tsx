@@ -124,6 +124,16 @@ export default function RootLayout({
                 <ButtonLink href="https://app.bulma.com.au/register">Get started</ButtonLink>
               </>
             }
+            mobileActions={
+              <>
+                <ButtonLink href="https://app.bulma.com.au/register" className="w-full justify-center">
+                  Get started
+                </ButtonLink>
+                <PlainButtonLink href="https://app.bulma.com.au/login" className="w-full justify-center">
+                  Log in
+                </PlainButtonLink>
+              </>
+            }
           />
 
           <HueShiftProvider>

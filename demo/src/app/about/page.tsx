@@ -46,6 +46,7 @@ export default function Page() {
       {/* Stats */}
       <StatsAnimatedGraph
         id="stats"
+        className="content-visibility-stats"
         eyebrow="Growing with brokers"
         headline="The policy assistant Australian brokers rely on."
         subheadline={
@@ -64,6 +65,7 @@ export default function Page() {
       {/* Testimonial */}
       <TestimonialTwoColumnWithLargePhoto
         id="testimonial"
+        className="content-visibility-testimonials"
         quote={
           <p>
             Bulma has genuinely changed how I work. I used to dread the policy research part of complex applications.
@@ -85,6 +87,7 @@ export default function Page() {
       {/* Team */}
       <TeamFourColumnGrid
         id="team"
+        className="content-visibility-team"
         headline="Our team"
         subheadline={
           <p>

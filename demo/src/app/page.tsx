@@ -1,10 +1,10 @@
 import { AnnouncementBadge } from '@/components/elements/announcement-badge'
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
 import { Link } from '@/components/elements/link'
+import { FeatureScreenshotLeft, FeatureScreenshotRight, HeroScreenshot } from '@/components/elements/responsive-screenshot'
 import { Screenshot } from '@/components/elements/screenshot'
 import { ScrollHighlight } from '@/components/elements/scroll-highlight'
 import { SupportedLendersField } from '@/components/elements/supported-lenders-field'
-import { ThemePicture } from '@/components/elements/theme-picture'
 import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { ArrowLeftArrowRightIcon } from '@/components/icons/arrow-left-arrow-right-icon'
 import { ChatBubbleCircleEllipsisIcon } from '@/components/icons/chat-bubble-circle-ellipsis-icon'
@@ -224,42 +224,9 @@ export default function Page() {
         }
         demo={
           <>
-            {/* Mobile/tablet screenshot (P-1, P-2, J-1: LCP image optimization with <picture>) */}
-            <Screenshot className="rounded-md lg:hidden" wallpaper="blue" placement="bottom-right" enableReflection>
-              {/* Mobile (<768px): Uses ThemePicture to prevent downloading both dark/light variants */}
-              <ThemePicture
-                srcLight="/img/screenshots/1-left-1670-top-1408.webp"
-                srcDark="/img/screenshots/1-color-mist-left-1670-top-1408.webp"
-                alt={heroScreenshotAlt}
-                width={1670}
-                height={1408}
-                loading="eager"
-                fetchPriority="high"
-                className="md:hidden"
-              />
-              {/* Tablet (768px-1023px): Uses ThemePicture for theme-aware loading */}
-              <ThemePicture
-                srcLight="/img/screenshots/1-left-2000-top-1408.webp"
-                srcDark="/img/screenshots/1-color-mist-left-2000-top-1408.webp"
-                alt={heroScreenshotAlt}
-                width={2000}
-                height={1408}
-                loading="eager"
-                fetchPriority="high"
-                className="max-md:hidden"
-              />
-            </Screenshot>
-            {/* Desktop screenshot (P-1, P-2, J-1: LCP image optimization with <picture>) */}
-            <Screenshot className="rounded-lg max-lg:hidden" wallpaper="blue" placement="bottom" enableReflection>
-              <ThemePicture
-                srcLight="/img/screenshots/1.webp"
-                srcDark="/img/screenshots/1-color-mist.webp"
-                alt={heroScreenshotAlt}
-                width={3440}
-                height={1990}
-                loading="eager"
-                fetchPriority="high"
-              />
+            {/* Use one viewport-aware picture so only the active hero crop is fetched eagerly. */}
+            <Screenshot className="rounded-md lg:rounded-lg" wallpaper="blue" placement="bottom" enableReflection>
+              <HeroScreenshot alt={heroScreenshotAlt} loading="eager" fetchPriority="high" />
             </Screenshot>
           </>
         }
@@ -287,43 +254,7 @@ export default function Page() {
             <Feature
               demo={
                 <Screenshot wallpaper="purple" placement="bottom-right">
-                  {/* J-1: ThemePicture prevents downloading both dark/light variants */}
-                  {/* Mobile (<640px) */}
-                  <ThemePicture
-                    srcLight="/img/screenshots/1-left-1000-top-800.webp"
-                    srcDark="/img/screenshots/1-color-mist-left-1000-top-800.webp"
-                    alt={policyQaScreenshotAlt}
-                    width={1000}
-                    height={800}
-                    className="sm:hidden"
-                  />
-                  {/* Tablet (640px-1023px) */}
-                  <ThemePicture
-                    srcLight="/img/screenshots/1-left-1800-top-660.webp"
-                    srcDark="/img/screenshots/1-color-mist-left-1800-top-660.webp"
-                    alt={policyQaScreenshotAlt}
-                    width={1800}
-                    height={660}
-                    className="max-sm:hidden lg:hidden"
-                  />
-                  {/* Desktop-md (1024px-1279px) */}
-                  <ThemePicture
-                    srcLight="/img/screenshots/1-left-1300-top-1300.webp"
-                    srcDark="/img/screenshots/1-color-mist-left-1300-top-1300.webp"
-                    alt={policyQaScreenshotAlt}
-                    width={1300}
-                    height={1300}
-                    className="max-lg:hidden xl:hidden"
-                  />
-                  {/* Desktop-lg (≥1280px) */}
-                  <ThemePicture
-                    srcLight="/img/screenshots/1-left-1800-top-1250.webp"
-                    srcDark="/img/screenshots/1-color-mist-left-1800-top-1250.webp"
-                    alt={policyQaScreenshotAlt}
-                    width={1800}
-                    height={1250}
-                    className="max-xl:hidden"
-                  />
+                  <FeatureScreenshotLeft alt={policyQaScreenshotAlt} />
                 </Screenshot>
               }
               icon={<ChatBubbleCircleEllipsisIcon className="size-5" />}
@@ -343,43 +274,7 @@ export default function Page() {
             <Feature
               demo={
                 <Screenshot wallpaper="blue" placement="bottom-left">
-                  {/* J-1: ThemePicture prevents downloading both dark/light variants */}
-                  {/* Mobile (<640px) */}
-                  <ThemePicture
-                    srcLight="/img/screenshots/1-right-1000-top-800.webp"
-                    srcDark="/img/screenshots/1-color-mist-right-1000-top-800.webp"
-                    alt={lenderComparisonScreenshotAlt}
-                    width={1000}
-                    height={800}
-                    className="sm:hidden"
-                  />
-                  {/* Tablet (640px-1023px) */}
-                  <ThemePicture
-                    srcLight="/img/screenshots/1-right-1800-top-660.webp"
-                    srcDark="/img/screenshots/1-color-mist-right-1800-top-660.webp"
-                    alt={lenderComparisonScreenshotAlt}
-                    width={1800}
-                    height={660}
-                    className="max-sm:hidden lg:hidden"
-                  />
-                  {/* Desktop-md (1024px-1279px) */}
-                  <ThemePicture
-                    srcLight="/img/screenshots/1-right-1300-top-1300.webp"
-                    srcDark="/img/screenshots/1-color-mist-right-1300-top-1300.webp"
-                    alt={lenderComparisonScreenshotAlt}
-                    width={1300}
-                    height={1300}
-                    className="max-lg:hidden xl:hidden"
-                  />
-                  {/* Desktop-lg (≥1280px) */}
-                  <ThemePicture
-                    srcLight="/img/screenshots/1-right-1800-top-1250.webp"
-                    srcDark="/img/screenshots/1-color-mist-right-1800-top-1250.webp"
-                    alt={lenderComparisonScreenshotAlt}
-                    width={1800}
-                    height={1250}
-                    className="max-xl:hidden"
-                  />
+                  <FeatureScreenshotRight alt={lenderComparisonScreenshotAlt} />
                 </Screenshot>
               }
               icon={<ArrowLeftArrowRightIcon className="size-5" />}

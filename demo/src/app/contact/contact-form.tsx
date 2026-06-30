@@ -26,6 +26,7 @@ export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState({ success: false, error: null as string | null })
   const hasSubmitFeedback = submitStatus.success || Boolean(submitStatus.error)
+  const showRecoveryHints = Boolean(submitStatus.error)
 
   function handleFormChange() {
     if (!hasSubmitFeedback) {
@@ -116,7 +117,10 @@ export function ContactForm() {
   }
 
   return (
-    <div className="contact-form-card h-full rounded-3xl bg-white/70 p-8 shadow-sm ring-1 ring-mist-950/10 dark:bg-white/5 dark:ring-white/10">
+    <div
+      id="contact-form"
+      className="contact-form-card h-full rounded-3xl bg-white/70 p-8 shadow-sm ring-1 ring-mist-950/10 dark:bg-white/5 dark:ring-white/10"
+    >
       {/* Frame the form intent to make it clear what information is needed. */}
       <div>
         <h2 className="text-2xl/8 font-medium tracking-tight text-mist-950 dark:text-white">Send a message</h2>
@@ -134,7 +138,7 @@ export function ContactForm() {
         onSubmit={handleSubmit}
       >
         <input type="hidden" name="form_source" value="contact_page" />
-        <div className="contact-field">
+        <div className="contact-field" data-recovery={showRecoveryHints ? 'true' : undefined}>
           <label
             htmlFor="contact-name"
             className="contact-field__label text-sm/6 font-semibold text-mist-600 dark:text-mist-400"
@@ -147,12 +151,18 @@ export function ContactForm() {
             type="text"
             autoComplete="name"
             required
+            aria-describedby={showRecoveryHints ? 'contact-name-recovery' : undefined}
             className="contact-input mt-2 w-full rounded-2xl border border-mist-200 bg-white px-4 py-3 text-base/7 text-mist-950 shadow-sm placeholder:text-mist-400 focus:border-mist-950 focus:ring-4 focus:ring-mist-950/10 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-mist-500 dark:focus:border-white dark:focus:ring-white/10"
             placeholder="Alex Broker"
           />
+          {showRecoveryHints && (
+            <p id="contact-name-recovery" className="contact-field__recovery mt-2 text-sm/6 text-mist-600 dark:text-mist-300">
+              Use the name we should address in our reply.
+            </p>
+          )}
         </div>
 
-        <div className="contact-field">
+        <div className="contact-field" data-recovery={showRecoveryHints ? 'true' : undefined}>
           <label
             htmlFor="contact-email"
             className="contact-field__label text-sm/6 font-semibold text-mist-600 dark:text-mist-400"
@@ -165,12 +175,18 @@ export function ContactForm() {
             type="email"
             autoComplete="email"
             required
+            aria-describedby={showRecoveryHints ? 'contact-email-recovery' : undefined}
             className="contact-input mt-2 w-full rounded-2xl border border-mist-200 bg-white px-4 py-3 text-base/7 text-mist-950 shadow-sm placeholder:text-mist-400 focus:border-mist-950 focus:ring-4 focus:ring-mist-950/10 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-mist-500 dark:focus:border-white dark:focus:ring-white/10"
             placeholder="alex@brokerage.com.au"
           />
+          {showRecoveryHints && (
+            <p id="contact-email-recovery" className="contact-field__recovery mt-2 text-sm/6 text-mist-600 dark:text-mist-300">
+              Check this is the inbox where we can reach you.
+            </p>
+          )}
         </div>
 
-        <div className="contact-field">
+        <div className="contact-field" data-recovery={showRecoveryHints ? 'true' : undefined}>
           <label
             htmlFor="contact-message"
             className="contact-field__label text-sm/6 font-semibold text-mist-600 dark:text-mist-400"
@@ -182,18 +198,28 @@ export function ContactForm() {
             name="message"
             rows={4}
             required
+            aria-describedby={showRecoveryHints ? 'contact-message-recovery' : undefined}
             className="contact-input mt-2 w-full rounded-2xl border border-mist-200 bg-white px-4 py-3 text-base/7 text-mist-950 shadow-sm placeholder:text-mist-400 focus:border-mist-950 focus:ring-4 focus:ring-mist-950/10 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-mist-500 dark:focus:border-white dark:focus:ring-white/10"
             placeholder="Tell us about the policy questions or workflows you want to improve."
           />
+          {showRecoveryHints && (
+            <p id="contact-message-recovery" className="contact-field__recovery mt-2 text-sm/6 text-mist-600 dark:text-mist-300">
+              Include the lender, workflow, or brokerage question you want us to help with.
+            </p>
+          )}
         </div>
 
         {submitStatus.error && (
-          <p
+          <div
             role="alert"
-            className="contact-status contact-status--error rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm/6 text-rose-700"
+            className="contact-status contact-status--error rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm/6 text-rose-800 dark:border-rose-400/30 dark:bg-rose-400/10 dark:text-rose-100"
           >
-            {submitStatus.error}
-          </p>
+            <p className="font-semibold">Message not sent</p>
+            <p className="mt-1">{submitStatus.error}</p>
+            <a className="mt-2 inline-flex font-semibold underline underline-offset-2" href="mailto:solutions@bulma.com.au">
+              Email solutions@bulma.com.au
+            </a>
+          </div>
         )}
 
         {submitStatus.success && (

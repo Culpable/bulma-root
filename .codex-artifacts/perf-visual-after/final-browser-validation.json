@@ -1,0 +1,158 @@
+{
+  "states": [
+    {
+      "name": "home desktop light hero",
+      "url": "http://localhost:3001/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "colorScheme": "light",
+      "scrollWidth": 1800,
+      "clientWidth": 1800,
+      "overflowX": false,
+      "bodyText": "Pricing\nContact\nLog in\nGet started\nNow covering all major Australian lenders\nSee the list\nYour AI assistant for policy questions.\n\nBulma helps Australian mortgage brokers get instant, source-cited answers to lender policy questions. No more digging through PDFs and portals.\n\nTry Bulma free\nSee it in action\nSUPPORTED LENDERS\nCommonwealth Bank\nWestpac\nNAB\nANZ\nMacquarie\nBankwest\nBank of Queensland\nBendigo Bank\nSuncorp\nING\nAMP Bank\nSt George\nUBank\nME Bank\nAdelaide Bank\nBank Australia\nHeritage Bank\nGreat Southern Bank\nBeyond Bank\nAuswide Bank\nBank of Sydney\nMyState\nPolice & Nurses\nTeachers Mutual Bank\nLiberty Financial\nPepper Money\nResimac\nFirstmac\nLa Trobe Financial\nBluestone\nAthena\nMA Money\nRed",
+      "activeElement": ":root { --scroll-padding-top: 5.25rem }PricingContactLog inLog inGet startedMobi"
+    },
+    {
+      "name": "home mobile dark hero",
+      "url": "http://localhost:3001/",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "colorScheme": "dark",
+      "scrollWidth": 487,
+      "clientWidth": 487,
+      "overflowX": false,
+      "bodyText": "Get started\nNow covering all major Australian lenders\nSee the list\nYour AI assistant for policy questions.\n\nBulma helps Australian mortgage brokers get instant, source-cited answers to lender policy questions. No more digging through PDFs and portals.\n\nTry Bulma free\nSee it in action\nSUPPORTED LENDERS\nCommonwealth Bank\nWestpac\nNAB\nANZ\nMacquarie\nBankwest\nBank of Queensland\nBendigo Bank\nSuncorp\nING\nAMP Bank\nSt George\nUBank\nME Bank\nAdelaide Bank\nBank Australia\nHeritage Bank\nGreat Southern Bank\nBeyond Bank\nAuswide Bank\nBank of Sydney\nMyState\nPolice & Nurses\nTeachers Mutual Bank\nLiberty Financial\nPepper Money\nResimac\nFirstmac\nLa Trobe Financial\nBluestone\nAthena\nMA Money\nRedZed\nAdvantedge\nAFG\nKeys",
+      "activeElement": ":root { --scroll-padding-top: 5.25rem }PricingContactLog inLog inGet startedMobi"
+    },
+    {
+      "name": "pricing desktop dark yearly",
+      "url": "http://localhost:3001/pricing/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "colorScheme": "dark",
+      "scrollWidth": 1800,
+      "clientWidth": 1800,
+      "overflowX": false,
+      "bodyText": "Pricing\nContact\nLog in\nGet started\nSimple pricing for every brokerage\n\nChoose the plan that fits your team. All plans include unlimited policy questions and full lender coverage.\n\nMonthly\nYearly\n\nGet 2 months free on a yearly plan.\n\nSolo\n\n$\n \n4\n4\n9\n9\n0\n/year\nSave $98 compared with monthly\n\nFor individual brokers getting started\n\nUnlimited policy questions\n\nPolicy coverage across 36 lenders\n\nCross-lender comparisons\n\nSource attribution on every answer\n\nConversation history\n\nEmail support\n\nBonuses\n\nFree 1 month of Track My Trail for yearly Solo signups.\n\nStart free trial\nMost popular\nTeam\n\n$\n \n9\n9\n9\n0\n/year\nSave $198 compared with monthly\n\nFor growing brokerages with multiple users\n\nEverything",
+      "activeElement": "Yearly"
+    },
+    {
+      "name": "pricing mobile light comparison sticky",
+      "url": "http://localhost:3001/pricing/",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "colorScheme": "light",
+      "scrollWidth": 487,
+      "clientWidth": 487,
+      "overflowX": false,
+      "bodyText": "Get started\nSimple pricing for every brokerage\n\nChoose the plan that fits your team. All plans include unlimited policy questions and full lender coverage.\n\nMonthly\nYearly\n\nGet 2 months free on a yearly plan.\n\nSolo\n\n$\n4\n9\n/month\nSwitch yearly to save $98\n\nFor individual brokers getting started\n\nUnlimited policy questions\n\nPolicy coverage across 36 lenders\n\nCross-lender comparisons\n\nSource attribution on every answer\n\nConversation history\n\nEmail support\n\nSwitch to yearly billing to unlock a Track My Trail signup bonus.\n\nStart free trial\nMost popular\nTeam\n\n$\n9\n9\n/month\nSwitch yearly to save $198\n\nFor growing brokerages with multiple users\n\nEverything in Solo\n\nUp to 5 team members\n\nPriority sup",
+      "activeElement": "Team"
+    },
+    {
+      "name": "pricing mobile light final cta",
+      "url": "http://localhost:3001/pricing/",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "colorScheme": "light",
+      "scrollWidth": 487,
+      "clientWidth": 487,
+      "overflowX": false,
+      "bodyText": "Get started\nSimple pricing for every brokerage\n\nChoose the plan that fits your team. All plans include unlimited policy questions and full lender coverage.\n\nMonthly\nYearly\n\nGet 2 months free on a yearly plan.\n\nSolo\n\n$\n4\n9\n/month\nSwitch yearly to save $98\n\nFor individual brokers getting started\n\nUnlimited policy questions\n\nPolicy coverage across 36 lenders\n\nCross-lender comparisons\n\nSource attribution on every answer\n\nConversation history\n\nEmail support\n\nSwitch to yearly billing to unlock a Track My Trail signup bonus.\n\nStart free trial\nMost popular\nTeam\n\n$\n9\n9\n/month\nSwitch yearly to save $198\n\nFor growing brokerages with multiple users\n\nEverything in Solo\n\nUp to 5 team members\n\nPriority sup",
+      "activeElement": ":root { --scroll-padding-top: 5.25rem }PricingContactLog inLog inGet startedMobi"
+    },
+    {
+      "name": "contact desktop light default",
+      "url": "http://localhost:3001/contact/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "colorScheme": "light",
+      "scrollWidth": 1800,
+      "clientWidth": 1800,
+      "overflowX": false,
+      "bodyText": "Pricing\nContact\nLog in\nGet started\nContact\nTalk to the Bulma team.\nWhether you need help with lender policy research, broker onboarding, or pricing, we are here to help you move faster with confidence.\nWhat to expect\nFast answers for complex policy questions.\n\nTell us about your brokerage, the lender policies you wrestle with, or the workflows you want to streamline. We will respond with practical next steps and a tailored demo plan.\n\nCommon requests\nPolicy Q&A coverage for specific lenders or niches.\nTeam onboarding, permissions, and shared knowledge.\nPricing, procurement, and rollout timelines.\nPrefer email?\n\nReach us at solutions@bulma.com.au.\n\nSend a message\n\nShare a few details and we w",
+      "activeElement": ":root { --scroll-padding-top: 5.25rem }PricingContactLog inLog inGet startedMobi"
+    },
+    {
+      "name": "contact mobile light focus",
+      "url": "http://localhost:3001/contact/",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "colorScheme": "light",
+      "scrollWidth": 487,
+      "clientWidth": 487,
+      "overflowX": false,
+      "bodyText": "Get started\nContact\nTalk to the Bulma team.\nWhether you need help with lender policy research, broker onboarding, or pricing, we are here to help you move faster with confidence.\nWhat to expect\nFast answers for complex policy questions.\n\nTell us about your brokerage, the lender policies you wrestle with, or the workflows you want to streamline. We will respond with practical next steps and a tailored demo plan.\n\nCommon requests\nPolicy Q&A coverage for specific lenders or niches.\nTeam onboarding, permissions, and shared knowledge.\nPricing, procurement, and rollout timelines.\nPrefer email?\n\nReach us at solutions@bulma.com.au.\n\nSend a message\n\nShare a few details and we will get back to you wit",
+      "activeElement": "INPUT"
+    },
+    {
+      "name": "about desktop light stats",
+      "url": "http://localhost:3001/about/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "colorScheme": "light",
+      "scrollWidth": 1800,
+      "clientWidth": 1800,
+      "overflowX": false,
+      "bodyText": "Pricing\nContact\nLog in\nGet started\nBuilt by brokers, for brokers.\n\nWe know firsthand how much time gets lost to policy research. Bulma was created to give that time back - so you can focus on what matters most: your clients.\n\nGrowing with brokers\nThe policy assistant Australian brokers rely on.\n\nBulma helps mortgage brokers across Australia find policy answers faster, match clients to the right lenders, and close more deals with confidence. We're growing every day alongside the brokers who use us.\n\n13\n\nMajor Australian lenders covered, with policies updated regularly.\n\nSeconds\n\nAverage time to answer - compared to hours of manual research.\n\nBulma has genuinely changed how I work. I used to d",
+      "activeElement": ":root { --scroll-padding-top: 5.25rem }PricingContactLog inLog inGet startedMobi"
+    },
+    {
+      "name": "about mobile light team",
+      "url": "http://localhost:3001/about/",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "colorScheme": "light",
+      "scrollWidth": 487,
+      "clientWidth": 487,
+      "overflowX": false,
+      "bodyText": "Get started\nBuilt by brokers, for brokers.\n\nWe know firsthand how much time gets lost to policy research. Bulma was created to give that time back - so you can focus on what matters most: your clients.\n\nGrowing with brokers\nThe policy assistant Australian brokers rely on.\n\nBulma helps mortgage brokers across Australia find policy answers faster, match clients to the right lenders, and close more deals with confidence. We're growing every day alongside the brokers who use us.\n\n0\n\nMajor Australian lenders covered, with policies updated regularly.\n\nSeconds\n\nAverage time to answer - compared to hours of manual research.\n\nBulma has genuinely changed how I work. I used to dread the policy research",
+      "activeElement": ":root { --scroll-padding-top: 5.25rem }PricingContactLog inLog inGet startedMobi"
+    },
+    {
+      "name": "home mobile light menu open",
+      "url": "http://localhost:3001/",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "colorScheme": "light",
+      "scrollWidth": 487,
+      "clientWidth": 487,
+      "overflowX": false,
+      "bodyText": "Get started\nMobile navigation\nPricing\nContact\nLog in\nGet started\nLog in\nNow covering all major Australian lenders\nSee the list\nYour AI assistant for policy questions.\n\nBulma helps Australian mortgage brokers get instant, source-cited answers to lender policy questions. No more digging through PDFs and portals.\n\nTry Bulma free\nSee it in action\nSUPPORTED LENDERS\nCommonwealth Bank\nWestpac\nNAB\nANZ\nMacquarie\nBankwest\nBank of Queensland\nBendigo Bank\nSuncorp\nING\nAMP Bank\nSt George\nUBank\nME Bank\nAdelaide Bank\nBank Australia\nHeritage Bank\nGreat Southern Bank\nBeyond Bank\nAuswide Bank\nBank of Sydney\nMyState\nPolice & Nurses\nTeachers Mutual Bank\nLiberty Financial\nPepper Money\nResimac\nFirstmac\nLa Trobe Fi",
+      "activeElement": "Close menu"
+    }
+  ],
+  "unexpectedConsoleErrors": [],
+  "warnings": [
+    {
+      "type": "warning",
+      "text": "Image with src \"/img/photos/1.webp\" was detected as the Largest Contentful Paint (LCP). Please add the `loading=\"eager\"` property if this image is above the fold.\nRead more: https://nextjs.org/docs/app/api-reference/components/image#loading",
+      "url": "http://localhost:3001/about/"
+    },
+    {
+      "type": "warning",
+      "text": "Image with src \"/img/avatars/16-h-1000-w-1400.webp\" was detected as the Largest Contentful Paint (LCP). Please add the `loading=\"eager\"` property if this image is above the fold.\nRead more: https://nextjs.org/docs/app/api-reference/components/image#loading",
+      "url": "http://localhost:3001/about/"
+    }
+  ],
+  "pageErrors": []
+}

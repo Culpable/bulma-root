@@ -1,0 +1,45 @@
+{
+  "consoleEvents": [
+    {
+      "type": "warning",
+      "text": "A command attempted to open an already open Dialog as a modal",
+      "url": "http://localhost:3001/"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "url": "http://localhost:3001/contact/"
+    },
+    {
+      "type": "error",
+      "text": "Contact form submission error: Error: Forced validation failure\n    at handleSubmit (http://localhost:3001/_next/static/chunks/_8b0401a5._.js:442:23)",
+      "url": "http://localhost:3001/contact/"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "url": "http://localhost:3001/contact/"
+    },
+    {
+      "type": "error",
+      "text": "Contact form submission error: Error: Forced validation failure\n    at handleSubmit (http://localhost:3001/_next/static/chunks/_8b0401a5._.js:442:23)",
+      "url": "http://localhost:3001/contact/"
+    },
+    {
+      "type": "warning",
+      "text": "Image with src \"/img/photos/1.webp\" was detected as the Largest Contentful Paint (LCP). Please add the `loading=\"eager\"` property if this image is above the fold.\nRead more: https://nextjs.org/docs/app/api-reference/components/image#loading",
+      "url": "http://localhost:3001/about/"
+    },
+    {
+      "type": "warning",
+      "text": "Image with src \"/img/photos/1.webp\" was detected as the Largest Contentful Paint (LCP). Please add the `loading=\"eager\"` property if this image is above the fold.\nRead more: https://nextjs.org/docs/app/api-reference/components/image#loading",
+      "url": "http://localhost:3001/about/"
+    },
+    {
+      "type": "warning",
+      "text": "Image with src \"/img/avatars/16-h-1000-w-1400.webp\" was detected as the Largest Contentful Paint (LCP). Please add the `loading=\"eager\"` property if this image is above the fold.\nRead more: https://nextjs.org/docs/app/api-reference/components/image#loading",
+      "url": "http://localhost:3001/about/"
+    }
+  ],
+  "pageErrors": []
+}

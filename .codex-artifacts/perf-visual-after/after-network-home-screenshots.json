@@ -1,0 +1,57 @@
+{
+  "responses": [
+    {
+      "url": "http://localhost:3001/img/screenshots/1.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "url": "http://localhost:3001/img/screenshots/1-left-1800-top-1250.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "url": "http://localhost:3001/img/screenshots/1-right-1800-top-1250.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "url": "http://localhost:3001/img/avatars/15-size-160.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "url": "http://localhost:3001/img/avatars/10-size-160.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "url": "http://localhost:3001/img/avatars/13-size-160.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    }
+  ],
+  "resourceEntries": [
+    {
+      "name": "http://localhost:3001/img/screenshots/1.webp",
+      "transferSize": 90606,
+      "encodedBodySize": 90306,
+      "decodedBodySize": 90306,
+      "initiatorType": "img"
+    },
+    {
+      "name": "http://localhost:3001/img/screenshots/1-left-1800-top-1250.webp",
+      "transferSize": 38948,
+      "encodedBodySize": 38648,
+      "decodedBodySize": 38648,
+      "initiatorType": "img"
+    },
+    {
+      "name": "http://localhost:3001/img/screenshots/1-right-1800-top-1250.webp",
+      "transferSize": 37798,
+      "encodedBodySize": 37498,
+      "decodedBodySize": 37498,
+      "initiatorType": "img"
+    }
+  ]
+}

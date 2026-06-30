@@ -1,0 +1,81 @@
+{
+  "responses": [
+    {
+      "url": "http://localhost:3001/img/screenshots/1-left-1670-top-1408.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "url": "http://localhost:3001/img/screenshots/1-left-2000-top-1408.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "url": "http://localhost:3001/img/screenshots/1.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "url": "http://localhost:3001/img/screenshots/1-left-1800-top-1250.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "url": "http://localhost:3001/img/screenshots/1-right-1800-top-1250.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "url": "http://localhost:3001/img/avatars/15-size-160.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "url": "http://localhost:3001/img/avatars/13-size-160.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    },
+    {
+      "url": "http://localhost:3001/img/avatars/10-size-160.webp",
+      "status": 200,
+      "fromServiceWorker": false
+    }
+  ],
+  "resourceEntries": [
+    {
+      "name": "http://localhost:3001/img/screenshots/1-left-1670-top-1408.webp",
+      "transferSize": 113590,
+      "encodedBodySize": 113290,
+      "decodedBodySize": 113290,
+      "initiatorType": "img"
+    },
+    {
+      "name": "http://localhost:3001/img/screenshots/1-left-2000-top-1408.webp",
+      "transferSize": 131874,
+      "encodedBodySize": 131574,
+      "decodedBodySize": 131574,
+      "initiatorType": "img"
+    },
+    {
+      "name": "http://localhost:3001/img/screenshots/1.webp",
+      "transferSize": 508480,
+      "encodedBodySize": 508180,
+      "decodedBodySize": 508180,
+      "initiatorType": "img"
+    },
+    {
+      "name": "http://localhost:3001/img/screenshots/1-left-1800-top-1250.webp",
+      "transferSize": 104484,
+      "encodedBodySize": 104184,
+      "decodedBodySize": 104184,
+      "initiatorType": "img"
+    },
+    {
+      "name": "http://localhost:3001/img/screenshots/1-right-1800-top-1250.webp",
+      "transferSize": 81108,
+      "encodedBodySize": 80808,
+      "decodedBodySize": 80808,
+      "initiatorType": "img"
+    }
+  ]
+}

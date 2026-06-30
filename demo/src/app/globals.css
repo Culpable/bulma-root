@@ -197,6 +197,11 @@
   contain-intrinsic-size: auto 600px;
 }
 
+.content-visibility-team {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
 .content-visibility-faqs {
   content-visibility: auto;
   contain-intrinsic-size: auto 500px;
@@ -826,6 +831,22 @@
     border-color 180ms ease-out,
     box-shadow 180ms ease-out,
     background-color 180ms ease-out;
+}
+
+.contact-field[data-recovery='true'] .contact-input {
+  border-color: oklch(72.3% 0.014 214.4);
+  box-shadow: 0 0 0 3px oklch(72.3% 0.014 214.4 / 0.16);
+}
+
+.contact-field__recovery {
+  animation: faq-spring-open 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@variant dark {
+  .contact-field[data-recovery='true'] .contact-input {
+    border-color: oklch(87.2% 0.007 219.6 / 0.72);
+    box-shadow: 0 0 0 3px oklch(87.2% 0.007 219.6 / 0.14);
+  }
 }
 
 .contact-status {

@@ -304,6 +304,7 @@ export default function Page() {
       {/* Plan Comparison Table */}
       <PlanComparisonTable
         id="plan-comparison"
+        className="content-visibility-pricing"
         plans={['Solo', 'Team', 'Enterprise']}
         features={[
           {
@@ -381,7 +382,7 @@ export default function Page() {
       />
       */}
       {/* FAQs */}
-      <FAQsAccordion id="faqs" headline="Questions & Answers">
+      <FAQsAccordion id="faqs" headline="Questions & Answers" className="content-visibility-faqs">
         {pricingFaqs.map((faq) => (
           <Faq key={faq.id} id={faq.id} question={faq.question} answer={faq.answer} />
         ))}
@@ -394,11 +395,15 @@ export default function Page() {
         cta={
           <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4">
             <ButtonLink href="/contact" size="lg" className="w-full sm:w-auto">
-              Contact sales
+              Ask a pricing question
             </ButtonLink>
 
-            <PlainButtonLink href="/contact" size="lg" className="group w-full sm:w-auto">
-              Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
+            <PlainButtonLink
+              href="mailto:solutions@bulma.com.au?subject=Bulma%20pricing%20demo"
+              size="lg"
+              className="group w-full sm:w-auto"
+            >
+              Email sales <AnimatedArrowIcon className="-mr-1 ml-1.5" />
             </PlainButtonLink>
           </div>
         }
