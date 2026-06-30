@@ -42,12 +42,12 @@ Git commit guidelines are documented in `.cursor/rules/git-commit-message-format
 - When reusing a visual component from one page on another page, verify visual parity against the source page in every relevant colour scheme and interaction state. Do not stop at layout/background matching: compare computed text colour, opacity, hover, focus, active states, underline/accent colours, and wrapper/background integration. If a new variant class is added for the destination page, confirm it does not unintentionally override the source component’s dark-mode or hover behaviour.
 
 <animation_standards>
-**NEVER add `prefers-reduced-motion` checks or similar accessibility media query conditionals to animation code.** Animations must work consistently for all users, so do not gate/short-circuit IntersectionObserver setup with accessibility or timing conditionals (including `requestAnimationFrame` wrappers).
+**NEVER add `prefers-reduced-motion`, `@media (prefers-reduced-motion: reduce)`, `matchMedia('(prefers-reduced-motion: reduce)')`, or similar accessibility media-query conditionals to animation code.** Animations must work consistently for all users, so do not gate, disable, pause, short-circuit, or skip animation setup based on reduced-motion preferences.
 - Do not remove, simplify, or rewrite existing marketing-site animations unless the user explicitly asks for that exact animation change. Performance work must preserve the intended animation design, timing, and interaction model.
-- Treat scroll-triggered, hover, focus, cursor-following, parallax, counter, blur-transition, gradient-border, and ambient-motion components as user-facing behaviour. Any change to these systems requires browser verification.
-- When modifying animation code, read `documents/guides/_animations.md` before making changes and compare the implementation against that guide before reporting completion.
-- Preserve animation behaviour across desktop and mobile. Verify trigger timing, final state, console output, and visible layout stability in both viewports.
-- Do not hard-code animation behaviour to pass a single viewport or screenshot. Implement general logic that works across valid viewport sizes, route states, and repeated visits.
+- When modifying animation code, read `documents/guides/_animations.md`, prefer the existing animation primitives documented there, and update the guide if implementation behaviour changes.
+- Keep animation wrappers layout-neutral. In grids, animated wrappers must preserve `h-full` where equal-height cards are expected; transforms must not introduce horizontal overflow, text clipping, content overlap, or layout shift.
+- Clean up every observer, timer, event listener, and animation frame created by animation code. High-frequency scroll or pointer handlers must avoid unnecessary React state updates and must not leave duplicate loops running after repeated mounts or route changes.
+- Treat scroll-triggered, hover, focus, cursor-following, parallax, counter, blur-transition, gradient-border, and ambient-motion changes as user-facing behaviour that requires browser verification on desktop and mobile.
 </animation_standards>
 </frontend_design>
 </code_standards>
