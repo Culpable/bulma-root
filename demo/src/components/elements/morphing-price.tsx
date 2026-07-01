@@ -140,6 +140,7 @@ export function MorphingPrice({
   style,
   ...props
 }: MorphingPriceProps) {
+  const accessibleLabel = props['aria-label'] ?? value
   // Treat non-numeric prices (e.g., "Custom") as plain text to avoid per-character spacing.
   const hasDigits = /\d/.test(value)
   const [displayValue, setDisplayValue] = useState(value)
@@ -236,8 +237,14 @@ export function MorphingPrice({
   // Render non-numeric prices as standard text after all hooks have been called.
   if (!hasDigits) {
     return (
-      <span className={clsx('inline-flex items-baseline tabular-nums', className)} style={style} {...props}>
-        {value}
+      <span
+        className={clsx('inline-flex items-baseline tabular-nums', className)}
+        style={style}
+        {...props}
+        role="text"
+        aria-label={accessibleLabel}
+      >
+        <span aria-hidden="true">{value}</span>
       </span>
     )
   }
@@ -247,14 +254,16 @@ export function MorphingPrice({
       className={clsx('inline-flex items-baseline tabular-nums', className)}
       style={{ lineHeight: MORPH_CONFIG.digitLineHeight, ...style }}
       {...props}
+      role="text"
+      aria-label={accessibleLabel}
     >
       {/* Currency symbol / prefix */}
       {currentParsed.prefix && (
-        <span className="inline-block">{currentParsed.prefix}</span>
+        <span className="inline-block" aria-hidden="true">{currentParsed.prefix}</span>
       )}
 
       {/* Animated digits container */}
-      <span className="relative inline-flex items-baseline">
+      <span className="relative inline-flex items-baseline" aria-hidden="true">
         {toDigits.map((toDigit, index) => {
           const fromDigit = fromDigits[index]
           const delay = index * MORPH_CONFIG.digitStagger
@@ -273,7 +282,7 @@ export function MorphingPrice({
 
       {/* Suffix (if any) */}
       {currentParsed.suffix && (
-        <span className="inline-block">{currentParsed.suffix}</span>
+        <span className="inline-block" aria-hidden="true">{currentParsed.suffix}</span>
       )}
     </span>
   )

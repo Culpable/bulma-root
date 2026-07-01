@@ -1,0 +1,48 @@
+<bug_1>
+<summary>
+<title>[Homepage CTA] Gradient hover speed no longer changes</title>
+<one_line_description>The homepage primary CTA gradient border keeps its default rotation speed on hover because the hover selector no longer matches the rendered element.</one_line_description>
+</summary>
+<file_locations>
+- demo/src/components/elements/gradient-border-wrapper.tsx - function: GradientBorderWrapper, Lines 115-127
+- demo/src/app/globals.css - selector: .gradient-border-wrapper:hover .gradient-border-rotating, Lines 1149-1157
+- demo/src/app/page.tsx - homepage CTA usages, Lines 212-216 and 592-596
+</file_locations>
+<issue_description>
+<description>
+The recent GradientBorderWrapper refactor moved the rotating gradient class onto the wrapper element itself by rendering the class string `gradient-border-wrapper gradient-border-rotating relative inline-flex`. The CSS hover rule still targets `.gradient-border-rotating` as a descendant of `.gradient-border-wrapper`. A descendant selector does not match the same element, so hovering the homepage `Try Bulma free` CTAs no longer applies `animation-duration: calc(var(--gradient-rotation-duration) * 0.5)`. The animation guide documents the expected CTA gradient behaviour as 3s per rotation by default and 1.5s per rotation on hover, so this is a concrete interaction regression that weakens the intended primary CTA feedback without changing layout or copy.
+
+Recommendation: Update the hover selector to match the combined wrapper and rotating classes on the same element, or move the rotating class to a child element that the existing descendant selector can match.
+</description>
+<code_example>
+
+```tsx
+// File: demo/src/components/elements/gradient-border-wrapper.tsx, Lines 115-127
+// The same element has both classes.
+className={clsx(
+'gradient-border-wrapper gradient-border-rotating relative inline-flex',
+className
+)}
+```
+
+```css
+/* File: demo/src/app/globals.css, Lines 1149-1157 */
+/* This selector expects gradient-border-rotating to be a descendant, not the same element. */
+.gradient-border-wrapper:hover .gradient-border-rotating,
+.gradient-border-wrapper:hover .gradient-border-glow {
+animation-duration: calc(var(--gradient-rotation-duration) * 0.5);
+}
+```
+
+</code_example>
+<expected_vs_actual>
+
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Hover interaction** | Hovering the homepage primary CTA speeds the rotating border from 3s to 1.5s per rotation | Hovering the CTA leaves the rotating border at the default 3s duration |
+| **Selector match** | The hover selector matches the element that owns the gradient animation | The hover selector looks for a child `.gradient-border-rotating` element that does not exist |
+| **Affected routes** | The hero and bottom CTA `Try Bulma free` buttons on `/` keep their intended hover feedback | Both homepage CTA instances lose the documented hover speed change |
+
+</expected_vs_actual>
+</issue_description>
+</bug_1>

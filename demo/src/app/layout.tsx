@@ -1,5 +1,4 @@
 import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
-import { HueShiftProvider } from '@/components/elements/hue-shift-provider'
 import { Main } from '@/components/elements/main'
 import {
   FooterCategory,
@@ -98,21 +97,24 @@ export default function RootLayout({
               <>
                 <NavbarLink href="/pricing">Pricing</NavbarLink>
                 <NavbarLink href="/contact">Contact</NavbarLink>
-                <NavbarLink href="https://app.bulma.com.au/login" className="sm:hidden">
-                  Log in
-                </NavbarLink>
               </>
             }
             logo={
               <NavbarLogo href="/">
                 <picture>
                   <source
-                    srcSet="/img/logos/bulma-logo-light.svg"
+                    srcSet="/img/logos/bulma-logo-light-40.webp 1x, /img/logos/bulma-logo-light-80.webp 2x, /img/logos/bulma-logo-light-160.webp 4x"
                     media="(prefers-color-scheme: dark)"
                     width={40}
                     height={40}
                   />
-                  <img src="/img/logos/bulma-logo-dark.svg" alt={siteLogoAlt} width={40} height={40} />
+                  <img
+                    src="/img/logos/bulma-logo-dark-40.webp"
+                    srcSet="/img/logos/bulma-logo-dark-40.webp 1x, /img/logos/bulma-logo-dark-80.webp 2x, /img/logos/bulma-logo-dark-160.webp 4x"
+                    alt={siteLogoAlt}
+                    width={40}
+                    height={40}
+                  />
                 </picture>
               </NavbarLogo>
             }
@@ -136,9 +138,7 @@ export default function RootLayout({
             }
           />
 
-          <HueShiftProvider>
-            <Main>{children}</Main>
-          </HueShiftProvider>
+          <Main>{children}</Main>
 
           <FooterWithNewsletterFormCategoriesAndSocialIcons
             id="footer"

@@ -29,7 +29,7 @@ export function PricingOptionCallout({ children, className }: { children: ReactN
 
 export function PricingPriceNote({ children }: { children: ReactNode }) {
   return (
-    <span className="ml-2 inline-flex rounded-full bg-mist-950/7 px-2.5 py-1 text-xs/5 font-medium text-mist-700 dark:bg-white/8 dark:text-mist-300">
+    <span className="inline-flex w-fit rounded-full bg-mist-950/7 px-2.5 py-1 text-xs/5 font-medium text-mist-700 dark:bg-white/8 dark:text-mist-300">
       {children}
     </span>
   )

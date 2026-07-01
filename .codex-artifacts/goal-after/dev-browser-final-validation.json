@@ -1,0 +1,436 @@
+{
+  "generatedAt": "2026-07-01T00:56:47.355Z",
+  "checkCount": 16,
+  "checks": [
+    {
+      "label": "home desktop light",
+      "route": "/",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "theme": "light",
+      "url": "http://localhost:3001/",
+      "screenshotViewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "Bulma: AI Assistant for Australian Mortgage Brokers",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "about desktop light",
+      "route": "/about",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "theme": "light",
+      "url": "http://localhost:3001/about/",
+      "screenshotViewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "About | Bulma",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "pricing desktop light",
+      "route": "/pricing",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "theme": "light",
+      "url": "http://localhost:3001/pricing/",
+      "screenshotViewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "Pricing | Bulma",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "contact desktop light",
+      "route": "/contact",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "theme": "light",
+      "url": "http://localhost:3001/contact/",
+      "screenshotViewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "Contact | Bulma",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "home mobile light",
+      "route": "/",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "theme": "light",
+      "url": "http://localhost:3001/",
+      "screenshotViewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "Bulma: AI Assistant for Australian Mortgage Brokers",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "about mobile light",
+      "route": "/about",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "theme": "light",
+      "url": "http://localhost:3001/about/",
+      "screenshotViewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "About | Bulma",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "pricing mobile light",
+      "route": "/pricing",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "theme": "light",
+      "url": "http://localhost:3001/pricing/",
+      "screenshotViewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "Pricing | Bulma",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "contact mobile light",
+      "route": "/contact",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "theme": "light",
+      "url": "http://localhost:3001/contact/",
+      "screenshotViewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "Contact | Bulma",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "home desktop dark",
+      "route": "/",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "theme": "dark",
+      "url": "http://localhost:3001/",
+      "screenshotViewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "Bulma: AI Assistant for Australian Mortgage Brokers",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "about desktop dark",
+      "route": "/about",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "theme": "dark",
+      "url": "http://localhost:3001/about/",
+      "screenshotViewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "About | Bulma",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "pricing desktop dark",
+      "route": "/pricing",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "theme": "dark",
+      "url": "http://localhost:3001/pricing/",
+      "screenshotViewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "Pricing | Bulma",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "contact desktop dark",
+      "route": "/contact",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "theme": "dark",
+      "url": "http://localhost:3001/contact/",
+      "screenshotViewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "Contact | Bulma",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "home mobile dark",
+      "route": "/",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "theme": "dark",
+      "url": "http://localhost:3001/",
+      "screenshotViewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "Bulma: AI Assistant for Australian Mortgage Brokers",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "about mobile dark",
+      "route": "/about",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "theme": "dark",
+      "url": "http://localhost:3001/about/",
+      "screenshotViewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "About | Bulma",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "pricing mobile dark",
+      "route": "/pricing",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "theme": "dark",
+      "url": "http://localhost:3001/pricing/",
+      "screenshotViewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "Pricing | Bulma",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    },
+    {
+      "label": "contact mobile dark",
+      "route": "/contact",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "theme": "dark",
+      "url": "http://localhost:3001/contact/",
+      "screenshotViewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 900
+      },
+      "newBrowserEvents": [],
+      "title": "Contact | Bulma",
+      "bodyIncludesExpectedText": true,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasHorizontalOverflow": false,
+      "hasNavbar": true,
+      "navbarScrolled": false
+    }
+  ],
+  "interactions": {
+    "mobileMenu": {
+      "mobileMenuTexts": [
+        "Pricing",
+        "Contact",
+        "Get started",
+        "Log in"
+      ],
+      "mobileMenuLoginCount": 1
+    },
+    "mobileComparison": {
+      "includesIncluded": true,
+      "includesNotIncluded": true
+    },
+    "contactState": {
+      "formFields": [
+        "form_source",
+        "name",
+        "email",
+        "message"
+      ],
+      "helperTextCount": 1,
+      "alertText": "Message not sentSorry, your message failed to send. Please email us directly at solutions@bulma.com.au.Your typed details are still saved above, so you can retry or send them by email.Email solutions@bulma.com.au",
+      "nameValue": "Alex Broker",
+      "emailValue": "alex@example.com",
+      "messageValue": "Please help me test the contact recovery state."
+    },
+    "gradientCtaHover": {
+      "ctaDefaultDuration": "3s",
+      "ctaHoverDuration": "1.5s"
+    }
+  },
+  "failures": [],
+  "browserEvents": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "url": "http://localhost:3001/contact/"
+    },
+    {
+      "type": "error",
+      "text": "Contact form submission error: Error: Synthetic validation failure\n    at handleSubmit (http://localhost:3001/_next/static/chunks/_8b0401a5._.js:441:23)",
+      "url": "http://localhost:3001/contact/"
+    }
+  ],
+  "unexpectedEvents": []
+}

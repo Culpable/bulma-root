@@ -161,7 +161,8 @@ export function ResponsiveScreenshot({
  * Breakpoint strategy:
  * - Mobile (<768px): 1670px wide crop, optimized for narrow viewports
  * - Tablet (768px-1023px): 2000px wide crop, balanced for medium screens
- * - Desktop (≥1024px): Full 3440px image for high-resolution displays
+ * - Desktop (1024px-1919px): 2000px crop for common laptop/desktop widths
+ * - Wide desktop (≥1920px): Full 3440px image for high-resolution displays
  *
  * Each breakpoint has light and dark mode variants using the color-mist theme.
  */
@@ -191,7 +192,8 @@ export function HeroScreenshot({
       className={className}
       // Mobile breakpoint: narrow crop for small screens
       // Tablet breakpoint: medium crop for tablet screens
-      // Desktop uses fallback (no explicit breakpoint needed)
+      // Desktop breakpoint: lighter crop for common 1024-1535px viewports
+      // Wide desktop uses fallback (no explicit breakpoint needed)
       breakpoints={[
         {
           // Mobile: max-width 767px (before md breakpoint)
@@ -209,8 +211,16 @@ export function HeroScreenshot({
           width: 2000,
           height: 1408,
         },
+        {
+          // Desktop: 1024px to 1919px (common laptop and desktop widths)
+          media: '(min-width: 1024px) and (max-width: 1919px)',
+          srcLight: '/img/screenshots/1-left-2000-top-1408.webp',
+          srcDark: '/img/screenshots/1-color-mist-left-2000-top-1408.webp',
+          width: 2000,
+          height: 1408,
+        },
       ]}
-      // Desktop fallback: full-size image for lg+ screens
+      // Wide desktop fallback: full-size image for very large displays
       fallbackSrc="/img/screenshots/1.webp"
       fallbackSrcDark="/img/screenshots/1-color-mist.webp"
       fallbackWidth={3440}

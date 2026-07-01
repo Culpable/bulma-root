@@ -1,0 +1,50 @@
+<bug_1>
+<summary>
+<title>[Gradient CTA] Hover rotation speed no longer changes</title>
+<one_line_description>CTA gradient borders rotate at the default speed on hover because the hover selector targets a descendant that no longer exists.</one_line_description>
+</summary>
+<file_locations>
+- demo/src/components/elements/gradient-border-wrapper.tsx - function: GradientBorderWrapper, Lines 115-127
+- demo/src/app/globals.css - selector: .gradient-border-wrapper:hover .gradient-border-rotating, Lines 1154-1157
+- documents/guides/_animations.md - section: Animated Gradient Border, Lines 425-429
+</file_locations>
+<issue_description>
+<description>
+The gradient CTA hover acceleration was lost when GradientBorderWrapper moved animation ownership from inline component styles to the CSS class on the wrapper element. The component now renders the same div with both gradient-border-wrapper and gradient-border-rotating classes. The hover CSS still uses a descendant selector, so it only matches a child with gradient-border-rotating inside a hovered wrapper, not the wrapper itself. As a result, hovering the hero or bottom CTA leaves the conic border at the default 3s rotation instead of the documented 1.5s hover rotation. This is a concrete animation regression in the performance/media change set because the desired post-change behaviour requires preserving animated gradient border behaviour while removing component-level theme observer state.
+</description>
+<code_example>
+
+```tsx
+// File: demo/src/components/elements/gradient-border-wrapper.tsx, Lines 115-127
+// BUG: The same wrapper element owns both classes, so the descendant hover selector below does not match it.
+className={clsx(
+'gradient-border-wrapper gradient-border-rotating relative inline-flex',
+className
+)}
+style={{
+'--gradient-rotation-duration': `${rotationDuration}ms`,
+padding: `${GRADIENT_CONFIG.borderWidth}px`,
+borderRadius: '9999px',
+animationPlayState: isVisible ? 'running' : 'paused',
+} as CSSProperties}
+```
+
+```css
+/* File: demo/src/app/globals.css, Lines 1154-1157 */
+/* BUG: This selector expects .gradient-border-rotating to be a descendant, not the hovered wrapper itself. */
+.gradient-border-wrapper:hover .gradient-border-rotating,
+.gradient-border-wrapper:hover .gradient-border-glow {
+animation-duration: calc(var(--gradient-rotation-duration) * 0.5);
+}
+```
+
+</code_example>
+<expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| Behaviour | Hovering a GradientBorderWrapper CTA doubles the border rotation speed from 3s to 1.5s | Hovering the CTA leaves the wrapper animation at the default duration because no descendant .gradient-border-rotating element exists |
+| Animation contract | CSS-owned theme handling preserves the previous hover animation behaviour | The theme observer is removed, but the hover-speed behaviour regresses |
+| User impact | Primary CTAs keep the richer hover response while benefiting from the performance change | Hero and bottom CTA borders feel less responsive and no longer match the documented visual behaviour |
+</expected_vs_actual>
+</issue_description>
+</bug_1>

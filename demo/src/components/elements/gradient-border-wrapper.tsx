@@ -1,8 +1,7 @@
 'use client'
 
 import { clsx } from 'clsx/lite'
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
-import { useDarkMode } from '@/hooks/use-dark-mode'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 
 /**
  * Configuration for the animated gradient border effect.
@@ -24,30 +23,6 @@ const GRADIENT_CONFIG = {
   // Shimmer duration (ms) - how long each shimmer takes
   shimmerDuration: 600,
 }
-
-// Light mode gradient colors
-const LIGHT_GRADIENT = `conic-gradient(
-  from var(--gradient-angle),
-  oklch(45% 0.017 213.2) 0deg,
-  oklch(56% 0.021 213.5) 60deg,
-  oklch(72.3% 0.014 214.4) 120deg,
-  oklch(56% 0.021 213.5) 180deg,
-  oklch(37.8% 0.015 216) 240deg,
-  oklch(45% 0.017 213.2) 300deg,
-  oklch(45% 0.017 213.2) 360deg
-)`
-
-// Dark mode gradient colors (lighter for visibility)
-const DARK_GRADIENT = `conic-gradient(
-  from var(--gradient-angle),
-  oklch(72.3% 0.014 214.4) 0deg,
-  oklch(87.2% 0.007 219.6) 60deg,
-  oklch(92.5% 0.005 214.3) 120deg,
-  oklch(87.2% 0.007 219.6) 180deg,
-  oklch(72.3% 0.014 214.4) 240deg,
-  oklch(56% 0.021 213.5) 300deg,
-  oklch(72.3% 0.014 214.4) 360deg
-)`
 
 interface GradientBorderWrapperProps {
   /** Content to wrap (typically a button) */
@@ -107,30 +82,6 @@ export function GradientBorderWrapper({
     return () => observer.disconnect()
   }, [disabled])
 
-  // Use shared dark mode hook (consolidates MutationObservers across all instances)
-  const isDark = useDarkMode()
-
-  // Update gradient based on dark mode - React handles updates when isDark changes
-  useEffect(() => {
-    if (disabled || !wrapperRef.current) return
-    wrapperRef.current.style.background = isDark ? DARK_GRADIENT : LIGHT_GRADIENT
-  }, [disabled, isDark])
-
-  // Stable event handlers for hover speed change (avoid recreating on every render)
-  const handleMouseEnter = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      e.currentTarget.style.animationDuration = `${rotationDuration * 0.5}ms`
-    },
-    [rotationDuration]
-  )
-
-  const handleMouseLeave = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      e.currentTarget.style.animationDuration = `${rotationDuration}ms`
-    },
-    [rotationDuration]
-  )
-
   // Shimmer animation - triggers periodically, but only when visible
   useEffect(() => {
     if (disabled || !shimmer || !shimmerRef.current || !isVisible) return
@@ -164,20 +115,16 @@ export function GradientBorderWrapper({
     <div
       ref={wrapperRef}
       className={clsx(
-        'gradient-border-wrapper relative inline-flex',
+        'gradient-border-wrapper gradient-border-rotating relative inline-flex',
         className
       )}
       style={{
         '--gradient-rotation-duration': `${rotationDuration}ms`,
-        background: LIGHT_GRADIENT,
         padding: `${GRADIENT_CONFIG.borderWidth}px`,
         borderRadius: '9999px',
-        animation: `gradient-border-rotate var(--gradient-rotation-duration) linear infinite`,
         // Pause animation when off-screen to save GPU/compositor resources
         animationPlayState: isVisible ? 'running' : 'paused',
-      } as React.CSSProperties}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      } as CSSProperties}
     >
       {/* Inner content with solid background to reveal border */}
       <div className="relative z-10 overflow-hidden rounded-full bg-mist-100 dark:bg-mist-950">

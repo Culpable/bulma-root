@@ -1,0 +1,17 @@
+[
+  {
+    "url": "http://localhost:3001/img/screenshots/1.webp",
+    "status": 200,
+    "transfer": "90306"
+  },
+  {
+    "url": "http://localhost:3001/img/screenshots/1-left-1800-top-1250.webp",
+    "status": 200,
+    "transfer": "38648"
+  },
+  {
+    "url": "http://localhost:3001/img/screenshots/1-right-1800-top-1250.webp",
+    "status": 200,
+    "transfer": "37498"
+  }
+]

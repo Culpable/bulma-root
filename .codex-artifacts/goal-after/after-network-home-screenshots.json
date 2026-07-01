@@ -1,0 +1,23 @@
+[
+  {
+    "name": "http://localhost:3001/img/screenshots/1-left-2000-top-1408.webp",
+    "transferSize": 300,
+    "encodedBodySize": 43800,
+    "decodedBodySize": 43800,
+    "initiatorType": "img"
+  },
+  {
+    "name": "http://localhost:3001/img/screenshots/1-left-1800-top-1250.webp",
+    "transferSize": 300,
+    "encodedBodySize": 38648,
+    "decodedBodySize": 38648,
+    "initiatorType": "img"
+  },
+  {
+    "name": "http://localhost:3001/img/screenshots/1-right-1800-top-1250.webp",
+    "transferSize": 300,
+    "encodedBodySize": 37498,
+    "decodedBodySize": 37498,
+    "initiatorType": "img"
+  }
+]

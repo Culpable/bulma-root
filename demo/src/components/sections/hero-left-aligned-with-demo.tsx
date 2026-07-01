@@ -52,8 +52,8 @@ export function HeroLeftAlignedWithDemo({
         {/* Aurora background effect - behind all content */}
         {enableAurora && <AuroraBackground className="z-0" />}
 
-        <Container className="relative z-10 flex flex-col gap-16">
-          <div className="flex flex-col gap-32">
+        <Container className="relative z-10 flex flex-col gap-12 lg:gap-14">
+          <div className="flex flex-col gap-16 lg:gap-20">
             <div className="flex flex-col items-start gap-6">
               {/* Announcement badge - first to appear */}
               {eyebrow && (

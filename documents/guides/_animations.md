@@ -416,11 +416,12 @@ Content uses `.faq-spring-content` class which applies the keyframe animation on
 | `borderRadius` | 9999 | Fully rounded (pill shape) |
 
 **Implementation:**
-- Outer container background uses `conic-gradient` with `var(--gradient-angle)` animation
+- Outer container uses the `.gradient-border-rotating` CSS class, which owns the light/dark conic gradients and `var(--gradient-angle)` animation
 - Padding creates the visible border effect
 - Inner div with solid background (mist-100 light / mist-950 dark) reveals the border
 - CSS animation `gradient-border-rotate` continuously rotates the angle
-- Detects dark mode via `document.documentElement.classList.contains('dark')`
+- Hover speed-up targets both the same outer element (`.gradient-border-wrapper.gradient-border-rotating:hover`) and legacy descendant gradient layers
+- Dark mode is handled by the CSS `@variant dark` gradient rules rather than a component-level dark-mode hook or MutationObserver
 
 **Visual behavior:**
 | State | Rotation Speed |
@@ -1235,7 +1236,7 @@ import { XIcon } from '@/components/icons/social/x-icon'
 - **CSS transition conflicts**: Plan components have their own hover transitions; ensure animation wrapper transitions don't override using specific properties rather than `transition-all` if conflicts arise
 - **Magnetic on touch**: Magnetic wrapper uses mouse events only; touch devices see no magnetic effect (acceptable degradation)
 - **BlurTransitionText width calculation**: Component measures phrase widths on mount; uses `width` + `maxWidth: '100%'` to prevent desktop jumping while avoiding mobile overflow. Container shows `auto` width until measurement completes.
-- **Gradient border browser support**: `@property` (CSS Houdini) required for smooth gradient angle animation; older browsers may show static gradient. Dark mode detection uses MutationObserver on `html.dark` class.
+- **Gradient border browser support**: `@property` (CSS Houdini) required for smooth gradient angle animation; older browsers may show static gradient. Theme adaptation is owned by CSS light/dark variants, so CTA border instances do not add dark-mode observers.
 - **CTA shimmer timing**: Shimmer uses JS class toggle with `offsetWidth` reflow to restart animation. If multiple CTAs are visible, they shimmer in sync (by design). Disable with `shimmer={false}` prop if unwanted.
 - **Floating orbs visibility**: Opacity range [0.08–0.15] and size range [80–180px] calibrated for visible but subtle effect. Reduce blur if GPU performance is impacted.
 - **Animated counter precision**: For large numbers or many decimal places, floating-point rounding may cause minor visual jitter near end of animation
@@ -2043,20 +2044,14 @@ import { StickyEyebrow, StickySectionWrapper } from '@/components/elements/stick
 
 **Integration:**
 ```tsx
-// In layout.tsx - enable hue shift tracking
+// In app/page.tsx - enable homepage hue shift tracking
 import { HueShiftProvider } from '@/components/elements/hue-shift-provider'
 
-export default function Layout({ children }) {
+export default function Page() {
   return (
-    <html>
-      <body>
-        <HueShiftProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-        </HueShiftProvider>
-      </body>
-    </html>
+    <HueShiftProvider>
+      {/* Homepage sections with data-section-hue attributes */}
+    </HueShiftProvider>
   )
 }
 
@@ -2074,7 +2069,7 @@ export default function Layout({ children }) {
 </div>
 ```
 
-**To disable:** Don't use `HueShiftProvider`, or set `enabled={false}` prop. Remove `hue-shift-*` classes and `data-section-hue` attributes from sections.
+**To disable:** Don't use `HueShiftProvider`, or set `enabled={false}` prop. Remove `hue-shift-*` classes and `data-section-hue` attributes from sections. The active marketing site scopes the provider to the homepage so non-home routes do not run hue tracking when they do not render hue-shifted sections.
 
 ---
 

@@ -18,12 +18,14 @@ function isPlanValueRecord<Plan extends string>(
 function FeatureGroup<Plan extends string>({
   group,
   plans,
+  showBooleanLabels = false,
 }: {
   group: {
     title: ReactNode
     features: { name: ReactNode; value: ReactNode | Record<Plan, ReactNode> }[]
   }
   plans: Plan[]
+  showBooleanLabels?: boolean
 }) {
   return (
     <tbody>
@@ -78,9 +80,15 @@ function FeatureGroup<Plan extends string>({
                 )}
               >
                 {value === true ? (
-                  <CheckmarkIcon aria-label="Included" className="stroke-mist-950 dark:stroke-white" />
+                  <span className={clsx('inline-flex items-center gap-2', showBooleanLabels && 'justify-end text-xs/5 font-medium')}>
+                    <CheckmarkIcon aria-label={showBooleanLabels ? undefined : 'Included'} aria-hidden={showBooleanLabels ? 'true' : undefined} className="stroke-mist-950 dark:stroke-white" />
+                    {showBooleanLabels && <span>Included</span>}
+                  </span>
                 ) : value === false ? (
-                  <MinusIcon aria-label="Not included" className="stroke-mist-950 dark:stroke-white" />
+                  <span className={clsx('inline-flex items-center gap-2', showBooleanLabels && 'justify-end text-xs/5 font-medium')}>
+                    <MinusIcon aria-label={showBooleanLabels ? undefined : 'Not included'} aria-hidden={showBooleanLabels ? 'true' : undefined} className="stroke-mist-950 dark:stroke-white" />
+                    {showBooleanLabels && <span>Not included</span>}
+                  </span>
                 ) : (
                   value
                 )}
@@ -199,7 +207,7 @@ export function PlanComparisonTable<const Plan extends string>({
                     <col className="w-1/4" />
                   </colgroup>
                   {features.map((group, index) => (
-                    <FeatureGroup key={index} group={group} plans={[plan]} />
+                    <FeatureGroup key={index} group={group} plans={[plan]} showBooleanLabels />
                   ))}
                 </table>
               ))}

@@ -34,13 +34,21 @@ export default function Page() {
           </p>
         }
         photo={
-          <Image
-            src="/img/photos/1.webp"
-            alt={aboutAlt('Bulma team photo')}
-            width={1800}
-            height={945}
-            className="not-dark:bg-white/75 dark:bg-black/75"
-          />
+          <picture>
+            <source srcSet="/img/photos/1-720.webp" media="(max-width: 639px)" type="image/webp" width={720} height={378} />
+            <source srcSet="/img/photos/1-1200.webp" media="(max-width: 1279px)" type="image/webp" width={1200} height={630} />
+            <source srcSet="/img/photos/1-1600.webp" media="(max-width: 1919px)" type="image/webp" width={1600} height={840} />
+            <img
+              src="/img/photos/1.webp"
+              alt={aboutAlt('Bulma team photo')}
+              width={1800}
+              height={945}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              className="not-dark:bg-white/75 dark:bg-black/75"
+            />
+          </picture>
         }
       />
       {/* Stats */}

@@ -1,0 +1,121 @@
+[
+  {
+    "name": "http://localhost:3002/_next/static/media/849c382dee069680-s.p.woff2",
+    "transferSize": 98364,
+    "encodedBodySize": 98064,
+    "decodedBodySize": 98064,
+    "initiatorType": "link"
+  },
+  {
+    "name": "http://localhost:3002/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+    "transferSize": 48732,
+    "encodedBodySize": 48432,
+    "decodedBodySize": 48432,
+    "initiatorType": "link"
+  },
+  {
+    "name": "http://localhost:3002/_next/static/css/app/layout.css?v=1782857864564",
+    "transferSize": 26397,
+    "encodedBodySize": 26097,
+    "decodedBodySize": 200726,
+    "initiatorType": "link"
+  },
+  {
+    "name": "http://localhost:3002/_next/static/chunks/webpack.js?v=1782857864564",
+    "transferSize": 28287,
+    "encodedBodySize": 27987,
+    "decodedBodySize": 141116,
+    "initiatorType": "link"
+  },
+  {
+    "name": "http://localhost:3002/_next/static/chunks/main-app.js?v=1782857864564",
+    "transferSize": 2562039,
+    "encodedBodySize": 2561739,
+    "decodedBodySize": 11581284,
+    "initiatorType": "script"
+  },
+  {
+    "name": "http://localhost:3002/_next/static/chunks/app-pages-internals.js",
+    "transferSize": 57583,
+    "encodedBodySize": 57283,
+    "decodedBodySize": 231082,
+    "initiatorType": "script"
+  },
+  {
+    "name": "http://localhost:3002/_next/static/chunks/app/not-found.js",
+    "transferSize": 46929,
+    "encodedBodySize": 46629,
+    "decodedBodySize": 159647,
+    "initiatorType": "script"
+  },
+  {
+    "name": "http://localhost:3002/_next/static/chunks/app/layout.js",
+    "transferSize": 126734,
+    "encodedBodySize": 126434,
+    "decodedBodySize": 490856,
+    "initiatorType": "script"
+  },
+  {
+    "name": "http://localhost:3002/_next/static/chunks/_app-pages-browser_src_components_elements_animated-counter_tsx.js",
+    "transferSize": 7702,
+    "encodedBodySize": 7402,
+    "decodedBodySize": 19358,
+    "initiatorType": "link"
+  },
+  {
+    "name": "http://localhost:3002/_next/static/chunks/app/about/page.js",
+    "transferSize": 202987,
+    "encodedBodySize": 202687,
+    "decodedBodySize": 800415,
+    "initiatorType": "script"
+  },
+  {
+    "name": "http://localhost:3002/img/logos/bulma-logo-dark.svg",
+    "transferSize": 46796,
+    "encodedBodySize": 46496,
+    "decodedBodySize": 61610,
+    "initiatorType": "img"
+  },
+  {
+    "name": "http://localhost:3002/img/avatars/16-h-1000-w-1400.webp",
+    "transferSize": 32320,
+    "encodedBodySize": 32020,
+    "decodedBodySize": 32020,
+    "initiatorType": "img"
+  },
+  {
+    "name": "http://localhost:3002/img/photos/1.webp",
+    "transferSize": 228662,
+    "encodedBodySize": 228362,
+    "decodedBodySize": 228362,
+    "initiatorType": "img"
+  },
+  {
+    "name": "http://localhost:3002/favicon.ico",
+    "transferSize": 13062,
+    "encodedBodySize": 12762,
+    "decodedBodySize": 32038,
+    "initiatorType": "other"
+  },
+  {
+    "name": "http://localhost:3002/_next/static/chunks/_app-pages-browser_Users_sacino_bulma-root_demo_node_modules_tailwindplus_elements_dist_index_js.js",
+    "transferSize": 70777,
+    "encodedBodySize": 70477,
+    "decodedBodySize": 226945,
+    "initiatorType": "script"
+  },
+  {
+    "name": "http://localhost:3002/scripts/referral-tracking.js",
+    "transferSize": 2300,
+    "encodedBodySize": 2000,
+    "decodedBodySize": 7576,
+    "initiatorType": "script"
+  },
+  {
+    "name": "http://localhost:3002/_next/static/chunks/_app-pages-browser_src_lib_mixpanelClient_js.js",
+    "transferSize": 517520,
+    "encodedBodySize": 517220,
+    "decodedBodySize": 2448804,
+    "initiatorType": "script"
+  }
+]

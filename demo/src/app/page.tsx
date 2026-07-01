@@ -1,5 +1,6 @@
 import { AnnouncementBadge } from '@/components/elements/announcement-badge'
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
+import { HueShiftProvider } from '@/components/elements/hue-shift-provider'
 import { Link } from '@/components/elements/link'
 import { FeatureScreenshotLeft, FeatureScreenshotRight, HeroScreenshot } from '@/components/elements/responsive-screenshot'
 import { Screenshot } from '@/components/elements/screenshot'
@@ -172,7 +173,7 @@ const homeStructuredData = [
 
 export default function Page() {
   return (
-    <>
+    <HueShiftProvider>
       <Script
         id="structured-data"
         type="application/ld+json"
@@ -603,6 +604,6 @@ export default function Page() {
           </div>
         }
       />
-    </>
+    </HueShiftProvider>
   )
 }

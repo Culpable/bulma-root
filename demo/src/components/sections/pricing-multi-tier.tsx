@@ -193,11 +193,14 @@ export function Plan({
 
             <h3 className="text-2xl/8 tracking-tight text-mist-950 dark:text-white">{name}</h3>
           </div>
-          <p className="mt-1 flex flex-wrap items-baseline gap-y-1 text-base/7">
-            <span className="text-mist-950 dark:text-white">{currentPrice}</span>
-            {resolvedPeriod && <span className="ml-1 text-mist-500 dark:text-mist-500">{resolvedPeriod}</span>}
-            {currentPriceNote && <PricingPriceNote>{currentPriceNote}</PricingPriceNote>}
-          </p>
+          {/* Keep price metadata on a stable second line so homepage and pricing page cards stay aligned. */}
+          <div className="mt-2 grid min-h-16 content-start gap-1.5">
+            <p className="flex flex-wrap items-baseline text-base/7">
+              <span className="text-mist-950 dark:text-white">{currentPrice}</span>
+              {resolvedPeriod && <span className="ml-1 text-mist-500 dark:text-mist-500">{resolvedPeriod}</span>}
+            </p>
+            {currentPriceNote ? <PricingPriceNote>{currentPriceNote}</PricingPriceNote> : <span className="h-7" aria-hidden="true" />}
+          </div>
           <div className="mt-4 flex flex-col gap-4 text-sm/6 text-mist-700 dark:text-mist-400">{subheadline}</div>
           <ul className="mt-4 space-y-2 text-sm/6 text-mist-700 dark:text-mist-400">
             {renderedFeatures.map((feature, index) => (

@@ -182,7 +182,7 @@ export function NavbarWithLinksActionsAndCenteredLogo({
     <header
       className={clsx(
         'sticky top-0 z-10 transition-all duration-300',
-        'relative',
+        scrolled && 'navbar-scrolled',
         // Base background - solid when at top
         !scrolled && 'bg-mist-100 dark:bg-mist-950',
         // Glassmorphism when scrolled - semi-transparent with blur
@@ -226,7 +226,10 @@ export function NavbarWithLinksActionsAndCenteredLogo({
               <h2 id="mobile-menu-title" className="sr-only">
                 Mobile navigation
               </h2>
-              <div className="flex justify-end">
+              <div className="flex items-center justify-between gap-4">
+                <div className="inline-flex" onClick={handleMobileMenuLinkClick}>
+                  {logo}
+                </div>
                 <button
                   aria-label="Close menu"
                   onClick={closeMobileMenu}

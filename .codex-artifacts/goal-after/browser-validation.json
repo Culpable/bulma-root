@@ -1,0 +1,121 @@
+{
+  "states": [
+    {
+      "label": "before about hero desktop light",
+      "url": "http://localhost:3002/about/",
+      "title": "About | Bulma",
+      "width": 1800,
+      "height": 1125,
+      "scrollWidth": 1800,
+      "clientWidth": 1800,
+      "hasHorizontalOverflow": false
+    },
+    {
+      "label": "after about hero desktop light",
+      "url": "http://localhost:3001/about/",
+      "title": "About | Bulma",
+      "width": 1800,
+      "height": 1125,
+      "scrollWidth": 1800,
+      "clientWidth": 1800,
+      "hasHorizontalOverflow": false
+    },
+    {
+      "label": "after home hero desktop light",
+      "url": "http://localhost:3001/",
+      "title": "Bulma: AI Assistant for Australian Mortgage Brokers",
+      "width": 1800,
+      "height": 1125,
+      "scrollWidth": 1800,
+      "clientWidth": 1800,
+      "hasHorizontalOverflow": false
+    },
+    {
+      "label": "after home hero mobile dark",
+      "url": "http://localhost:3001/",
+      "title": "Bulma: AI Assistant for Australian Mortgage Brokers",
+      "width": 487,
+      "height": 1125,
+      "scrollWidth": 487,
+      "clientWidth": 487,
+      "hasHorizontalOverflow": false
+    },
+    {
+      "label": "after home nav scrolled desktop light",
+      "url": "http://localhost:3001/",
+      "title": "Bulma: AI Assistant for Australian Mortgage Brokers",
+      "width": 1800,
+      "height": 1125,
+      "scrollWidth": 1800,
+      "clientWidth": 1800,
+      "hasHorizontalOverflow": false
+    },
+    {
+      "label": "after mobile menu open light",
+      "url": "http://localhost:3001/",
+      "title": "Bulma: AI Assistant for Australian Mortgage Brokers",
+      "width": 487,
+      "height": 1125,
+      "scrollWidth": 487,
+      "clientWidth": 487,
+      "hasHorizontalOverflow": false
+    },
+    {
+      "label": "after pricing yearly desktop dark",
+      "url": "http://localhost:3001/pricing/",
+      "title": "Pricing | Bulma",
+      "width": 1800,
+      "height": 1125,
+      "scrollWidth": 1800,
+      "clientWidth": 1800,
+      "hasHorizontalOverflow": false
+    },
+    {
+      "label": "after home pricing yearly desktop light",
+      "url": "http://localhost:3001/",
+      "title": "Bulma: AI Assistant for Australian Mortgage Brokers",
+      "width": 1800,
+      "height": 1125,
+      "scrollWidth": 1800,
+      "clientWidth": 1800,
+      "hasHorizontalOverflow": false
+    },
+    {
+      "label": "after pricing comparison mobile team light",
+      "url": "http://localhost:3001/pricing/",
+      "title": "Pricing | Bulma",
+      "width": 487,
+      "height": 1125,
+      "scrollWidth": 487,
+      "clientWidth": 487,
+      "hasHorizontalOverflow": false
+    },
+    {
+      "label": "after contact error desktop light",
+      "url": "http://localhost:3001/contact/",
+      "title": "Contact | Bulma",
+      "width": 1800,
+      "height": 1125,
+      "scrollWidth": 1800,
+      "clientWidth": 1800,
+      "hasHorizontalOverflow": false
+    }
+  ],
+  "browserEvents": [
+    {
+      "type": "warning",
+      "text": "Image with src \"/img/photos/1.webp\" was detected as the Largest Contentful Paint (LCP). Please add the `loading=\"eager\"` property if this image is above the fold.\nRead more: https://nextjs.org/docs/app/api-reference/components/image#loading",
+      "url": "http://localhost:3002/about/"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "url": "http://localhost:3001/contact/"
+    },
+    {
+      "type": "error",
+      "text": "Contact form submission error: Error: Forced validation failure\n    at handleSubmit (http://localhost:3001/_next/static/chunks/_8b0401a5._.js:441:23)",
+      "url": "http://localhost:3001/contact/"
+    }
+  ]
+}

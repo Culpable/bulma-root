@@ -1151,6 +1151,7 @@
   opacity: 0.5;
 }
 
+.gradient-border-wrapper.gradient-border-rotating:hover,
 .gradient-border-wrapper:hover .gradient-border-rotating,
 .gradient-border-wrapper:hover .gradient-border-glow {
   animation-duration: calc(var(--gradient-rotation-duration) * 0.5);
