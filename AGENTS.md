@@ -91,6 +91,7 @@ LOCAL DEV SERVER POLICY (CRITICAL):
 - If port `3001` is already serving the Bulma demo app, reuse it.
 - If port `3001` is not running, start it with `cd demo && npm run dev -- -p 3001`, wait for the URL to respond, then proceed.
 - If port `3001` is occupied by another service, start the demo on the next available port and state the URL used in the final validation summary.
+- If you started the dev server for manual testing, stop it when finished unless the user asked you to leave it running. If it was already running when you arrived, leave it running.
 - For frontend UI verification, use `dev-browser` by default. Use `agent-browser` when the task needs more complex browser automation. Use Playwright only when browser automation is explicitly requested or when a Playwright suite is added.
 - Follow `.cursor/rules/dev-browser.mdc` whenever browser verification, screenshots, visual analysis, or UI interaction checks are required.
 </dev_server_policy>
