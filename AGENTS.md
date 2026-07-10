@@ -5,22 +5,6 @@
 
 Your container guidelines MUST be followed in all circumstances:
 <container_guidelines>
-Rules for creating implementation plans (plan mode):
-<plan_mode_guidelines>
-When creating implementation plans in `.cursor/plans/`, ALL plans MUST follow the guidelines outlined in `documents/reference/planning_new_feature.md`.
-
-All `.cursor/plans/*.plan.md` must open with:
-1. **Goal**: Summarise the desired outcome, business impact, and success criteria. Explain why the work matters so implementers can adapt tactics without losing intent.
-2. **Current State Analysis**: Detail today’s behavior, affected components, root causes, and user impact. Treat this as the decision-making reference that enables autonomous pivots.
-3. **Implementation Plan**: Outline the recommended approach at a high level (key modules, major steps, pivotal trade-offs). Focus on objectives; avoid line-by-line instructions. If any of the architecture docs require updating, include an explicit step to update them.
-
-The plan must be comprehensive and information dense. It must include all the information necessary to implement the plan without being verbose. Assume the plan will serve as a STANDALONE DOCUMENT, and hence include ALL relevant context within the file itself.
-
-When writing a plan for a complex feature, if you're unsure about anything, ask the user for clarification, presenting your questions and possible solutions clearly so they can understand and provide direction. For each unknown, ask a numbered clarification question and provide 2–4 concrete answer options (A, B, C…), including "Other: ____". ALWAYS format your questions as numbered lists with options (A/B/C etc.) so that it's easy for the user to respond.
-
-AFTER you have built the plan, append an **Implemented Solution** section to the same plan file summarizing (a) the exact code/doc files touched, (b) the key logic or behavioral deltas (backend, cache/versioning, UI/methodology, docs), and (c) any other important notes. Keep it information-dense and bulletised; no narrative filler. The goal is to allow a reviewer to understand the implementation to facilitate reviewing the changes.
-</plan_mode_guidelines>
-
 <code_standards>
 - Give fully coded solutions to each problem without skipping lines.
 - You must separate distinct functions and classes by two new lines.
