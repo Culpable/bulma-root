@@ -10,9 +10,11 @@ End-to-end guide to deploy this Next.js static site to GitHub Pages.
 
 ## Prerequisites
 
-- Node.js 18+ installed locally
+- Node.js 22.23.1 LTS installed locally; run `nvm use` from the repository root to select the version pinned in `.nvmrc`
 - GitHub account
 - Git installed locally
+
+Next.js 16.1.5 supports Node.js `>=20.9.0`, but this repository uses Node.js 22.23.1 consistently across local development, package engines, and GitHub Actions. Node.js 26.4.0 exposes an upstream `module.register()` deprecation in `@tailwindcss/node@4.1.18`; the pinned LTS runtime completes the same build without that warning.
 
 ## 1. Create GitHub Repository
 
@@ -98,7 +100,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20.18.3"
+          node-version: "22.23.1"
           cache: "npm"
           cache-dependency-path: demo/package-lock.json
 

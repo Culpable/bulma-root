@@ -25,6 +25,7 @@ Do not use this rule for documentation-only edits, dependency-only maintenance, 
 - If port `3001` is already occupied by the correct Bulma demo server, reuse it.
 - If port `3001` is occupied by another service, start the demo on the next available port with `cd demo && npm run dev -- -p <port>` and state the URL used.
 - Wait for the page to respond before opening `dev-browser` or `agent-browser`.
+- When waiting for navigation, compare canonical pathnames after normalising one optional trailing slash. Static export may settle `/pricing` at `/pricing/`; treat those paths as equivalent while still asserting any query string or hash required by the scenario.
 
 ## Validation Gate
 
@@ -40,6 +41,9 @@ Required checks for UI-affecting work:
 - Check browser console errors and page errors.
 - Check that changed text does not overlap, clip, wrap poorly, or obscure adjacent content.
 - Save screenshots with absolute filesystem paths when visual evidence is useful or when investigating a visual issue.
+- For IntersectionObserver, `content-visibility`, scroll-reveal, or sticky targets, scroll each target into the live viewport and wait for layout and animation state to settle before evaluating it.
+- Capture targeted viewport or element evidence after scrolling; a full-page screenshot alone does not prove viewport-triggered or sticky state.
+- Before taking a later full-page screenshot, return to the intended starting scroll position and wait for layout to settle so fixed and sticky elements are composited in the correct state.
 
 If a required browser check is skipped, the final response must state:
 

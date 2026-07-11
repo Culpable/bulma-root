@@ -6,7 +6,11 @@
     "build": "next build && node src/scripts/generate-sitemap.js",
     "start": "next start",
     "lint": "eslint",
+    "test": "node --test test/*.test.mjs",
     "generate-sitemap": "node src/scripts/generate-sitemap.js"
+  },
+  "engines": {
+    "node": ">=22.23.1 <23"
   },
   "prettier": {
     "semi": false,

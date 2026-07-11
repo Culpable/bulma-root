@@ -6,11 +6,18 @@ Bulma Root is a [Tailwind Plus](https://tailwindcss.com/plus) marketing site bui
 
 - The only runnable Next.js app in this repo lives in `demo/`.
 - The repo root has no `package.json`, so all dev and build commands must be run from `demo/`.
+- Use Node.js 22.23.1 LTS, pinned in `.nvmrc`; run `nvm use` from the repository root before installing or validating dependencies.
 - `components/` and `pages/` are source templates and variations, not routed pages.
 - Dev: `cd demo && npm run dev` (example `npm run dev -- -p 3001` for `http://localhost:3001`).
 - Production: GitHub Pages builds from the default branch `main` using the workflow in `/.github/workflows/deploy.yml`, and serves the static export from `demo/out`.
 - If GitHub Pages shows the README instead of the app, Pages is pointing at the repo root. Fix by setting Pages to use workflow builds:
   - `gh api repos/Culpable/bulma-root/pages -X PUT -f build_type=workflow && gh workflow run deploy.yml`
+
+### Runtime support
+
+Next.js 16.1.5 declares Node.js `>=20.9.0`. This repository standardises local development and CI on Node.js 22.23.1 LTS and bounds `demo/package.json` to the Node 22 release line so newer, unverified majors are not selected implicitly.
+
+Node.js 26.4.0 exposes a `module.register()` deprecation from `@tailwindcss/node@4.1.18`, which is installed through `@tailwindcss/postcss`. The warning is absent when the same production build runs on the pinned Node.js 22.23.1 runtime, so the Tailwind dependency remains unchanged. Reassess the coordinated Tailwind packages before widening the repository runtime beyond Node 22.
 
 ## Quickstart using your coding agent
 
