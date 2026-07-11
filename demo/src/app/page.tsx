@@ -79,9 +79,9 @@ export const metadata: Metadata = {
 const homeSeoAltContext =
   'Bulma AI assistant for Australian mortgage brokers focused on scenario planning, credit assessment, policy matching, and lender selection'
 const homeAlt = (text: string) => `${text} - ${homeSeoAltContext}`
-const heroScreenshotAlt = homeAlt('Bulma policy Q&A interface screenshot')
-const policyQaScreenshotAlt = homeAlt('Bulma policy answers with source attribution')
-const lenderComparisonScreenshotAlt = homeAlt('Bulma lender policy comparison view')
+const heroScreenshotAlt = homeAlt('Bulma Policy Advisor workspace with suggested lender policy questions')
+const policyQaScreenshotAlt = homeAlt('Bulma policy evidence ledger with lender sources and update dates')
+const lenderComparisonScreenshotAlt = homeAlt('Bulma comparison table for lender maximum LVR policies')
 const homeTestimonialAlt = (name: string) => homeAlt(`Portrait of ${name}`)
 const trackMyTrailHomePricingUrl = 'https://trackmytrail.com.au/?utm_source=bulma.com.au&utm_page=home_pricing'
 const homePricingPeriods = { Monthly: '/month', Yearly: '/year' }
@@ -225,7 +225,7 @@ export default function Page() {
         }
         demo={
           <>
-            {/* Use one viewport-aware picture so only the active hero crop is fetched eagerly. */}
+            {/* Load the verified Policy Advisor capture eagerly because it is the page's primary product visual. */}
             <Screenshot className="rounded-md lg:rounded-lg" wallpaper="blue" placement="bottom" enableReflection>
               <HeroScreenshot alt={heroScreenshotAlt} loading="eager" fetchPriority="high" />
             </Screenshot>

@@ -1,0 +1,53 @@
+<bug_1>
+<summary>
+<title>[Screenshots] Sources blur on high-density displays</title>
+<one_line_description>The responsive screenshot pipeline offers only one low-density candidate per viewport, causing app text and controls to upscale and lose sharpness.</one_line_description>
+</summary>
+<file_locations>
+- demo/src/components/elements/responsive-screenshot.tsx – function: `VerifiedAppScreenshot`, Lines 42-75
+- demo/src/components/elements/responsive-screenshot.tsx – functions: `HeroScreenshot`, `FeatureScreenshotLeft`, and `FeatureScreenshotRight`, Lines 81-124
+- demo/public/img/screenshots/bulma-policy-advisor-workspace-mobile.webp – 390×330 mobile capture
+- demo/public/img/screenshots/bulma-policy-advisor-workspace.webp – 1440×900 desktop capture
+- demo/public/img/screenshots/bulma-policy-evidence-ledger-mobile.webp – 390×350 mobile capture
+- demo/public/img/screenshots/bulma-policy-evidence-ledger.webp – 710×510 desktop capture
+- demo/public/img/screenshots/bulma-lender-comparison-mobile.webp – 350×305 mobile capture
+- demo/public/img/screenshots/bulma-lender-comparison.webp – 840×603 desktop capture
+</file_locations>
+<issue_description>
+<description>
+`VerifiedAppScreenshot` gives each viewport exactly one unlabelled `srcSet` candidate, so the browser has no higher-density image to select for Retina and other high-DPI screens. The problem is visible even at 1× near the mobile breakpoint: browser verification at 639 CSS pixels rendered the 390-pixel hero at 472.81 pixels and rendered the 390-pixel evidence and 350-pixel comparison captures at 517.5 pixels. At the required 390-pixel viewport, the three captures render at 273.63-293.41 CSS pixels, which requires roughly 547-587 source pixels for a 2× display but receives only 350-390 pixels. Desktop has the same limitation: at 1440×900 the 1440-pixel hero renders 1072 CSS pixels, requiring 2144 source pixels at 2×. Because these captures contain small UI labels and table text, interpolation softens the exact content the visuals are intended to showcase. Recommended correction: provide appropriate 1× and 2× width- or density-described candidates for each art direction, or constrain the breakpoint and rendered size so a source is never enlarged beyond its effective pixel density.
+</description>
+<code_example>
+
+```tsx
+// File: demo/src/components/elements/responsive-screenshot.tsx, lines 56-72
+// BUG: Each art direction exposes only one 1× candidate.
+
+&lt;source
+media="(max-width: 639px)"
+srcSet={mobileSrc}
+type="image/webp"
+width={mobileWidth}
+height={mobileHeight}
+/&gt;
+&lt;img
+src={src}
+width={width}
+height={height}
+className={clsx('block h-auto w-full bg-[#090b0c]', className)}
+/&gt;
+```
+
+</code_example>
+<expected_vs_actual>
+
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Mobile selection** | A source with enough pixels for its rendered width and device density | At 639 CSS pixels, 350-390-pixel assets render at 472.81-517.5 pixels even at 1× |
+| **High-DPI rendering** | The browser selects a 2× candidate so small app text remains crisp | Only one candidate exists, so 2× screens upscale the 1× asset |
+| **Desktop hero** | The 1072 CSS-pixel hero has at least 2144 source pixels on a 2× display | The only desktop hero source is 1440 pixels wide |
+| **Visual result** | Policy labels, evidence dates, and lender-table text retain capture sharpness | Browser interpolation softens the UI details on common high-density devices |
+
+</expected_vs_actual>
+</issue_description>
+</bug_1>

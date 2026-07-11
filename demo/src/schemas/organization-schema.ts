@@ -19,7 +19,7 @@ export const organizationSchema = {
   alternateName: ['Bulma: AI Mortgage Broker Assistant', 'Bulma AI Policy Advisor'],
   url: SITE_URL,
   logo: `${SITE_URL}img/logos/bulma-logo-dark.svg`,
-  image: `${SITE_URL}img/screenshots/1.webp`,
+  image: `${SITE_URL}img/screenshots/bulma-policy-advisor-workspace.webp`,
   description:
     'Bulma is an AI assistant for Australian mortgage brokers that answers lender policy questions with source attribution, helping with scenario planning, policy matching, and lender selection.',
   contactPoint: [

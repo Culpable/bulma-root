@@ -1,0 +1,87 @@
+<bug_1>
+<summary>
+<title>[Screenshots] Sources blur on high-density displays</title>
+<one_line_description>The responsive screenshot pipeline offers only one low-density candidate per viewport, causing app text and controls to upscale and lose sharpness.</one_line_description>
+</summary>
+<file_locations>
+- demo/src/components/elements/responsive-screenshot.tsx – function: `VerifiedAppScreenshot`, Lines 42-75
+- demo/src/components/elements/responsive-screenshot.tsx – functions: `HeroScreenshot`, `FeatureScreenshotLeft`, and `FeatureScreenshotRight`, Lines 81-124
+- demo/public/img/screenshots/bulma-policy-advisor-workspace-mobile.webp – 390×330 mobile capture
+- demo/public/img/screenshots/bulma-policy-advisor-workspace.webp – 1440×900 desktop capture
+- demo/public/img/screenshots/bulma-policy-evidence-ledger-mobile.webp – 390×350 mobile capture
+- demo/public/img/screenshots/bulma-policy-evidence-ledger.webp – 710×510 desktop capture
+- demo/public/img/screenshots/bulma-lender-comparison-mobile.webp – 350×305 mobile capture
+- demo/public/img/screenshots/bulma-lender-comparison.webp – 840×603 desktop capture
+</file_locations>
+<issue_description>
+<description>
+`VerifiedAppScreenshot` gave each viewport exactly one unlabelled `srcSet` candidate, so the browser had no higher-density image to select for Retina and other high-DPI screens. The problem was visible even at 1× near the mobile breakpoint: browser verification at 639 CSS pixels rendered the 390-pixel hero at 472.81 pixels and rendered the 390-pixel evidence and 350-pixel comparison captures at 517.5 pixels. At the required 390-pixel viewport, the three captures rendered at 273.63-293.41 CSS pixels, requiring roughly 547-587 source pixels for a 2× display but receiving only 350-390 pixels. Desktop had the same limitation: at 1440×900 the 1440-pixel hero rendered 1072 CSS pixels, requiring 2144 source pixels at 2×. Because these captures contain small UI labels and table text, interpolation softened the exact content the visuals were intended to showcase.
+</description>
+<code_example>
+
+```tsx
+// File: demo/src/components/elements/responsive-screenshot.tsx, lines 56-72
+// BUG: Each art direction exposed only one 1× candidate.
+
+&lt;source
+media="(max-width: 639px)"
+srcSet={mobileSrc}
+type="image/webp"
+width={mobileWidth}
+height={mobileHeight}
+/&gt;
+&lt;img
+src={src}
+width={width}
+height={height}
+className={clsx('block h-auto w-full bg-[#090b0c]', className)}
+/&gt;
+```
+
+</code_example>
+<expected_vs_actual>
+
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Mobile selection** | A source with enough pixels for its rendered width and device density | At 639 CSS pixels, 350-390-pixel assets rendered at 472.81-517.5 pixels even at 1× |
+| **High-DPI rendering** | The browser selects a 2× candidate so small app text remains crisp | Only one candidate existed, so 2× screens upscaled the 1× asset |
+| **Desktop hero** | The 1072 CSS-pixel hero has at least 2144 source pixels on a 2× display | The only desktop hero source was 1440 pixels wide |
+| **Visual result** | Policy labels, evidence dates, and lender-table text retain capture sharpness | Browser interpolation softened the UI details on common high-density devices |
+
+</expected_vs_actual>
+</issue_description>
+</bug_1>
+
+<bug_2>
+<summary>
+<title>[Structured Data] Homepage publishes synthetic screenshot</title>
+<one_line_description>The homepage Organization JSON-LD still advertises the retired synthetic app mock instead of one of the verified Policy Advisor captures.</one_line_description>
+</summary>
+<file_locations>
+- demo/src/schemas/organization-schema.ts – `organizationSchema.image`, Line 22
+- demo/src/app/page.tsx – `homeStructuredData` and homepage JSON-LD output, Lines 163-183
+</file_locations>
+<issue_description>
+<description>
+The three visible homepage placements loaded distinct verified Policy Advisor assets, but `organizationSchema.image` still pointed to `/img/screenshots/1.webp`, the retired synthetic mock that the change replaced. `Page` includes that schema in `homeStructuredData` and serialises it into the rendered `script#structured-data`, so every homepage response continued to publish the stale visual to search-engine consumers even though the DOM images used the new `bulma-*` files. This left an externally consumed homepage image reference inconsistent with the visible product presentation and violated the requirement that no stale synthetic source references remain.
+</description>
+<code_example>
+
+```typescript
+// File: demo/src/schemas/organization-schema.ts, line 22
+// BUG: Structured data continued to advertise the retired synthetic mock.
+image: `${SITE_URL}img/screenshots/1.webp`,
+```
+
+</code_example>
+<expected_vs_actual>
+
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Homepage image references** | Visible images and Organization JSON-LD reference approved current Policy Advisor captures | Visible images used `bulma-*` assets, but Organization JSON-LD referenced `1.webp` |
+| **External representation** | Search consumers receive a current, accurate Bulma application visual | Search consumers were directed to the retired synthetic mock |
+| **Old-reference removal** | No runtime homepage output contains the stale synthetic screenshot path | `script#structured-data` contained `https://bulma.com.au/img/screenshots/1.webp` |
+
+</expected_vs_actual>
+</issue_description>
+</bug_2>
