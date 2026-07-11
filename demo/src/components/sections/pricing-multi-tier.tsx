@@ -84,7 +84,7 @@ function PricingOptionToggle<T extends string>({
             aria-selected={isSelected}
             onClick={() => onSelect(index)}
             className={clsx(
-              'rounded-full px-4 py-1 text-sm/7 font-medium transition-colors duration-200',
+              'cursor-pointer rounded-full px-4 py-1 text-sm/7 font-medium transition-colors duration-200',
               isSelected
                 ? 'bg-mist-950 text-white shadow-sm dark:bg-white dark:text-mist-950'
                 : 'text-mist-950 hover:bg-mist-950/5 dark:text-white dark:hover:bg-white/10',

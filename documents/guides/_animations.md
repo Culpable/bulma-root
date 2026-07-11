@@ -114,6 +114,8 @@ const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
 
 All animations use `transition-all` with `ease-out` timing. Duration ranges from 500ms to 1500ms, with longer timings reserved for graph draw and glow effects.
 
+The two-column feature grid explicitly stretches its cells, and both the slide-animation wrappers and feature cards preserve `h-full`. This keeps paired cards aligned even when their copy lengths differ.
+
 FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with `data-hash-target="true"`, so direct or routed hash deep links such as `#lenders` remain visible even when navigation lands below the section header that normally triggers the staggered entrance animation.
 
 ---

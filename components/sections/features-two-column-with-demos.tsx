@@ -15,7 +15,7 @@ export function Feature({
   cta: ReactNode
 } & Omit<ComponentProps<'div'>, 'children'>) {
   return (
-    <div className={clsx('rounded-lg bg-mist-950/2.5 p-2 dark:bg-white/5', className)}>
+    <div className={clsx('h-full rounded-lg bg-mist-950/2.5 p-2 dark:bg-white/5', className)}>
       <div className="relative overflow-hidden rounded-sm dark:after:absolute dark:after:inset-0 dark:after:rounded-sm dark:after:outline-1 dark:after:-outline-offset-1 dark:after:outline-white/10">
         {demo}
       </div>
@@ -36,7 +36,7 @@ export function FeaturesTwoColumnWithDemos({
 }: { features: ReactNode } & Omit<ComponentProps<typeof Section>, 'children'>) {
   return (
     <Section {...props}>
-      <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">{features}</div>
+      <div className="grid grid-cols-1 items-stretch gap-2 lg:grid-cols-2">{features}</div>
     </Section>
   )
 }

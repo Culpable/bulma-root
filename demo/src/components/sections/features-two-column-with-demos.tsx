@@ -22,7 +22,7 @@ export function Feature({
   cta: ReactNode
 } & Omit<ComponentProps<'div'>, 'children'>) {
   return (
-    <div className={clsx('rounded-lg bg-mist-950/2.5 p-2 dark:bg-white/5', className)}>
+    <div className={clsx('h-full rounded-lg bg-mist-950/2.5 p-2 dark:bg-white/5', className)}>
       <div className="relative overflow-hidden rounded-sm dark:after:absolute dark:after:inset-0 dark:after:rounded-sm dark:after:outline-1 dark:after:-outline-offset-1 dark:after:outline-white/10">
         {demo}
       </div>
@@ -76,7 +76,7 @@ export function FeaturesTwoColumnWithDemos({
     return (
       <div
         className={clsx(
-          'transition-all duration-700 ease-out',
+          'h-full transition-all duration-700 ease-out',
           // Staggered slide direction: left for even, right for odd
           isVisible
             ? 'opacity-100 translate-x-0'
@@ -98,7 +98,7 @@ export function FeaturesTwoColumnWithDemos({
         data-visible={isVisible}
         className={clsx(enableHorizon && 'section-horizon')}
       >
-        <div ref={containerRef} className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+        <div ref={containerRef} className="grid grid-cols-1 items-stretch gap-2 lg:grid-cols-2">
           {animatedFeatures}
         </div>
       </div>
