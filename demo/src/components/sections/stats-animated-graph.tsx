@@ -154,7 +154,7 @@ export function StatsAnimatedGraph({
         return (
           <div
             className={clsx(
-              'transition-all duration-700 ease-out',
+              'transition-[translate,opacity] duration-700 ease-out',
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             )}
             style={{ transitionDelay: `${delay}ms` }}
@@ -274,7 +274,7 @@ export function StatsAnimatedGraph({
               r="4"
               className={clsx(
                 'fill-mist-600 dark:fill-mist-300',
-                'transition-all duration-500',
+                'transition-[scale,opacity] duration-500',
                 isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
               )}
               style={{

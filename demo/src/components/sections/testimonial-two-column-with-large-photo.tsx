@@ -25,7 +25,7 @@ export function TestimonialTwoColumnWithLargePhoto({
       <Container>
         <figure
           className={clsx(
-            'grid grid-cols-1 gap-x-2 rounded-xl bg-mist-950/2.5 p-2 transition-all duration-700 ease-out lg:grid-cols-2 dark:bg-white/5',
+            'grid grid-cols-1 gap-x-2 rounded-xl bg-mist-950/2.5 p-2 transition-[translate,opacity] duration-700 ease-out lg:grid-cols-2 dark:bg-white/5',
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
           )}
         >
@@ -38,7 +38,7 @@ export function TestimonialTwoColumnWithLargePhoto({
               <p className="text-mist-700 dark:text-mist-400">{byline}</p>
             </figcaption>
           </div>
-          <div className="flex overflow-hidden rounded-sm outline -outline-offset-1 outline-black/5 *:object-cover dark:outline-white/5">
+          <div className="flex overflow-hidden rounded-sm *:object-cover [&_img]:outline [&_img]:-outline-offset-1 [&_img]:outline-black/10 dark:[&_img]:outline-white/10">
             {img}
           </div>
         </figure>

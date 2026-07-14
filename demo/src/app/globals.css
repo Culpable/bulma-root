@@ -124,12 +124,6 @@
     }
   }
 
-  /* Respect reduced motion - disable animated grain if motion is reduced */
-  @media (prefers-reduced-motion: reduce) {
-    body::before {
-      opacity: 0.025;
-    }
-  }
 }
 
 /* Scroll-triggered reveal animations */
@@ -151,14 +145,6 @@
 
 .animate-fade-up[data-animate='visible'] {
   animation: fade-up 0.5s ease-out forwards;
-}
-
-/* Respect reduced motion preferences */
-@media (prefers-reduced-motion: reduce) {
-  .animate-fade-up {
-    animation: none !important;
-    opacity: 1 !important;
-  }
 }
 
 /* =============================================================================
@@ -485,7 +471,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.1rem 0;
+  min-height: 2.75rem;
+  padding: 0.45rem 0.15rem;
   border: 0;
   appearance: none;
   background: transparent;
@@ -683,6 +670,8 @@
 
   .supported-lenders-field__button {
     font-size: 1rem;
+    min-height: 2.5rem;
+    padding-block: 0.35rem;
   }
 }
 
@@ -729,8 +718,8 @@
 }
 
 /* =============================================================================
-   FAQ SPRING ANIMATION
-   Smooth accordion open/close with spring-like overshoot easing
+   FAQ STATE TRANSITIONS
+   Keep disclosure content and contextual icons reversible during rapid toggles.
    ============================================================================= */
 
 @keyframes faq-spring-open {
@@ -748,21 +737,78 @@
   }
 }
 
-@keyframes faq-icon-rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  60% {
-    transform: rotate(95deg);
-  }
-  100% {
-    transform: rotate(90deg);
+/* Retain the spring entrance for contact-form recovery and success messages. */
+.faq-spring-content {
+  animation: faq-spring-open 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.faq-disclosure {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    grid-template-rows 150ms cubic-bezier(0.2, 0, 0, 1),
+    opacity 150ms cubic-bezier(0.2, 0, 0, 1),
+    transform 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.faq-disclosure[hidden]:not([data-transition]) {
+  display: none;
+}
+
+@layer base {
+  .faq-disclosure[hidden][data-transition] {
+    /* Override Tailwind Preflight's important hidden rule only during exit. */
+    display: grid !important;
   }
 }
 
-/* Spring animation for FAQ content reveal */
-.faq-spring-content {
-  animation: faq-spring-open 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+.faq-disclosure[data-enter] {
+  transition-duration: 400ms;
+}
+
+.faq-disclosure[data-leave] {
+  transition-duration: 150ms;
+}
+
+/* A rapid close can reverse an unfinished enter and retain data-enter. */
+.faq-disclosure[hidden][data-enter] {
+  transition-duration: 150ms;
+}
+
+.faq-disclosure[data-closed] {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.faq-disclosure__content {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.faq-context-icon {
+  filter: blur(0);
+  opacity: 1;
+  scale: 1;
+  transition:
+    filter 300ms cubic-bezier(0.2, 0, 0, 1),
+    opacity 300ms cubic-bezier(0.2, 0, 0, 1),
+    scale 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.faq-context-icon--minus,
+[aria-expanded='true'] .faq-context-icon--plus {
+  filter: blur(4px);
+  opacity: 0;
+  scale: 0.25;
+}
+
+[aria-expanded='true'] .faq-context-icon--minus {
+  filter: blur(0);
+  opacity: 1;
+  scale: 1;
 }
 
 /* Ensure routed hash links reveal FAQ items even when the section entrance observer has not fired. */
@@ -865,6 +911,7 @@
     padding-inline 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
     background-color 180ms ease-out,
     color 180ms ease-out,
+    scale 150ms ease-out,
     box-shadow 180ms ease-out;
 }
 
@@ -1623,33 +1670,6 @@
    overshoot and settle effect.
    ============================================================================= */
 
-@keyframes elastic-slide {
-  0% {
-    transform: translateX(var(--from-x, 0));
-  }
-  60% {
-    /* Overshoot by 8% */
-    transform: translateX(calc(var(--to-x, 0) + (var(--to-x, 0) - var(--from-x, 0)) * 0.08));
-  }
-  80% {
-    /* Settle back slightly past target */
-    transform: translateX(calc(var(--to-x, 0) - (var(--to-x, 0) - var(--from-x, 0)) * 0.03));
-  }
-  100% {
-    transform: translateX(var(--to-x, 0));
-  }
-}
-
-/* Pill indicator base styles */
-.pricing-toggle-pill {
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* When animating, use the elastic keyframe */
-.pricing-toggle-pill[data-animating='true'] {
-  animation: elastic-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
 /* =============================================================================
    SECTION REVEAL HORIZON LINE
    Animated horizontal accent line that draws inward from both edges
@@ -1970,8 +1990,8 @@
 }
 
 /* =============================================================================
-   RECOMMENDATION B: PRICING CARD FOCUS ISOLATION
-   Cinema-style focus pull - hovering one card dims others.
+   PRICING CARD FOCUS
+   Keep every plan fully readable while the hovered card gains controlled lift.
    ============================================================================= */
 
 /* Parent container that enables focus isolation */
@@ -1979,36 +1999,33 @@
   /* Children will respond to parent hover state */
 }
 
-/* Card within focus group - dims when sibling is hovered */
 .pricing-focus-card {
   transition:
-    filter 0.4s ease-out,
-    opacity 0.4s ease-out,
-    transform 0.2s ease-out;
-}
-
-/* When parent is hovered, dim all cards */
-.pricing-focus-group:hover .pricing-focus-card {
-  filter: saturate(0.7) brightness(0.95);
-  opacity: 0.7;
-}
-
-/* The hovered card overrides the dim effect and gains focus */
-.pricing-focus-group:hover .pricing-focus-card:hover {
-  filter: saturate(1) brightness(1);
-  opacity: 1;
-  /* Add subtle glow halo */
+    transform 200ms ease-out,
+    box-shadow 200ms ease-out;
   box-shadow:
-    0 0 0 1px oklch(56% 0.021 213.5 / 0.1),
-    0 8px 32px -8px oklch(56% 0.021 213.5 / 0.15);
+    0 0 0 1px oklch(45% 0.017 213.2 / 0.1),
+    0 18px 46px -32px oklch(45% 0.017 213.2 / 0.42);
 }
 
-/* Dark mode adjustments */
+.pricing-focus-group:hover .pricing-focus-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 0 1px oklch(45% 0.017 213.2 / 0.16),
+    0 24px 60px -30px oklch(45% 0.017 213.2 / 0.48);
+}
+
 @variant dark {
+  .pricing-focus-card {
+    box-shadow:
+      0 0 0 1px oklch(87.2% 0.007 219.6 / 0.1),
+      0 18px 46px -32px black;
+  }
+
   .pricing-focus-group:hover .pricing-focus-card:hover {
     box-shadow:
       0 0 0 1px oklch(72.3% 0.014 214.4 / 0.15),
-      0 8px 32px -8px oklch(72.3% 0.014 214.4 / 0.2);
+      0 24px 60px -30px oklch(72.3% 0.014 214.4 / 0.3);
   }
 }
 
@@ -2333,40 +2350,9 @@
 }
 
 /* =============================================================================
-   MOBILE MENU ENTRANCE CHOREOGRAPHY
-   Native dialog open-state animation for the mobile navigation sheet.
+   MOBILE MENU STATE CHOREOGRAPHY
+   Tailwind Plus transition attributes keep enter and exit interruptible.
    ============================================================================= */
-
-@keyframes mobile-menu-panel-enter {
-  from {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes mobile-menu-link-enter {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes mobile-menu-close-enter {
-  from {
-    transform: rotate(-90deg) scale(0.88);
-  }
-  to {
-    transform: rotate(0deg) scale(1);
-  }
-}
 
 .mobile-menu-dialog {
   width: 100%;
@@ -2388,46 +2374,85 @@
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.58) inset,
     0 24px 80px rgba(15, 23, 42, 0.12);
-  opacity: 0;
-  transform: translateY(-8px) scale(0.985);
+  opacity: 1;
+  transform: translateY(0) scale(1);
   transform-origin: top center;
+  transition:
+    opacity 150ms cubic-bezier(0.2, 0, 0, 1),
+    transform 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-.mobile-menu-dialog[open] .mobile-menu-panel {
-  animation: mobile-menu-panel-enter 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+.mobile-menu-panel[data-enter] {
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mobile-menu-panel[data-leave] {
+  transition-duration: 150ms;
+}
+
+.mobile-menu-panel[data-closed] {
+  opacity: 0;
+  transform: translateY(-12px) scale(0.985);
+}
+
+.mobile-menu-panel[data-enter][data-closed] {
+  transition-duration: 150ms;
 }
 
 .mobile-menu-links > * {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 150ms cubic-bezier(0.2, 0, 0, 1),
+    transform 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.mobile-menu-panel[data-closed] .mobile-menu-links > * {
   opacity: 0;
   transform: translateY(14px);
 }
 
-.mobile-menu-dialog[open] .mobile-menu-links > * {
-  animation: mobile-menu-link-enter 260ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+.mobile-menu-panel[data-enter] .mobile-menu-links > * {
+  transition-duration: 260ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.mobile-menu-dialog[open] .mobile-menu-links > :nth-child(1) {
-  animation-delay: 60ms;
+.mobile-menu-panel[data-enter] .mobile-menu-links > :nth-child(1) {
+  transition-delay: 60ms;
 }
 
-.mobile-menu-dialog[open] .mobile-menu-links > :nth-child(2) {
-  animation-delay: 120ms;
+.mobile-menu-panel[data-enter] .mobile-menu-links > :nth-child(2) {
+  transition-delay: 120ms;
 }
 
-.mobile-menu-dialog[open] .mobile-menu-links > :nth-child(3) {
-  animation-delay: 180ms;
+.mobile-menu-panel[data-enter] .mobile-menu-links > :nth-child(3) {
+  transition-delay: 180ms;
 }
 
-.mobile-menu-dialog[open] .mobile-menu-links > :nth-child(n + 4) {
-  animation-delay: 240ms;
+.mobile-menu-panel[data-enter] .mobile-menu-links > :nth-child(n + 4) {
+  transition-delay: 240ms;
+}
+
+.mobile-menu-panel[data-closed] .mobile-menu-links > * {
+  transition-duration: 150ms;
+  transition-delay: 0ms;
+}
+
+.mobile-menu-panel[data-enter][data-closed] .mobile-menu-links > * {
+  transition-duration: 150ms;
+  transition-delay: 0ms;
 }
 
 .mobile-menu-close-icon {
   transform-origin: center;
+  transform: rotate(0deg) scale(1);
+  transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.mobile-menu-dialog[open] .mobile-menu-close-icon {
-  animation: mobile-menu-close-enter 220ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+.mobile-menu-panel[data-closed] .mobile-menu-close-icon {
+  transform: rotate(-90deg) scale(0.88);
+  transition-duration: 150ms;
 }
 
 @variant dark {
@@ -2600,31 +2625,6 @@
 /* Dot matrix responds to scroll velocity - increases opacity during fast scroll */
 .velocity-dot-matrix {
   --dot-opacity-boost: calc(var(--scroll-velocity, 0) * 0.0002);
-}
-
-/* =============================================================================
-   PAGE ROUTE TRANSITIONS (C)
-   Smooth entrance animations for page content when navigating between routes.
-   Creates a polished, premium feel by eliminating jarring page changes.
-
-   To disable: Remove the PageTransition wrapper from pages, or remove
-   the .page-transition-enter class from the wrapper element.
-   ============================================================================= */
-
-@keyframes page-enter {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Page entrance animation - triggers on mount */
-.page-transition-enter {
-  animation: page-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 /* =============================================================================
@@ -2848,6 +2848,9 @@
   height: 150%;
   border-radius: 50%;
   filter: blur(80px);
+}
+
+.aurora-background:not([data-paused='true']) .aurora-layer {
   will-change: transform, opacity;
 }
 
@@ -3061,8 +3064,8 @@
   will-change: transform;
 }
 
-/* Disable parallax on touch devices and when reduced motion is preferred */
-@media (hover: none), (prefers-reduced-motion: reduce) {
+/* Disable pointer-led parallax where hover input is unavailable. */
+@media (hover: none) {
   .hero-parallax-element {
     transform: none !important;
   }
@@ -3123,14 +3126,6 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-/* Respect reduced motion preferences for View Transitions */
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation-duration: 0.01ms !important;
   }
 }
 

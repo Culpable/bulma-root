@@ -223,7 +223,7 @@ export default function Page() {
             </ButtonLink>
 
             <PlainButtonLink href="/contact" size="lg" className="group w-full sm:w-auto">
-              Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
+              Book a demo <AnimatedArrowIcon />
             </PlainButtonLink>
           </div>
         }

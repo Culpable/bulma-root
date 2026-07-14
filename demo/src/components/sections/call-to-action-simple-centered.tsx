@@ -26,7 +26,7 @@ export function CallToActionSimpleCentered({
         {/* Headline and subheadline with slide up animation */}
         <div
           className={clsx(
-            'flex flex-col gap-6 transition-all duration-600 ease-out',
+            'flex flex-col gap-6 transition-[translate,opacity] duration-600 ease-out',
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
           )}
         >
@@ -36,7 +36,7 @@ export function CallToActionSimpleCentered({
         {/* CTA with delayed slide up animation */}
         <div
           className={clsx(
-            'transition-all duration-600 ease-out',
+            'transition-[translate,opacity] duration-600 ease-out',
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
           )}
           style={{ transitionDelay: '150ms' }}

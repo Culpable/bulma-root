@@ -30,33 +30,21 @@ export function TestimonialGlass({
         // Glassmorphism: stronger blur and semi-transparent background
         'bg-gradient-to-br from-white/70 via-white/50 to-white/30',
         'backdrop-blur-xl backdrop-saturate-150',
-        // Multi-layer border effect for depth
-        'ring-1 ring-white/50',
-        'shadow-[0_4px_20px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.6)]',
+        // Use a neutral edge and two restrained depth layers on the light surface.
+        'ring-1 ring-black/[0.06]',
+        'shadow-[0_8px_20px_rgba(0,0,0,0.04),0_24px_48px_rgba(0,0,0,0.035)]',
         // Dark mode: frosted dark glass
         'dark:from-white/[0.08] dark:via-white/[0.04] dark:to-white/[0.02]',
-        'dark:ring-white/10',
-        'dark:shadow-[0_4px_20px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]',
+        'dark:ring-white/[0.08]',
+        'dark:shadow-[0_8px_20px_rgba(0,0,0,0.3),0_24px_48px_rgba(0,0,0,0.22)]',
         // Hover: lift and glow
-        'transition-all duration-500 ease-out',
-        'hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.8)]',
-        'dark:hover:shadow-[0_12px_28px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)]',
-        'dark:hover:from-white/[0.12] dark:hover:via-white/[0.06]',
+        'transition-[translate,box-shadow] duration-500 ease-out',
+        'hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.07),0_30px_60px_rgba(0,0,0,0.05)]',
+        'dark:hover:shadow-[0_12px_28px_rgba(0,0,0,0.4),0_30px_60px_rgba(0,0,0,0.3)]',
         className,
       )}
       {...props}
     >
-      {/* Gradient border overlay - visible on hover */}
-      <div
-        className={clsx(
-          'pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500',
-          'bg-gradient-to-br from-mist-400/20 via-transparent to-mist-600/20',
-          'group-hover:opacity-100',
-          'dark:from-mist-300/10 dark:to-mist-500/10',
-        )}
-        aria-hidden="true"
-      />
-
       {/* Subtle inner highlight line at top */}
       <div
         className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent dark:via-white/20"
@@ -101,12 +89,14 @@ export function TestimonialGlass({
             'shadow-[0_0_0_1px_rgba(0,0,0,0.05)]',
             'dark:ring-white/20',
             // Hover glow
-            'transition-all duration-300',
+            'transition-shadow duration-300',
             'group-hover:ring-mist-400/30 group-hover:shadow-[0_0_12px_rgba(0,0,0,0.1)]',
             'dark:group-hover:ring-mist-300/20',
           )}
         >
-          <div className="size-full *:size-full *:object-cover">{img}</div>
+          <div className="size-full *:size-full *:object-cover [&_img]:outline [&_img]:-outline-offset-1 [&_img]:outline-black/10 dark:[&_img]:outline-white/10">
+            {img}
+          </div>
         </div>
         <div>
           <p className="font-semibold tracking-tight">{name}</p>

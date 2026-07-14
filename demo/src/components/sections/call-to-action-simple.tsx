@@ -32,7 +32,7 @@ export function CallToActionSimple({
         {/* Headline and subheadline with slide-up animation */}
         <div
           className={clsx(
-            'flex flex-col gap-6 transition-all duration-700 ease-out',
+            'flex flex-col gap-6 transition-[translate,opacity] duration-700 ease-out',
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           )}
         >
@@ -46,7 +46,7 @@ export function CallToActionSimple({
         {cta && (
           <div
             className={clsx(
-              'transition-all duration-600 ease-out',
+              'transition-[translate,scale,opacity] duration-600 ease-out',
               isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-[0.98]'
             )}
             style={{ transitionDelay: '150ms' }}

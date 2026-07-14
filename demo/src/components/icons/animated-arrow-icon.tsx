@@ -12,7 +12,7 @@ export function AnimatedArrowIcon({ className, ...props }: ComponentProps<'svg'>
       {...props}
     >
       <path
-        className="origin-left scale-x-0 opacity-0 transition-[transform,opacity] duration-200 ease-out group-hover:scale-x-100 group-hover:opacity-100"
+        className="origin-left scale-x-0 opacity-0 transition-[scale,opacity] duration-200 ease-out group-hover:scale-x-100 group-hover:opacity-100"
         d="M0 5h7"
         strokeLinecap="round"
       />

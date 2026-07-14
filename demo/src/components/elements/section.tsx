@@ -39,7 +39,7 @@ export function Section({
             <div className="flex flex-col gap-2">
               {eyebrow && (
                 stickyEyebrow ? (
-                  <div className="sticky top-16 z-10 -mx-4 px-4 py-2 transition-all duration-300 [&[data-stuck=true]]:bg-mist-100/85 [&[data-stuck=true]]:backdrop-blur-md [&[data-stuck=true]]:rounded-lg dark:[&[data-stuck=true]]:bg-mist-950/85">
+                  <div className="sticky top-16 z-10 -mx-4 px-4 py-2 transition-[background-color,backdrop-filter,border-radius] duration-300 [&[data-stuck=true]]:rounded-lg [&[data-stuck=true]]:bg-mist-100/85 [&[data-stuck=true]]:backdrop-blur-md dark:[&[data-stuck=true]]:bg-mist-950/85">
                     <Eyebrow>{eyebrow}</Eyebrow>
                   </div>
                 ) : (

@@ -16,8 +16,8 @@ export default function Page() {
         headline="Page not found"
         subheadline={<p>Sorry, but the page you were looking for could not be found.</p>}
         cta={
-          <Link href="/" className="group">
-            Go back home <AnimatedArrowIcon className="-mr-1 ml-1.5" />
+          <Link href="/" size="cta" className="group">
+            Go back home <AnimatedArrowIcon />
           </Link>
         }
       />

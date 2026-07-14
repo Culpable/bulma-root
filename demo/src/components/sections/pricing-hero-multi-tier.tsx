@@ -20,6 +20,13 @@ import { MorphingPrice } from '../elements/morphing-price'
 import { Text } from '../elements/text'
 import { AnimatedCheckmarkIcon } from '../icons/animated-checkmark-icon'
 import { PricingBonusPanel, PricingBonusPrompt, PricingOptionCallout, PricingPriceNote } from './pricing-card-shared'
+import {
+  PRICING_TOGGLE_BUTTON,
+  PRICING_TOGGLE_SELECTED_SURFACE,
+  PRICING_TOGGLE_SELECTED_TEXT,
+  PRICING_TOGGLE_TRACK,
+  PRICING_TOGGLE_UNSELECTED,
+} from './pricing-toggle-shared'
 
 // =============================================================================
 // PRICING OPTION CONTEXT
@@ -82,6 +89,20 @@ function ElasticTabToggle<T extends string>({ options, selectedIndex, onSelect }
   const [isAnimating, setIsAnimating] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const animationResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Clear the owned reset timer so only the latest tab selection can end the spring transition.
+  const clearAnimationResetTimer = useCallback(() => {
+    if (animationResetTimerRef.current === null) return
+
+    clearTimeout(animationResetTimerRef.current)
+    animationResetTimerRef.current = null
+  }, [])
+
+  // Prevent an animation reset from updating state after the toggle unmounts.
+  useEffect(() => {
+    return () => clearAnimationResetTimer()
+  }, [clearAnimationResetTimer])
 
   // Update pill position when selection changes
   useEffect(() => {
@@ -106,18 +127,22 @@ function ElasticTabToggle<T extends string>({ options, selectedIndex, onSelect }
   const handleSelect = (index: number) => {
     if (index === selectedIndex) return
 
-    // Trigger elastic animation
+    // Replace any earlier reset so a rapid reversal receives its full animation window.
+    clearAnimationResetTimer()
     setIsAnimating(true)
     onSelect(index)
 
     // Reset animation state after animation completes
-    setTimeout(() => setIsAnimating(false), 500)
+    animationResetTimerRef.current = setTimeout(() => {
+      setIsAnimating(false)
+      animationResetTimerRef.current = null
+    }, 500)
   }
 
   return (
     <div
       ref={containerRef}
-      className="relative flex items-center gap-1 rounded-full bg-mist-950/5 p-1 dark:bg-white/5"
+      className={clsx('relative flex', PRICING_TOGGLE_TRACK)}
       role="tablist"
       aria-label="Pricing options"
     >
@@ -125,7 +150,7 @@ function ElasticTabToggle<T extends string>({ options, selectedIndex, onSelect }
       <div
         className={clsx(
           'pricing-toggle-pill absolute top-1 bottom-1 rounded-full',
-          'bg-mist-950 shadow-sm dark:bg-white/10',
+          PRICING_TOGGLE_SELECTED_SURFACE,
           // Use spring easing for elastic effect
           isAnimating
             ? '[transition:left_0.4s_cubic-bezier(0.34,1.56,0.64,1),width_0.3s_ease-out]'
@@ -147,12 +172,12 @@ function ElasticTabToggle<T extends string>({ options, selectedIndex, onSelect }
           aria-selected={selectedIndex === index}
           onClick={() => handleSelect(index)}
           className={clsx(
-            'relative z-10 cursor-pointer rounded-full px-4 py-1 text-sm/7 font-medium',
-            'transition-colors duration-200',
+            'relative z-10',
+            PRICING_TOGGLE_BUTTON,
             // Text color based on selection
             selectedIndex === index
-              ? 'text-white dark:text-white'
-              : 'text-mist-950 hover:text-mist-800 dark:text-white dark:hover:text-mist-200',
+              ? PRICING_TOGGLE_SELECTED_TEXT
+              : PRICING_TOGGLE_UNSELECTED,
           )}
         >
           {option}
@@ -250,8 +275,7 @@ export function Plan<T extends string = string>({
       <div
         className={clsx(
           'flex h-full flex-col gap-6 rounded-xl bg-mist-950/2.5 p-6 sm:items-start dark:bg-white/5',
-          // Hover lift effect with smooth transition
-          'transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:shadow-mist-950/5 dark:hover:shadow-black/20',
+          // Keep the inner surface stable; the shared pricing wrapper owns lift and depth.
           className,
         )}
       >
@@ -294,7 +318,7 @@ export function Plan<T extends string = string>({
           ) : bonusPrompt ? (
             <PricingBonusPrompt>{bonusPrompt}</PricingBonusPrompt>
           ) : null}
-          {cta}
+          <React.Fragment key="cta">{cta}</React.Fragment>
         </div>
       </div>
     </CardSpotlight>
@@ -345,7 +369,7 @@ export function PricingHeroMultiTier<T extends string>({
 
   // Wrap plan cards with staggered animation and context provider
   // Includes depth stack effect for "pulled from deck" card entrance
-  // Includes focus isolation effect - hovering one card dims others
+  // Includes focus emphasis without reducing the readability of sibling plans.
   const animatedPlans = Children.map(plans, (child, index) => {
     const delay = 300 + index * staggerDelay
     const planKey = React.isValidElement(child) && child.key != null ? child.key : index
@@ -356,15 +380,17 @@ export function PricingHeroMultiTier<T extends string>({
         data-animating={isVisible}
         className={clsx(
           // Base styles for animation and layout
-          'card-depth-stack pricing-focus-card h-full rounded-xl transition-all duration-600 ease-out',
+          'card-depth-stack h-full rounded-xl transition-[translate,scale,opacity] duration-600 ease-out',
           isVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-6 scale-95 opacity-0',
         )}
         style={{ transitionDelay: `${delay}ms` }}
       >
-        {/* Provide animation context to Plan component for checkmark staggering */}
-        <PricingHeroAnimationContext.Provider value={{ isVisible, baseDelay: delay }}>
-          {child}
-        </PricingHeroAnimationContext.Provider>
+        <div className="pricing-focus-card h-full rounded-xl">
+          {/* Provide animation context to Plan component for checkmark staggering */}
+          <PricingHeroAnimationContext.Provider value={{ isVisible, baseDelay: delay }}>
+            {child}
+          </PricingHeroAnimationContext.Provider>
+        </div>
       </div>
     )
   })
@@ -376,7 +402,7 @@ export function PricingHeroMultiTier<T extends string>({
           {/* Header with slide up animation */}
           <div
             className={clsx(
-              'flex flex-col items-center gap-6 transition-all duration-700 ease-out',
+              'flex flex-col items-center gap-6 transition-[translate,opacity] duration-700 ease-out',
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
             )}
           >
@@ -391,7 +417,7 @@ export function PricingHeroMultiTier<T extends string>({
           </div>
 
           {/* Plan cards - persistent across option changes for smooth price morphing */}
-          {/* pricing-focus-group enables focus isolation - hovering one card dims siblings */}
+          {/* Keep every plan readable while the hovered plan receives focused depth. */}
           <div className="pricing-focus-group grid grid-cols-1 items-stretch gap-2 sm:has-[>:nth-child(5)]:grid-cols-2 sm:max-lg:has-[>:last-child:nth-child(even)]:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none lg:has-[>:nth-child(5)]:grid-flow-row lg:has-[>:nth-child(5)]:grid-cols-3">
             {animatedPlans}
           </div>

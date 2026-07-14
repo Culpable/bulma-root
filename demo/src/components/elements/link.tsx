@@ -12,9 +12,11 @@ import type { ComponentProps } from 'react'
 export function Link({
   href,
   className,
+  size = 'inline',
   ...props
 }: {
   href: string
+  size?: 'inline' | 'cta'
 } & Omit<ComponentProps<'a'>, 'href'>) {
   return (
     <NextLink
@@ -23,6 +25,8 @@ export function Link({
         // Base link styling with w-fit to prevent stretching in flex containers
         'link-underline-grow inline-flex w-fit cursor-pointer items-center gap-2',
         'text-sm/7 font-medium text-mist-950 dark:text-white',
+        // Give standalone actions compliant targets while keeping links inside prose compact.
+        size === 'cta' && 'min-h-11 lg:min-h-10',
         // Smooth color transition on hover (subtle blue tint in dark mode)
         'transition-colors duration-200 hover:text-mist-800 dark:hover:text-[oklch(95%_0.015_210)]',
         className,

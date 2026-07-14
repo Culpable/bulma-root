@@ -70,8 +70,7 @@ function FeatureGroup<Plan extends string>({
                 className={clsx(
                   'relative border-t border-mist-950/5 px-3 py-4 text-center text-mist-700',
                   'group-first:border-mist-950/10 dark:border-white/10 dark:text-mist-400 dark:group-first:border-white/10',
-                  // Column highlight effect - subtle glow on hover
-                  'transition-all duration-200',
+                  // Animate only the pseudo-element used for the column highlight.
                   'before:pointer-events-none before:absolute before:inset-0 before:opacity-0',
                   'before:bg-gradient-to-b before:from-mist-500/5 before:to-transparent',
                   'before:transition-opacity before:duration-200',
@@ -135,7 +134,7 @@ export function PlanComparisonTable<const Plan extends string>({
 
         <table
           className={clsx(
-            'w-full border-collapse text-left text-sm/5 transition-all duration-700 ease-out max-sm:hidden',
+            'w-full border-collapse text-left text-sm/5 transition-[translate,opacity] duration-700 ease-out max-sm:hidden',
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
           )}
         >
@@ -168,7 +167,7 @@ export function PlanComparisonTable<const Plan extends string>({
 
         <div
           className={clsx(
-            'transition-all duration-700 ease-out sm:hidden',
+            'transition-[translate,opacity] duration-700 ease-out sm:hidden',
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
           )}
         >

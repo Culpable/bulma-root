@@ -33,7 +33,7 @@ export function HeroLeftAlignedWithPhoto({
           {/* Hero content with slide up animation */}
           <div
             className={clsx(
-              'flex flex-col items-start gap-6 transition-all duration-700 ease-out',
+              'flex flex-col items-start gap-6 transition-[translate,opacity] duration-700 ease-out',
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
             )}
           >
@@ -47,7 +47,7 @@ export function HeroLeftAlignedWithPhoto({
           {/* Photo with delayed slide up animation */}
           <div
             className={clsx(
-              'overflow-hidden rounded-xl outline -outline-offset-1 outline-black/5 transition-all duration-700 ease-out dark:outline-white/5',
+              'overflow-hidden rounded-xl transition-[translate,opacity] duration-700 ease-out [&_img]:outline [&_img]:-outline-offset-1 [&_img]:outline-black/10 dark:[&_img]:outline-white/10',
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
             )}
             style={{ transitionDelay: '150ms' }}

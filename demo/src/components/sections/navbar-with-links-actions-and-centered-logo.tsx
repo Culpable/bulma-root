@@ -83,7 +83,7 @@ export function NavbarLink({ children, href, className, ...props }: ComponentPro
     <TransitionLink
       href={href}
       className={clsx(
-        'group relative inline-flex cursor-pointer items-center justify-between gap-2 text-3xl/10 font-medium lg:text-sm/7',
+        'group relative inline-flex min-h-11 cursor-pointer items-center justify-between gap-2 text-3xl/10 font-medium lg:min-h-10 lg:text-sm/7',
         // Text color: active state is slightly bolder
         isActive
           ? 'text-mist-950 dark:text-white'
@@ -104,7 +104,7 @@ export function NavbarLink({ children, href, className, ...props }: ComponentPro
           'bg-gradient-to-r from-mist-500 via-mist-400 to-mist-500',
           'dark:from-mist-400 dark:via-mist-300 dark:to-mist-400',
           // Animation: scale from center
-          'origin-center transition-all duration-300 ease-out',
+          'origin-center transition-[width,opacity] duration-300 ease-out',
           isActive ? 'w-full opacity-100' : 'w-0 opacity-0 group-hover:w-full group-hover:opacity-50',
         )}
         aria-hidden="true"
@@ -121,7 +121,11 @@ export function NavbarLink({ children, href, className, ...props }: ComponentPro
 
 export function NavbarLogo({ className, href, ...props }: ComponentProps<typeof TransitionLink>) {
   return (
-    <TransitionLink href={href} {...props} className={clsx('inline-flex cursor-pointer items-stretch', className)} />
+    <TransitionLink
+      href={href}
+      {...props}
+      className={clsx('inline-flex size-11 cursor-pointer items-center justify-center lg:size-10', className)}
+    />
   )
 }
 
@@ -181,7 +185,7 @@ export function NavbarWithLinksActionsAndCenteredLogo({
   return (
     <header
       className={clsx(
-        'sticky top-0 z-10 transition-all duration-300',
+        'sticky top-0 z-10 transition-[background-color,backdrop-filter,box-shadow] duration-300',
         scrolled && 'navbar-scrolled',
         // Base background - solid when at top
         !scrolled && 'bg-mist-100 dark:bg-mist-950',
@@ -204,7 +208,7 @@ export function NavbarWithLinksActionsAndCenteredLogo({
             <button
               aria-label="Open menu"
               onClick={openMobileMenu}
-              className="inline-flex cursor-pointer rounded-full p-1.5 text-mist-950 hover:bg-mist-950/10 lg:hidden dark:text-white dark:hover:bg-white/10"
+              className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-mist-950 transition-colors duration-200 hover:bg-mist-950/10 lg:hidden dark:text-white dark:hover:bg-white/10"
             >
               <svg viewBox="0 0 24 24" fill="currentColor" className="size-6">
                 <path
@@ -233,7 +237,7 @@ export function NavbarWithLinksActionsAndCenteredLogo({
                 <button
                   aria-label="Close menu"
                   onClick={closeMobileMenu}
-                  className="inline-flex cursor-pointer rounded-full p-1.5 text-mist-950 hover:bg-mist-950/10 dark:text-white dark:hover:bg-white/10"
+                  className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-mist-950 transition-colors duration-200 hover:bg-mist-950/10 dark:text-white dark:hover:bg-white/10"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

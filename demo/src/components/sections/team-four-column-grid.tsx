@@ -18,7 +18,7 @@ export function TeamMember({
 } & ComponentProps<'li'>) {
   return (
     <li className={clsx('flex flex-col gap-4 text-sm/7', className)} {...props}>
-      <div className="aspect-3/4 w-full overflow-hidden rounded-sm outline -outline-offset-1 outline-black/5 *:size-full *:object-cover dark:outline-white/5">
+      <div className="aspect-3/4 w-full overflow-hidden rounded-sm *:size-full *:object-cover [&_img]:outline [&_img]:-outline-offset-1 [&_img]:outline-black/10 dark:[&_img]:outline-white/10">
         {img}
       </div>
       <div>
@@ -36,7 +36,7 @@ export function TeamFourColumnGrid({ children, ...props }: ComponentProps<typeof
   const animatedChildren = Children.map(children, (child, index) => (
     <div
       className={clsx(
-        'transition-all duration-600 ease-out',
+        'transition-[translate,opacity] duration-600 ease-out',
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
       )}
       style={{ transitionDelay: `${index * 80}ms` }}

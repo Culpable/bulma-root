@@ -25,7 +25,7 @@ export function ContactPageContent() {
         <div
           ref={heroRef}
           className={clsx(
-            'max-w-2xl transition-all duration-600 ease-out',
+            'max-w-2xl transition-[translate,opacity] duration-600 ease-out',
             heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           )}
         >
@@ -42,7 +42,7 @@ export function ContactPageContent() {
           {/* ContactDetails slides in from left. */}
           <div
             className={clsx(
-              'h-full transition-all duration-600 ease-out',
+              'h-full transition-[translate,opacity] duration-600 ease-out',
               gridVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
             )}
           >
@@ -52,7 +52,7 @@ export function ContactPageContent() {
           {/* ContactForm slides in from right with staggered delay. */}
           <div
             className={clsx(
-              'h-full transition-all duration-600 ease-out',
+              'h-full transition-[translate,opacity] duration-600 ease-out',
               gridVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
             )}
             style={{ transitionDelay: '150ms' }}

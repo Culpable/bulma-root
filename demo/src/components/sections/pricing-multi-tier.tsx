@@ -5,6 +5,7 @@ import { clsx } from 'clsx/lite'
 import {
   Children,
   createContext,
+  Fragment,
   memo,
   useCallback,
   useContext,
@@ -17,6 +18,13 @@ import { CardSpotlight } from '../elements/card-spotlight'
 import { Section } from '../elements/section'
 import { AnimatedCheckmarkIcon } from '../icons/animated-checkmark-icon'
 import { PricingBonusPanel, PricingBonusPrompt, PricingOptionCallout, PricingPriceNote } from './pricing-card-shared'
+import {
+  PRICING_TOGGLE_BUTTON,
+  PRICING_TOGGLE_SELECTED_SURFACE,
+  PRICING_TOGGLE_SELECTED_TEXT,
+  PRICING_TOGGLE_TRACK,
+  PRICING_TOGGLE_UNSELECTED,
+} from './pricing-toggle-shared'
 
 interface PricingOptionContextValue<T extends string = string> {
   selectedOption: T
@@ -71,7 +79,7 @@ function PricingOptionToggle<T extends string>({
     <div
       role="tablist"
       aria-label="Pricing options"
-      className="inline-flex w-fit items-center gap-1 rounded-full bg-mist-950/5 p-1 dark:bg-white/5"
+      className={clsx('inline-flex w-fit', PRICING_TOGGLE_TRACK)}
     >
       {options.map((option, index) => {
         const isSelected = selectedIndex === index
@@ -84,10 +92,10 @@ function PricingOptionToggle<T extends string>({
             aria-selected={isSelected}
             onClick={() => onSelect(index)}
             className={clsx(
-              'cursor-pointer rounded-full px-4 py-1 text-sm/7 font-medium transition-colors duration-200',
+              PRICING_TOGGLE_BUTTON,
               isSelected
-                ? 'bg-mist-950 text-white shadow-sm dark:bg-white dark:text-mist-950'
-                : 'text-mist-950 hover:bg-mist-950/5 dark:text-white dark:hover:bg-white/10',
+                ? clsx(PRICING_TOGGLE_SELECTED_SURFACE, PRICING_TOGGLE_SELECTED_TEXT)
+                : PRICING_TOGGLE_UNSELECTED,
             )}
           >
             {option}
@@ -178,8 +186,7 @@ export function Plan({
         className={clsx(
           // h-full ensures Plan fills its container for equal height alignment in grids
           'flex h-full flex-col gap-6 rounded-xl bg-mist-950/2.5 p-6 sm:items-start dark:bg-white/5',
-          // Hover lift effect with smooth transition
-          'transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:shadow-mist-950/5 dark:hover:shadow-black/20',
+          // Keep the inner surface stable; the shared pricing wrapper owns lift and depth.
           className,
         )}
       >
@@ -222,7 +229,7 @@ export function Plan({
           ) : bonusPrompt ? (
             <PricingBonusPrompt>{bonusPrompt}</PricingBonusPrompt>
           ) : null}
-          {cta}
+          <Fragment key="cta">{cta}</Fragment>
         </div>
       </div>
     </CardSpotlight>
@@ -269,7 +276,7 @@ export function PricingMultiTier<T extends string = string>({
   // h-full ensures wrapper fills grid cell so child Plan components align heights
   // Each plan gets its own context with the appropriate base delay for checkmarks
   // Includes depth stack effect for "pulled from deck" card entrance
-  // Includes focus isolation effect (Rec B) - hovering one card dims others
+  // Includes focus emphasis without reducing the readability of sibling plans.
   // Uses PlanWrapper to memoize context value and prevent cascade re-renders
   const animatedPlans = Children.map(plans, (child, index) => {
     const delay = index * staggerDelay
@@ -280,13 +287,15 @@ export function PricingMultiTier<T extends string = string>({
         data-animating={isVisible}
         className={clsx(
           // Base styles for animation and layout
-          'card-depth-stack pricing-focus-card h-full rounded-xl transition-all duration-600 ease-out',
+          'card-depth-stack h-full rounded-xl transition-[translate,scale,opacity] duration-600 ease-out',
           isVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-8 scale-[0.97] opacity-0',
         )}
         style={{ transitionDelay: `${delay}ms` }}
       >
-        {/* PlanWrapper memoizes context value to prevent cascade re-renders */}
-        <PlanWrapper child={child} delay={delay} isVisible={isVisible} />
+        <div className="pricing-focus-card h-full rounded-xl">
+          {/* PlanWrapper memoizes context value to prevent cascade re-renders */}
+          <PlanWrapper child={child} delay={delay} isVisible={isVisible} />
+        </div>
       </div>
     )
   })
@@ -300,7 +309,7 @@ export function PricingMultiTier<T extends string = string>({
         headerClassName={sectionCta ? '!max-w-none' : undefined}
         {...props}
       >
-        {/* pricing-focus-group enables focus isolation (Rec B) - hovering one card dims siblings */}
+        {/* Keep every plan readable while the hovered plan receives focused depth. */}
         <div
           ref={containerRef}
           className="pricing-focus-group grid grid-cols-1 items-stretch gap-2 sm:has-[>:nth-child(5)]:grid-cols-2 sm:max-lg:has-[>:last-child:nth-child(even)]:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:grid-cols-none lg:has-[>:nth-child(5)]:grid-flow-row lg:has-[>:nth-child(5)]:grid-cols-3"

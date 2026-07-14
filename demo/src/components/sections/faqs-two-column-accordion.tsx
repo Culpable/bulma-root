@@ -122,46 +122,18 @@ export function Faq({
         className="group flex w-full cursor-pointer items-start justify-between gap-6 py-4 text-left text-base/7 text-mist-950 dark:text-white"
       >
         {question}
-        {/* Icon container with spring rotation animation */}
+        {/* Crossfade the contextual icons so rapid toggles remain reversible. */}
         <span className="relative flex h-lh w-4 shrink-0 items-center justify-center">
-          {/* Plus icon - rotates out with spring overshoot when expanded */}
-          <PlusIcon
-            className={clsx(
-              'absolute h-lh transition-all duration-300',
-              // Spring easing curve for overshoot effect
-              '[transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]',
-              // Default state: visible, no rotation
-              'rotate-0 opacity-100',
-              // Expanded state: hidden, rotated 90deg
-              'in-aria-expanded:rotate-90 in-aria-expanded:opacity-0',
-            )}
-          />
-          {/* Minus icon - rotates in with spring overshoot when expanded */}
-          <MinusIcon
-            className={clsx(
-              'absolute h-lh transition-all duration-300',
-              // Spring easing curve for overshoot effect
-              '[transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]',
-              // Default state: hidden, rotated -90deg
-              '-rotate-90 opacity-0',
-              // Expanded state: visible, no rotation
-              'in-aria-expanded:rotate-0 in-aria-expanded:opacity-100',
-            )}
-          />
+          <PlusIcon className="faq-context-icon faq-context-icon--plus absolute h-lh" />
+          <MinusIcon className="faq-context-icon faq-context-icon--minus absolute h-lh" />
         </span>
       </button>
       {/* Glow trail wrapper (Rec 9) - tracks expansion edge */}
       <div data-open={isOpen} className="faq-glow-trail">
-        <ElDisclosure
-          id={`${faqId}-answer`}
-          hidden
-          className={clsx(
-            '-mt-2 flex flex-col gap-2 pr-12 pb-4 text-sm/7 text-mist-700 dark:text-mist-400',
-            // Spring animation for content reveal
-            'faq-spring-content',
-          )}
-        >
-          {renderedAnswer}
+        <ElDisclosure id={`${faqId}-answer`} hidden className="faq-disclosure">
+          <div className="faq-disclosure__content -mt-2 flex flex-col gap-2 pr-12 pb-4 text-sm/7 text-mist-700 dark:text-mist-400">
+            {renderedAnswer}
+          </div>
         </ElDisclosure>
       </div>
     </div>
@@ -198,7 +170,7 @@ export function FAQsTwoColumnAccordion({
         className={clsx(
           // Keep hash-targeted FAQ items visible when deep links land below the section animation sentinel.
           'faq-target-visible',
-          'transition-all duration-500 ease-out',
+          'transition-[translate,opacity] duration-500 ease-out',
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0',
         )}
         style={{ transitionDelay: `${delay}ms` }}
@@ -219,7 +191,7 @@ export function FAQsTwoColumnAccordion({
         <div
           ref={containerRef}
           className={clsx(
-            'flex flex-col gap-6 transition-all duration-600 ease-out',
+            'flex flex-col gap-6 transition-[translate,opacity] duration-600 ease-out',
             isVisible ? 'translate-x-0 opacity-100' : '-translate-x-6 opacity-0',
           )}
         >

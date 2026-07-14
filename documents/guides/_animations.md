@@ -75,7 +75,7 @@ const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
 
 // Apply to container
 <div ref={containerRef} className={clsx(
-  'transition-all duration-600 ease-out',
+  'transition-[translate,opacity] duration-600 ease-out',
   isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
 )}>
 ```
@@ -112,11 +112,15 @@ const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
 | FAQs Accordion | Slide Y (header) + Slide Y (items) | Up | 80ms (items start at 200ms) |
 | CTA Centered | Slide Y | Up | 150ms (CTA delayed) |
 
-All animations use `transition-all` with `ease-out` timing. Duration ranges from 500ms to 1500ms, with longer timings reserved for graph draw and glow effects.
+Section entrances declare only the properties they change, normally Tailwind v4's independent `translate` or `scale` longhands plus `opacity`, with `ease-out` timing. Inline styles that write the composite `transform` property continue to transition `transform` directly. Duration ranges from 500ms to 1500ms, with longer timings reserved for graph draw and glow effects.
 
 The two-column feature grid explicitly stretches its cells, and both the slide-animation wrappers and feature cards preserve `h-full`. This keeps paired cards aligned even when their copy lengths differ.
 
 FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with `data-hash-target="true"`, so direct or routed hash deep links such as `#lenders` remain visible even when navigation lands below the section header that normally triggers the staggered entrance animation.
+
+### Shared control feedback
+
+`button.tsx` applies a 150ms transition limited to the independent `scale` longhand, background colour, box shadow, and text colour. All six button exports press to `scale(0.96)` by default; their `static` prop disables only that press scale, while hover colour, shadow, and focus-ring feedback remain active. The same primitive owns the 44px mobile and 40px large-screen minimum boxes plus the 2px trailing-icon padding correction.
 
 ---
 
@@ -138,6 +142,7 @@ FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with
 - Pointer movement is batched with `requestAnimationFrame` and writes `transform`, `--mouse-x`, and `--mouse-y` directly to the screenshot wrapper
 - `handleMouseLeave` resets transform with smooth transition
 - React state only tracks hover/reveal state, not per-frame pointer coordinates
+- `will-change: transform` exists only from pointer enter through the 400ms reset, then a cleanup timer removes it
 - Disable via `enableTilt={false}` prop
 
 ---
@@ -301,7 +306,7 @@ Sections use `Children.map` to wrap each child with animation styles:
 const animatedChildren = Children.map(children, (child, index) => (
   <div
     className={clsx(
-      'h-full transition-all duration-600 ease-out',
+      'h-full transition-[translate,opacity] duration-600 ease-out',
       isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
     )}
     style={{ transitionDelay: `${index * staggerDelay}ms` }}
@@ -319,40 +324,24 @@ const animatedChildren = Children.map(children, (child, index) => (
 
 ---
 
-## 11. FAQ Spring Animation
+## 11. FAQ Disclosure Transitions
 
-`faqs-two-column-accordion.tsx` and `faqs-accordion.tsx` implement a spring-based "wiggle" effect on expand/collapse using CSS cubic-bezier overshoot.
+`faqs-two-column-accordion.tsx::Faq` and `faqs-accordion.tsx::Faq` use Tailwind Plus disclosure lifecycle attributes so enter and exit can retarget during rapid toggles.
 
 **Files:**
-- `globals.css` — keyframes and utility classes
-- `faqs-two-column-accordion.tsx`, `faqs-accordion.tsx` — component implementation
+- `globals.css` - disclosure and icon transition states
+- `faqs-two-column-accordion.tsx`, `faqs-accordion.tsx` - disclosure structure
 
-**Spring Easing Curve:** `cubic-bezier(0.34, 1.56, 0.64, 1)` — overshoots target then settles back
+**State Easing Curve:** `cubic-bezier(0.2, 0, 0, 1)`
 
 | Element | Animation | Duration | Behavior |
 |---------|-----------|----------|----------|
-| Plus icon | Rotate 0° → 90° + fade out | 300ms | Overshoots to ~95° then settles |
-| Minus icon | Rotate -90° → 0° + fade in | 300ms | Overshoots slightly then settles |
-| Content | `faq-spring-open` keyframe | 400ms | translateY: -8px → +2px → 0 with opacity |
+| Plus icon | Opacity, blur, and scale crossfade | 300ms | `scale(1)` to `0.25`, `blur(0)` to `4px` |
+| Minus icon | Opacity, blur, and scale crossfade | 300ms | Inverse of the plus icon |
+| Content enter | Grid row, opacity, and translate | 400ms | `translateY(-8px)` to `0` |
+| Content exit | Grid row, opacity, and translate | 150ms | `translateY(0)` to `-8px` before `hidden` settles |
 
-**CSS Keyframe (`faq-spring-open`):**
-```css
-0%   { opacity: 0; transform: translateY(-8px); }
-60%  { opacity: 1; transform: translateY(2px); }  /* overshoot */
-100% { opacity: 1; transform: translateY(0); }
-```
-
-**Icon Implementation (Tailwind):**
-```tsx
-<PlusIcon className={clsx(
-  'transition-all duration-300',
-  '[transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]',
-  'opacity-100 rotate-0',
-  'in-aria-expanded:opacity-0 in-aria-expanded:rotate-90',
-)} />
-```
-
-Content uses `.faq-spring-content` class which applies the keyframe animation on mount.
+`ElDisclosure` supplies `data-transition`, `data-enter`, `data-leave`, and `data-closed`. `globals.css` overrides native `hidden` display only while `data-transition` is active, including the `hidden` plus `data-enter` state used when an unfinished enter reverses into exit. The homepage hash logic still opens `#lenders` and forces the targeted wrapper visible. `.faq-spring-content` remains scoped to contact-form recovery and success messages, not FAQ disclosure state.
 
 ---
 
@@ -366,25 +355,11 @@ Content uses `.faq-spring-content` class which applies the keyframe animation on
 |----------|------------|-----------|
 | Background | `from-white/70 via-white/50 to-white/30` | `from-white/[0.08] via-white/[0.04] to-white/[0.02]` |
 | Blur | `backdrop-blur-xl backdrop-saturate-150` | same |
-| Border | `ring-1 ring-white/50` | `ring-1 ring-white/10` |
-| Shadow | `shadow-[0_4px_20px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.6)]` | `shadow-[0_4px_20px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]` |
-| Hover | `-translate-y-1` + stronger glow | darker glow + gradient intensifies |
+| Border | `ring-1 ring-black/[0.06]` | `ring-1 ring-white/[0.08]` |
+| Shadow | Two restrained black depth layers | Two stronger black depth layers |
+| Hover | `-translate-y-1` + deeper two-layer shadow | same geometry with darker shadow |
 
-**Combined Tailwind classes:**
-```tsx
-<figure className={clsx(
-  'bg-gradient-to-br from-white/70 via-white/50 to-white/30',
-  'backdrop-blur-xl backdrop-saturate-150',
-  'ring-1 ring-white/50',
-  'shadow-[0_4px_20px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.6)]',
-  'dark:from-white/[0.08] dark:via-white/[0.04] dark:to-white/[0.02]',
-  'dark:ring-white/10',
-  'dark:shadow-[0_4px_20px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]',
-  'transition-all duration-500 ease-out',
-  'hover:-translate-y-1',
-  'hover:shadow-[0_12px_28px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.8)]',
-)}>
-```
+The hover state changes only `transform` and `box-shadow`; it does not add a gradient border. Avatar images and other photographic media use an inset black/10 outline in light mode and white/10 in dark mode.
 
 **Section animation + backdrop details:**
 - `TestimonialsGlassmorphism` wraps cards in staggered containers (700ms duration, 100ms delay, slight scale-in).
@@ -451,7 +426,7 @@ The component includes a periodic shimmer effect - a diagonal shine sweep that c
 - Repeats every 4s by default
 - 600ms sweep animation with ease-out timing
 - Skewed diagonal gradient for natural light reflection
-- Respects `prefers-reduced-motion`
+- Runs through the same shimmer path for every user, matching the project animation policy
 
 **CSS Keyframe (`cta-shimmer-sweep`):**
 ```css
@@ -611,7 +586,7 @@ The `StatAnimated` component in `stats-animated-graph.tsx` accepts optional `cou
 - Uses CSS `translateX(-50%)` animation on duplicated content
 - Edge fade gradients (via `::before`/`::after`) create smooth visual blend
 - Pauses on hover for accessibility and logo inspection
-- Respects `prefers-reduced-motion` (pauses animation)
+- Runs continuously until hover pauses the marquee
 
 **CSS Keyframes:**
 ```css
@@ -644,14 +619,14 @@ The navbar components (`navbar-with-links-actions-and-centered-logo.tsx`, `navba
 | At top (`!scrolled`) | `bg-mist-100` / `bg-mist-950` (solid) | None |
 | Scrolled (`scrolled`) | `bg-mist-100/80` / `bg-mist-950/80` (semi-transparent) | `backdrop-blur-xl`, `backdrop-saturate-150`, subtle shadow |
 
-**Transition:** `transition-all duration-300` for smooth state changes
+**Transition:** Background colour, backdrop filter, and box shadow transition for 300ms.
 
 **Implementation:**
 ```tsx
 const scrolled = useScrolled(20)
 
 <header className={clsx(
-  'sticky top-0 z-10 transition-all duration-300',
+  'sticky top-0 z-10 transition-[background-color,backdrop-filter,box-shadow] duration-300',
   !scrolled && 'bg-mist-100 dark:bg-mist-950',
   scrolled && 'bg-mist-100/80 backdrop-blur-xl backdrop-saturate-150 dark:bg-mist-950/80',
   scrolled && 'shadow-sm shadow-mist-950/5 dark:shadow-black/20',
@@ -894,17 +869,22 @@ The Plan Comparison Table features enhanced row and cell hover states for improv
 
 ## 24. Elastic Pricing Toggle
 
-`pricing-hero-multi-tier.tsx::ElasticTabToggle` implements a sliding pill indicator with spring physics animation.
+`pricing-hero-multi-tier.tsx::ElasticTabToggle` implements a sliding pill indicator with spring physics animation. `pricing-toggle-shared.ts` supplies the track, control, selected surface, selected text, unselected hover, and keyboard-focus tokens used by both this toggle and `pricing-multi-tier.tsx::PricingOptionToggle`, so homepage and pricing-page states remain visually identical.
 
-**File:** `demo/src/components/sections/pricing-hero-multi-tier.tsx`
+**Files:**
+
+- `demo/src/components/sections/pricing-hero-multi-tier.tsx`
+- `demo/src/components/sections/pricing-multi-tier.tsx`
+- `demo/src/components/sections/pricing-toggle-shared.ts`
 
 **Animation behavior:**
 - Pill indicator slides between tab positions
 - Uses spring easing `cubic-bezier(0.34, 1.56, 0.64, 1)` for overshoot effect
-- ~8% overshoot past target, then settles back
 - 400ms transition duration when animating, 300ms for normal repositioning
+- A single owned 500ms reset timer preserves the complete spring window for the latest selection; rapid reversals replace the earlier timer, and unmount cleanup clears it
+- Component-owned `left` and `width` transitions move and resize the pill; global CSS must not override that transition shorthand
 
-**CSS class:** `.pricing-toggle-pill` (in `globals.css`)
+**CSS class:** `.pricing-toggle-pill` is a stable browser-test hook; the component owns its transition declarations.
 
 **Implementation:**
 ```tsx
@@ -916,10 +896,12 @@ The Plan Comparison Table features enhanced row and cell hover states for improv
 ```
 
 **Visual states:**
-| State | Easing | Duration |
-|-------|--------|----------|
-| Animating (just clicked) | Spring with overshoot | 400ms |
-| Repositioning | Ease-out | 300ms |
+| State | Shared treatment | Motion |
+|-------|------------------|--------|
+| Selected, light | Mist-950 surface with white text | Spring pill on pricing page; colour transition on homepage |
+| Selected, dark | White surface with mist-950 text | Spring pill on pricing page; colour transition on homepage |
+| Unselected hover | Theme-adjusted surface and text tint | 200ms colour transition |
+| Keyboard focus | 2px theme-contrast outline with 2px offset | Immediate |
 
 **To disable:** Replace `ElasticTabToggle` with standard tab buttons.
 
@@ -1044,71 +1026,29 @@ Ghost shadow card that appears behind cards during entrance animation, creating 
 
 ## 29. Page Route Transitions
 
-`page-transition.tsx::PageTransition` and `main.tsx::Main` provide smooth entrance animations for page content, creating a polished transition feel when navigating between routes.
+`transition-link.tsx::TransitionLink` uses the View Transitions API for supported internal navigation. `main.tsx::Main` is layout-neutral and no longer adds a mount-time entrance, preventing full loads from stacking global page motion over the hero entrance.
 
 **Files:**
-- `demo/src/components/elements/page-transition.tsx` — Standalone wrapper component
-- `demo/src/components/elements/main.tsx` — Main wrapper with built-in transition
-- `demo/src/app/globals.css` — CSS keyframes
+- `demo/src/components/elements/transition-link.tsx` - internal navigation coordinator
+- `demo/src/components/elements/main.tsx` - isolation and overflow wrapper only
+- `demo/src/app/globals.css` - old/new root snapshot timing and keyframes
 
 **Animation behavior:**
-- Content fades in from 0 to full opacity
-- Subtle slide up from 16px offset
-- 500ms duration with smooth ease-out timing
-- Triggers automatically on page mount
-
-**CSS Keyframe (`page-enter`):**
-```css
-@keyframes page-enter {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-```
+- Full page loads render `Main` content directly and retain each page's intentional section entrances.
+- Supported internal navigation starts `document.startViewTransition`, then commits the route update.
+- The outgoing root snapshot fades while moving up 8px; the incoming snapshot starts 12px below and settles at full opacity.
+- Unsupported browsers use normal navigation without a separate mount animation.
 
 **Configuration:**
 
 | Setting | Value | Effect |
 |---------|-------|--------|
-| Duration | 500ms | Animation length |
+| Duration | 300ms | Root snapshot animation length |
 | Easing | cubic-bezier(0.22, 1, 0.36, 1) | Smooth ease-out |
-| Slide distance | 16px | Vertical translation |
+| Outgoing distance | 8px | Upward root snapshot movement |
+| Incoming distance | 12px | Upward settling distance |
 
-**Integration via Main component (automatic):**
-
-The `Main` component in `layout.tsx` automatically applies page transitions to all page content.
-
-```tsx
-// In layout.tsx - transitions enabled by default
-<Main>{children}</Main>
-
-// To disable for a specific layout
-<Main enableTransition={false}>{children}</Main>
-```
-
-**Integration via PageTransition wrapper (manual):**
-
-```tsx
-import { PageTransition } from '@/components/elements/page-transition'
-
-export default function Page() {
-  return (
-    <PageTransition>
-      <HeroSection />
-      <ContentSection />
-    </PageTransition>
-  )
-}
-```
-
-**To disable:**
-- Set `enableTransition={false}` on the `Main` component, or
-- Remove the `page-transition-enter` class from the wrapper element
+Set `disableTransition` on an individual `TransitionLink` when a navigation must bypass the API. Do not add a mount animation to `Main`; that duplicates first-load hero motion.
 
 ---
 
@@ -1235,7 +1175,7 @@ import { XIcon } from '@/components/icons/social/x-icon'
 - **Server-side rendering**: Hook initializes `isVisible` to `false`, so elements start hidden. This is intentional—elements animate in on scroll
 - **Multiple observers**: Each section creates its own IntersectionObserver instance. For pages with many animated sections, consider a shared observer context if performance degrades
 - **Tilt on touch devices**: Parallax tilt uses mouse events only; touch devices see no effect (acceptable degradation)
-- **CSS transition conflicts**: Plan components have their own hover transitions; ensure animation wrapper transitions don't override using specific properties rather than `transition-all` if conflicts arise
+- **CSS transition conflicts**: Keep pricing entrance `transform` and `opacity` on the outer `card-depth-stack` wrapper and hover `transform` and `box-shadow` on the nested `pricing-focus-card` so the two timelines remain independent.
 - **Magnetic on touch**: Magnetic wrapper uses mouse events only; touch devices see no magnetic effect (acceptable degradation)
 - **BlurTransitionText width calculation**: Component measures phrase widths on mount; uses `width` + `maxWidth: '100%'` to prevent desktop jumping while avoiding mobile overflow. Container shows `auto` width until measurement completes.
 - **Gradient border browser support**: `@property` (CSS Houdini) required for smooth gradient angle animation; older browsers may show static gradient. Theme adaptation is owned by CSS light/dark variants, so CTA border instances do not add dark-mode observers.
@@ -1254,8 +1194,7 @@ import { XIcon } from '@/components/icons/social/x-icon'
 - **Section horizon line visibility**: Lines use `scaleX(0)` to hide initially. If parent has `overflow: hidden`, ensure the horizon wrapper itself doesn't clip the lines.
 - **Avatar presence ring z-index**: Ring uses `::before` pseudo-element with `inset: -4px`. If avatar has sibling elements, ring may appear behind them. Add `z-index` if needed.
 - **Card depth stack border-radius**: Ghost card inherits `border-radius` from parent. Ensure wrapper div has matching `rounded-*` class to avoid visible corners on the ghost.
-- **Page transition double animation**: If using both `Main` with `enableTransition={true}` (default) and a manual `PageTransition` wrapper, the animation will apply twice. Use only one method.
-- **Page transition with hero animations**: Page transition (500ms) runs concurrently with hero entrance animations (600ms with delays). This is intentional—the page fades in while hero elements stagger. If timing feels off, adjust `hero-delay-*` values.
+- **Page transition duplication**: `Main` must remain layout-neutral. Adding a mount animation there would stack with hero entrances on full loads and with View Transitions after navigation.
 - **Icon animation replay**: Icon animations play once per hover and reset when cursor leaves. Rapid hover in/out may cause animation to restart mid-play. This is expected CSS behavior.
 - **Icon animation on touch**: Touch devices don't trigger hover states, so icon animations won't play on tap. Consider adding `:active` variants if touch feedback is desired.
 - **SocialLink children sizing**: The `SocialLink` component wraps children in a `size-6` span. Ensure child icons don't have conflicting size classes that override this.
@@ -1307,9 +1246,9 @@ Cards enter from different directions based on grid position with subtle color t
 
 ---
 
-## 33. Pricing Card Focus Isolation (Rec B)
+## 33. Pricing Card Focus Depth (Rec B)
 
-Cinema-style focus pull where hovering one pricing card dims others, creating decisive attention direction.
+Pricing cards remain equally readable while pointer hover adds controlled depth to the active plan.
 
 **Files:**
 - `demo/src/app/globals.css` — Focus group and focus card classes
@@ -1318,24 +1257,26 @@ Cinema-style focus pull where hovering one pricing card dims others, creating de
 
 **Animation behavior:**
 - Parent container uses `pricing-focus-group` class
-- Each card uses `pricing-focus-card` class
-- When any card is hovered, siblings are dimmed (70% opacity, 70% saturation)
-- Hovered card gains subtle glow halo effect
-- 400ms transition for smooth focus shift
+- The outer `card-depth-stack` wrapper owns the one-shot entrance.
+- A nested `pricing-focus-card` owns the reversible hover lift and shadow.
+- Siblings remain at full opacity with no saturation or brightness filter.
+- Hover translates the active card up 4px over 200ms and strengthens its two-layer shadow.
 
 **Visual states:**
 
-| State | Opacity | Saturation | Brightness | Shadow |
-|-------|---------|------------|------------|--------|
-| Default | 1 | 1 | 1 | None |
-| Sibling hovered | 0.7 | 0.7 | 0.95 | None |
-| Self hovered | 1 | 1 | 1 | Glow halo |
+| State | Opacity | Filter | Transform | Shadow |
+|-------|---------|--------|-----------|--------|
+| Default | 1 | None | None | Neutral ring + depth layer |
+| Sibling hovered | 1 | None | None | Unchanged |
+| Self hovered | 1 | None | `translateY(-4px)` | Stronger neutral ring + depth layer |
 
 **Integration:**
 ```tsx
 <div className="pricing-focus-group grid ...">
-  <div className="pricing-focus-card">
-    <Plan ... />
+  <div className="card-depth-stack h-full ...">
+    <div className="pricing-focus-card h-full">
+      <Plan ... />
+    </div>
   </div>
 </div>
 ```
@@ -1361,6 +1302,7 @@ Radial ripple emanating from CTA buttons when cursor enters the magnetic field, 
 - Single pulse at 40% opacity radiating outward
 - 500ms duration, fires once per entry
 - Resets when cursor leaves element
+- React re-keys the ripple element for each entry, so replay does not force layout through `offsetWidth`
 
 **CSS Keyframe (`magnetic-ripple`):**
 ```css
@@ -1651,7 +1593,7 @@ function Page() {
 ## 42. Premium Effects Points of Error
 
 - **Prismatic entrance filter conflict**: The hue-rotate filter may conflict with other filters on the element. If using multiple filters, combine them carefully.
-- **Focus isolation on touch**: The focus isolation effect relies on hover states; touch devices won't see the dimming effect.
+- **Pricing focus on touch**: Touch devices retain the neutral resting edge and depth but do not receive pointer hover lift.
 - **Magnetic ripple z-index**: The ripple element uses `pointer-events: none` but may appear above other absolutely positioned elements. Adjust z-index if needed.
 - **Screenshot reveal clip-path**: Clip-path animations may not work in older browsers. Falls back to instant reveal.
 - **Section divider pulse visibility**: The light pulse is 30px wide and very brief. On very narrow viewports, it may be barely visible.
@@ -1681,6 +1623,7 @@ function Page() {
 - Uses 80px Gaussian blur for soft, ambient appearance
 - Fades in on mount with 1s transition
 - Pauses CSS animation when scrolled off-screen for performance
+- Applies `will-change` only while the aurora is not paused
 
 **CSS Keyframes:**
 - `aurora-drift-1`: 35s cycle, primary gradient movement
@@ -1821,7 +1764,7 @@ function Page() {
 - Transform calculated: `translateY(scrollY * (1 - speed))`
 - `will-change: transform` applied only during active scroll
 - Automatically disabled on touch devices
-- Respects `prefers-reduced-motion`
+- Uses the same scroll path for every pointer-capable user, matching the project animation policy
 
 **Integration:** Currently applied inside `HeroLeftAlignedWithDemo` when `enableParallax={true}` (default).
 
@@ -2386,9 +2329,9 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 
 **Mobile menu:**
 
-- `NavbarWithLinksActionsAndCenteredLogo`, the active app navbar, uses explicit React open/close handlers around the native `dialog#mobile-menu`; this keeps the menu reliable without combining native command attributes with manual `showModal()` calls, while preserving `dialog[open]` as the CSS trigger.
-- `globals.css` owns `.mobile-menu-dialog`, `.mobile-menu-panel`, `.mobile-menu-links`, `.mobile-menu-close-icon`, and the `mobile-menu-panel-enter`, `mobile-menu-link-enter`, and `mobile-menu-close-enter` keyframes.
-- The panel uses the navbar glass surface (`bg-mist-100/90` or `bg-mist-950/90`, `backdrop-blur-xl`, `backdrop-saturate-150`) and animates via `opacity` plus `transform`. Links rise with 60ms staggered delays through `dialog[open] .mobile-menu-links > *`; pinned `.mobile-menu-actions` sit at the bottom of the flex panel without their own JS timeline.
+- `navbar-with-links-actions-and-centered-logo.tsx::NavbarWithLinksActionsAndCenteredLogo`, the active app navbar, uses explicit React open/close handlers around `dialog#mobile-menu`. Tailwind Plus intercepts native `dialog.close()` and waits for registered leave transitions before removing the dialog.
+- `globals.css` owns `.mobile-menu-dialog`, `.mobile-menu-panel`, `.mobile-menu-links`, and `.mobile-menu-close-icon`. The panel uses `data-enter`, `data-leave`, and `data-closed` transition states rather than one-shot keyframes.
+- The glass panel enters over 200ms and exits over 150ms with opacity plus `translateY(-12px)`. A reversed `data-enter` plus `data-closed` state is explicitly reduced to 150ms; link delays are cleared and the close icon also uses 150ms during exit. Pinned `.mobile-menu-actions` remain at the bottom of the flex panel without their own JS timeline.
 
 **Contact form:**
 

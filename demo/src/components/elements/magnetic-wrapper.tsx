@@ -3,8 +3,8 @@
 import { clsx } from 'clsx/lite'
 import {
   useCallback,
-  useEffect,
   useRef,
+  useState,
   type MouseEvent,
   type ReactNode,
 } from 'react'
@@ -22,8 +22,6 @@ const MAGNETIC_CONFIG = {
   returnDuration: 400,
   // Spring easing for natural bounce-back
   springEasing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-  // Ripple animation duration (ms) - Rec C
-  rippleDuration: 500,
 }
 
 interface MagneticWrapperProps {
@@ -57,18 +55,9 @@ export function MagneticWrapper({
   enableRipple = true,
 }: MagneticWrapperProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
-  const rippleRef = useRef<HTMLDivElement>(null)
-  const rippleTimeoutRef = useRef<number | null>(null)
+  const [rippleKey, setRippleKey] = useState(0)
   // Track if ripple has fired this entry to prevent multiple triggers
   const rippleFiredRef = useRef(false)
-
-  useEffect(() => {
-    return () => {
-      if (rippleTimeoutRef.current !== null) {
-        window.clearTimeout(rippleTimeoutRef.current)
-      }
-    }
-  }, [])
 
   /**
    * Calculate magnetic pull based on cursor distance from element center.
@@ -130,24 +119,10 @@ export function MagneticWrapper({
     }
 
     // Trigger ripple effect on entry (Rec C)
-    if (enableRipple && rippleRef.current && !rippleFiredRef.current) {
+    if (enableRipple && !rippleFiredRef.current) {
       rippleFiredRef.current = true
-      const ripple = rippleRef.current
-      // Remove previous animation class if present
-      ripple.classList.remove('animate')
-      // Force reflow to restart animation
-      void ripple.offsetWidth
-      // Add animation class
-      ripple.classList.add('animate')
-      // Remove animation class after completion
-      if (rippleTimeoutRef.current !== null) {
-        window.clearTimeout(rippleTimeoutRef.current)
-      }
-
-      rippleTimeoutRef.current = window.setTimeout(() => {
-        ripple.classList.remove('animate')
-        rippleTimeoutRef.current = null
-      }, MAGNETIC_CONFIG.rippleDuration)
+      // Re-key the ripple so CSS restarts the animation without a forced layout read.
+      setRippleKey((currentKey) => currentKey + 1)
     }
   }, [enableRipple])
 
@@ -164,10 +139,10 @@ export function MagneticWrapper({
       className={clsx('magnetic-wrapper magnetic-ripple-container', className)}
     >
       {/* Ripple effect element (Rec C) - animates on magnetic field entry */}
-      {enableRipple && (
+      {enableRipple && rippleKey > 0 && (
         <div
-          ref={rippleRef}
-          className="magnetic-ripple"
+          key={rippleKey}
+          className="magnetic-ripple animate"
           aria-hidden="true"
         />
       )}

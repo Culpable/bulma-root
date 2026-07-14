@@ -147,7 +147,7 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
 
       {/* Visible animated text */}
       <span
-        className={clsx('inline-block text-left transition-all ease-out', className)}
+        className={clsx('inline-block text-left transition-[transform,opacity,filter] ease-out', className)}
         style={{
           transitionDuration: `${BLUR_CONFIG.blurDuration}ms`,
           opacity: isBlurred ? 0 : 1,

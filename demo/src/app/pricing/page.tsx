@@ -403,7 +403,7 @@ export default function Page() {
               size="lg"
               className="group w-full sm:w-auto"
             >
-              Email sales <AnimatedArrowIcon className="-mr-1 ml-1.5" />
+              Email sales <AnimatedArrowIcon />
             </PlainButtonLink>
           </div>
         }

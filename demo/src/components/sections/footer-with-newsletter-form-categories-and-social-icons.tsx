@@ -21,7 +21,7 @@ export function FooterLink({ href, className, ...props }: { href: string } & Omi
     <li className={clsx('text-mist-700 dark:text-mist-400', className)}>
       <Link
         href={href}
-        className="inline-flex cursor-pointer transition-[color,transform] duration-200 ease-out hover:translate-x-0.5 hover:text-mist-950 focus-visible:translate-x-0.5 focus-visible:text-mist-950 focus-visible:outline-none dark:hover:text-white dark:focus-visible:text-white"
+        className="inline-flex min-h-11 cursor-pointer items-center transition-[color,translate] duration-200 ease-out hover:translate-x-0.5 hover:text-mist-950 focus-visible:translate-x-0.5 focus-visible:text-mist-950 focus-visible:outline-none lg:min-h-10 dark:hover:text-white dark:focus-visible:text-white"
         {...props}
       />
     </li>
@@ -62,7 +62,7 @@ export function SocialLink({
       target="_blank"
       rel={rel}
       aria-label={name}
-      className={clsx('group cursor-pointer text-mist-950 dark:text-white', className)}
+      className={clsx('group inline-flex size-11 cursor-pointer items-center justify-center text-mist-950 lg:size-10 dark:text-white', className)}
       {...props}
     >
       {/* Wrap children in animated container */}
@@ -102,7 +102,7 @@ export function NewsletterForm({
         <button
           type="submit"
           aria-label="Subscribe"
-          className="group relative inline-flex size-7 cursor-pointer items-center justify-center rounded-full after:absolute after:-inset-2 hover:bg-mist-950/10 dark:hover:bg-white/10 after:pointer-fine:hidden"
+          className="group relative inline-flex size-11 cursor-pointer items-center justify-center rounded-full hover:bg-mist-950/10 lg:size-10 dark:hover:bg-white/10"
         >
           <AnimatedArrowIcon />
         </button>

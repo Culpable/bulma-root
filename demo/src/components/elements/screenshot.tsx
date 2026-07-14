@@ -41,8 +41,10 @@ export function Screenshot({
   const containerRef = useRef<HTMLDivElement>(null)
   const revealRef = useRef<HTMLDivElement>(null)
   const frameRef = useRef<number | null>(null)
+  const resetTimerRef = useRef<number | null>(null)
   const pointerRef = useRef({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
+  const [isTiltActive, setIsTiltActive] = useState(false)
   const [isRevealed, setIsRevealed] = useState(!enableReveal) // Start revealed if effect is disabled
 
   // IntersectionObserver for scroll-triggered reveal (Rec D)
@@ -68,6 +70,10 @@ export function Screenshot({
     return () => {
       if (frameRef.current !== null) {
         window.cancelAnimationFrame(frameRef.current)
+      }
+
+      if (resetTimerRef.current !== null) {
+        window.clearTimeout(resetTimerRef.current)
       }
     }
   }, [])
@@ -130,6 +136,16 @@ export function Screenshot({
       containerRef.current.style.transition = `transform ${TILT_CONFIG.resetDuration}ms ease-out`
       containerRef.current.style.transform = `perspective(${TILT_CONFIG.perspective}px) rotateX(0deg) rotateY(0deg) scale(1)`
     }
+
+    if (resetTimerRef.current !== null) {
+      window.clearTimeout(resetTimerRef.current)
+    }
+
+    // Retain the compositor hint only until the reset transform finishes.
+    resetTimerRef.current = window.setTimeout(() => {
+      setIsTiltActive(false)
+      resetTimerRef.current = null
+    }, TILT_CONFIG.resetDuration)
   }, [])
 
   /**
@@ -137,6 +153,13 @@ export function Screenshot({
    */
   const handleMouseEnter = useCallback(() => {
     setIsHovering(true)
+    setIsTiltActive(true)
+
+    if (resetTimerRef.current !== null) {
+      window.clearTimeout(resetTimerRef.current)
+      resetTimerRef.current = null
+    }
+
     // Clear the reset transition so movement feels responsive
     if (containerRef.current) {
       containerRef.current.style.transition = 'transform 0.1s ease-out'
@@ -179,7 +202,8 @@ export function Screenshot({
             'group-data-[placement=top-left]:pr-(--padding) group-data-[placement=top-left]:pb-(--padding)',
             'group-data-[placement=top-right]:pb-(--padding) group-data-[placement=top-right]:pl-(--padding)',
             // Tilt effect base styles
-            enableTilt && 'transform-gpu will-change-transform'
+            enableTilt && 'transform-gpu',
+            isTiltActive && 'will-change-transform',
           )}
         >
           {/* Glow overlay that follows cursor */}
@@ -196,7 +220,7 @@ export function Screenshot({
           )}
           <div
             className={clsx(
-              '*:relative *:ring-1 *:ring-black/10',
+              '*:relative [&_img]:outline [&_img]:-outline-offset-1 [&_img]:outline-black/10 dark:[&_img]:outline-white/10',
               'group-data-[placement=bottom]:*:rounded-t-sm group-data-[placement=bottom-left]:*:rounded-tr-sm',
               'group-data-[placement=bottom-right]:*:rounded-tl-sm group-data-[placement=top]:*:rounded-b-sm',
               'group-data-[placement=top-left]:*:rounded-br-sm group-data-[placement=top-right]:*:rounded-bl-sm'

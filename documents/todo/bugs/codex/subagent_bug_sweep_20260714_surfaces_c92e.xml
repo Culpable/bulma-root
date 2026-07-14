@@ -1,0 +1,121 @@
+<bug_1>
+<summary>
+<title>[CTA Links] Action targets remain below minimum size</title>
+<one_line_description>Feature and 404 calls to action remain 28px high, missing the plan's 40px desktop and 44px mobile target contract.</one_line_description>
+</summary>
+<file_locations>
+- /Users/sacino/bulma-root/demo/src/components/elements/link.tsx - function: Link, Lines 12-31
+- /Users/sacino/bulma-root/demo/src/app/page.tsx - homepage feature CTAs, Lines 269-293
+- /Users/sacino/bulma-root/demo/src/app/404/page.tsx - Go back home CTA, Lines 15-23
+- /Users/sacino/bulma-root/demo/src/app/not-found.tsx - Go back home CTA, Lines 16-24
+- /Users/sacino/bulma-root/demo/test/better-ui-contracts.test.mjs - surface contract coverage, Lines 120-142
+</file_locations>
+<issue_description>
+<description>
+The implementation increases shared button, navbar, pricing-tab, footer, and lender targets, but the styled Link primitive still has only text-sm/7 line height and no minimum height or vertical padding. The non-prose Link instances used as the two homepage feature-card CTAs and both branded 404 CTAs therefore render with a 28px-high interaction box at desktop and mobile sizes. These are standalone actions rather than inline prose links, so they violate REQ-1 and the verification checklist requiring visible buttons and actionable links to be at least 40px on desktop and 44px at 390x900. The new contract test checks shared buttons and lender buttons but does not cover these Link-based CTA paths, allowing the incomplete target-size pass to remain green. Add an explicit CTA-sized Link variant or migrate these standalone actions to a compliant control while keeping inline prose links compact, then add route-level target assertions for the affected instances.
+</description>
+<code_example>
+
+```tsx
+// File: demo/src/components/elements/link.tsx, Lines 22-27
+// BUG: text-sm/7 supplies a 28px line box, with no min-height for CTA usage.
+
+'link-underline-grow inline-flex w-fit cursor-pointer items-center gap-2'
+'text-sm/7 font-medium text-mist-950 dark:text-white'
+```
+
+</code_example>
+<expected_vs_actual>
+
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| Desktop target | Standalone feature and 404 actions are at least 40px high | Link box is 28px high |
+| Mobile target | Standalone feature and 404 actions are at least 44px high | Link box remains 28px high |
+| Regression coverage | Tests cover every standalone action class affected by REQ-1 | Structural tests cover buttons and lenders but omit Link-based CTAs |
+
+</expected_vs_actual>
+</issue_description>
+</bug_1>
+
+<bug_2>
+<summary>
+<title>[Pricing] Dark selectors break module parity</title>
+<one_line_description>The homepage and pricing page use materially different selected-tab contrast in dark mode despite the required visual parity.</one_line_description>
+</summary>
+<file_locations>
+- /Users/sacino/bulma-root/demo/src/components/sections/pricing-multi-tier.tsx - function: PricingOptionToggle, Lines 62-100
+- /Users/sacino/bulma-root/demo/src/components/sections/pricing-hero-multi-tier.tsx - function: ElasticTabToggle, Lines 80-163
+- /Users/sacino/bulma-root/demo/src/app/page.tsx - homepage PricingMultiTier integration, Lines 461-574
+- /Users/sacino/bulma-root/demo/src/app/pricing/page.tsx - pricing PricingHeroMultiTier integration, Lines 85-303
+- /Users/sacino/bulma-root/demo/test/better-ui-contracts.test.mjs - pricing parity assertions, Lines 120-142
+</file_locations>
+<issue_description>
+<description>
+The two pricing routes expose the same Monthly and Yearly choice but render incompatible selected states in dark mode. PricingOptionToggle on the homepage gives the selected button a solid white background with dark text, while ElasticTabToggle on /pricing uses a white 10% pill and keeps selected text white. The /pricing container itself is white 5%, so its selected pill differs from the track by only five percentage points and is much less legible than the homepage state. This violates the project pricing-module parity rule and the plan's instruction to keep both implementations visually aligned in every colour scheme and interaction state. The current contract test verifies the annual copy and source structure but never compares selected-tab colour classes. Consolidate the selector into a shared component or shared visual tokens so both routes use the same dark selected background, foreground, hover, and focus treatment, then assert computed parity in the required browser matrix.
+</description>
+<code_example>
+
+```tsx
+// File: demo/src/components/sections/pricing-multi-tier.tsx, Lines 89-91
+// Homepage selected state
+'bg-mist-950 text-white shadow-sm dark:bg-white dark:text-mist-950'
+
+// File: demo/src/components/sections/pricing-hero-multi-tier.tsx, Lines 127-155
+// Pricing-page selected state
+'bg-mist-950 shadow-sm dark:bg-white/10'
+'text-white dark:text-white'
+```
+
+</code_example>
+<expected_vs_actual>
+
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| Dark selected state | Homepage and /pricing use the same selected-tab treatment | Homepage is solid white with dark text; /pricing is translucent white with white text |
+| Selection affordance | Selected option is immediately distinguishable in both modules | /pricing selected pill is white/10 over a white/5 track |
+| Regression coverage | Parity checks compare computed selected, hover, and focus styles | Test checks copy presence but not selector styling parity |
+
+</expected_vs_actual>
+</issue_description>
+</bug_2>
+
+<bug_3>
+<summary>
+<title>[Pricing Toggle] Stale timers interrupt rapid reversals</title>
+<one_line_description>Each pricing-page tab click leaves an uncancelled timeout that can end a newer pill animation early.</one_line_description>
+</summary>
+<file_locations>
+- /Users/sacino/bulma-root/demo/src/components/sections/pricing-hero-multi-tier.tsx - function: ElasticTabToggle and handleSelect, Lines 80-115
+- /Users/sacino/bulma-root/demo/src/app/pricing/page.tsx - PricingHeroMultiTier integration, Lines 85-303
+- /Users/sacino/bulma-root/demo/test/better-ui-contracts.test.mjs - pricing interaction coverage, Lines 120-142
+</file_locations>
+<issue_description>
+<description>
+ElasticTabToggle starts a new 500ms timeout on every selection and never stores or cancels the previous timeout. If a visitor selects Yearly and then returns to Monthly before the first 500ms window ends, the first timeout sets isAnimating to false while the second pill transition is still running. That state change replaces the active 400ms spring transition with the resting 300ms ease-out transition mid-flight, so the reversal can change speed or settle abruptly instead of remaining interruptible. The timer also survives component unmount, contrary to the project's requirement to clean up every timer created by animation code. Store the timeout handle, clear it before starting a replacement and during effect cleanup, and add a rapid Monthly-Yearly-Monthly interaction test that asserts the latest animation owns the full lifecycle.
+</description>
+<code_example>
+
+```tsx
+// File: demo/src/components/sections/pricing-hero-multi-tier.tsx, Lines 105-115
+// BUG: previous timeout is neither replaced nor cleaned up.
+
+const handleSelect = (index: number) => {
+  if (index === selectedIndex) return
+  setIsAnimating(true)
+  onSelect(index)
+  setTimeout(() => setIsAnimating(false), 500)
+}
+```
+
+</code_example>
+<expected_vs_actual>
+
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| Rapid reversal | Latest selection retains its complete spring timing | Earlier timeout can switch the newer transition to resting timing mid-flight |
+| Timer ownership | At most one reset timer exists and unmount clears it | Every selection creates an independent timeout with no cleanup |
+| Regression coverage | Rapid tab reversal and unmount cleanup are exercised | Current pricing contract test is source-only and does not exercise timing |
+
+</expected_vs_actual>
+</issue_description>
+</bug_3>

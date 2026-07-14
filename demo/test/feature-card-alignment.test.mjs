@@ -33,7 +33,7 @@ test('homepage two-column feature cards preserve equal heights through animation
   )
   assert.match(
     source,
-    /'(?=[^']*\bh-full\b)(?=[^']*\btransition-all\b)(?=[^']*\bduration-700\b)[^']*'/,
+    /'(?=[^']*\bh-full\b)(?=[^']*transition-\[translate,opacity\])(?=[^']*\bduration-700\b)[^']*'/,
     'Animation wrappers must pass the stretched grid height to each feature card.'
   )
   assert.match(

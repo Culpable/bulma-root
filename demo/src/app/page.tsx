@@ -218,7 +218,7 @@ export default function Page() {
 
             <MagneticWrapper className="w-full sm:w-auto">
               <PlainButtonLink href="/contact" size="lg" className="group w-full sm:w-auto">
-                See it in action <AnimatedArrowIcon className="-mr-1 ml-1.5" />
+                See it in action <AnimatedArrowIcon />
               </PlainButtonLink>
             </MagneticWrapper>
           </div>
@@ -267,8 +267,8 @@ export default function Page() {
                 </p>
               }
               cta={
-                <Link href="/contact" className="group">
-                  Book a walkthrough <AnimatedArrowIcon className="-mr-1 ml-1.5" />
+                <Link href="/contact" size="cta" className="group">
+                  Book a walkthrough <AnimatedArrowIcon />
                 </Link>
               }
             />
@@ -287,8 +287,8 @@ export default function Page() {
                 </p>
               }
               cta={
-                <Link href="#supported-lenders" className="group">
-                  See covered lenders <AnimatedArrowIcon className="-mr-1 ml-1.5" />
+                <Link href="#supported-lenders" size="cta" className="group">
+                  See covered lenders <AnimatedArrowIcon />
                 </Link>
               }
             />
@@ -598,7 +598,7 @@ export default function Page() {
 
             <MagneticWrapper className="w-full sm:w-auto">
               <PlainButtonLink href="/contact" size="lg" className="group w-full sm:w-auto">
-                Book a demo <AnimatedArrowIcon className="-mr-1 ml-1.5" />
+                Book a demo <AnimatedArrowIcon />
               </PlainButtonLink>
             </MagneticWrapper>
           </div>

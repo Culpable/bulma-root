@@ -1,0 +1,119 @@
+<bug_1>
+<summary>
+<title>[Motion] Tailwind transforms snap instead of transitioning</title>
+<one_line_description>Explicit transform transitions do not animate Tailwind v4 translate and scale utilities, so button presses and section entrances snap.</one_line_description>
+</summary>
+<file_locations>
+- demo/src/components/elements/button.tsx - constants: `TRANSITION`, `ACTIVE_PRESS`, Lines 23-29
+- demo/src/components/sections/faqs-accordion.tsx - function: `FAQsAccordion`, Lines 73-93
+- demo/src/components/sections/faqs-two-column-accordion.tsx - function: `FAQsTwoColumnAccordion`, Lines 169-196
+- demo/src/components/sections/call-to-action-simple.tsx - function: `CallToActionSimple`, Lines 33-52
+- demo/src/components/sections/call-to-action-simple-centered.tsx - function: `CallToActionSimpleCentered`, Lines 27-42
+</file_locations>
+<issue_description>
+<description>
+The broad-transition replacement declares `transition-property: transform` while the affected Tailwind v4 utilities compile to the independent CSS `translate` and `scale` longhands. Changing `active:scale-[0.96]`, `translate-y-*`, or `scale-*` therefore does not change the declared `transform` property and is excluded from the transition. Shared buttons reach the correct pressed scale but snap into and out of it instead of using the required interruptible 150ms feedback. FAQ section wrappers and CTA entrances fade because opacity is listed, but their translation and scale components jump immediately, weakening or removing the intended slide and scale choreography. The same mismatch affects every listed location and directly violates the plan requirement to preserve motion while replacing `transition-all`. Replace the property lists with the actual Tailwind v4 longhands used by each state, or express those state changes through the `transform` property itself.
+</description>
+<code_example>
+
+```typescript
+// File: demo/src/components/elements/button.tsx, Lines 23-29
+// BUG: Tailwind v4 emits `scale: .96`, but only `transform` is transitioned.
+const TRANSITION = 'transition-[transform,background-color,box-shadow,color] duration-150 ease-out'
+const ACTIVE_PRESS = 'active:scale-[0.96]'
+
+// File: demo/src/components/sections/call-to-action-simple.tsx, Lines 49-50
+// BUG: `translate` and `scale` snap while only opacity transitions.
+'transition-[transform,opacity] duration-600 ease-out'
+isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-[0.98]'
+```
+
+</code_example>
+<expected_vs_actual>
+
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Button press** | Scale interpolates to and from 0.96 over 150ms | The independent `scale` property snaps because it is not transitioned |
+| **FAQ entrance** | Opacity and vertical position settle together | Opacity fades while the independent `translate` property jumps |
+| **CTA entrance** | Opacity, translation, and scale animate together | Only opacity is covered by the explicit property list |
+| **Transition discipline** | Explicit lists name every changed CSS property | Lists name `transform`, which the Tailwind utilities do not modify |
+
+</expected_vs_actual>
+</issue_description>
+</bug_1>
+
+<bug_2>
+<summary>
+<title>[Navbar] Duplicate dialog commands can throw</title>
+<one_line_description>The secondary navbar issues native dialog commands and imperative calls from the same click, which can invoke showModal or close twice.</one_line_description>
+</summary>
+<file_locations>
+- demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx - function: `NavbarWithLogoActionsAndLeftAlignedLinks`, Lines 145-167, 197-224
+</file_locations>
+<issue_description>
+<description>
+The secondary navbar attaches both `command="show-modal"` or `command="close"` attributes and React `onClick` handlers that call `dialog.showModal()` or `dialog.close()` directly. Tailwind Plus installs command handling at the document level, so one user click can execute the declarative command and then the React handler. The open handler has no `dialog.open` guard; if the native command opens the dialog first, the subsequent `showModal()` call targets an already open modal and can throw `InvalidStateError`. Duplicate close requests can also bypass or restart the registered leave lifecycle. This component is not mounted by the current runnable layout, but it remains a reusable demo component and fails as soon as a route or template consumes it. The animation guide explicitly prohibits mixing these two command paths. Retain one dialog-control mechanism and remove the other.
+</description>
+<code_example>
+
+```typescript
+// File: demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx, Lines 197-202
+// BUG: The same click has both a declarative command and an imperative handler.
+command="show-modal"
+commandfor="mobile-menu"
+onClick={openMobileMenu}
+
+// Lines 149-150: no already-open guard exists before showModal.
+if (typeof dialog.showModal === 'function') {
+  dialog.showModal()
+}
+```
+
+</code_example>
+<expected_vs_actual>
+
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Open action** | One mechanism opens the dialog once | Native command and React handler can both call `showModal()` |
+| **Runtime safety** | Repeated or overlapping actions remain exception-free | The second `showModal()` can throw for an already open modal |
+| **Exit lifecycle** | Tailwind Plus owns one reversible leave transition | Duplicate close paths can interfere with lifecycle coordination |
+
+</expected_vs_actual>
+</issue_description>
+</bug_2>
+
+<bug_3>
+<summary>
+<title>[Navbar] Secondary controls remain undersized</title>
+<one_line_description>The secondary navbar still renders 28-40px navigation targets and 36px menu controls instead of the required 40px desktop and 44px mobile boxes.</one_line_description>
+</summary>
+<file_locations>
+- demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx - functions: `NavbarLink`, `NavbarLogo`, `NavbarWithLogoActionsAndLeftAlignedLinks`, Lines 79-129, 190-224
+</file_locations>
+<issue_description>
+<description>
+The active centered-logo navbar received explicit minimum target sizes, but the secondary left-aligned navbar retained its original geometry. Desktop links use `lg:text-sm/7` without a 40px minimum, so their target height follows the 28px line box. Mobile links use a 40px line height without the required 44px minimum. The menu and close buttons wrap a 24px icon with 6px padding on each side, producing a 36px square. `NavbarLogo` also has no minimum target box. Although this component is currently dormant in `demo/src/app/layout.tsx`, its exported interface is ready for reuse and would immediately violate the plan's control-size contract on any page that adopts it. Apply the shared 44px mobile and 40px large-screen target geometry to its links, logo, menu button, and close button without overlapping adjacent targets.
+</description>
+<code_example>
+
+```typescript
+// File: demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx
+// Lines 91 and 202-204: no minimum target sizes are applied.
+'text-3xl/10 font-medium lg:text-sm/7'
+'rounded-full p-1.5'
+'size-6'
+```
+
+</code_example>
+<expected_vs_actual>
+
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **Desktop navigation** | Every nav target is at least 40px high | Link height follows the 28px text line box |
+| **Mobile navigation** | Every nav target is at least 44px high | Link height follows a 40px line box |
+| **Menu controls** | Open and close controls are 44px squares on mobile | 24px icon plus 6px padding produces a 36px square |
+| **Component parity** | Both navbar variants share the control-size contract | Only the active centered-logo variant has compliant sizing |
+
+</expected_vs_actual>
+</issue_description>
+</bug_3>
