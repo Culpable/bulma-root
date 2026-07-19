@@ -1,5 +1,7 @@
 # Bulma Marketing Runtime and Browser Rules Plan
 
+> **Implemented status (verified 2026-07-19):** Implemented and ready to archive from documents/todo. Evidence: `.nvmrc`, `demo/package.json`, `.github/workflows/deploy.yml`, `.cursor/rules/dev-browser.mdc`, and `demo/test/runtime-and-browser-rules.test.mjs` (3 passing runtime/browser contract tests).
+
 <critical_warning>
 > **CRITICAL WARNING:** Preserve the pre-existing newline-only `demo/public/sitemap.xml` change and exclude it from the scoped commit unless the deterministic build produces a separate necessary sitemap content change.
 </critical_warning>

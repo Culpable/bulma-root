@@ -1,5 +1,7 @@
 # Bulma Better-UI Polish Plan
 
+> **Implemented status (verified 2026-07-19):** Implemented and ready to archive from documents/todo. Evidence: `demo/test/better-ui-contracts.test.mjs` plus five focused UI contract suites (14 passing tests), `demo/src/components/elements/button.tsx`, `demo/src/components/sections/faqs-two-column-accordion.tsx`, `demo/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx`, `demo/src/app/globals.css`, and `documents/guides/_animations.md`.
+
 <critical_warning>
 > **CRITICAL WARNING:** The project forbids `prefers-reduced-motion`, `@media (prefers-reduced-motion: reduce)`, and equivalent animation gates. The current stylesheet contains four such branches. Remove those branches while preserving the intended animation timing and interaction model. Do not replace them with timing short-circuits or `requestAnimationFrame` wrappers.
 </critical_warning>
