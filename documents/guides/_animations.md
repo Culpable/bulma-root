@@ -114,6 +114,8 @@ const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
 
 Section entrances declare only the properties they change, normally Tailwind v4's independent `translate` or `scale` longhands plus `opacity`, with `ease-out` timing. Inline styles that write the composite `transform` property continue to transition `transform` directly. Duration ranges from 500ms to 1500ms, with longer timings reserved for graph draw and glow effects.
 
+The homepage hero CTA animation wrapper preserves `w-full`, allowing its nested CTA row and both actions to stretch across the mobile container before returning to intrinsic widths at the `sm` breakpoint.
+
 The two-column feature grid explicitly stretches its cells, and both the slide-animation wrappers and feature cards preserve `h-full`. This keeps paired cards aligned even when their copy lengths differ.
 
 FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with `data-hash-target="true"`, so direct or routed hash deep links such as `#lenders` remain visible even when navigation lands below the section header that normally triggers the staggered entrance animation.
@@ -210,7 +212,7 @@ FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with
 - `handleMouseLeave` resets with spring easing (400ms, overshoots then settles)
 - Movement easing: 150ms `ease-out` for responsive tracking
 
-**Integration:** Wrap buttons or interactive elements. Currently applied to hero and CTA section buttons.
+**Integration:** Wrap buttons or interactive elements. Currently applied to the secondary action buttons in the homepage hero and bottom CTA section. The primary `Try Bulma free` links use direct porcelain hover and press feedback without magnetic movement.
 
 ```tsx
 <MagneticWrapper>
@@ -436,7 +438,7 @@ The component includes a periodic shimmer effect - a diagonal shine sweep that c
 100% { transform: translateX(200%) skewX(-20deg); opacity: 0; }
 ```
 
-**Integration:** Currently applied to hero and bottom CTA buttons.
+**Integration:** No current route renders this treatment. The homepage primary CTAs use `precision-porcelain-button-link.tsx::PrecisionPorcelainButtonLink`, which replaces the moving conic border and repeating shimmer with a uniform edge, inset highlight, controlled shadow, 1px hover lift, and `scale(0.98)` press response.
 
 ```tsx
 <GradientBorderWrapper>

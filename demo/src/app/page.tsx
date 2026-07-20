@@ -2,6 +2,7 @@ import { AnnouncementBadge } from '@/components/elements/announcement-badge'
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
 import { HueShiftProvider } from '@/components/elements/hue-shift-provider'
 import { Link } from '@/components/elements/link'
+import { PrecisionPorcelainButtonLink } from '@/components/elements/precision-porcelain-button-link'
 import { FeatureScreenshotLeft, FeatureScreenshotRight, HeroScreenshot } from '@/components/elements/responsive-screenshot'
 import { Screenshot } from '@/components/elements/screenshot'
 import { ScrollHighlight } from '@/components/elements/scroll-highlight'
@@ -46,11 +47,6 @@ const BlurTransitionText = dynamic(() =>
 // Magnetic hover effect wrapper - interaction enhancement, deferred
 const MagneticWrapper = dynamic(() => import('@/components/elements/magnetic-wrapper').then((m) => m.MagneticWrapper))
 
-// Rotating gradient border animation - decorative CTA enhancement
-const GradientBorderWrapper = dynamic(() =>
-  import('@/components/elements/gradient-border-wrapper').then((m) => m.GradientBorderWrapper),
-)
-
 // Metallic sheen sweep on headlines - decorative entrance animation
 const LuminanceSweep = dynamic(() => import('@/components/elements/luminance-sweep').then((m) => m.LuminanceSweep))
 
@@ -64,7 +60,6 @@ const LuminanceSweep = dynamic(() => import('@/components/elements/luminance-swe
 export const preloadAnimationComponents = () => {
   void import('@/components/elements/blur-transition-text')
   void import('@/components/elements/magnetic-wrapper')
-  void import('@/components/elements/gradient-border-wrapper')
   void import('@/components/elements/luminance-sweep')
 }
 
@@ -208,13 +203,12 @@ export default function Page() {
         }
         cta={
           <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4">
-            <MagneticWrapper className="w-full sm:w-auto">
-              <GradientBorderWrapper className="w-full sm:w-auto">
-                <ButtonLink href="https://app.bulma.com.au/register" size="lg" className="w-full sm:w-auto" preloadOnHover>
-                  Try Bulma free
-                </ButtonLink>
-              </GradientBorderWrapper>
-            </MagneticWrapper>
+            <PrecisionPorcelainButtonLink
+              href="https://app.bulma.com.au/register"
+              className="w-full sm:w-auto"
+            >
+              Try Bulma free
+            </PrecisionPorcelainButtonLink>
 
             <MagneticWrapper className="w-full sm:w-auto">
               <PlainButtonLink href="/contact" size="lg" className="group w-full sm:w-auto">
@@ -588,13 +582,12 @@ export default function Page() {
         }
         cta={
           <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4">
-            <MagneticWrapper className="w-full sm:w-auto">
-              <GradientBorderWrapper className="w-full sm:w-auto">
-                <ButtonLink href="https://app.bulma.com.au/register" size="lg" className="w-full sm:w-auto" preloadOnHover>
-                  Try Bulma free
-                </ButtonLink>
-              </GradientBorderWrapper>
-            </MagneticWrapper>
+            <PrecisionPorcelainButtonLink
+              href="https://app.bulma.com.au/register"
+              className="w-full sm:w-auto"
+            >
+              Try Bulma free
+            </PrecisionPorcelainButtonLink>
 
             <MagneticWrapper className="w-full sm:w-auto">
               <PlainButtonLink href="/contact" size="lg" className="group w-full sm:w-auto">

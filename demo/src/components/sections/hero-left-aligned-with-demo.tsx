@@ -78,7 +78,7 @@ export function HeroLeftAlignedWithDemo({
               {cta && (
                 <div
                   className={clsx(
-                    'hero-animate hero-delay-3',
+                    'hero-animate hero-delay-3 w-full',
                     shouldApplyParallax && 'hero-parallax-element hero-parallax-cta'
                   )}
                 >
