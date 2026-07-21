@@ -212,7 +212,7 @@ FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with
 - `handleMouseLeave` resets with spring easing (400ms, overshoots then settles)
 - Movement easing: 150ms `ease-out` for responsive tracking
 
-**Integration:** Wrap buttons or interactive elements. Currently applied to the secondary action buttons in the homepage hero and bottom CTA section. The primary `Try Bulma free` links use direct porcelain hover and press feedback without magnetic movement.
+**Integration:** Wrap buttons or interactive elements. Currently applied to the secondary action buttons in the homepage hero and bottom CTA section. The primary `Try Bulma free` links use the direct `glass-press-button-link.tsx::GlassPressButtonLink` hover and press feedback without magnetic movement.
 
 ```tsx
 <MagneticWrapper>
@@ -438,7 +438,7 @@ The component includes a periodic shimmer effect - a diagonal shine sweep that c
 100% { transform: translateX(200%) skewX(-20deg); opacity: 0; }
 ```
 
-**Integration:** No current route renders this treatment. The homepage primary CTAs use `precision-porcelain-button-link.tsx::PrecisionPorcelainButtonLink`, which replaces the moving conic border and repeating shimmer with a uniform edge, inset highlight, controlled shadow, 1px hover lift, and `scale(0.98)` press response.
+**Integration:** No current route renders this treatment. The primary CTAs (homepage hero and bottom CTA `Try Bulma free`, navbar `Get started`) use `glass-press-button-link.tsx::GlassPressButtonLink`, which replaces the moving conic border and repeating shimmer with a frosted-glass surface (backdrop blur and saturation, hairline border, inset top sheen) plus tactile press physics: the key rests lifted 2px above a hard offset ledge shadow, rises to 3px on hover, and drops onto the ledge when pressed, transitioning only translate, background colour, box shadow, and text colour over 150ms ease-out. `precision-porcelain-button-link.tsx::PrecisionPorcelainButtonLink` remains in the tree as the superseded dormant variant.
 
 ```tsx
 <GradientBorderWrapper>

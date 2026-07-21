@@ -156,7 +156,7 @@ The contact form owns the only shipped loading, success, and error states: submi
 ## Approved Exceptions and Drift
 
 - Approved exceptions: the Glass Press primary intentionally breaks the pill-radius rule (`rounded-xl`) and uses bold weight; ambient decorative layers are exempt from the "no looped animation on content" stance because they sit behind content.
-- Known implementation drift: `documents/guides/_animations.md` (sections 7 and 13) still names the porcelain treatment as the homepage primary CTA; the working tree has replaced it with `GlassPressButtonLink`. Sync the guide when the button change lands. The Glass Press source comment cites a prototype HTML file that is not in this repository.
+- Known implementation drift: the Glass Press source comment cites a prototype HTML file that is not in this repository; treat it as historical provenance only. No other material drift is known.
 - Retained but unreferenced: `precision-porcelain-button-link.tsx` (superseded primary) and `gradient-border-wrapper.tsx` (no route renders it) remain in the tree as approved dormant variants; do not treat their presence as sanction to use them for primary CTAs.
 - Reference-only trees: root `components/` and `pages/` are unrouted template sources; `demo/src` is the authority for everything shipped.
 
