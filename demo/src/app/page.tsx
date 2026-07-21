@@ -2,7 +2,7 @@ import { AnnouncementBadge } from '@/components/elements/announcement-badge'
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
 import { HueShiftProvider } from '@/components/elements/hue-shift-provider'
 import { Link } from '@/components/elements/link'
-import { PrecisionPorcelainButtonLink } from '@/components/elements/precision-porcelain-button-link'
+import { GlassPressButtonLink } from '@/components/elements/glass-press-button-link'
 import { FeatureScreenshotLeft, FeatureScreenshotRight, HeroScreenshot } from '@/components/elements/responsive-screenshot'
 import { Screenshot } from '@/components/elements/screenshot'
 import { ScrollHighlight } from '@/components/elements/scroll-highlight'
@@ -203,12 +203,12 @@ export default function Page() {
         }
         cta={
           <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4">
-            <PrecisionPorcelainButtonLink
+            <GlassPressButtonLink
               href="https://app.bulma.com.au/register"
               className="w-full sm:w-auto"
             >
               Try Bulma free
-            </PrecisionPorcelainButtonLink>
+            </GlassPressButtonLink>
 
             <MagneticWrapper className="w-full sm:w-auto">
               <PlainButtonLink href="/contact" size="lg" className="group w-full sm:w-auto">
@@ -582,12 +582,12 @@ export default function Page() {
         }
         cta={
           <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4">
-            <PrecisionPorcelainButtonLink
+            <GlassPressButtonLink
               href="https://app.bulma.com.au/register"
               className="w-full sm:w-auto"
             >
               Try Bulma free
-            </PrecisionPorcelainButtonLink>
+            </GlassPressButtonLink>
 
             <MagneticWrapper className="w-full sm:w-auto">
               <PlainButtonLink href="/contact" size="lg" className="group w-full sm:w-auto">

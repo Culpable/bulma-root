@@ -1,4 +1,5 @@
-import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
+import { PlainButtonLink } from '@/components/elements/button'
+import { GlassPressButtonLink } from '@/components/elements/glass-press-button-link'
 import { Main } from '@/components/elements/main'
 import {
   FooterCategory,
@@ -123,14 +124,14 @@ export default function RootLayout({
                 <PlainButtonLink href="https://app.bulma.com.au/login" className="max-sm:hidden">
                   Log in
                 </PlainButtonLink>
-                <ButtonLink href="https://app.bulma.com.au/register">Get started</ButtonLink>
+                <GlassPressButtonLink href="https://app.bulma.com.au/register">Get started</GlassPressButtonLink>
               </>
             }
             mobileActions={
               <>
-                <ButtonLink href="https://app.bulma.com.au/register" className="w-full justify-center">
+                <GlassPressButtonLink href="https://app.bulma.com.au/register" className="w-full justify-center">
                   Get started
-                </ButtonLink>
+                </GlassPressButtonLink>
                 <PlainButtonLink href="https://app.bulma.com.au/login" className="w-full justify-center">
                   Log in
                 </PlainButtonLink>

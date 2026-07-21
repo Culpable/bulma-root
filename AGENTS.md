@@ -155,6 +155,10 @@ REMEMBER: You don't always need to update docs, but you always need to check whe
 
 </system_architecture_documentation>
 
+<design_documentation>
+Visual implementation contract: [`DESIGN.md`](DESIGN.md) (project root). Read it before changing any user-facing surface in `demo/src`. It documents the mist palette roles, typography and layout primitives, the action hierarchy (Glass Press primary via `demo/src/components/elements/glass-press-button-link.tsx` for the `Try Bulma free` and `Get started` CTAs), component contracts, approved exceptions/drift, and the design verification matrix. Token values remain owned by `demo/src/app/globals.css`; motion implementation detail remains owned by `documents/guides/_animations.md`.
+</design_documentation>
+
 <brand_colors>
 Primary gradient (dark mode, blue):
 - From: #243a42
