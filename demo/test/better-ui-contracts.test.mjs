@@ -83,15 +83,25 @@ test('FAQ disclosures and icons use reversible enter and leave contracts', () =>
 
   for (const source of [homepageFaq, pricingFaq]) {
     assert.match(source, /className="faq-disclosure"/)
+    assert.match(source, /className="faq-disclosure__viewport"/)
+    assert.match(source, /className="faq-disclosure__body/)
+    assert.doesNotMatch(source, /faq-disclosure__viewport[^"]*pb-6/)
     assert.match(source, /faq-context-icon--plus/)
     assert.match(source, /faq-context-icon--minus/)
     assert.doesNotMatch(source, /faq-spring-content/)
   }
 
   assert.match(globalStyles, /\.faq-disclosure\[data-enter\][\s\S]*transition-duration: 400ms/)
-  assert.match(globalStyles, /\.faq-disclosure\[data-leave\][\s\S]*transition-duration: 150ms/)
+  assert.match(
+    globalStyles,
+    /\.faq-disclosure\[data-leave\][\s\S]*transition-duration: 300ms[\s\S]*cubic-bezier\(0\.4, 0, 0\.2, 1\)/,
+  )
   assert.match(globalStyles, /\.faq-disclosure\[hidden\]\[data-transition\][\s\S]*display: grid !important/)
-  assert.match(globalStyles, /\.faq-disclosure\[hidden\]\[data-enter\][\s\S]*transition-duration: 150ms/)
+  assert.match(
+    globalStyles,
+    /\.faq-disclosure\[hidden\]\[data-enter\][\s\S]*transition-duration: 300ms[\s\S]*cubic-bezier\(0\.4, 0, 0\.2, 1\)/,
+  )
+  assert.match(globalStyles, /\.faq-disclosure__viewport\s*\{[\s\S]*min-height: 0;[\s\S]*overflow: hidden;/)
   assert.match(globalStyles, /transform: translateY\(-8px\)/)
   assert.match(globalStyles, /filter 300ms cubic-bezier\(0\.2, 0, 0, 1\)/)
   assert.match(globalStyles, /scale: 0\.25/)

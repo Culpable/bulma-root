@@ -119,6 +119,12 @@ The contact form (`demo/src/app/contact/contact-form.tsx`) is the only full form
 
 No search exists. Navbar links are Pricing and Contact; the mobile menu adds the stacked actions. Internal navigation uses `transition-link.tsx::TransitionLink` View Transitions (300ms root crossfade with vertical settle) where supported. The homepage FAQ deep link contract is binding: `#lenders` targets the lender-coverage FAQ and must keep auto-opening it on both direct loads and same-page clicks; `#supported-lenders` targets the hero lender field only.
 
+### FAQ disclosures
+
+The homepage and pricing disclosures (`demo/src/components/sections/faqs-two-column-accordion.tsx::Faq` and `demo/src/components/sections/faqs-accordion.tsx::Faq`) share one visual and interaction contract. Answers expand from zero height and collapse fully without a residual gap or final snap. Answer spacing belongs inside a layout-neutral clipping viewport so the closed state remains truly closed.
+
+Opening, closing, and rapid reversals stay smooth and synchronised with the plus/minus icon. The homepage light starts at the readable answer centre, expands outwards only while opening, and follows the disclosure's real expanded state so pointer, keyboard, rapid-toggle, and hash-triggered opening cannot drift onto separate timelines. `documents/guides/_animations.md` owns the implementation structure, durations, easing curves, and known failure points.
+
 ### Cards, badges, and statuses
 
 Pricing cards must stay equal-height: `items-stretch` on the grid with `h-full` on every card and animation wrapper. The homepage pricing module mirrors the pricing page module; `/pricing` is the source of truth and both must change together, including the exact annual callout copy noted below. Testimonial cards use the layered glassmorphism treatment with hover lift; featured pricing cards add the border beam. Statuses everywhere are text-first on neutral surfaces.
@@ -167,6 +173,7 @@ The contact form owns the only shipped loading, success, and error states: submi
 | 1440x900, light and dark | Home, pricing, about, contact, privacy-policy, 404; navbar scrolled and unscrolled; Monthly and Yearly | No horizontal overflow, no console or page errors, equal-height pricing cards, glass navbar engages after scroll |
 | 1440x900, light and dark | Glass Press CTAs (hero, closing CTA, navbar) hover, press, and keyboard focus | Key rises on hover, drops onto ledge on press, visible focus ring in both schemes, label never wraps |
 | 390x900, light and dark | Same routes; mobile menu open; hero CTA stack | Full-width stacked CTAs (Glass Press first in menu), 44px targets, no clipped or overlapping text |
+| 1440x900 and 390x900, light and dark | Home and pricing FAQ open, close, keyboard toggle, and rapid reversal | Content starts and ends at zero height without a residual gap or snap; icon and content remain synchronised; homepage light expands from the answer centre only while opening |
 | Either viewport | `/#lenders` direct load and same-page click; contact form invalid, pending, success | FAQ auto-opens in both hash paths; form states announce via alert and status roles without layout jump |
 
 Also verify keyboard order and focus visibility on nav, pricing toggle, FAQ disclosures, and the contact form; scroll-triggered sections after settling; and both colour schemes for any changed surface. Commands, server lifecycle, and the browser-verification gate live in `AGENTS.md`.

@@ -120,6 +120,8 @@ The two-column feature grid explicitly stretches its cells, and both the slide-a
 
 FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with `data-hash-target="true"`, so direct or routed hash deep links such as `#lenders` remain visible even when navigation lands below the section header that normally triggers the staggered entrance animation.
 
+`stats-animated-graph.tsx::StatsAnimatedGraph` requires a stable section `id` and derives its SVG clip-path ID from that value. Keep section IDs unique per page; React tree-order IDs can diverge during transient server/client trees and break hydration or local `url(#...)` references.
+
 ### Shared control feedback
 
 `button.tsx` applies a 150ms transition limited to the independent `scale` longhand, background colour, box shadow, and text colour. All six button exports press to `scale(0.96)` by default; their `static` prop disables only that press scale, while hover colour, shadow, and focus-ring feedback remain active. The same primitive owns the 44px mobile and 40px large-screen minimum boxes plus the 2px trailing-icon padding correction.
@@ -341,9 +343,9 @@ const animatedChildren = Children.map(children, (child, index) => (
 | Plus icon | Opacity, blur, and scale crossfade | 300ms | `scale(1)` to `0.25`, `blur(0)` to `4px` |
 | Minus icon | Opacity, blur, and scale crossfade | 300ms | Inverse of the plus icon |
 | Content enter | Grid row, opacity, and translate | 400ms | `translateY(-8px)` to `0` |
-| Content exit | Grid row, opacity, and translate | 150ms | `translateY(0)` to `-8px` before `hidden` settles |
+| Content exit | Grid row, opacity, and translate | 300ms | Uses balanced ease-in-out motion before `hidden` settles |
 
-`ElDisclosure` supplies `data-transition`, `data-enter`, `data-leave`, and `data-closed`. `globals.css` overrides native `hidden` display only while `data-transition` is active, including the `hidden` plus `data-enter` state used when an unfinished enter reverses into exit. The homepage hash logic still opens `#lenders` and forces the targeted wrapper visible. `.faq-spring-content` remains scoped to contact-form recovery and success messages, not FAQ disclosure state.
+`ElDisclosure` supplies `data-transition`, `data-enter`, `data-leave`, and `data-closed`. `globals.css` overrides native `hidden` display only while `data-transition` is active, including the `hidden` plus `data-enter` state used when an unfinished enter reverses into exit. Each disclosure uses a padding-free `.faq-disclosure__viewport` as the direct grid child; `.faq-disclosure__body` owns answer spacing so the `0fr` closed track resolves to exactly `0px` without an end snap. The homepage hash logic still opens `#lenders` and forces the targeted wrapper visible. `.faq-spring-content` remains scoped to contact-form recovery and success messages, not FAQ disclosure state.
 
 ---
 
@@ -1511,23 +1513,24 @@ Glow effect that follows the expanding content edge when FAQ items open.
 - `demo/src/components/sections/faqs-two-column-accordion.tsx` — Glow integration
 
 **Animation behavior:**
-- 2px glow line appears at bottom of expanding content
-- Animates from full opacity to fade-out over 600ms
-- Uses gradient with center emphasis
-- Triggers when FAQ item opens
+- A fixed 2px glow line stays attached to the bottom edge of the expanding content.
+- The line scales horizontally from its centre while fading over the disclosure's 400ms enter transition.
+- Its right inset matches the answer's reserved icon space, so the light starts from the readable content centre.
+- The disclosure button's real `aria-expanded="true"` state triggers the glow, so hash opening and rapid toggles cannot desynchronise separate React state.
+- The glow does not run during the 300ms close transition.
 
 **CSS Keyframe (`faq-glow-trail`):**
 ```css
 @keyframes faq-glow-trail {
-  0% { opacity: 0.8; height: 0; }
-  50% { opacity: 1; }
-  100% { opacity: 0; height: 100%; }
+  0% { opacity: 0; transform: scaleX(0); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: scaleX(1); }
 }
 ```
 
 **Integration:**
 ```tsx
-<div data-open={isOpen} className="faq-glow-trail">
+<div className="faq-glow-trail">
   <ElDisclosure>{content}</ElDisclosure>
 </div>
 ```
@@ -1602,7 +1605,8 @@ function Page() {
 - **Navbar glow GPU impact**: The animated gradient glow uses continuous animation. On low-end devices, may impact scrolling performance.
 - **Quote float pausing**: Animation pauses via `animation-play-state`, which may cause a slight visual jump on hover.
 - **Data pulse offset-path support**: The `offset-path` property has limited browser support. Falls back to no animation in unsupported browsers.
-- **FAQ glow trail timing**: The glow effect is brief (600ms). If content takes longer to expand, the glow may complete before content is fully visible.
+- **FAQ disclosure collapse floor**: Keep vertical spacing on `.faq-disclosure__body`, not the direct `.faq-disclosure__viewport` grid child; direct-child padding prevents the `0fr` track from reaching `0px`.
+- **FAQ glow trail lifecycle**: Keep the glow wrapper immediately after its disclosure button because the real `aria-expanded="true"` state starts the centre-out animation through the adjacent-sibling selector.
 - **Scroll velocity sampling**: Velocity is sampled at ~50ms intervals with exponential smoothing. Rapid direction changes may not register accurately.
 
 ---

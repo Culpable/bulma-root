@@ -39,7 +39,7 @@ export function Faq({
         id={`${id}-question`}
         command="--toggle"
         commandfor={`${id}-answer`}
-        className="group flex w-full cursor-pointer items-start justify-between gap-6 py-4 text-left text-base/7 text-mist-950 dark:text-white"
+        className="group flex w-full cursor-pointer items-start justify-between gap-6 py-5 text-left text-base/7 text-mist-950 dark:text-white"
       >
         {question}
         {/* Crossfade the contextual icons so rapid toggles remain reversible. */}
@@ -49,8 +49,11 @@ export function Faq({
         </span>
       </button>
       <ElDisclosure id={`${id}-answer`} hidden className="faq-disclosure">
-        <div className="faq-disclosure__content -mt-2 flex flex-col gap-2 pr-12 pb-4 text-sm/7 text-mist-700 dark:text-mist-400">
-          {renderedAnswer}
+        {/* Keep spacing inside a padding-free viewport so the grid track can reach exactly zero. */}
+        <div className="faq-disclosure__viewport">
+          <div className="faq-disclosure__body flex flex-col gap-2 pr-12 pb-6 text-sm/7 text-mist-700 dark:text-mist-400">
+            {renderedAnswer}
+          </div>
         </div>
       </ElDisclosure>
     </div>

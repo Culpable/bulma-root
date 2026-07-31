@@ -3,7 +3,7 @@
 import { useScrollAnimation } from '@/hooks/use-scroll-animation'
 import { ElDisclosure } from '@tailwindplus/elements/react'
 import { clsx } from 'clsx/lite'
-import { Children, useCallback, useEffect, useId, useRef, useState, type ComponentProps, type ReactNode } from 'react'
+import { Children, useEffect, useId, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { Container } from '../elements/container'
 import { Subheading } from '../elements/subheading'
 import { Text } from '../elements/text'
@@ -19,14 +19,7 @@ export function Faq({
   const autoId = useId()
   const faqId = id || autoId
   const buttonRef = useRef<HTMLButtonElement | null>(null)
-  // Track open state for glow trail effect (Rec 9)
-  const [isOpen, setIsOpen] = useState(false)
   const [isHashTarget, setIsHashTarget] = useState(false)
-
-  // Handle toggle to track open state
-  const handleToggle = useCallback(() => {
-    setIsOpen((prev) => !prev)
-  }, [])
 
   useEffect(() => {
     const normalizedHash = `#${faqId}`
@@ -118,8 +111,7 @@ export function Faq({
         id={`${faqId}-question`}
         command="--toggle"
         commandfor={`${faqId}-answer`}
-        onClick={handleToggle}
-        className="group flex w-full cursor-pointer items-start justify-between gap-6 py-4 text-left text-base/7 text-mist-950 dark:text-white"
+        className="group flex w-full cursor-pointer items-start justify-between gap-6 py-5 text-left text-base/7 text-mist-950 dark:text-white"
       >
         {question}
         {/* Crossfade the contextual icons so rapid toggles remain reversible. */}
@@ -128,11 +120,14 @@ export function Faq({
           <MinusIcon className="faq-context-icon faq-context-icon--minus absolute h-lh" />
         </span>
       </button>
-      {/* Glow trail wrapper (Rec 9) - tracks expansion edge */}
-      <div data-open={isOpen} className="faq-glow-trail">
+      {/* Keep the glow attached to the disclosure so both animations share one lifecycle. */}
+      <div className="faq-glow-trail">
         <ElDisclosure id={`${faqId}-answer`} hidden className="faq-disclosure">
-          <div className="faq-disclosure__content -mt-2 flex flex-col gap-2 pr-12 pb-4 text-sm/7 text-mist-700 dark:text-mist-400">
-            {renderedAnswer}
+          {/* Keep spacing inside a padding-free viewport so the grid track can reach exactly zero. */}
+          <div className="faq-disclosure__viewport">
+            <div className="faq-disclosure__body flex flex-col gap-2 pr-12 pb-6 text-sm/7 text-mist-700 dark:text-mist-400">
+              {renderedAnswer}
+            </div>
           </div>
         </ElDisclosure>
       </div>
@@ -186,7 +181,7 @@ export function FAQsTwoColumnAccordion({
       data-section-hue={sectionHue}
       {...props}
     >
-      <Container className="grid grid-cols-1 gap-x-2 gap-y-8 lg:grid-cols-2">
+      <Container className="grid grid-cols-1 gap-x-2 gap-y-12 lg:grid-cols-2 lg:gap-y-8">
         {/* Header with slide-in animation */}
         <div
           ref={containerRef}

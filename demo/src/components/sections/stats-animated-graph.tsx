@@ -2,7 +2,7 @@
 
 import { clsx } from 'clsx/lite'
 import dynamic from 'next/dynamic'
-import { Children, useEffect, useId, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react'
+import { Children, useEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { Section } from '../elements/section'
 
 // Dynamic import for AnimatedCounter - not needed for initial paint since it only
@@ -99,14 +99,15 @@ export function StatsAnimatedGraph({
   sectionHue,
   ...props
 }: {
+  /** Provide a stable section ID that also namespaces the graph's SVG definitions. */
+  id: string
   staggerDelay?: number
   /** Enable sticky eyebrow behavior (Recommendation 8) */
   stickyEyebrow?: boolean
   /** Section hue identifier for smooth color transitions (Recommendation 9) */
   sectionHue?: 'hero' | 'features' | 'stats' | 'testimonials' | 'pricing' | 'faqs' | 'cta'
 } & ComponentProps<typeof Section>) {
-  const pathId = useId()
-  const glowId = useId()
+  const graphClipId = `${props.id}-graph-fill-clip`
   const containerRef = useRef<HTMLDivElement>(null)
   const [isInView, setIsInView] = useState(false)
   const [pathLength, setPathLength] = useState(0)
@@ -193,16 +194,9 @@ export function StatsAnimatedGraph({
           >
             <defs>
               {/* Clip path for fill area */}
-              <clipPath id={pathId}>
+              <clipPath id={graphClipId}>
                 <path d={GRAPH_FILL_PATH} />
               </clipPath>
-
-              {/* Gradient for the line glow effect */}
-              <linearGradient id={glowId} x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="oklch(56% 0.021 213.5)" stopOpacity="0.8" />
-                <stop offset="50%" stopColor="oklch(72.3% 0.014 214.4)" stopOpacity="1" />
-                <stop offset="100%" stopColor="oklch(56% 0.021 213.5)" stopOpacity="0.8" />
-              </linearGradient>
             </defs>
 
             {/* Filled area under the curve - fades in */}
@@ -227,7 +221,7 @@ export function StatsAnimatedGraph({
               style={{ transitionDelay: `${graphDelay + 1000}ms` }}
               strokeWidth="1"
               strokeDasharray="4 3"
-              clipPath={`url(#${pathId})`}
+              clipPath={`url(#${graphClipId})`}
             >
               {GRID_LINES}
             </g>
