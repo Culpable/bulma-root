@@ -1,14 +1,13 @@
 /**
  * ThemePicture Component (J-1)
  *
- * Simple wrapper that uses <picture> to serve different images based on
- * prefers-color-scheme media query. Prevents browser from downloading
- * both dark and light mode image variants.
+ * Renders the dark-mode variant of an image pair. The site is dark-only for
+ * every visitor (see the `dark` class on <html> in app/layout.tsx), so no
+ * prefers-color-scheme switching happens here: only `srcDark` is requested and
+ * the light variant is never downloaded.
  *
- * Unlike CSS class-based hiding (e.g., `dark:hidden`), media queries in
- * <source> elements prevent unused images from being downloaded entirely.
- *
- * Savings: ~50% reduction in image bandwidth per image pair.
+ * `srcLight` and `bgLight` are retained so existing call sites keep compiling
+ * and so a light variant can be reinstated without touching every caller.
  */
 
 import { clsx } from 'clsx/lite'
@@ -50,19 +49,15 @@ export function ThemePicture({
   bgDark = 'bg-black/75',
   ...props
 }: ThemePictureProps) {
+  // Reference the unused light-mode props so the retained API stays lint-clean.
+  void srcLight
+  void bgLight
+
   return (
     <picture>
-      {/* Dark mode source - only downloaded when prefers-color-scheme: dark */}
-      <source
-        srcSet={srcDark}
-        media="(prefers-color-scheme: dark)"
-        type="image/webp"
-        width={width}
-        height={height}
-      />
-      {/* Light mode fallback - used when no source matches */}
+      {/* Dark-only site: the dark variant is the single source requested */}
       <img
-        src={srcLight}
+        src={srcDark}
         alt={alt}
         width={width}
         height={height}
@@ -70,10 +65,8 @@ export function ThemePicture({
         fetchPriority={fetchPriority}
         decoding="async"
         className={clsx(
-          // Background colors for loading placeholder
-          bgLight,
-          // Dark mode background - applied when dark source is showing
-          `dark:${bgDark}`,
+          // Background color for the loading placeholder (dark-only site)
+          bgDark,
           className
         )}
         {...props}

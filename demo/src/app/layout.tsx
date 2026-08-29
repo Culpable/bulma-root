@@ -13,7 +13,7 @@ import {
 } from '@/components/sections/navbar-with-links-actions-and-centered-logo'
 import MixpanelProvider from '@/components/MixpanelProvider'
 import { siteMetadata } from '@/lib/metadata'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Mona_Sans, Inter } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
@@ -74,6 +74,14 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
 }
 
+
+// Declare the site as dark-only. This renders UA chrome (scrollbars, form
+// controls, autofill) in dark regardless of the visitor's system preference.
+export const viewport: Viewport = {
+  colorScheme: 'dark',
+  themeColor: '#0a0d0e',
+}
+
 const siteLogoAlt = `${siteMetadata.title} logo - AI policy assistant for Australian mortgage brokers`
 
 export default function RootLayout({
@@ -82,7 +90,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${monaSans.variable} ${inter.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`dark ${monaSans.variable} ${inter.variable}`} suppressHydrationWarning>
       <head>
         {/* Resource hints for external domains (S-1) */}
         <link rel="dns-prefetch" href="https://app.bulma.com.au" />
@@ -103,15 +111,10 @@ export default function RootLayout({
             logo={
               <NavbarLogo href="/">
                 <picture>
-                  <source
-                    srcSet="/img/logos/bulma-logo-light-40.webp 1x, /img/logos/bulma-logo-light-80.webp 2x, /img/logos/bulma-logo-light-160.webp 4x"
-                    media="(prefers-color-scheme: dark)"
-                    width={40}
-                    height={40}
-                  />
+                  {/* Dark-only site: always serve the light-on-dark logo */}
                   <img
-                    src="/img/logos/bulma-logo-dark-40.webp"
-                    srcSet="/img/logos/bulma-logo-dark-40.webp 1x, /img/logos/bulma-logo-dark-80.webp 2x, /img/logos/bulma-logo-dark-160.webp 4x"
+                    src="/img/logos/bulma-logo-light-40.webp"
+                    srcSet="/img/logos/bulma-logo-light-40.webp 1x, /img/logos/bulma-logo-light-80.webp 2x, /img/logos/bulma-logo-light-160.webp 4x"
                     alt={siteLogoAlt}
                     width={40}
                     height={40}

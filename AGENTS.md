@@ -22,8 +22,17 @@ Git commit guidelines are documented in `.cursor/rules/git-commit-message-format
 </commenting_standards>
 
 <frontend_design>
+
+<colour_scheme_rules>
+**The marketing site is dark-only for every visitor. Never reintroduce a light rendering path.**
+- The `dark` variant is class-based: `demo/src/app/globals.css` declares `@custom-variant dark (&:where(.dark, .dark *))` and `demo/src/app/layout.tsx` puts a permanent `dark` class on `<html>` together with `viewport.colorScheme = 'dark'`.
+- Do not add `@media (prefers-color-scheme: ...)` to CSS, `media="(prefers-color-scheme: ...)"` to `<source>` elements, or `matchMedia('(prefers-color-scheme: ...)')` to components. Nothing may branch on the visitor's system colour scheme.
+- Unprefixed light-mode utilities that a `dark:` utility overrides (for example `bg-white dark:bg-mist-950`) are inert and may stay. Never rely on them rendering and never ship a surface whose only styling is the light default.
+- Verify UI changes with the browser emulating `prefers-color-scheme: light`. That is the case that proves the dark lock-in holds; a visitor whose system is dark would pass either way.
+</colour_scheme_rules>
+
 - For pricing card grids, always enforce equal heights by pairing `items-stretch` on the grid with `h-full` on each plan card, and verify visually.
-- When reusing a visual component from one page on another page, verify visual parity against the source page in every relevant colour scheme and interaction state. Do not stop at layout/background matching: compare computed text colour, opacity, hover, focus, active states, underline/accent colours, and wrapper/background integration. If a new variant class is added for the destination page, confirm it does not unintentionally override the source component’s dark-mode or hover behaviour.
+- When reusing a visual component from one page on another page, verify visual parity against the source page in every relevant interaction state. Do not stop at layout/background matching: compare computed text colour, opacity, hover, focus, active states, underline/accent colours, and wrapper/background integration. If a new variant class is added for the destination page, confirm it does not unintentionally override the source component’s dark-mode or hover behaviour.
 
 <hash_navigation_rules>
 - Preserve the homepage FAQ deep link `#lenders`. It intentionally targets the `Which lenders does Bulma cover?` FAQ item (`id="lenders"`) and `Faq` auto-opens the disclosure when the hash matches.
@@ -42,7 +51,7 @@ Git commit guidelines are documented in `.cursor/rules/git-commit-message-format
 - Keep the homepage pricing module (`/`, `demo/src/app/page.tsx`) visually and verbally aligned with the pricing-page module (`/pricing`, `demo/src/app/pricing/page.tsx`); treat `/pricing` as the source of truth unless the user explicitly asks for a different homepage variant.
 - The annual option callout must use the exact text `Get 2 months free on a yearly plan.` in both pricing modules.
 - When changing plan-card pricing copy, savings notes, bonus wording, bonus panel presentation, plan feature wording, CTA labels, or pricing-card shared components, update and verify both modules together.
-- Verify pricing-card parity at `1440x900` and `390x900` in light and dark modes, including Monthly and Yearly states, equal-height cards, bonus panel/prompt states, text wrapping, hover/focus styling where relevant, and horizontal overflow.
+- Verify pricing-card parity at `1440x900` and `390x900` (dark is the only shipped scheme), including Monthly and Yearly states, equal-height cards, bonus panel/prompt states, text wrapping, hover/focus styling where relevant, and horizontal overflow.
 </pricing_module_parity_rules>
 
 <animation_standards>
@@ -91,6 +100,9 @@ VALIDATION GATE (CRITICAL):
 Responsive verification viewports:
 - Desktop: `1440x900`.
 - Mobile: `390x900`.
+
+Colour scheme:
+- The site is dark-only. Verify with `prefers-color-scheme: light` emulated (for example `page.emulateMedia({ colorScheme: 'light' })`) so the check proves the dark lock-in holds for visitors whose system is set to light.
 
 Browser verification requirements:
 - Open every changed route or relevant page state.

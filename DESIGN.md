@@ -48,16 +48,17 @@ This document is the visual implementation contract for the Bulma marketing site
 | Role | Token or source | Use |
 | --- | --- | --- |
 | Palette | `--color-mist-50` through `--color-mist-950` in `demo/src/app/globals.css` | Single cool blue-grey ramp (oklch) used for every UI colour decision |
-| Canvas | mist-100 light, mist-950 dark | Page background, set on the root in `globals.css`; navbar matches when unscrolled |
-| Primary text | mist-950 light, white dark | Headings, button labels, emphasised copy |
-| Secondary text | mist-700 light, mist-400 dark | Body copy (`text.tsx::Text`), eyebrows, captions |
+| Canvas | mist-950 | Page background, set on the root in `globals.css`; navbar matches when unscrolled |
+| Primary text | white | Headings, button labels, emphasised copy |
+| Secondary text | mist-400 | Body copy (`text.tsx::Text`), eyebrows, captions |
 | Accent | The mist ramp itself | There is no separate accent hue; emphasis comes from contrast, glass, and depth |
 | Border | Translucent mist-950 or white hairlines (about 6 to 30 percent alpha) | Card rings, glass button borders, dividers |
 | Screenshot backdrops | `wallpaper.tsx::Wallpaper` gradients (blue, green, purple, brown; separate light and dark stops) | Product screenshot framing; blue is the brand default and matches the brand gradient in `AGENTS.md` |
 | Success, warning, error | No dedicated tokens | Contact form status uses neutral mist surfaces with text plus `role="alert"` or `role="status"`; never colour alone |
 
-- Theme status: light and dark are both shipped and follow `prefers-color-scheme` only. There is no manual theme toggle and no `.dark` class strategy; every change must be verified in both schemes.
-- Accessibility target: no formal audited contrast target. Text pairs in shipped use (mist-950 on mist-100, white on mist-950, mist-700 on mist-100, mist-400 on mist-950) are treated as the safe set; measure the rendered pair before introducing new text-on-tint combinations.
+- Theme status: **the site is dark-only for every visitor**. `demo/src/app/globals.css` redefines the Tailwind variant with `@custom-variant dark (&:where(.dark, .dark *))`, and `demo/src/app/layout.tsx` puts a permanent `dark` class on `<html>` plus `viewport.colorScheme = 'dark'`. `prefers-color-scheme` no longer selects the theme anywhere: not in CSS, not in `<picture>` sources, and not in the Dot Pool WebGL palette. There is no manual theme toggle and no light rendering path to verify.
+- Light-mode values still present in components (`bg-white`, `text-mist-950`, and similar unprefixed defaults that a `dark:` utility overrides) are inert. Keep them so the pair stays readable and a light theme could be reinstated, but never rely on them rendering.
+- Accessibility target: no formal audited contrast target. The shipped text pairs (white on mist-950, mist-400 on mist-950) are treated as the safe set; measure the rendered pair before introducing new text-on-tint combinations.
 - Status communication: text and iconography always accompany colour (verified in the contact form and pricing feature lists).
 
 ## Typography
@@ -145,7 +146,7 @@ The contact form owns the only shipped loading, success, and error states: submi
 
 - Do use `GlassPressButtonLink` for every primary register CTA (Try Bulma free, Get started); don't reintroduce the porcelain button, gradient border wrapper, or magnetic effects on it.
 - Don't add `prefers-reduced-motion` or any reduced-motion conditional to animation code, ever (binding rule in `AGENTS.md`).
-- Do verify every UI change at 1440x900 and 390x900 in both light and dark schemes before reporting completion.
+- Do verify every UI change at 1440x900 and 390x900 before reporting completion. The site is dark-only, so verify with the browser emulating `prefers-color-scheme: light` as well: that proves the dark lock-in holds for visitors whose system is set to light.
 - Don't change contact form fields, the `#lenders` deep-link behaviour, or pricing-module copy parity without explicit approval; the annual callout must read exactly "Get 2 months free on a yearly plan." in both modules.
 - Do keep equal-height card grids intact: `items-stretch` on the grid, `h-full` on cards and every animation wrapper between them.
 - Don't hardcode colour values in components or docs; use mist utility classes backed by the theme block in `globals.css`.
@@ -170,10 +171,10 @@ The contact form owns the only shipped loading, success, and error states: submi
 
 | Viewport or mode | Routes and states | Proof |
 | --- | --- | --- |
-| 1440x900, light and dark | Home, pricing, about, contact, privacy-policy, 404; navbar scrolled and unscrolled; Monthly and Yearly | No horizontal overflow, no console or page errors, equal-height pricing cards, glass navbar engages after scroll |
-| 1440x900, light and dark | Glass Press CTAs (hero, closing CTA, navbar) hover, press, and keyboard focus | Key rises on hover, drops onto ledge on press, visible focus ring in both schemes, label never wraps |
-| 390x900, light and dark | Same routes; mobile menu open; hero CTA stack | Full-width stacked CTAs (Glass Press first in menu), 44px targets, no clipped or overlapping text |
-| 1440x900 and 390x900, light and dark | Home and pricing FAQ open, close, keyboard toggle, and rapid reversal | Content starts and ends at zero height without a residual gap or snap; icon and content remain synchronised; homepage light expands from the answer centre only while opening |
+| 1440x900 (dark, the only scheme) | Home, pricing, about, contact, privacy-policy, 404; navbar scrolled and unscrolled; Monthly and Yearly | No horizontal overflow, no console or page errors, equal-height pricing cards, glass navbar engages after scroll |
+| 1440x900 (dark, the only scheme) | Glass Press CTAs (hero, closing CTA, navbar) hover, press, and keyboard focus | Key rises on hover, drops onto ledge on press, visible focus ring, label never wraps |
+| 390x900 (dark, the only scheme) | Same routes; mobile menu open; hero CTA stack | Full-width stacked CTAs (Glass Press first in menu), 44px targets, no clipped or overlapping text |
+| 1440x900 and 390x900 (dark, the only scheme) | Home and pricing FAQ open, close, keyboard toggle, and rapid reversal | Content starts and ends at zero height without a residual gap or snap; icon and content remain synchronised; homepage expands from the answer centre only while opening |
 | Either viewport | `/#lenders` direct load and same-page click; contact form invalid, pending, success | FAQ auto-opens in both hash paths; form states announce via alert and status roles without layout jump |
 
-Also verify keyboard order and focus visibility on nav, pricing toggle, FAQ disclosures, and the contact form; scroll-triggered sections after settling; and both colour schemes for any changed surface. Commands, server lifecycle, and the browser-verification gate live in `AGENTS.md`.
+Also verify keyboard order and focus visibility on nav, pricing toggle, FAQ disclosures, and the contact form; scroll-triggered sections after settling; and that any changed surface still renders dark when the browser reports `prefers-color-scheme: light`. Commands, server lifecycle, and the browser-verification gate live in `AGENTS.md`.

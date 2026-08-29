@@ -40,8 +40,7 @@ export const DOT_POOL_CONFIG = {
   /** Pool extents in world units */
   width: 34,
   depth: 30,
-  /** Disc size in CSS px at reference depth; larger and softer on the light canvas */
-  dotSizeLight: 7,
+  /** Disc size in CSS px at reference depth (dark canvas; the site is dark-only) */
   dotSizeDark: 4.5,
   /** Calm energy: concentric wave from the CTA, plus two slow swells */
   waveAmp: 0.2,
@@ -220,7 +219,7 @@ export function DotPoolBackground({ sectionRef, className }: DotPoolBackgroundPr
       uRippleRadius: { value: C.rippleRadius },
       uAmpScale: { value: 0 },
       uSink: { value: C.riseDistance },
-      uSize: { value: C.dotSizeLight },
+      uSize: { value: C.dotSizeDark },
       uDpr: { value: 1 },
       uIntro: { value: 0 },
       uFade: { value: 1 },
@@ -240,15 +239,12 @@ export function DotPoolBackground({ sectionRef, className }: DotPoolBackgroundPr
     points.frustumCulled = false
     scene.add(points)
 
-    // Colour scheme: base and crest colours plus disc size follow prefers-color-scheme.
-    const themeQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    const applyTheme = (dark: boolean) => {
-      uniforms.uBase.value.setRGB(...mistRgb(dark ? 700 : 300))
-      uniforms.uPeak.value.setRGB(...mistRgb(dark ? 200 : 600))
-      uniforms.uSize.value = dark ? C.dotSizeDark : C.dotSizeLight
-    }
-    applyTheme(themeQuery.matches)
-    const onTheme = (event: MediaQueryListEvent) => applyTheme(event.matches)
+    // Colour scheme: the site is dark-only for every visitor, so the pool always
+    // uses the dark palette (mist-700 trough, mist-200 crest) and the smaller
+    // dark-mode disc. No prefers-color-scheme listener is needed.
+    uniforms.uBase.value.setRGB(...mistRgb(700))
+    uniforms.uPeak.value.setRGB(...mistRgb(200))
+    uniforms.uSize.value = C.dotSizeDark
 
     // Size the renderer to the host and keep the camera aspect in step.
     const measure = () => {
@@ -388,7 +384,6 @@ export function DotPoolBackground({ sectionRef, className }: DotPoolBackgroundPr
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('scroll', onScrollResume, { passive: true })
     document.addEventListener('visibilitychange', onVisibility)
-    themeQuery.addEventListener('change', onTheme)
 
     measure()
     canvas.dataset.dotPoolReady = 'true'
@@ -404,7 +399,6 @@ export function DotPoolBackground({ sectionRef, className }: DotPoolBackgroundPr
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('scroll', onScrollResume)
       document.removeEventListener('visibilitychange', onVisibility)
-      themeQuery.removeEventListener('change', onTheme)
       geometry.dispose()
       material.dispose()
       renderer.dispose()

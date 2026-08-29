@@ -4,6 +4,8 @@
 
 The animation system provides scroll-triggered entrance animations for page sections and a 3D parallax tilt effect for screenshots. Scroll-triggered visibility still uses React state via IntersectionObserver, while high-frequency pointer effects write transform and CSS-variable updates directly through refs and `requestAnimationFrame` to avoid render loops. No external animation libraries are required.
 
+**Colour scheme: the site is dark-only for every visitor.** `globals.css` redefines the Tailwind variant as `@custom-variant dark (&:where(.dark, .dark *))` and `app/layout.tsx` keeps a permanent `dark` class on `<html>`, so `prefers-color-scheme` never selects a theme. Every "Light mode" row in the colour tables below documents the unprefixed default that a `dark:` utility or `@variant dark` block overrides; those light values are retained in source but never render. Only the dark row ships.
+
 ---
 
 ## 2. File Structure
@@ -1194,7 +1196,7 @@ import { XIcon } from '@/components/icons/social/x-icon'
 - **Border beam on touch devices**: Border beam uses CSS animation only; works on all devices but may impact battery on mobile. Consider disabling on touch devices for extended sessions.
 - **Animated checkmark path length**: Path length measurement occurs on mount. If SVG is hidden initially, measurement may fail. Ensure parent is mounted before animating.
 - **Dot matrix canvas performance**: Canvas redraws at 60fps when active. On low-end devices with many dots, may cause jank. Increase `spacing` or reduce `effectRadius` to mitigate.
-- **Dot matrix dark mode detection**: Uses `document.documentElement.classList.contains('dark')` which runs on every frame. If dark mode toggle doesn't use this class, dots won't adapt.
+- **Dot matrix dark mode detection**: Uses `document.documentElement.classList.contains('dark')` which runs on every frame. `<html>` now always carries `dark`, so this check is constant and the dots always draw their dark-mode variant.
 - **Table row highlight z-index**: Cell `::before` pseudo-element requires `position: relative` on parent. If table cells have positioned children, may need z-index adjustment.
 - **Screenshot reflection overflow**: Reflection pseudo-element extends 30% below the screenshot. Ensure parent container has sufficient padding-bottom or `overflow: visible` to accommodate.
 - **Elastic toggle initial position**: Pill position is calculated via `getBoundingClientRect` on mount. If the toggle is rendered off-screen initially, pill may misposition until first interaction.
@@ -2294,7 +2296,7 @@ After optimisations:
 - Active state brightens the selected lender, applies a small lift and scale within the row, and adds a centre-grown underline. Non-active lenders fade back through a dimming selector that excludes `[data-active='true']`, `:hover`, and `:focus-visible` so the active lender is not dimmed by a higher-specificity parent selector.
 - Pointer leave resets proximity variables and returns to the last explicit click or touch selection.
 - Keyboard focus and touch-style pointer selection use the same active visual state as pointer proximity.
-- The pricing page passes `appearance="light"` so the field can sit transparently in the pricing footer. In dark colour-scheme mode, that light variant reuses the homepage white/mist resting text, bright white hover/active state, pointer aperture, heading marker, underline, and focus outline so the pricing block remains visually seamless with the dark pricing background.
+- The pricing page passes `appearance="light"` so the field can sit transparently in the pricing footer. The `.dark` overrides always apply, so that light variant reuses the homepage white/mist resting text, bright white hover/active state, pointer aperture, heading marker, underline, and focus outline, and the pricing block stays visually seamless with the dark pricing background.
 
 **CSS ownership:**
 
@@ -2302,7 +2304,7 @@ After optimisations:
 - The field animates only `transform`, `opacity`, `filter`, colour, and CSS custom properties; the heading marker uses the same `supported-lender-enter` keyframes as the lender reveal.
 - Responsive font sizing uses breakpoints instead of viewport-scaling font expressions.
 - Active scale is smaller on mobile to prevent collisions.
-- `.supported-lenders-field--light` owns the light-page colour treatment, while its `prefers-color-scheme: dark` overrides must match the default homepage field values for lender text, hover/active opacity, underline, and heading marker colours.
+- `.supported-lenders-field--light` owns the light-page colour treatment, while its overrides inside the `.dark` block must match the default homepage field values for lender text, hover/active opacity, underline, and heading marker colours. Because `<html>` always carries `dark`, the `.dark` overrides are what actually render; the `--light` base declarations are inert.
 
 **Verification requirements:**
 
@@ -2393,7 +2395,7 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 - One `Points` object over a static 150 x 95 grid (34 x 30 world units) with a `ShaderMaterial`; all motion is in the vertex shader from uniforms, so the CPU updates ~12 uniforms per frame and never touches the buffer.
 - Height = CTA-origin concentric wave (`sin(d*1.5 - t*1.33) * 0.2 * exp(-d*0.045)`) + two swells (`0.096`) + pointer ripple (`0.28`, radius 2.4, gated by damped pointer presence), scaled by `uAmpScale` = entrance amplitude x scroll calm.
 - Fragment: soft disc (`smoothstep(1, 0.45)`), depth fade between 27 and 11 units and a near fade under 6, crest colour mix, premultiplied alpha.
-- Colours from `mistRgb`: base mist-300 / crest mist-600 in light; base mist-700 / crest mist-200 in dark. Disc size 7px light / 4.5px dark at reference depth. `prefers-color-scheme` changes re-tint live.
+- Colours from `mistRgb` are fixed at the dark palette: base mist-700, crest mist-200, disc size 4.5px at reference depth. The site is dark-only, so the component sets these once at init and keeps no `prefers-color-scheme` listener.
 - Camera `(0, 3.4, 8)` looking at `(0, -0.4, -8)`, x sways ±0.25 with the damped pointer.
 - The wave origin is re-projected every frame from the hero's `[data-glass-press-button]` rect onto the pool plane, so it tracks layout and viewport changes.
 
@@ -2408,7 +2410,7 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 
 **Tunables:** every pool dial is a named constant in `DOT_POOL_CONFIG` (grid, extents, disc sizes, wave/swell/ripple amplitudes and speeds, rise and sink distances and rates, calm window and floor, fade window, camera, sway, pointer rate, DPR caps, far fade); the stage dials live in `STAGE_CONFIG`.
 
-**Verification:** `dev-browser` at 1440x900 and 390x900 in both schemes: entrance, pointer ripples, the frame sliding up and growing while pinned, still water visible around the pinned frame, fade at the lenders field and loop sleep, `/#lenders` auto-open and same-page `#supported-lenders`, no horizontal overflow, no console errors, stable document height and landmark positions during animation, canvas disposed on route change and recreated on return.
+**Verification:** `dev-browser` at 1440x900 and 390x900, including a run with the browser emulating `prefers-color-scheme: light` to prove the dark lock-in holds: entrance, pointer ripples, the frame sliding up and growing while pinned, still water visible around the pinned frame, fade at the lenders field and loop sleep, `/#lenders` auto-open and same-page `#supported-lenders`, no horizontal overflow, no console errors, stable document height and landmark positions during animation, canvas disposed on route change and recreated on return.
 
 **Points of error:**
 
