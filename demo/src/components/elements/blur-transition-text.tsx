@@ -23,20 +23,27 @@ interface BlurTransitionTextProps {
 /**
  * Blur transition text component that blurs out the current phrase
  * and blurs in the next phrase for a dreamy, modern effect.
- * Uses a fixed-width container sized to the longest phrase to prevent layout shift.
  *
- * IMPORTANT: Wraps in a single relative container so the absolute-positioned
- * measurement span is properly contained and doesn't interfere with parent
- * text-balance or other layout properties.
+ * Width reservation is pure CSS: every phrase is stacked in the same grid
+ * cell as an invisible sizer, so the box is always as wide (and as tall) as
+ * the longest phrase from the very first server-rendered paint. No
+ * measurement runs on the client, which means:
+ *
+ * - No hydration re-layout. A measured width applied after hydration used to
+ *   widen the box, re-wrap the heading (`text-balance` pulled the preceding
+ *   word onto the phrase line at narrow widths), and shift the phrase.
+ * - Font-swap safe. A width measured before the display font arrived was
+ *   too narrow once it swapped in and made long phrases wrap mid-cycle.
+ *
+ * The sizers draw their text through `before:content-[attr(data-text)]`, so
+ * the phrases never enter the DOM text content: the heading's `textContent` stays the single visible
+ * phrase for search engines and assistive tech.
  */
 export function BlurTransitionText({ phrases, className }: BlurTransitionTextProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isBlurred, setIsBlurred] = useState(false)
-  const [containerWidth, setContainerWidth] = useState<number | null>(null)
   const [isVisible, setIsVisible] = useState(true)
   const containerRef = useRef<HTMLSpanElement>(null)
-  const measureRef = useRef<HTMLSpanElement>(null)
-  const hasInitialized = useRef(false)
   const intervalRef = useRef<number | null>(null)
   const timeoutRef = useRef<number | null>(null)
 
@@ -52,34 +59,6 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
       timeoutRef.current = null
     }
   }
-
-  // Measure the longest phrase on mount to set fixed container width.
-  // Measures in-place to inherit correct font styling from parent context.
-  // Note: With ~4 phrases this causes 4 reflows, which is acceptable for
-  // a one-time initialization that runs once on mount.
-  useEffect(() => {
-    if (!measureRef.current || hasInitialized.current) return
-
-    // Defer DOM measurement to the next frame to keep the effect body pure.
-    requestAnimationFrame(() => {
-      if (!measureRef.current || hasInitialized.current) return
-
-      const measureEl = measureRef.current
-      let maxWidth = 0
-
-      phrases.forEach((phrase) => {
-        measureEl.textContent = phrase
-        const width = measureEl.getBoundingClientRect().width
-        if (width > maxWidth) {
-          maxWidth = width
-        }
-      })
-
-      measureEl.textContent = phrases[0]
-      setContainerWidth(Math.ceil(maxWidth))
-      hasInitialized.current = true
-    })
-  }, [phrases])
 
   // Track visibility so the animation pauses when the hero scrolls out of view.
   useEffect(() => {
@@ -100,7 +79,7 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
 
   // Handle the blur transition cycle
   useEffect(() => {
-    if (!containerWidth || phrases.length < 2) return
+    if (phrases.length < 2) return
 
     if (!isVisible) {
       clearTimers()
@@ -123,36 +102,26 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
     }, BLUR_CONFIG.displayDuration)
 
     return () => clearTimers()
-  }, [phrases.length, containerWidth, isVisible])
+  }, [phrases.length, isVisible])
 
-  // Single wrapper span with relative positioning to contain the absolute measurement span.
-  // This prevents the hidden span from escaping and interfering with parent layout (e.g. text-balance).
-  // Fixed pixel width (prevents jumping) capped by max-width 100% of the heading (prevents overflow); the
-  // percentage cap tracks the real containing block, unlike a 100vw formula that ignores the scrollbar.
-  // The visible phrase is centred inside the fixed-width box: the box is always at least as wide as the
-  // longest phrase, so shorter phrases (and any wrapped lines when the box is viewport-clamped) stay on the
-  // heading's centre axis instead of hugging the box's left edge.
+  // Inline grid: every child shares cell 1/1, so the box takes the widest phrase's width and the
+  // tallest phrase's height. `max-w-full` caps it at the heading width; when capped, each sizer and
+  // the visible phrase wrap inside the same cell, so the reserved height still covers the longest.
   return (
-    <span
-      ref={containerRef}
-      className="relative inline-block align-baseline"
-      style={{
-        width: containerWidth ? `${containerWidth}px` : 'auto',
-        maxWidth: '100%',
-      }}
-    >
-      {/* Hidden element used to measure phrase widths - absolutely positioned within relative parent */}
-      <span
-        ref={measureRef}
-        className={clsx('pointer-events-none invisible absolute left-0 top-0 whitespace-nowrap', className)}
-        aria-hidden="true"
-      >
-        {phrases[0]}
-      </span>
+    <span ref={containerRef} className="relative inline-grid max-w-full align-baseline">
+      {/* Invisible sizers: one per phrase, text drawn by ::before so it stays out of the DOM text */}
+      {phrases.map((phrase) => (
+        <span
+          key={phrase}
+          className={clsx('blur-phrase-sizer invisible [grid-area:1/1] text-center before:content-[attr(data-text)]', className)}
+          data-text={phrase}
+          aria-hidden="true"
+        />
+      ))}
 
-      {/* Visible animated text */}
+      {/* Visible animated text, centred on the heading's axis inside the reserved box */}
       <span
-        className={clsx('inline-block text-center transition-[transform,opacity,filter] ease-out', className)}
+        className={clsx('[grid-area:1/1] text-center transition-[transform,opacity,filter] ease-out', className)}
         style={{
           transitionDuration: `${BLUR_CONFIG.blurDuration}ms`,
           opacity: isBlurred ? 0 : 1,

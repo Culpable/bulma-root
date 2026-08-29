@@ -253,18 +253,17 @@ FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with
 - Smooth 400ms transitions with ease-out timing
 - Animation pauses when the text is scrolled out of view to avoid layout jank
 
-**Layout stability (width constraint):**
-- Measures longest phrase on mount, applies as `width` (prevents desktop jumping)
-- Constrains with `maxWidth: '100%'` (percentage of the heading, so it tracks the real containing block rather than `100vw`, which ignores the scrollbar) to prevent mobile overflow
-- Desktop: fixed width ensures consistent container size across all phrases
-- Mobile: text wraps naturally when width exceeds the container
-- The visible phrase is `text-center` inside the fixed-width box, so shorter phrases (and any wrapped lines when the box is clamped) stay on the heading's centre axis; the homepage hero scales the headline at `9vw` under `sm` so the longest phrase (~82vw) never wraps on phones
+**Layout stability (CSS-reserved width, no measurement):**
+- The container is an `inline-grid max-w-full align-baseline`; every phrase is rendered as an invisible sizer span in grid cell `1/1` (`blur-phrase-sizer invisible [grid-area:1/1]`), and the visible phrase shares the same cell, so the box is as wide and as tall as the longest phrase from the first server-rendered paint
+- Sizers draw their text with the `before:content-[attr(data-text)]` utility (no global CSS), so the phrases never enter the DOM text: the heading `textContent` stays `Your AI assistant for policy questions.` for search engines and assistive tech (sizers are `aria-hidden`)
+- No client measurement means no hydration re-layout (a measured width applied after hydration widened the box and let `text-balance` re-wrap the preceding word onto another line, shifting the phrase ~26px at 390px) and no font-swap drift (a width measured before Mona Sans arrived was ~30px too narrow after the swap and wrapped the long phrases mid-cycle)
+- `max-w-full` caps the box at the heading width; when capped, sizers and the visible phrase wrap inside the same cell, so the reserved height still covers the tallest phrase
+- The visible phrase is `text-center` inside the reserved box, so shorter phrases stay on the heading's centre axis; the homepage hero scales the headline at `9vw` under `sm` so the longest phrase (~82vw) never wraps on phones
 
 **Implementation details:**
-- Uses `useRef` to track initialization and prevent re-measurement
 - IntersectionObserver toggles visibility state so intervals stop when offscreen
 - Single `useEffect` manages animation cycle with proper cleanup
-- Hidden measurement span (`whitespace-nowrap`) sized absolutely within relative parent
+- No refs, effects, or state for sizing: width and height come from the stacked sizers
 - CSS `filter: blur()` and `transform: scale()` for visual effect
 
 **Integration:** Insert within text content. Currently applied to hero headline.
@@ -1187,7 +1186,7 @@ import { XIcon } from '@/components/icons/social/x-icon'
 - **Tilt on touch devices**: Parallax tilt uses mouse events only; touch devices see no effect (acceptable degradation)
 - **CSS transition conflicts**: Keep pricing entrance `transform` and `opacity` on the outer `card-depth-stack` wrapper and hover `transform` and `box-shadow` on the nested `pricing-focus-card` so the two timelines remain independent.
 - **Magnetic on touch**: Magnetic wrapper uses mouse events only; touch devices see no magnetic effect (acceptable degradation)
-- **BlurTransitionText width calculation**: Component measures phrase widths on mount; uses `width` + `maxWidth: '100%'` to prevent desktop jumping while avoiding mobile overflow. Container shows `auto` width until measurement completes.
+- **BlurTransitionText width reservation**: Width is reserved by CSS (all phrases stacked as invisible sizers in one grid cell), so the SSR paint already has the final box and font swaps resize it with the heading. Do not reintroduce client-side measurement: applying a measured width after hydration re-wraps the heading and jitters the phrase on load.
 - **Gradient border browser support**: `@property` (CSS Houdini) required for smooth gradient angle animation; older browsers may show static gradient. Theme adaptation is owned by CSS light/dark variants, so CTA border instances do not add dark-mode observers.
 - **CTA shimmer timing**: Shimmer uses JS class toggle with `offsetWidth` reflow to restart animation. If multiple CTAs are visible, they shimmer in sync (by design). Disable with `shimmer={false}` prop if unwanted.
 - **Floating orbs visibility**: Opacity range [0.08–0.15] and size range [80–180px] calibrated for visible but subtle effect. Reduce blur if GPU performance is impacted.
