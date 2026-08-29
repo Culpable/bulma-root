@@ -255,9 +255,10 @@ FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with
 
 **Layout stability (width constraint):**
 - Measures longest phrase on mount, applies as `width` (prevents desktop jumping)
-- Constrains with `maxWidth: '100%'` to prevent mobile overflow
+- Constrains with `maxWidth: '100%'` (percentage of the heading, so it tracks the real containing block rather than `100vw`, which ignores the scrollbar) to prevent mobile overflow
 - Desktop: fixed width ensures consistent container size across all phrases
-- Mobile: text wraps naturally when width exceeds viewport
+- Mobile: text wraps naturally when width exceeds the container
+- The visible phrase is `text-center` inside the fixed-width box, so shorter phrases (and any wrapped lines when the box is clamped) stay on the heading's centre axis; the homepage hero scales the headline at `9vw` under `sm` so the longest phrase (~82vw) never wraps on phones
 
 **Implementation details:**
 - Uses `useRef` to track initialization and prevent re-measurement
@@ -2377,7 +2378,7 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 **Section structure (`HeroDotPool`):**
 
 - A `sticky top-0 h-[100svh] -mb-[100svh]` aria-hidden layer at the top of the section hosts the canvas, so the pool stays pinned behind the copy, screenshot, and lenders for the whole hero. The content wrapper is `relative z-10`.
-- Copy stage: copy centred in a `min-h-[100svh]` stage; headline `max-w-5xl` at `4.5rem/1.05` from `lg`; subheadline `max-w-2xl`; CTA row centred. The copy block and lenders reuse the `hero-animate` + `hero-delay-0..5` stagger from section 4 (the screenshot does not: it is below the fold and scroll-driven).
+- Copy stage: from `lg` the copy is centred in a `min-h-[100svh]` stage; below `lg` the stage is its natural height and top-aligned (`pt-10 pb-10`, `sm:pt-14 sm:pb-14`), because with the 84px sticky navbar a centred full-viewport stage pushed the CTAs under the fold on phones. Headline `max-w-5xl`, `clamp(1.75rem, 9vw, 2.25rem)/1.1` under `sm` (keeps the longest cycling phrase on one line at every phone width so the heading height never changes mid-cycle), `4.5rem/1.05` from `lg`; subheadline `max-w-2xl`, `base/7` under `sm`; announcement badge rows centred under `sm`; CTA row centred. The copy block and lenders reuse the `hero-animate` + `hero-delay-0..5` stagger from section 4 (the screenshot does not: it is below the fold and scroll-driven).
 - Scrim: an absolutely positioned page-colour gradient (`-inset-x-[2%] -inset-y-6`, radial to transparent at 66%; linear top-to-55% below `lg`) sits inside the `isolate` copy container at `-z-10`, keeping the copy clean where the horizon crosses it without hiding the pool around it.
 - Stage track (`demo`): `relative pt-6 lg:-mt-[30svh]` wrapper holding a `lg:sticky lg:top-0 lg:h-[100svh]` centred panel with the screenshot frame, followed by a `lg:h-[100svh]` spacer, so the frame is pinned for 100svh of extra scroll. The `-30svh` margin overlaps the empty bottom of the copy stage so the panel pins while the CTAs are still leaving; the frame itself stays below the fold at load (no peek). Frame width: `max-w-5xl`, `lg:max-w-[min(1152px, (100svh-6rem)*1.45)]`, `2xl:max-w-[min(1440px, 72vw, (100svh-6rem)*1.45)]` (the height term keeps the padded frame inside the viewport).
 - Supported-lenders field (`footer`): normal `Container` with `pt-16 pb-24 lg:pt-24 lg:pb-28` after the track.

@@ -40,8 +40,12 @@ const LARGE_QUERY = '(min-width: 1024px)'
  * scroll, sliding up from low in the viewport and growing from 72% to full
  * width while the pool calms to still water beneath it; once released it
  * scrolls away and the supported-lenders field follows, where the water fades.
- * Below `lg` the screenshot is a normal centred frame and the water still
- * lingers behind the lenders field. A page-colour scrim anchored to the copy
+ * Below `lg` the copy stage is top-aligned at its natural height (no 100svh
+ * minimum: with the 84px sticky navbar a centred full-viewport stage pushed the
+ * CTAs under the fold on phones), the headline scales at 9vw under `sm` so
+ * every cycling phrase fits on one line on every phone width, the subheadline
+ * steps down to base/7, the screenshot is a normal centred frame, and the water
+ * still lingers behind the lenders field. A page-colour scrim anchored to the copy
  * block keeps the headline, subheadline, and CTAs clean where the pool's
  * horizon crosses them.
  */
@@ -121,9 +125,9 @@ export function HeroDotPool({
       </div>
 
       <div className="relative z-10">
-        {/* Copy stage: full viewport, copy centred */}
-        <div className="relative flex min-h-[100svh] flex-col">
-          <Container className="relative isolate z-10 flex flex-1 flex-col items-center justify-center gap-6 pt-16 pb-16 text-center">
+        {/* Copy stage: natural height and top-aligned below lg; full viewport with the copy centred from lg */}
+        <div className="relative flex flex-col lg:min-h-[100svh]">
+          <Container className="relative isolate z-10 flex flex-1 flex-col items-center justify-center gap-6 pt-10 pb-10 text-center sm:pt-14 sm:pb-14 lg:pt-16 lg:pb-16">
             {/* Page-colour scrim anchored to the copy block */}
             <div
               className={clsx(
@@ -136,9 +140,10 @@ export function HeroDotPool({
             {/* Announcement badge - first to appear */}
             {eyebrow && <div className="hero-animate hero-delay-0">{eyebrow}</div>}
             {/* Headline - appears second */}
-            <Heading className="hero-animate hero-delay-1 max-w-5xl lg:text-[4.5rem]/[1.05]!">{headline}</Heading>
+            {/* Headline: fluid 9vw under sm (28-36px) keeps the longest cycling phrase (~82vw) on one line down to ~270px */}
+            <Heading className="hero-animate hero-delay-1 max-w-5xl max-sm:text-[clamp(1.75rem,9vw,2.25rem)]/[1.1] lg:text-[4.5rem]/[1.05]!">{headline}</Heading>
             {/* Subheadline - appears third */}
-            <Text size="lg" className="hero-animate hero-delay-2 flex max-w-2xl flex-col items-center gap-4 text-center">
+            <Text size="lg" className="hero-animate hero-delay-2 flex max-w-2xl flex-col items-center gap-4 text-center max-sm:text-base/7">
               {subheadline}
             </Text>
             {/* CTA buttons - appear fourth */}

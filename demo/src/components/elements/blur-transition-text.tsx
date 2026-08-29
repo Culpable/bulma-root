@@ -127,13 +127,18 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
 
   // Single wrapper span with relative positioning to contain the absolute measurement span.
   // This prevents the hidden span from escaping and interfering with parent layout (e.g. text-balance).
-  // Uses min() to pick smaller of: fixed width (prevents jumping) OR viewport minus padding (prevents overflow).
+  // Fixed pixel width (prevents jumping) capped by max-width 100% of the heading (prevents overflow); the
+  // percentage cap tracks the real containing block, unlike a 100vw formula that ignores the scrollbar.
+  // The visible phrase is centred inside the fixed-width box: the box is always at least as wide as the
+  // longest phrase, so shorter phrases (and any wrapped lines when the box is viewport-clamped) stay on the
+  // heading's centre axis instead of hugging the box's left edge.
   return (
     <span
       ref={containerRef}
       className="relative inline-block align-baseline"
       style={{
-        width: containerWidth ? `min(${containerWidth}px, 100vw - 3rem)` : 'auto'
+        width: containerWidth ? `${containerWidth}px` : 'auto',
+        maxWidth: '100%',
       }}
     >
       {/* Hidden element used to measure phrase widths - absolutely positioned within relative parent */}
@@ -147,7 +152,7 @@ export function BlurTransitionText({ phrases, className }: BlurTransitionTextPro
 
       {/* Visible animated text */}
       <span
-        className={clsx('inline-block text-left transition-[transform,opacity,filter] ease-out', className)}
+        className={clsx('inline-block text-center transition-[transform,opacity,filter] ease-out', className)}
         style={{
           transitionDuration: `${BLUR_CONFIG.blurDuration}ms`,
           opacity: isBlurred ? 0 : 1,

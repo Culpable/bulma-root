@@ -184,6 +184,8 @@ export default function Page() {
             href="#supported-lenders"
             text="Now covering all major Australian lenders"
             cta="See the list"
+            // Centre the stacked text and CTA rows on phones to match the centred hero copy
+            className="max-sm:items-center max-sm:text-center"
           />
         }
         headline={
