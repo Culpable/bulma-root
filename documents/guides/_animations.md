@@ -17,6 +17,7 @@ demo/src/
 │   ├── use-hue-shift.ts                 # Section hue shift tracking (Rec 9)
 │   └── use-scroll-highlight.ts          # Viewport center text highlighting (Rec 10)
 ├── lib/
+│   ├── mist-palette.ts                  # Mist oklch tokens -> sRGB triples for WebGL uniforms
 │   └── supported-lenders.ts             # Canonical lender metadata for hero field + FAQ answer
 ├── app/
 │   └── globals.css                       # CSS keyframes and utility classes
@@ -25,6 +26,7 @@ demo/src/
     │   ├── animated-counter.tsx          # Scroll-triggered number counting
     │   ├── aurora-background.tsx         # Morphing gradient aurora background
     │   ├── cursor-spotlight.tsx          # Cursor-following ambient glow
+    │   ├── dot-pool-background.tsx       # Three.js Dot Pool hero background (section 55)
     │   ├── floating-orbs.tsx             # Ambient drifting background orbs
     │   ├── gradient-border-wrapper.tsx   # Rotating gradient CTA border
     │   ├── hue-shift-provider.tsx        # Provider for section hue shifts (Rec 9)
@@ -39,6 +41,7 @@ demo/src/
     │   └── supported-lenders-field.tsx   # Pointer-driven lender coverage ledger
     └── sections/
         # Home page sections
+        ├── hero-dot-pool.tsx                    # Homepage hero: sticky Dot Pool layer + staggered copy (section 55)
         ├── features-two-column-with-demos.tsx   # Slide left/right staggered
         ├── stats-animated-graph.tsx             # Slide up staggered + graph draw
         ├── pricing-multi-tier.tsx               # Scale up staggered
@@ -176,7 +179,7 @@ FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with
 | Primary glow | `soft-light` | Always | White radial gradient, illumination |
 | Secondary glow | `screen` | Dark mode only | Blue-tinted (#78B4DC), 1.5× size, adds depth |
 
-**Integration:** Wrap any component to add the effect. Currently applied to `HeroLeftAlignedWithDemo`.
+**Integration:** Wrap any component to add the effect. Applied inside `HeroLeftAlignedWithDemo`; the homepage hero is now `HeroDotPool` (section 55), which does not use the spotlight.
 
 ```tsx
 <CursorSpotlight size={600} opacity={0.1}>
@@ -1642,7 +1645,7 @@ function Page() {
 | Light mode | Cooler, more subtle gradients |
 | Dark mode | Brighter, more vibrant auroras |
 
-**Integration:** Currently applied inside `HeroLeftAlignedWithDemo` when `enableAurora={true}` (default).
+**Integration:** Applied inside `HeroLeftAlignedWithDemo` when `enableAurora={true}` (default). The homepage hero is now `HeroDotPool` (section 55), which replaces the aurora with the Dot Pool background.
 
 ```tsx
 // Enabled by default
@@ -1772,7 +1775,7 @@ function Page() {
 - Automatically disabled on touch devices
 - Uses the same scroll path for every pointer-capable user, matching the project animation policy
 
-**Integration:** Currently applied inside `HeroLeftAlignedWithDemo` when `enableParallax={true}` (default).
+**Integration:** Applied inside `HeroLeftAlignedWithDemo` when `enableParallax={true}` (default). The homepage hero is now `HeroDotPool` (section 55), which uses the pool's sink-on-scroll instead of element parallax.
 
 ```tsx
 // Enabled by default
@@ -2355,3 +2358,65 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 - The footer wordmark observer threshold is intentionally low (`0.01`) with a positive bottom root margin so the sweep triggers on mobile, where only the cropped lower wordmark may enter the viewport.
 - Do not mix explicit navbar open/close handlers with `command="show-modal"` and `command="close"` on the same dialog controls because that can issue duplicate native dialog commands.
 - The contact submit success choreography depends on the Formspree request resolving successfully; browser visual tests should mock or avoid the external submission unless a real test message is explicitly authorised.
+
+---
+
+## 55. Dot Pool Hero Background (Three.js) and the "Take the stage" screenshot
+
+`dot-pool-background.tsx::DotPoolBackground` renders the homepage hero background: a perspective field of soft mist-coloured discs that behaves like a pool. Concentric waves radiate from under the primary CTA, two slow swells cross the field, the pointer stirs ripples, the pool rises from under the fold on load, and on scroll it calms to still water under the pinned product screenshot before fading out at the supported-lenders field. `hero-dot-pool.tsx::HeroDotPool` is the section that hosts it and owns the scroll-driven screenshot stage. This is the site's only WebGL surface and its only runtime dependency beyond React/Next (`three` ^0.170).
+
+**Files:**
+
+- `demo/src/components/elements/dot-pool-background.tsx::DotPoolBackground` and `DOT_POOL_CONFIG`
+- `demo/src/components/sections/hero-dot-pool.tsx::HeroDotPool` and `STAGE_CONFIG`
+- `demo/src/lib/mist-palette.ts::mistRgb`
+- `demo/src/app/page.tsx` (homepage integration)
+
+**Section structure (`HeroDotPool`):**
+
+- A `sticky top-0 h-[100svh] -mb-[100svh]` aria-hidden layer at the top of the section hosts the canvas, so the pool stays pinned behind the copy, screenshot, and lenders for the whole hero. The content wrapper is `relative z-10`.
+- Copy stage: copy centred in a `min-h-[100svh]` stage; headline `max-w-5xl` at `4.5rem/1.05` from `lg`; subheadline `max-w-2xl`; CTA row centred. The copy block and lenders reuse the `hero-animate` + `hero-delay-0..5` stagger from section 4 (the screenshot does not: it is below the fold and scroll-driven).
+- Scrim: an absolutely positioned page-colour gradient (`-inset-x-[2%] -inset-y-6`, radial to transparent at 66%; linear top-to-55% below `lg`) sits inside the `isolate` copy container at `-z-10`, keeping the copy clean where the horizon crosses it without hiding the pool around it.
+- Stage track (`demo`): `relative pt-6 lg:-mt-[30svh]` wrapper holding a `lg:sticky lg:top-0 lg:h-[100svh]` centred panel with the screenshot frame, followed by a `lg:h-[100svh]` spacer, so the frame is pinned for 100svh of extra scroll. The `-30svh` margin overlaps the empty bottom of the copy stage so the panel pins while the CTAs are still leaving; the frame itself stays below the fold at load (no peek). Frame width: `max-w-5xl`, `lg:max-w-[min(1152px, (100svh-6rem)*1.45)]`, `2xl:max-w-[min(1440px, 72vw, (100svh-6rem)*1.45)]` (the height term keeps the padded frame inside the viewport).
+- Supported-lenders field (`footer`): normal `Container` with `pt-16 pb-24 lg:pt-24 lg:pb-28` after the track.
+- `DotPoolBackground` loads via `next/dynamic` with `ssr: false`; the copy still server-renders.
+
+**Stage scroll controller (`HeroDotPool`, large viewports only):**
+
+- One passive `scroll` listener (plus `resize` and the `(min-width: 1024px)` media-query change) schedules a single rAF that writes `transform`/`opacity` directly to the frame element; no React state changes on scroll.
+- Progress `p` = track scrolled-through fraction (`-top / (height - viewport)`), 0 when the panel pins and 1 when it releases. `grow = easeOutCubic(p / growEnd)`; scale = `minScale + (1 - minScale) * grow`; translateY = `slideStartVh * vh * (1 - grow)` (slides up from low in the viewport to centre); opacity = `minOpacity -> 1`. After `growEnd` the frame holds at full size until the track releases it.
+- Under `lg` the styles are cleared and the frame is a normal centred block. The `Screenshot` component's own hover tilt/glow keeps working inside the frame; its transform lives on an inner element so the two never fight.
+- `STAGE_CONFIG`: `minScale 0.72`, `growEnd 0.6`, `slideStartVh 0.42`, `minOpacity 0.75`.
+
+**Scene:**
+
+- One `Points` object over a static 150 x 95 grid (34 x 30 world units) with a `ShaderMaterial`; all motion is in the vertex shader from uniforms, so the CPU updates ~12 uniforms per frame and never touches the buffer.
+- Height = CTA-origin concentric wave (`sin(d*1.5 - t*1.33) * 0.2 * exp(-d*0.045)`) + two swells (`0.096`) + pointer ripple (`0.28`, radius 2.4, gated by damped pointer presence), scaled by `uAmpScale` = entrance amplitude x scroll calm.
+- Fragment: soft disc (`smoothstep(1, 0.45)`), depth fade between 27 and 11 units and a near fade under 6, crest colour mix, premultiplied alpha.
+- Colours from `mistRgb`: base mist-300 / crest mist-600 in light; base mist-700 / crest mist-200 in dark. Disc size 7px light / 4.5px dark at reference depth. `prefers-color-scheme` changes re-tint live.
+- Camera `(0, 3.4, 8)` looking at `(0, -0.4, -8)`, x sways ±0.25 with the damped pointer.
+- The wave origin is re-projected every frame from the hero's `[data-glass-press-button]` rect onto the pool plane, so it tracks layout and viewport changes.
+
+**Lifecycle and behaviour:**
+
+- Entrance: `uSink` starts at 2.4 and damps to 0 (rate 1.6/s) while amplitude damps 0 -> 1 (rate 2.2/s): the pool surfaces and its waves grow in over ~1.5s.
+- Scroll: progress = hero section scrolled-through fraction (`-top / (height - viewport)`; 1 when the section bottom reaches the viewport bottom), recomputed only after scroll/resize events. Calm: amplitude eases 1 -> `calmFloor 0.3` over p 0.1..0.4 (still water under the pinned frame). Sink = `min(1, p*0.5) * 1.0` (a gentle drop). Fade eases 1 -> 0 over p 0.66..0.94, which lands as the supported-lenders field comes into view. Once fully faded the rAF loop sleeps; a scroll event wakes it.
+- Loop gating: `IntersectionObserver` on the canvas, `visibilitychange`, and the fade sleep. `dt` clamps to 50ms; all damping is `1 - exp(-rate * dt)`.
+- Sizing: `ResizeObserver` on the host; DPR capped at 1.5 (1.25 under 640px); `antialias: false`.
+- Pointer: window `pointermove` mapped to canvas NDC and damped (6/s); ripples fade in/out with pointer presence (`pointerleave` on the host).
+- Cleanup on unmount: rAF, both observers, all listeners, the media-query listener, geometry, material, and renderer are disposed; `data-dot-pool-ready` is removed. The stage controller removes its scroll/resize/media listeners and clears the inline styles.
+
+**Tunables:** every pool dial is a named constant in `DOT_POOL_CONFIG` (grid, extents, disc sizes, wave/swell/ripple amplitudes and speeds, rise and sink distances and rates, calm window and floor, fade window, camera, sway, pointer rate, DPR caps, far fade); the stage dials live in `STAGE_CONFIG`.
+
+**Verification:** `dev-browser` at 1440x900 and 390x900 in both schemes: entrance, pointer ripples, the frame sliding up and growing while pinned, still water visible around the pinned frame, fade at the lenders field and loop sleep, `/#lenders` auto-open and same-page `#supported-lenders`, no horizontal overflow, no console errors, stable document height and landmark positions during animation, canvas disposed on route change and recreated on return.
+
+**Points of error:**
+
+- The canvas must stay inside the sticky aria-hidden layer; moving it into the content flow would make the pool scroll away with the copy and break the still-water read under the frame.
+- The scrim relies on the copy container's `isolate` so `-z-10` stays above the sticky layer but below the copy. Removing `isolate` sends the scrim behind the canvas.
+- The stage's `lg:-mt-[30svh]` overlaps the copy stage's empty bottom band only; growing the copy block (extra lines, a taller CTA row) shrinks that band and can put the pinned panel over the CTAs. Check the overlap at 1440x900 and 1024x768 after copy changes.
+- The frame's scale/translate transform is on the outer frame element; the `Screenshot` hover tilt is on an inner element. Putting both on one element makes the last writer win and drops one effect.
+- The pool fade is timed to the section's scroll range; adding or removing content after the lenders field (or changing the track height) moves where p = 0.66..0.94 lands and must be re-checked in the browser.
+- `mistRgb` converts oklch through a canvas `fillStyle` round-trip; if a browser cannot parse oklch it silently falls back to the precomputed sRGB table, which must be kept in step with the ramp in `globals.css`.
+- The wave origin lookup assumes exactly one `[data-glass-press-button]` inside the hero section (the primary CTA). A second Glass Press button in the hero would move the origin to whichever comes first in DOM order.
+- `three` is bundled from `node_modules`; do not load it from a CDN.

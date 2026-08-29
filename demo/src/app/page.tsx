@@ -13,7 +13,7 @@ import { ChatBubbleCircleEllipsisIcon } from '@/components/icons/chat-bubble-cir
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { FAQsTwoColumnAccordion, Faq } from '@/components/sections/faqs-two-column-accordion'
 import { Feature, FeaturesTwoColumnWithDemos } from '@/components/sections/features-two-column-with-demos'
-import { HeroLeftAlignedWithDemo } from '@/components/sections/hero-left-aligned-with-demo'
+import { HeroDotPool } from '@/components/sections/hero-dot-pool'
 import { Plan, PricingMultiTier } from '@/components/sections/pricing-multi-tier'
 import { StatAnimated, StatsAnimatedGraph } from '@/components/sections/stats-animated-graph'
 import { TestimonialGlass, TestimonialsGlassmorphism } from '@/components/sections/testimonials-glassmorphism'
@@ -176,8 +176,8 @@ export default function Page() {
           __html: JSON.stringify(homeStructuredData),
         }}
       />
-      {/* Hero */}
-      <HeroLeftAlignedWithDemo
+      {/* Hero: Dot Pool Three.js background (see documents/guides/_animations.md, Dot Pool Hero) */}
+      <HeroDotPool
         id="hero"
         eyebrow={
           <AnnouncementBadge
@@ -202,7 +202,7 @@ export default function Page() {
           </p>
         }
         cta={
-          <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4">
+          <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:justify-center sm:gap-4">
             <GlassPressButtonLink
               href="https://app.bulma.com.au/register"
               className="w-full sm:w-auto"

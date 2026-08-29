@@ -17,7 +17,7 @@ This document is the visual implementation contract for the Bulma marketing site
 - Audience and job: Australian mortgage brokers evaluating an AI policy assistant; the site's job is to earn trust and convert visitors to `https://app.bulma.com.au/register`.
 - Character: calm, premium, precision-engineered. Concretely: a single cool-grey `mist` palette instead of saturated accents, hairline borders over heavy outlines, frosted-glass surfaces, tactile press physics on the primary CTA, and restrained scroll-triggered entrances.
 - Not: multi-colour gradients as identity, marketing-neon accents, bouncy or attention-grabbing looped animation on content, dense enterprise chrome.
-- Expressive exceptions: ambient hero and section effects (cursor spotlight, floating orbs, aurora, dot matrix, luminance sweep) and glassmorphism testimonial cards are approved decorative layers; they stay behind content and never carry meaning.
+- Expressive exceptions: the homepage hero's Three.js Dot Pool background plus ambient section effects (cursor spotlight, floating orbs, aurora, dot matrix, luminance sweep) and glassmorphism testimonial cards are approved decorative layers; they stay behind content and never carry meaning.
 
 ### Source map
 
@@ -27,7 +27,7 @@ This document is the visual implementation contract for the Bulma marketing site
 | Primary action component | `demo/src/components/elements/glass-press-button-link.tsx::GlassPressButtonLink` | Glass Press primary CTA surface, press physics, light and dark treatments, focus ring |
 | Secondary button family | `demo/src/components/elements/button.tsx` | Solid, soft, and plain button and link variants, shared sizes, press scale, focus ring |
 | Shared primitives | `demo/src/components/elements` | Headings, text, eyebrow, links, container, section, screenshot, wallpaper, and animation elements |
-| Page sections | `demo/src/components/sections` | Composed hero, feature, stats, pricing, FAQ, testimonial, navbar, and footer sections |
+| Page sections | `demo/src/components/sections` | Composed hero (`hero-dot-pool.tsx::HeroDotPool` on the homepage), feature, stats, pricing, FAQ, testimonial, navbar, and footer sections |
 | Application shell | `demo/src/app/layout.tsx::RootLayout` | Font loading, metadata, navbar and footer composition, analytics scripts |
 | Product routes | `demo/src/app` | Home, pricing, about, contact, privacy-policy, and 404 pages |
 | Brand wallpaper gradients | `demo/src/components/elements/wallpaper.tsx::Wallpaper` | Screenshot backdrop gradients per colour and theme, noise overlay |
@@ -40,7 +40,7 @@ This document is the visual implementation contract for the Bulma marketing site
 
 - Framework and rendering: Next.js 16 App Router with React 19, static export only (no server runtime), deployed to GitHub Pages. Only `demo/` runs.
 - Styling and token authority: Tailwind CSS v4; the theme block in `demo/src/app/globals.css` is the canonical token source (implementation-authoritative). This document names roles only and never duplicates values.
-- Components and icons: hand-rolled primitives in `demo/src/components/elements`, composed sections in `demo/src/components/sections`, and roughly 110 local SVG icon components in `demo/src/components/icons`. No external UI or animation library.
+- Components and icons: hand-rolled primitives in `demo/src/components/elements`, composed sections in `demo/src/components/sections`, and roughly 110 local SVG icon components in `demo/src/components/icons`. No external UI or animation library; `three` is the one rendering dependency and is used only by the homepage hero's Dot Pool background.
 - Fonts and charts: Mona Sans (variable width axis) for display, Inter for body, both self-hosted through `next/font/google` with swap display. The stats graph is bespoke SVG; there is no charting library.
 
 ## Colors
@@ -81,7 +81,7 @@ This document is the visual implementation contract for the Bulma marketing site
 
 - Surface hierarchy: flat canvas, then hairline-ringed cards with translucent tints, then frosted glass (blurred, saturated, translucent) for the navbar when scrolled, testimonial cards, and the Glass Press primary. Shadows are reserved for interactive lift and card depth, never for static decoration.
 - Overlays and stacking: the site has no modal, dialog, or popover layer. The navbar sits at `z-10`; ambient background layers (orbs, spotlight, dot matrix) sit at or below `z-0` behind content.
-- Expressive depth: approved ambient layers are cursor spotlight, floating orbs, aurora background, dot matrix, border beam on featured pricing cards, and the screenshot reflection. The Glass Press primary expresses depth mechanically: the key rests 2px above a hard offset ledge shadow, rises to 3px on hover, and drops onto the ledge when pressed.
+- Expressive depth: approved ambient layers are the homepage Dot Pool (a sticky full-viewport WebGL field of mist-coloured discs behind the hero copy, colours from the mist tokens via `demo/src/lib/mist-palette.ts`), cursor spotlight, floating orbs, aurora background, dot matrix, border beam on featured pricing cards, and the screenshot reflection. The Glass Press primary expresses depth mechanically: the key rests 2px above a hard offset ledge shadow, rises to 3px on hover, and drops onto the ledge when pressed.
 
 ## Shapes
 
@@ -156,7 +156,7 @@ The contact form owns the only shipped loading, success, and error states: submi
 - Conversion flow: every primary CTA routes to `https://app.bulma.com.au/register`; Log in routes to `https://app.bulma.com.au/login`; secondary CTAs route to `/contact`.
 - Shipped CTA copy: "Try Bulma free" (homepage hero and closing CTA), "Get started" (navbar), "See it in action" (hero secondary), "Book a demo" (closing secondary), "Log in".
 - Terminology: "brokers", "lenders", "policy questions"; Australian English throughout (en-AU locale in metadata).
-- Hero value proposition cycles through phrase variants via the blur transition text without layout shift; the supported-lenders field is the canonical lender-coverage visual and shares data with the lenders FAQ.
+- Homepage hero: centred copy in a full-viewport stage over the Dot Pool, primary and secondary CTAs centred, then the product screenshot below the fold, which on large viewports pins in the viewport and grows from 72% to full width (1152px from xl, 1440px from 2xl) while the pool calms to still water beneath it, then the supported-lenders field where the water fades. The value proposition cycles through phrase variants via the blur transition text without layout shift; the supported-lenders field is the canonical lender-coverage visual and shares data with the lenders FAQ.
 - Load-bearing copy: the pricing annual callout sentence above, the FAQ lender answer, and the fineprint "© 2026 Bulma Pty Ltd".
 
 ## Approved Exceptions and Drift

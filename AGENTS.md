@@ -130,7 +130,7 @@ System architecture documentation (IMPORTANT):
 
 | Component | Path (documents/guides) | Purpose |
 |-----------|-------------------------|---------|
-| **Animations** | [`_animations.md`](documents/guides/_animations.md) | Animation system conventions, motion principles, and implementation rules for the marketing site |
+| **Animations** | [`_animations.md`](documents/guides/_animations.md) | Animation system conventions, motion principles, and implementation rules for the marketing site, including the Three.js Dot Pool hero background |
 | **Demo Video** | [`_demo-video.md`](documents/guides/_demo-video.md) | Remotion video project for marketing demo (`video/bulma-demo/`) |
 
 IMPORTANT: You MUST read the appropriate documentation above when working with any of the systems mentioned.
@@ -249,6 +249,7 @@ Here is a high level overview of the folder structure:
 │   │   │   ├── elements/                       # Base UI elements (copied from components/elements/)
 │   │   │   │   ├── animated-counter.tsx        # Scroll-triggered number counting
 │   │   │   │   ├── cursor-spotlight.tsx        # Cursor-following ambient glow
+│   │   │   │   ├── dot-pool-background.tsx     # Three.js Dot Pool homepage hero background
 │   │   │   │   ├── floating-orbs.tsx           # Ambient drifting background orbs
 │   │   │   │   ├── gradient-border-wrapper.tsx # Rotating gradient CTA border
 │   │   │   │   ├── magnetic-wrapper.tsx        # Magnetic cursor-attraction effect
@@ -256,9 +257,11 @@ Here is a high level overview of the folder structure:
 │   │   │   │   └── screenshot.tsx              # Parallax tilt implementation
 │   │   │   ├── icons/                          # Icon components (copied from components/icons/)
 │   │   │   ├── sections/                       # Page sections (copied from components/sections/)
+│   │   │   │   └── hero-dot-pool.tsx           # Homepage hero: sticky Dot Pool layer, staggered copy, pinned 'take the stage' screenshot
 │   │   │   └── MixpanelProvider.jsx            # Mixpanel analytics provider component (disabled in development)
 │   │   ├── lib/                                # Shared utilities and configuration
 │   │   │   ├── analytics.js                    # Analytics event tracking utilities
+│   │   │   ├── mist-palette.ts                 # Mist oklch tokens -> sRGB for WebGL uniforms
 │   │   │   ├── metadata.ts                     # SEO metadata config (sitewide + per-page)
 │   │   │   ├── mixpanelClient.js               # Mixpanel client initialization (disabled in development)
 │   │   │   └── sitemap.js                      # Sitemap route configuration
@@ -278,7 +281,7 @@ Here is a high level overview of the folder structure:
 │   │   │   └── screenshots/                    # App screenshots for marketing
 │   │   └── scripts/                            # Client-side tracking scripts
 │   │       └── referral-tracking.js            # UTM and referral parameter tracking
-│   ├── package.json                            # Dependencies: Next.js 16, React 19, Tailwind v4 (root has no package.json)
+│   ├── package.json                            # Dependencies: Next.js 16, React 19, Tailwind v4, three (root has no package.json)
 │   ├── next.config.ts                          # Next.js config with static export for GitHub Pages
 │   ├── tsconfig.json                           # TypeScript configuration
 │   └── postcss.config.mjs                      # PostCSS config for Tailwind
