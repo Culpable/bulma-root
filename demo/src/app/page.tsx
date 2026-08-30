@@ -1,11 +1,16 @@
 import { AnnouncementBadge } from '@/components/elements/announcement-badge'
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
+import { GlassPressButtonLink } from '@/components/elements/glass-press-button-link'
 import { HueShiftProvider } from '@/components/elements/hue-shift-provider'
 import { Link } from '@/components/elements/link'
-import { GlassPressButtonLink } from '@/components/elements/glass-press-button-link'
-import { FeatureScreenshotLeft, FeatureScreenshotRight, HeroScreenshot } from '@/components/elements/responsive-screenshot'
+import {
+  FeatureScreenshotLeft,
+  FeatureScreenshotRight,
+  HeroScreenshot,
+} from '@/components/elements/responsive-screenshot'
 import { Screenshot } from '@/components/elements/screenshot'
 import { ScrollHighlight } from '@/components/elements/scroll-highlight'
+import { StructuredData } from '@/components/elements/structured-data'
 import { SupportedLendersField } from '@/components/elements/supported-lenders-field'
 import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { ArrowLeftArrowRightIcon } from '@/components/icons/arrow-left-arrow-right-icon'
@@ -21,6 +26,7 @@ import { pageMetadata } from '@/lib/metadata'
 import { bulmaCoveredLenderCount, bulmaCoveredLenders, bulmaCoveredLendersAnswer } from '@/lib/supported-lenders'
 import {
   buildFaqPageSchema,
+  buildWebPageSchema,
   organizationSchema,
   softwareApplicationSchema,
   websiteSchema,
@@ -29,7 +35,6 @@ import {
 import type { Metadata } from 'next'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import Script from 'next/script'
 import type { ReactNode } from 'react'
 
 // =============================================================================
@@ -158,6 +163,7 @@ const homeStructuredFaqs: FaqEntry[] = homeFaqs.map((faq) => ({
 const homeStructuredData = [
   organizationSchema,
   websiteSchema,
+  buildWebPageSchema({ path: '/', name: pageMetadata.home.title, description: pageMetadata.home.description }),
   softwareApplicationSchema,
   buildFaqPageSchema({
     path: '/',
@@ -169,13 +175,7 @@ const homeStructuredData = [
 export default function Page() {
   return (
     <HueShiftProvider>
-      <Script
-        id="structured-data"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(homeStructuredData),
-        }}
-      />
+      <StructuredData graph={homeStructuredData} />
       {/* Hero: Dot Pool Three.js background (see documents/guides/_animations.md, Dot Pool Hero) */}
       <HeroDotPool
         id="hero"
@@ -205,10 +205,7 @@ export default function Page() {
         }
         cta={
           <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:justify-center sm:gap-4">
-            <GlassPressButtonLink
-              href="https://app.bulma.com.au/register"
-              className="w-full sm:w-auto"
-            >
+            <GlassPressButtonLink href="https://app.bulma.com.au/register" className="w-full sm:w-auto">
               Try Bulma free
             </GlassPressButtonLink>
 
@@ -483,7 +480,10 @@ export default function Page() {
               features={[
                 <span key="policy-questions">Unlimited policy questions</span>,
                 <span key="lenders">
-                  Policy coverage across <Link key="lender-count-link" href="#lenders">{bulmaCoveredLenderCount} lenders</Link>
+                  Policy coverage across{' '}
+                  <Link key="lender-count-link" href="#lenders">
+                    {bulmaCoveredLenderCount} lenders
+                  </Link>
                 </span>,
                 <span key="comparisons">Cross-lender comparisons</span>,
                 <span key="source-attribution">Source attribution on every answer</span>,
@@ -584,10 +584,7 @@ export default function Page() {
         }
         cta={
           <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4">
-            <GlassPressButtonLink
-              href="https://app.bulma.com.au/register"
-              className="w-full sm:w-auto"
-            >
+            <GlassPressButtonLink href="https://app.bulma.com.au/register" className="w-full sm:w-auto">
               Try Bulma free
             </GlassPressButtonLink>
 

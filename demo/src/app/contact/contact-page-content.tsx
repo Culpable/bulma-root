@@ -1,34 +1,18 @@
-'use client'
-
-import clsx from 'clsx'
 import { Container } from '@/components/elements/container'
 import { Eyebrow } from '@/components/elements/eyebrow'
 import { Heading } from '@/components/elements/heading'
 import { Text } from '@/components/elements/text'
-import { useScrollAnimation } from '@/hooks/use-scroll-animation'
-import { ContactDetails } from './contact-details'
-import { ContactForm } from './contact-form'
+import { ContactPageGrid } from './contact-page-grid'
 
 /**
- * Render the animated contact page content with scroll-triggered entrance animations.
- * Separates client-side animation logic from the server component page.tsx.
+ * Render critical contact copy on the server and hydrate only the interactive cards.
  */
 export function ContactPageContent() {
-  // Initialize scroll animation observers for hero and grid sections.
-  const { containerRef: heroRef, isVisible: heroVisible } = useScrollAnimation({ threshold: 0.15 })
-  const { containerRef: gridRef, isVisible: gridVisible } = useScrollAnimation({ threshold: 0.1 })
-
   return (
     <section className="py-16">
       <Container>
-        {/* Hero section with slide-up entrance animation. */}
-        <div
-          ref={heroRef}
-          className={clsx(
-            'max-w-2xl transition-[translate,opacity] duration-600 ease-out',
-            heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          )}
-        >
+        {/* Keep critical hero text visible while its transform-only entrance runs. */}
+        <div className="above-fold-slide-up max-w-2xl">
           <Eyebrow>Contact</Eyebrow>
           <Heading className="mt-2">Talk to the Bulma team.</Heading>
           <Text className="mt-4" size="lg">
@@ -37,29 +21,7 @@ export function ContactPageContent() {
           </Text>
         </div>
 
-        {/* Two-column layout with staggered slide animations for each card. */}
-        <div ref={gridRef} className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {/* ContactDetails slides in from left. */}
-          <div
-            className={clsx(
-              'h-full transition-[translate,opacity] duration-600 ease-out',
-              gridVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
-            )}
-          >
-            <ContactDetails />
-          </div>
-
-          {/* ContactForm slides in from right with staggered delay. */}
-          <div
-            className={clsx(
-              'h-full transition-[translate,opacity] duration-600 ease-out',
-              gridVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
-            )}
-            style={{ transitionDelay: '150ms' }}
-          >
-            <ContactForm />
-          </div>
-        </div>
+        <ContactPageGrid />
       </Container>
     </section>
   )

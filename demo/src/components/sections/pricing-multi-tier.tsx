@@ -204,7 +204,7 @@ export function Plan({
           <div className="mt-2 grid min-h-16 content-start gap-1.5">
             <p className="flex flex-wrap items-baseline text-base/7">
               <span className="text-mist-950 dark:text-white">{currentPrice}</span>
-              {resolvedPeriod && <span className="ml-1 text-mist-500 dark:text-mist-500">{resolvedPeriod}</span>}
+              {resolvedPeriod && <span className="ml-1 text-mist-500 dark:text-mist-400">{resolvedPeriod}</span>}
             </p>
             {currentPriceNote ? <PricingPriceNote>{currentPriceNote}</PricingPriceNote> : <span className="h-7" aria-hidden="true" />}
           </div>

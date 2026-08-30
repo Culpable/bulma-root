@@ -9,7 +9,8 @@ export function Document2StackedIcon({ className, ...props }: ComponentProps<'sv
       viewBox="0 0 11 13"
       fill="none"
       strokeWidth={1}
-      role="image"
+      aria-hidden="true"
+      focusable="false"
       className={clsx('inline-block', className)}
       {...props}
     >

@@ -51,7 +51,7 @@ demo/src/
         ├── call-to-action-simple.tsx            # Slide up with CTA delay
         ├── testimonials-glassmorphism.tsx       # Slide up + scale staggered
         # About page sections
-        ├── hero-left-aligned-with-photo.tsx     # Slide up with photo delay
+        ├── hero-left-aligned-with-photo.tsx     # Visible transform-only slide with photo delay
         ├── team-four-column-grid.tsx            # Staggered fade-in
         ├── testimonial-two-column-with-large-photo.tsx  # Slide up
         # Pricing page sections
@@ -104,9 +104,16 @@ const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
 
 | Section | Animation | Direction | Stagger Delay |
 |---------|-----------|-----------|---------------|
-| Hero with Photo | Slide Y | Up (photo 150ms delay) | — |
+| Hero with Photo | Transform-only Slide Y | Up (photo 150ms delay) | — |
 | Team Grid | Slide Y | Up | 80ms |
 | Testimonial Large Photo | Slide Y | Up | — |
+
+### Contact Page
+
+| Section | Animation | Direction | Stagger Delay |
+|---------|-----------|-----------|---------------|
+| Hero Copy | Transform-only Slide Y | Up | — |
+| Contact Cards | Slide X + fade | Left / Right | 150ms (form delayed) |
 
 ### Pricing Page
 
@@ -118,6 +125,8 @@ const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.15 })
 | CTA Centered | Slide Y | Up | 150ms (CTA delayed) |
 
 Section entrances declare only the properties they change, normally Tailwind v4's independent `translate` or `scale` longhands plus `opacity`, with `ease-out` timing. Inline styles that write the composite `transform` property continue to transition `transform` directly. Duration ranges from 500ms to 1500ms, with longer timings reserved for graph draw and glow effects.
+
+Above-fold LCP candidates are the exception. `hero-left-aligned-with-photo.tsx::HeroLeftAlignedWithPhoto` and `contact-page-content.tsx::ContactPageContent` server-render at opacity `1` and use `globals.css::.above-fold-slide-up` for a 700ms transform-only entrance. The About photo retains its 150ms delay. Never reintroduce an initial transparent state on these elements because Lighthouse does not consider fully transparent content paintable for LCP.
 
 The homepage hero CTA animation wrapper preserves `w-full`, allowing its nested CTA row and both actions to stretch across the mobile container before returning to intrinsic widths at the `sm` breakpoint.
 
@@ -290,6 +299,7 @@ FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with
 
 | Class/Keyframe | Purpose |
 |----------------|---------|
+| `@keyframes above-fold-slide-up` / `.above-fold-slide-up` | Move visible above-fold content up 32px without delaying its paint |
 | `@keyframes scroll-slide-up` | Fade up 32px |
 | `@keyframes scroll-slide-left` | Fade from left 32px |
 | `@keyframes scroll-slide-right` | Fade from right 32px |
@@ -617,9 +627,7 @@ The `StatAnimated` component in `stats-animated-graph.tsx` accepts optional `cou
 
 ## 17. Navbar Glassmorphism on Scroll
 
-The navbar components (`navbar-with-links-actions-and-centered-logo.tsx`, `navbar-with-logo-actions-and-left-aligned-links.tsx`) implement a glassmorphism effect that activates when the user scrolls down.
-
-**Hook:** `useScrolled(threshold = 20)` — returns `true` when `scrollY > threshold`
+The navbar components implement a glassmorphism effect that activates when the user scrolls down. The active layout uses server-rendered markup from `navbar-with-links-actions-and-centered-logo.tsx::NavbarWithLinksActionsAndCenteredLogo`; `navbar-controller.tsx::NavbarController` attaches one passive scroll listener, throttles class changes through one animation frame, and does not create React scroll state. The secondary navbar variants retain their local `useScrolled(threshold = 20)` hooks.
 
 **Visual states:**
 
@@ -630,17 +638,7 @@ The navbar components (`navbar-with-links-actions-and-centered-logo.tsx`, `navba
 
 **Transition:** Background colour, backdrop filter, and box shadow transition for 300ms.
 
-**Implementation:**
-```tsx
-const scrolled = useScrolled(20)
-
-<header className={clsx(
-  'sticky top-0 z-10 transition-[background-color,backdrop-filter,box-shadow] duration-300',
-  !scrolled && 'bg-mist-100 dark:bg-mist-950',
-  scrolled && 'bg-mist-100/80 backdrop-blur-xl backdrop-saturate-150 dark:bg-mist-950/80',
-  scrolled && 'shadow-sm shadow-mist-950/5 dark:shadow-black/20',
-)}>
-```
+`NavbarController` adds or removes the same top and scrolled Tailwind class sets directly on the server-rendered header. Cleanup removes the listener and cancels any queued animation frame.
 
 ---
 
@@ -2257,7 +2255,7 @@ After optimisations:
 | `demo/src/hooks/use-hero-parallax.ts` | State→ref conversion + isScrolling de-duplication |
 | `demo/src/hooks/use-scroll-velocity.ts` | Timeout-based decay (replaces continuous setInterval) |
 | `demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx` | RAF throttling + state de-duplication in `useScrolled` |
-| `demo/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx` | RAF throttling + state de-duplication in `useScrolled` |
+| `demo/src/components/sections/navbar-controller.tsx` | RAF-throttled class updates without React scroll state |
 
 ---
 
@@ -2326,6 +2324,8 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 - `demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx::FooterWithNewsletterFormCategoriesAndSocialIcons`
 - `demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx::FooterLink`
 - `demo/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx::NavbarWithLinksActionsAndCenteredLogo`
+- `demo/src/components/sections/navbar-controller.tsx::NavbarController`
+- `demo/src/components/sections/navbar-links.tsx::NavbarMobileLink`
 - `demo/src/components/sections/navbar-with-logo-actions-and-centered-links.tsx::NavbarWithLogoActionsAndCenteredLinks`
 - `demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx::NavbarWithLogoActionsAndLeftAlignedLinks`
 - `demo/src/app/contact/contact-form.tsx::ContactForm`
@@ -2340,9 +2340,10 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 
 **Mobile menu:**
 
-- `navbar-with-links-actions-and-centered-logo.tsx::NavbarWithLinksActionsAndCenteredLogo`, the active app navbar, uses explicit React open/close handlers around `dialog#mobile-menu`. Tailwind Plus intercepts native `dialog.close()` and waits for registered leave transitions before removing the dialog.
+- `navbar-with-links-actions-and-centered-logo.tsx::NavbarWithLinksActionsAndCenteredLogo` server-renders the native `dialog#mobile-menu`; `navbar-controller.tsx::NavbarController` owns its open, cancel, backdrop, link, and close events without hydrating the menu markup.
 - `globals.css` owns `.mobile-menu-dialog`, `.mobile-menu-panel`, `.mobile-menu-links`, and `.mobile-menu-close-icon`. The panel uses `data-enter`, `data-leave`, and `data-closed` transition states rather than one-shot keyframes.
-- The glass panel enters over 200ms and exits over 150ms with opacity plus `translateY(-12px)`. A reversed `data-enter` plus `data-closed` state is explicitly reduced to 150ms; link delays are cleared and the close icon also uses 150ms during exit. Pinned `.mobile-menu-actions` remain at the bottom of the flex panel without their own JS timeline.
+- The controller applies the enter state across two animation frames, waits 170ms before native `dialog.close()` on exit, and clears every frame and timer on unmount. The glass panel enters over 200ms and exits over 150ms with opacity plus `translateY(-12px)`. A reversed `data-enter` plus `data-closed` state is explicitly reduced to 150ms; link delays are cleared and the close icon also uses 150ms during exit. Pinned `.mobile-menu-actions` remain at the bottom of the flex panel without their own JS timeline.
+- `navbar-links.tsx::NavbarMobileLink` uses a native anchor inside the dialog. This lets the controller start the exit transition while the browser completes navigation; desktop links retain the site View Transition path.
 
 **Contact form:**
 
@@ -2381,7 +2382,7 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 - Scrim: an absolutely positioned page-colour gradient (`-inset-x-[2%] -inset-y-6`, radial to transparent at 66%; linear top-to-55% below `lg`) sits inside the `isolate` copy container at `-z-10`, keeping the copy clean where the horizon crosses it without hiding the pool around it.
 - Stage track (`demo`): `relative pt-6 lg:-mt-[30svh]` wrapper holding a `lg:sticky lg:top-0 lg:h-[100svh]` centred panel with the screenshot frame, followed by a `lg:h-[100svh]` spacer, so the frame is pinned for 100svh of extra scroll. The `-30svh` margin overlaps the empty bottom of the copy stage so the panel pins while the CTAs are still leaving; the frame itself stays below the fold at load (no peek). Frame width: `max-w-5xl`, `lg:max-w-[min(1152px, (100svh-6rem)*1.45)]`, `2xl:max-w-[min(1440px, 72vw, (100svh-6rem)*1.45)]` (the height term keeps the padded frame inside the viewport).
 - Supported-lenders field (`footer`): normal `Container` with `pt-16 pb-24 lg:pt-24 lg:pb-28` after the track.
-- `DotPoolBackground` loads via `next/dynamic` with `ssr: false`; the copy still server-renders.
+- `DotPoolBackground` loads via `next/dynamic` with `ssr: false`; the copy still server-renders. `HeroDotPool` keeps the sticky host mounted, waits for the document `load` event, then mounts the pool in `requestIdleCallback` (`timeout: 2000`) or a 200ms timeout fallback. Cleanup removes the load listener and cancels either scheduled path. This gate keeps the 123 KiB three.js chunk off the first-paint critical path; the pool's animation, tunables, timing curves, and interaction model are unchanged.
 
 **Stage scroll controller (`HeroDotPool`, large viewports only):**
 
@@ -2405,6 +2406,7 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 - Scroll: progress = hero section scrolled-through fraction (`-top / (height - viewport)`; 1 when the section bottom reaches the viewport bottom), recomputed only after scroll/resize events. Calm: amplitude eases 1 -> `calmFloor 0.3` over p 0.1..0.4 (still water under the pinned frame). Sink = `min(1, p*0.5) * 1.0` (a gentle drop). Fade eases 1 -> 0 over p 0.66..0.94, which lands as the supported-lenders field comes into view. Once fully faded the rAF loop sleeps; a scroll event wakes it.
 - Loop gating: `IntersectionObserver` on the canvas, `visibilitychange`, and the fade sleep. `dt` clamps to 50ms; all damping is `1 - exp(-rate * dt)`.
 - Sizing: `ResizeObserver` on the host; DPR capped at 1.5 (1.25 under 640px); `antialias: false`.
+- WebGL fallback: renderer construction is contained in the canvas effect. If WebGL is unavailable or blocked, the effect returns without registering runtime resources, and the server-rendered hero remains fully usable without the decorative pool.
 - Pointer: window `pointermove` mapped to canvas NDC and damped (6/s); ripples fade in/out with pointer presence (`pointerleave` on the host).
 - Cleanup on unmount: rAF, both observers, all listeners, the media-query listener, geometry, material, and renderer are disposed; `data-dot-pool-ready` is removed. The stage controller removes its scroll/resize/media listeners and clears the inline styles.
 

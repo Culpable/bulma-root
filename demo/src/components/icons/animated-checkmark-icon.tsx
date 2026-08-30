@@ -64,7 +64,8 @@ export function AnimatedCheckmarkIcon({
       fill="none"
       stroke="currentColor"
       strokeWidth={1}
-      role="image"
+      aria-hidden="true"
+      focusable="false"
       className={clsx('inline-block', className)}
       {...props}
     >

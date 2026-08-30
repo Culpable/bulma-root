@@ -1,20 +1,17 @@
 import { PlainButtonLink } from '@/components/elements/button'
 import { GlassPressButtonLink } from '@/components/elements/glass-press-button-link'
 import { Main } from '@/components/elements/main'
+import MixpanelProvider from '@/components/MixpanelProvider'
 import {
   FooterCategory,
   FooterLink,
   FooterWithNewsletterFormCategoriesAndSocialIcons,
 } from '@/components/sections/footer-with-newsletter-form-categories-and-social-icons'
-import {
-  NavbarLink,
-  NavbarLogo,
-  NavbarWithLinksActionsAndCenteredLogo,
-} from '@/components/sections/navbar-with-links-actions-and-centered-logo'
-import MixpanelProvider from '@/components/MixpanelProvider'
+import { NavbarLink, NavbarLogo, NavbarMobileLink, NavbarMobileLogo } from '@/components/sections/navbar-links'
+import { NavbarWithLinksActionsAndCenteredLogo } from '@/components/sections/navbar-with-links-actions-and-centered-logo'
 import { siteMetadata } from '@/lib/metadata'
 import type { Metadata, Viewport } from 'next'
-import { Mona_Sans, Inter } from 'next/font/google'
+import { Inter, Mona_Sans } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
 
@@ -24,6 +21,8 @@ const monaSans = Mona_Sans({
   subsets: ['latin'],
   variable: '--font-mona-sans',
   display: 'swap',
+  // Let swap paint the metric-matched fallback for LCP before the font downloads.
+  preload: false,
   // Enable variable font axes
   axes: ['wdth'],
 })
@@ -34,6 +33,8 @@ const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
+  // Let swap paint the metric-matched fallback for LCP before the font downloads.
+  preload: false,
 })
 
 export const metadata: Metadata = {
@@ -72,8 +73,10 @@ export const metadata: Metadata = {
 
   // Additional metadata
   metadataBase: new URL(siteMetadata.siteUrl),
+  alternates: {
+    canonical: './',
+  },
 }
-
 
 // Declare the site as dark-only. This renders UA chrome (scrollbars, form
 // controls, autofill) in dark regardless of the visitor's system preference.
@@ -95,9 +98,16 @@ export default function RootLayout({
         {/* Resource hints for external domains (S-1) */}
         <link rel="dns-prefetch" href="https://app.bulma.com.au" />
         <link rel="dns-prefetch" href="https://api-js.mixpanel.com" />
+        <link rel="describedby" href="https://bulma.com.au/llms.txt" />
       </head>
       <body>
         <>
+          <a
+            href="#main-content"
+            className="sr-only z-50 rounded-md bg-mist-950 px-4 py-2 text-white focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:outline-2 focus:outline-offset-2 focus:outline-white"
+          >
+            Skip to main content
+          </a>
           <Script id="referral-tracking" src="/scripts/referral-tracking.js" strategy="lazyOnload" />
           <MixpanelProvider />
           <NavbarWithLinksActionsAndCenteredLogo
@@ -106,6 +116,12 @@ export default function RootLayout({
               <>
                 <NavbarLink href="/pricing">Pricing</NavbarLink>
                 <NavbarLink href="/contact">Contact</NavbarLink>
+              </>
+            }
+            mobileLinks={
+              <>
+                <NavbarMobileLink href="/pricing">Pricing</NavbarMobileLink>
+                <NavbarMobileLink href="/contact">Contact</NavbarMobileLink>
               </>
             }
             logo={
@@ -122,12 +138,28 @@ export default function RootLayout({
                 </picture>
               </NavbarLogo>
             }
+            mobileLogo={
+              <NavbarMobileLogo href="/">
+                <picture>
+                  {/* Dark-only site: always serve the light-on-dark logo */}
+                  <img
+                    src="/img/logos/bulma-logo-light-40.webp"
+                    srcSet="/img/logos/bulma-logo-light-40.webp 1x, /img/logos/bulma-logo-light-80.webp 2x, /img/logos/bulma-logo-light-160.webp 4x"
+                    alt={siteLogoAlt}
+                    width={40}
+                    height={40}
+                  />
+                </picture>
+              </NavbarMobileLogo>
+            }
             actions={
               <>
                 <PlainButtonLink href="https://app.bulma.com.au/login" className="max-sm:hidden">
                   Log in
                 </PlainButtonLink>
-                <GlassPressButtonLink href="https://app.bulma.com.au/register">Get started</GlassPressButtonLink>
+                <GlassPressButtonLink href="https://app.bulma.com.au/register" className="min-w-[119px]">
+                  Get started
+                </GlassPressButtonLink>
               </>
             }
             mobileActions={

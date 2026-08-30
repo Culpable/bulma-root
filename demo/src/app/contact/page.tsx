@@ -1,6 +1,8 @@
-import { pageMetadata } from '@/lib/metadata'
-import { ContactPageContent } from './contact-page-content'
+import { StructuredData } from '@/components/elements/structured-data'
+import { pageMetadata, siteMetadata } from '@/lib/metadata'
+import { buildWebPageSchema, organizationSchema, websiteSchema } from '@/schemas/organization-schema'
 import type { Metadata } from 'next'
+import { ContactPageContent } from './contact-page-content'
 
 export const metadata: Metadata = {
   title: pageMetadata.contact.title,
@@ -12,5 +14,20 @@ export const metadata: Metadata = {
  * Delegates layout and animations to the client-side ContactPageContent component.
  */
 export default function Page() {
-  return <ContactPageContent />
+  return (
+    <>
+      <StructuredData
+        graph={[
+          organizationSchema,
+          websiteSchema,
+          buildWebPageSchema({
+            path: '/contact/',
+            name: `${pageMetadata.contact.title} | ${siteMetadata.name}`,
+            description: pageMetadata.contact.description,
+          }),
+        ]}
+      />
+      <ContactPageContent />
+    </>
+  )
 }

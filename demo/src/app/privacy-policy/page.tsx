@@ -1,5 +1,7 @@
-import { pageMetadata } from '@/lib/metadata'
+import { StructuredData } from '@/components/elements/structured-data'
 import { DocumentCentered } from '@/components/sections/document-centered'
+import { pageMetadata, siteMetadata } from '@/lib/metadata'
+import { buildWebPageSchema, organizationSchema, websiteSchema } from '@/schemas/organization-schema'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -11,13 +13,25 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
+      <StructuredData
+        graph={[
+          organizationSchema,
+          websiteSchema,
+          buildWebPageSchema({
+            path: '/privacy-policy/',
+            name: `${pageMetadata.privacyPolicy.title} | ${siteMetadata.name}`,
+            description: pageMetadata.privacyPolicy.description,
+          }),
+        ]}
+      />
       <DocumentCentered id="document" headline="Privacy Policy" subheadline={<p>Last updated on January 20, 2026.</p>}>
         <p>
           Bulma Pty Ltd (&quot;<strong>Bulma</strong>&quot;, &quot;<strong>we</strong>&quot;, &quot;<strong>us</strong>
-          &quot;, or &quot;<strong>our</strong>&quot;) respects your privacy and is committed to protecting your personal information.
-          This Privacy Policy describes, in general terms, how we collect, use, store, and protect information when you
-          interact with our websites, products, or services (collectively, the &quot;<strong>Services</strong>&quot;). This policy
-          is provided for informational purposes and is intended to be a general example only.
+          &quot;, or &quot;<strong>our</strong>&quot;) respects your privacy and is committed to protecting your
+          personal information. This Privacy Policy describes, in general terms, how we collect, use, store, and protect
+          information when you interact with our websites, products, or services (collectively, the &quot;
+          <strong>Services</strong>&quot;). This policy is provided for informational purposes and is intended to be a
+          general example only.
         </p>
         <h2>Information We Collect and How We Use It</h2>
         <p>
@@ -61,8 +75,8 @@ export default function Page() {
         </p>
         <p>
           We may update this Privacy Policy from time to time. Any changes will be reflected by updating the &quot;
-          <strong>Last updated</strong>&quot; date at the top of this page. Continued use of the Services after any changes
-          indicates acceptance of the updated policy.
+          <strong>Last updated</strong>&quot; date at the top of this page. Continued use of the Services after any
+          changes indicates acceptance of the updated policy.
         </p>
         <p>If you have any questions about this Privacy Policy, please contact us at:</p>
         <p>

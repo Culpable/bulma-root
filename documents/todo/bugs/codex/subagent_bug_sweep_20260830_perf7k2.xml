@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bug_report>
+<bug_1>
+<summary>
+<title>[Hero Runtime] WebGL initialisation failure unmounts the homepage</title>
+<one_line_description>A browser that cannot create a WebGL context shows a full-page application error after the deferred Dot Pool mounts.</one_line_description>
+</summary>
+
+<file_locations><![CDATA[
+- /Users/sacino/bulma-root/demo/src/components/elements/dot-pool-background.tsx - function: `DotPoolBackground`, Lines 169-188
+- /Users/sacino/bulma-root/demo/src/components/sections/hero-dot-pool.tsx - function: `HeroDotPool`, Lines 68-99 and 146-151
+]]></file_locations>
+
+<issue_description>
+<description>The deferred load gate correctly starts the Dot Pool chunk after the document load event, but `DotPoolBackground` constructs `WebGLRenderer` without checking WebGL availability or catching renderer construction errors. Three.js throws when a browser, graphics driver, enterprise policy, or execution environment cannot create a WebGL context. Because no fallback or local error boundary contains that exception, React unmounts the page and replaces the marketing site with a client-side application error. This was reproduced at 412 x 900 in Chromium with WebGL context creation unavailable: the Dot Pool chunk began after `loadEventEnd`, `WebGLRenderer` threw at line 187, and the document lost its navbar, main content, and images. The decorative pool should fail closed while the server-rendered page remains usable. Add a WebGL capability/failure fallback around renderer creation and retain the existing non-canvas hero when initialisation fails.</description>
+
+<code_example><![CDATA[```tsx
+# File: demo/src/components/elements/dot-pool-background.tsx, Lines 169-188
+
+useEffect(() => {
+  const canvas = canvasRef.current
+  const host = canvas?.parentElement
+  if (!canvas || !host) return
+
+  // Renderer construction throws when WebGL is unavailable.
+  const renderer = new WebGLRenderer({
+    canvas,
+    alpha: true,
+    antialias: false,
+    powerPreference: 'high-performance',
+  })
+  renderer.setClearColor(0x000000, 0)
+}, [sectionRef])
+```]]></code_example>
+
+<expected_vs_actual><![CDATA[
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **WebGL unavailable** | Omit the decorative Dot Pool and keep the marketing page interactive | `WebGLRenderer` throws during the deferred effect |
+| **Failure scope** | Canvas-only degradation | React unmounts the homepage client root |
+| **User impact** | Hero copy, navigation, CTAs, and content remain usable | Browser displays a full-page application error after load |
+]]></expected_vs_actual>
+</issue_description>
+</bug_1>
+</bug_report>

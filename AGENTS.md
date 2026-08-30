@@ -71,7 +71,8 @@ Git commit guidelines are documented in `.cursor/rules/git-commit-message-format
 Required validation before reporting completion:
 - `cd demo && npm run lint` - ESLint checks for the runnable Next.js app. Must pass with zero errors.
 - `cd demo && npm run build` - Production static export build plus sitemap generation. Must complete without errors.
-- Run targeted tests when a task adds a test file or when a relevant test command exists. This project currently has no `npm test` script and no configured Playwright suite.
+- `cd demo && npm test` - Node test suite (`node --test test/*.test.mjs`). Run `npm run build` first because agent-readiness assertions inspect `demo/out`.
+- Run targeted tests when a task adds a test file or when a relevant test command exists. This project currently has no configured Playwright suite.
 - If a required command cannot run because of missing dependencies, environment issues, or unrelated pre-existing failures, report the command, the exact failure summary, and the residual risk.
 </validation_commands>
 
@@ -85,6 +86,8 @@ LOCAL DEV SERVER POLICY (CRITICAL):
 - If port `3001` is not running, start it with `cd demo && npm run dev -- -p 3001`, wait for the URL to respond, then proceed.
 - If port `3001` is occupied by another service, start the demo on the next available port and state the URL used in the final validation summary.
 - If you started the dev server for manual testing, stop it when finished unless the user asked you to leave it running. If it was already running when you arrived, leave it running.
+- Do not run `npm run build`, and do not add or remove `src/app` route directories, while the dev server is running; both corrupt the Turbopack cache. Restart the dev server after either.
+- If the homepage loads but never hydrates in dev (`ERR_CONTENT_LENGTH_MISMATCH` or "Invalid or unexpected token" on a `src_app_layout_tsx_*` chunk), it is a Turbopack chunk-list artefact, not source: restart the dev server; if it recurs, verify against the static export (`npm run build`, then `python3 -m http.server <port> -d out`).
 - For frontend UI verification, use `dev-browser` by default. Use `agent-browser` when the task needs more complex browser automation. Use Playwright only when browser automation is explicitly requested or when a Playwright suite is added.
 - Follow `.cursor/rules/dev-browser.mdc` whenever browser verification, screenshots, visual analysis, or UI interaction checks are required.
 </dev_server_policy>
@@ -128,6 +131,10 @@ Before answering, you always think through the problem deeply using ultrathink m
 
 Details of the container (also called "project"):
 <container_information>
+
+<host_limits>
+GitHub Pages production fixes `Cache-Control: max-age=600` on all responses and provides no custom response headers. Cloudflare Pages previews honour `demo/public/_headers`; the approved migration comparison uses it only to give content-hashed `/_next/static/*` files a one-year immutable browser TTL. The site still uses the file-only agent-readability profile. Do not add header-based CSP/HSTS/`X-Robots-Tag`, `Vary: Accept`, same-URL Markdown negotiation, `vercel.json`, or middleware; those remain unavailable or outside the static-host contract.
+</host_limits>
 
 <description>
 This is a GitHub Pages project for the Bulma root domain at https://bulma.com.au

@@ -6,6 +6,7 @@ export function AnimatedArrowIcon({ className, ...props }: ComponentProps<'svg'>
     <svg
       className={clsx('h-[11px] w-[11px] flex-none', className)}
       aria-hidden="true"
+      focusable="false"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 10 10"

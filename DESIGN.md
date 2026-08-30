@@ -58,7 +58,7 @@ This document is the visual implementation contract for the Bulma marketing site
 
 - Theme status: **the site is dark-only for every visitor**. `demo/src/app/globals.css` redefines the Tailwind variant with `@custom-variant dark (&:where(.dark, .dark *))`, and `demo/src/app/layout.tsx` puts a permanent `dark` class on `<html>` plus `viewport.colorScheme = 'dark'`. `prefers-color-scheme` no longer selects the theme anywhere: not in CSS, not in `<picture>` sources, and not in the Dot Pool WebGL palette. There is no manual theme toggle and no light rendering path to verify.
 - Light-mode values still present in components (`bg-white`, `text-mist-950`, and similar unprefixed defaults that a `dark:` utility overrides) are inert. Keep them so the pair stays readable and a light theme could be reinstated, but never rely on them rendering.
-- Accessibility target: no formal audited contrast target. The shipped text pairs (white on mist-950, mist-400 on mist-950) are treated as the safe set; measure the rendered pair before introducing new text-on-tint combinations.
+- Accessibility target: text reaches WCAG AA contrast. Use mist-400 as the minimum secondary-text token on the dark canvas, including footer fineprint and pricing-period text; it renders at 7.37:1 on the footer's mist-950 surface. Measure the rendered pair before introducing new text-on-tint combinations.
 - Status communication: text and iconography always accompany colour (verified in the contact form and pricing feature lists).
 
 ## Typography
@@ -74,7 +74,7 @@ This document is the visual implementation contract for the Bulma marketing site
 
 - Spacing rhythm: Tailwind spacing scale only. Sections are `py-16` with internal column gaps of 10 to 16; section headers stack with gap-2 and gap-6.
 - Breakpoints and frames: Tailwind defaults. `container.tsx::Container` centres content at `max-w-2xl` with `px-6`, widening to `max-w-3xl` at `md` and `max-w-7xl` with `px-10` at `lg`.
-- Navigation and shell: sticky top navbar (`navbar-with-links-actions-and-centered-logo.tsx`) that gains a translucent blurred background after 20px of scroll; centred logo, left links, right actions (Log in as plain button, Get started as Glass Press primary). Mobile menu repeats both actions full-width, Glass Press first. Footer carries newsletter form, link categories, social icons, and the fineprint.
+- Navigation and shell: a `Skip to main content` link is the first focusable body element, stays visually hidden until focus, uses the white focus ring on a mist-950 surface, and targets `main.tsx::Main` at `#main-content`. The sticky navbar (`navbar-with-links-actions-and-centered-logo.tsx`) gains a translucent blurred background after 20px of scroll; centred logo, left links, right actions (Log in as plain button, Get started as Glass Press primary). Mobile menu repeats both actions full-width, Glass Press first. Footer carries newsletter form, link categories, social icons, and the fineprint.
 - Overflow and dense data: no page-level horizontal scrolling anywhere; the plan comparison table is the only dense grid and must reflow, not scroll the page. Verify horizontal overflow at both reference viewports after any layout change.
 - Touch targets: 44px minimum boxes on small screens stepping to 40px at `lg`, owned by the shared size classes in `button.tsx` and mirrored by `GlassPressButtonLink` and the `cta` size of `link.tsx::Link`.
 
@@ -87,7 +87,7 @@ This document is the visual implementation contract for the Bulma marketing site
 ## Shapes
 
 - Radius and geometry: the standard button family is fully rounded (pill). The Glass Press primary is deliberately `rounded-xl`, not pill, to read as a physical key. Cards and status panels use xl to 2xl radii; screenshots use md rising to lg at `lg`.
-- Icons: local SVG components sized by Tailwind (`size-4` to `size-6` in controls), inheriting `currentColor`. Decorative icons are `aria-hidden`; standalone icon links carry an accessible name (footer social links). Hover micro-animations (wiggle, pulse, bounce, float, spin, sparkle) come from the icon animation classes in `globals.css`.
+- Icons: local SVG components sized by Tailwind (`size-4` to `size-6` in controls), inheriting `currentColor`. Icon components default to `aria-hidden="true"` and `focusable="false"`, with spread props last so an informative call site can deliberately override the default and supply `role="img"` plus an accessible name. Standalone icon links carry their own accessible name (footer social links). Hover micro-animations (wiggle, pulse, bounce, float, spin, sparkle) come from the icon animation classes in `globals.css`.
 - Imagery: product screenshots are real captures of the Bulma app rendered inside `screenshot.tsx::Screenshot` on a `Wallpaper` gradient with optional parallax tilt and reflection; photographic media gets an inset hairline outline. All meaningful images have descriptive alt text (the logo alt names the product and audience).
 
 ## Components

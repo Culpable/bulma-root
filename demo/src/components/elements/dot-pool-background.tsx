@@ -183,8 +183,27 @@ export function DotPoolBackground({ sectionRef, className }: DotPoolBackgroundPr
     let progress = 0
     let scrollDirty = true
 
-    // Renderer with a capped pixel ratio; antialiasing is unnecessary for soft discs.
-    const renderer = new WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'high-performance' })
+    // Keep the decorative canvas optional when WebGL is unavailable or blocked.
+    // Request the context before Three.js so a missing context fails silently
+    // without producing a renderer error in the browser console.
+    const contextAttributes = { alpha: true, antialias: false, powerPreference: 'high-performance' as const }
+    let context: WebGL2RenderingContext | WebGLRenderingContext | null
+    try {
+      const webgl2 = canvas.getContext('webgl2', contextAttributes) as WebGL2RenderingContext | null
+      context = webgl2 ?? (canvas.getContext('webgl', contextAttributes) as WebGLRenderingContext | null)
+    } catch {
+      return
+    }
+    if (!context) return
+
+    // Contain any remaining renderer construction failure and preserve the
+    // server-rendered hero, navigation, and calls to action.
+    let renderer: WebGLRenderer
+    try {
+      renderer = new WebGLRenderer({ canvas, context, ...contextAttributes })
+    } catch {
+      return
+    }
     renderer.setClearColor(0x000000, 0)
 
     const scene = new Scene()
@@ -241,7 +260,7 @@ export function DotPoolBackground({ sectionRef, className }: DotPoolBackgroundPr
 
     // Colour scheme: the site is dark-only for every visitor, so the pool always
     // uses the dark palette (mist-700 trough, mist-200 crest) and the smaller
-    // dark-mode disc. No prefers-color-scheme listener is needed.
+    // dark-mode disc. No system-theme listener is needed.
     uniforms.uBase.value.setRGB(...mistRgb(700))
     uniforms.uPeak.value.setRGB(...mistRgb(200))
     uniforms.uSize.value = C.dotSizeDark

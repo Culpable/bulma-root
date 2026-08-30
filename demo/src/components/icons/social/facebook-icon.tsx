@@ -8,7 +8,8 @@ export function FacebookIcon({ className, ...props }: ComponentProps<'svg'>) {
       height={24}
       viewBox="0 0 24 24"
       fill="currentColor"
-      role="image"
+      aria-hidden="true"
+      focusable="false"
       className={clsx('inline-block', className)}
       {...props}
     >

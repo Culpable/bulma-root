@@ -3,7 +3,7 @@
 /* Force dark mode for every visitor.
    Overriding the default `dark` variant makes `dark:` utilities and
    `@variant dark` blocks depend on the `.dark` class that layout.tsx puts
-   on <html>, not on the visitor's `prefers-color-scheme` setting. */
+   on <html>, not on the visitor's system theme. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -129,7 +129,6 @@
       opacity: 0.05;
     }
   }
-
 }
 
 /* Scroll-triggered reveal animations */
@@ -1000,6 +999,21 @@
    SCROLL-TRIGGERED SECTION ANIMATIONS
    Reusable animation classes for section reveals on scroll
    ============================================================================= */
+
+/* Keep above-fold LCP candidates visible while retaining the slide-up motion. */
+@keyframes above-fold-slide-up {
+  from {
+    transform: translateY(32px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.above-fold-slide-up {
+  animation: above-fold-slide-up 700ms ease-out both;
+  animation-delay: var(--above-fold-slide-delay, 0ms);
+}
 
 /* Slide up animation - default for most elements */
 @keyframes scroll-slide-up {

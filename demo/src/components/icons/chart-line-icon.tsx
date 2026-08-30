@@ -9,7 +9,8 @@ export function ChartLineIcon({ className, ...props }: ComponentProps<'svg'>) {
       viewBox="0 0 13 11"
       fill="none"
       strokeWidth={1}
-      role="image"
+      aria-hidden="true"
+      focusable="false"
       className={clsx('inline-block', className)}
       {...props}
     >

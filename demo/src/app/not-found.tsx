@@ -7,8 +7,8 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: pageMetadata.notFound.title,
   description: pageMetadata.notFound.description,
+  alternates: { canonical: null },
 }
-
 
 export default function NotFound() {
   // Render the branded 404 experience for unmatched App Router routes.

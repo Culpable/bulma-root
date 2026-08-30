@@ -22,28 +22,13 @@ async function generateSitemap() {
   const globby = globbyModule.default ?? globbyModule
 
   // Import configuration from sitemap.js
-  const {
-    SITE_URL,
-    CORE_ROUTES,
-    EXCLUDED_ROUTES,
-    CHANGE_FREQUENCY,
-    PRIORITIES,
-  } = sitemapModule.default ?? sitemapModule
-  console.log('Generating sitemap...');
-
-  const lastModified = new Date().toISOString();
+  const { SITE_URL, CORE_ROUTES, EXCLUDED_ROUTES } = sitemapModule.default ?? sitemapModule
+  console.log('Generating sitemap...')
 
   // Generate core URLs (always included)
-  const coreUrls = CORE_ROUTES.map((route) => {
-    const isHomepage = route === '/';
-
-    return {
-      url: isHomepage ? SITE_URL : `${SITE_URL}${route}`,
-      lastmod: lastModified,
-      changefreq: isHomepage ? CHANGE_FREQUENCY.homepage : CHANGE_FREQUENCY.default,
-      priority: isHomepage ? PRIORITIES.homepage : PRIORITIES.default,
-    };
-  });
+  const coreUrls = CORE_ROUTES.map((route) => ({
+    url: route === '/' ? SITE_URL : `${SITE_URL}${route.replace(/^\//, '')}`,
+  }))
 
   // Discover dynamic URLs from the project file structure
   const pages = await globby([
@@ -63,7 +48,7 @@ async function generateSitemap() {
     '!**/layout.*',
     '!**/template.*',
     '!src/app/404/**/*',
-  ]);
+  ])
 
   // Process file paths into URLs
   const dynamicUrls = pages
@@ -72,53 +57,47 @@ async function generateSitemap() {
         .replace('src/app', '')
         .replace(/\/(page)\.(jsx|js|tsx|ts)$/, '')
         .replace(/\/(index)$/, '')
-        .replace(/\/$/, '');
+        .replace(/\/$/, '')
 
-      const normalizedRoute = route === '' ? '/' : route.startsWith('/') ? route : `/${route}`;
-      const formattedRoute = normalizedRoute === '/' ? '/' : `${normalizedRoute}/`;
+      const normalizedRoute = route === '' ? '/' : route.startsWith('/') ? route : `/${route}`
+      const formattedRoute = normalizedRoute === '/' ? '/' : `${normalizedRoute}/`
 
       if (EXCLUDED_ROUTES.includes(formattedRoute) || CORE_ROUTES.includes(formattedRoute)) {
-        return null;
+        return null
       }
 
       return {
-        url: formattedRoute === '/' ? SITE_URL : `${SITE_URL}${formattedRoute}`,
-        lastmod: lastModified,
-        changefreq: CHANGE_FREQUENCY.default,
-        priority: PRIORITIES.default,
-      };
+        url: formattedRoute === '/' ? SITE_URL : `${SITE_URL}${formattedRoute.replace(/^\//, '')}`,
+      }
     })
-    .filter(Boolean);
+    .filter(Boolean)
 
-  const allUrls = [...coreUrls, ...dynamicUrls];
+  const allUrls = [...coreUrls, ...dynamicUrls]
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${allUrls
   .map(
-    ({ url, lastmod, changefreq, priority }) => `  <url>
+    ({ url }) => `  <url>
     <loc>${url}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <changefreq>${changefreq}</changefreq>
-    <priority>${priority}</priority>
-  </url>`
+  </url>`,
   )
   .join('\n')}
-</urlset>`;
+</urlset>`
 
-  const publicDir = path.join(process.cwd(), 'public');
+  const publicDir = path.join(process.cwd(), 'public')
   if (!fs.existsSync(publicDir)) {
-    fs.mkdirSync(publicDir, { recursive: true });
+    fs.mkdirSync(publicDir, { recursive: true })
   }
 
-  fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemap);
+  fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemap)
 
-  console.log(`Sitemap generated with ${allUrls.length} URLs`);
-  console.log('Sitemap saved to public/sitemap.xml');
+  console.log(`Sitemap generated with ${allUrls.length} URLs`)
+  console.log('Sitemap saved to public/sitemap.xml')
 }
 
 // Execute the function
 generateSitemap().catch((error) => {
-  console.error('Error generating sitemap:', error);
-  process.exit(1);
-});
+  console.error('Error generating sitemap:', error)
+  process.exit(1)
+})

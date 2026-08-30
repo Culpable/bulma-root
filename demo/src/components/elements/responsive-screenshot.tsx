@@ -31,6 +31,12 @@ interface VerifiedAppScreenshotProps extends AppScreenshotProps {
   height: number
   /** Use the immutable public path for the approved mobile crop. */
   mobileSrc: string
+  /** Provide an intermediate mobile crop for mid-density mobile displays. */
+  mobileSrc15x?: string
+  /** Declare the intermediate mobile crop's exact intrinsic width. */
+  mobileIntermediateWidth?: number
+  /** Describe the rendered mobile width so the browser selects the right candidate. */
+  mobileSizes?: string
   /** Provide the verified mobile crop at twice the pixel density. */
   mobileSrc2x: string
   /** Provide extra resolution when the mobile frame expands near its breakpoint. */
@@ -51,6 +57,9 @@ function VerifiedAppScreenshot({
   width,
   height,
   mobileSrc,
+  mobileSrc15x,
+  mobileIntermediateWidth,
+  mobileSizes = '82vw',
   mobileSrc2x,
   mobileSrc3x,
   mobileWidth,
@@ -65,8 +74,8 @@ function VerifiedAppScreenshot({
     <picture className="block overflow-hidden">
       <source
         media="(max-width: 639px)"
-        srcSet={`${mobileSrc} ${mobileWidth}w, ${mobileSrc2x} ${mobileWidth * 2}w, ${mobileSrc3x} ${mobileWidth * 3}w`}
-        sizes="82vw"
+        srcSet={`${mobileSrc} ${mobileWidth}w, ${mobileSrc15x && mobileIntermediateWidth ? `${mobileSrc15x} ${mobileIntermediateWidth}w, ` : ''}${mobileSrc2x} ${mobileWidth * 2}w, ${mobileSrc3x} ${mobileWidth * 3}w`}
+        sizes={mobileSizes}
         type="image/webp"
         width={mobileWidth}
         height={mobileHeight}
@@ -87,7 +96,6 @@ function VerifiedAppScreenshot({
   )
 }
 
-
 /** Show the authentic Policy Advisor workspace and its suggested questions. */
 export function HeroScreenshot(props: AppScreenshotProps) {
   return (
@@ -97,6 +105,9 @@ export function HeroScreenshot(props: AppScreenshotProps) {
       width={1440}
       height={900}
       mobileSrc="/img/screenshots/bulma-policy-advisor-workspace-mobile.webp"
+      mobileSrc15x="/img/screenshots/bulma-policy-advisor-workspace-mobile@1.5x.webp"
+      mobileIntermediateWidth={585}
+      mobileSizes="69vw"
       mobileSrc2x="/img/screenshots/bulma-policy-advisor-workspace-mobile@2x.webp"
       mobileSrc3x="/img/screenshots/bulma-policy-advisor-workspace-mobile@3x.webp"
       mobileWidth={390}
@@ -105,7 +116,6 @@ export function HeroScreenshot(props: AppScreenshotProps) {
     />
   )
 }
-
 
 /** Show source attribution through the application's expanded evidence ledger. */
 export function FeatureScreenshotLeft(props: AppScreenshotProps) {
@@ -116,6 +126,9 @@ export function FeatureScreenshotLeft(props: AppScreenshotProps) {
       width={710}
       height={510}
       mobileSrc="/img/screenshots/bulma-policy-evidence-ledger-mobile.webp"
+      mobileSrc15x="/img/screenshots/bulma-policy-evidence-ledger-mobile@1.5x.webp"
+      mobileIntermediateWidth={585}
+      mobileSizes="76vw"
       mobileSrc2x="/img/screenshots/bulma-policy-evidence-ledger-mobile@2x.webp"
       mobileSrc3x="/img/screenshots/bulma-policy-evidence-ledger-mobile@3x.webp"
       mobileWidth={390}
@@ -124,7 +137,6 @@ export function FeatureScreenshotLeft(props: AppScreenshotProps) {
     />
   )
 }
-
 
 /** Show a completed lender comparison using the application's real table UI. */
 export function FeatureScreenshotRight(props: AppScreenshotProps) {
@@ -135,6 +147,9 @@ export function FeatureScreenshotRight(props: AppScreenshotProps) {
       width={840}
       height={603}
       mobileSrc="/img/screenshots/bulma-lender-comparison-mobile.webp"
+      mobileSrc15x="/img/screenshots/bulma-lender-comparison-mobile@1.6x.webp"
+      mobileIntermediateWidth={560}
+      mobileSizes="76vw"
       mobileSrc2x="/img/screenshots/bulma-lender-comparison-mobile@2x.webp"
       mobileSrc3x="/img/screenshots/bulma-lender-comparison-mobile@3x.webp"
       mobileWidth={350}

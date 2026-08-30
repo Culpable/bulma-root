@@ -1,17 +1,22 @@
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
+import { StructuredData } from '@/components/elements/structured-data'
 import { SupportedLendersField } from '@/components/elements/supported-lenders-field'
 import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
 import { CallToActionSimpleCentered } from '@/components/sections/call-to-action-simple-centered'
 import { FAQsAccordion, Faq } from '@/components/sections/faqs-accordion'
 import { PlanComparisonTable } from '@/components/sections/plan-comparison-table'
 import { Plan, PricingHeroMultiTier } from '@/components/sections/pricing-hero-multi-tier'
-import { pageMetadata } from '@/lib/metadata'
+import { pageMetadata, siteMetadata } from '@/lib/metadata'
 import { bulmaCoveredLenderCount } from '@/lib/supported-lenders'
 // import { TestimonialTwoColumnWithLargePhoto } from '@/components/sections/testimonial-two-column-with-large-photo'
-import { buildFaqPageSchema } from '@/schemas/organization-schema'
+import {
+  buildFaqPageSchema,
+  buildWebPageSchema,
+  organizationSchema,
+  websiteSchema,
+} from '@/schemas/organization-schema'
 import type { Metadata } from 'next'
 import NextLink from 'next/link'
-import Script from 'next/script'
 
 export const metadata: Metadata = {
   title: pageMetadata.pricing.title,
@@ -49,11 +54,16 @@ const pricingFaqs = [
   },
 ]
 
-const pricingStructuredData = buildFaqPageSchema({
-  path: '/pricing/',
-  name: 'Bulma Pricing FAQs',
-  faqs: pricingFaqs,
-})
+const pricingStructuredData = [
+  organizationSchema,
+  websiteSchema,
+  buildWebPageSchema({
+    path: '/pricing/',
+    name: `${pageMetadata.pricing.title} | ${siteMetadata.name}`,
+    description: pageMetadata.pricing.description,
+  }),
+  buildFaqPageSchema({ path: '/pricing/', name: 'Bulma Pricing FAQs', faqs: pricingFaqs }),
+]
 
 // Period labels for each pricing option
 const pricingPeriods = { Monthly: '/month', Yearly: '/year' }
@@ -75,13 +85,7 @@ function TrackMyTrailLink({ children = 'Track My Trail' }: { children?: string }
 export default function Page() {
   return (
     <>
-      <Script
-        id="pricing-faq-structured-data"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(pricingStructuredData),
-        }}
-      />
+      <StructuredData graph={pricingStructuredData} />
       {/* Hero */}
       <PricingHeroMultiTier
         id="pricing"

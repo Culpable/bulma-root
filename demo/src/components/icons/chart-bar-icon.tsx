@@ -10,7 +10,8 @@ export function ChartBarIcon({ className, ...props }: ComponentProps<'svg'>) {
       fill="none"
       stroke="currentColor"
       strokeWidth={1}
-      role="image"
+      aria-hidden="true"
+      focusable="false"
       className={clsx('inline-block', className)}
       {...props}
     >

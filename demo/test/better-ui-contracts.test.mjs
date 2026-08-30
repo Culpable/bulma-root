@@ -9,7 +9,6 @@ const demoDirectory = path.resolve(testDirectory, '..')
 const repositoryDirectory = path.resolve(demoDirectory, '..')
 const sourceDirectory = path.join(demoDirectory, 'src')
 
-
 /**
  * Read a UTF-8 file relative to the runnable demo directory.
  *
@@ -19,7 +18,6 @@ const sourceDirectory = path.join(demoDirectory, 'src')
 function readDemoFile(relativePath) {
   return fs.readFileSync(path.join(demoDirectory, relativePath), 'utf8')
 }
-
 
 /**
  * Collect every implementation source file recursively.
@@ -39,7 +37,6 @@ function collectSourceFiles(directory) {
   })
 }
 
-
 test('interactive source avoids broad transitions and motion-policy branches', () => {
   const source = collectSourceFiles(sourceDirectory)
     .map((filePath) => fs.readFileSync(filePath, 'utf8'))
@@ -48,7 +45,6 @@ test('interactive source avoids broad transitions and motion-policy branches', (
   assert.doesNotMatch(source, /transition-all|transition\s*:\s*all/)
   assert.doesNotMatch(source, /prefers-reduced-motion/)
 })
-
 
 test('shared buttons enforce target sizes, exact press feedback, and static opt-out', () => {
   const source = readDemoFile('src/components/elements/button.tsx')
@@ -66,7 +62,6 @@ test('shared buttons enforce target sizes, exact press feedback, and static opt-
   assert.match(footer, /transition-\[color,translate\]/)
 })
 
-
 test('secondary navbar controls enforce the shared responsive target sizes', () => {
   const source = readDemoFile('src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx')
 
@@ -74,7 +69,6 @@ test('secondary navbar controls enforce the shared responsive target sizes', () 
   assert.match(source, /min-h-11 min-w-11[^']*lg:min-h-10 lg:min-w-10/)
   assert.equal(source.match(/size-11/g)?.length, 2)
 })
-
 
 test('FAQ disclosures and icons use reversible enter and leave contracts', () => {
   const globalStyles = readDemoFile('src/app/globals.css')
@@ -108,23 +102,27 @@ test('FAQ disclosures and icons use reversible enter and leave contracts', () =>
   assert.match(homepageFaq, /window\.addEventListener\('hashchange', openWhenHashMatches\)/)
 })
 
-
 test('mobile navigation exits through transition state before native dialog close', () => {
   const globalStyles = readDemoFile('src/app/globals.css')
   const navbar = readDemoFile('src/components/sections/navbar-with-links-actions-and-centered-logo.tsx')
+  const controller = readDemoFile('src/components/sections/navbar-controller.tsx')
 
-  assert.match(navbar, /<ElDialog className="lg:hidden">/)
-  assert.match(navbar, /dialog\.close\(\)/)
+  assert.match(navbar, /<dialog id="mobile-menu"/)
+  assert.match(navbar, /<NavbarController navbarId=\{navbarId\}/)
   assert.match(navbar, /className="mobile-menu-panel/)
+  assert.match(controller, /panel\.setAttribute\('data-leave', ''\)/)
+  assert.match(controller, /if \(dialog\.open\) dialog\.close\(\)/)
   assert.match(globalStyles, /\.mobile-menu-panel\[data-enter\]/)
   assert.match(globalStyles, /\.mobile-menu-panel\[data-leave\][\s\S]*transition-duration: 150ms/)
   assert.match(globalStyles, /\.mobile-menu-panel\[data-enter\]\[data-closed\][\s\S]*transition-duration: 150ms/)
   assert.match(globalStyles, /\.mobile-menu-panel\[data-closed\] \.mobile-menu-links > \*[\s\S]*transition-delay: 0ms/)
-  assert.match(globalStyles, /\.mobile-menu-panel\[data-enter\]\[data-closed\] \.mobile-menu-links > \*[\s\S]*transition-delay: 0ms/)
+  assert.match(
+    globalStyles,
+    /\.mobile-menu-panel\[data-enter\]\[data-closed\] \.mobile-menu-links > \*[\s\S]*transition-delay: 0ms/,
+  )
   assert.match(globalStyles, /\.mobile-menu-panel\[data-closed\][\s\S]*translateY\(-12px\)/)
   assert.doesNotMatch(globalStyles, /@keyframes mobile-menu-(?:panel|link|close)-enter/)
 })
-
 
 test('tilt and ripple effects avoid idle compositor promotion and forced layout', () => {
   const screenshot = readDemoFile('src/components/elements/screenshot.tsx')
@@ -138,7 +136,6 @@ test('tilt and ripple effects avoid idle compositor promotion and forced layout'
   assert.match(magneticWrapper, /setRippleKey\(\(currentKey\) => currentKey \+ 1\)/)
   assert.doesNotMatch(magneticWrapper, /offsetWidth|rippleTimeoutRef/)
 })
-
 
 test('surface geometry, media edges, and pricing focus retain comparison clarity', () => {
   const globalStyles = readDemoFile('src/app/globals.css')
@@ -164,7 +161,6 @@ test('surface geometry, media edges, and pricing focus retain comparison clarity
   assert.doesNotMatch(main, /page-transition-enter|enableTransition/)
 })
 
-
 test('animation architecture guide describes the current transition policy', () => {
   const guide = fs.readFileSync(path.join(repositoryDirectory, 'documents/guides/_animations.md'), 'utf8')
 
@@ -174,7 +170,6 @@ test('animation architecture guide describes the current transition policy', () 
   assert.match(guide, /data-enter`, `data-leave`, and `data-closed`/)
 })
 
-
 test('Tailwind longhand motion utilities transition the properties they change', () => {
   const source = collectSourceFiles(sourceDirectory)
     .map((filePath) => fs.readFileSync(filePath, 'utf8'))
@@ -182,6 +177,9 @@ test('Tailwind longhand motion utilities transition the properties they change',
 
   assert.doesNotMatch(source, /transition-\[transform,opacity\]/)
   assert.doesNotMatch(source, /transition-\[transform,background-color,box-shadow,color\]/)
-  assert.match(readDemoFile('src/components/sections/call-to-action-simple.tsx'), /transition-\[translate,scale,opacity\]/)
+  assert.match(
+    readDemoFile('src/components/sections/call-to-action-simple.tsx'),
+    /transition-\[translate,scale,opacity\]/,
+  )
   assert.match(readDemoFile('src/components/sections/faqs-accordion.tsx'), /transition-\[translate,opacity\]/)
 })

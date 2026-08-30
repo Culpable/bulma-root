@@ -1,11 +1,8 @@
-'use client'
-
 import { clsx } from 'clsx/lite'
-import type { ComponentProps, ReactNode } from 'react'
+import type { ComponentProps, CSSProperties, ReactNode } from 'react'
 import { Container } from '../elements/container'
 import { Heading } from '../elements/heading'
 import { Text } from '../elements/text'
-import { useScrollAnimation } from '@/hooks/use-scroll-animation'
 
 export function HeroLeftAlignedWithPhoto({
   eyebrow,
@@ -24,19 +21,12 @@ export function HeroLeftAlignedWithPhoto({
   photo?: ReactNode
   footer?: ReactNode
 } & ComponentProps<'section'>) {
-  const { containerRef, isVisible } = useScrollAnimation({ threshold: 0.1 })
-
   return (
-    <section ref={containerRef} className={clsx('py-16', className)} {...props}>
+    <section className={clsx('py-16', className)} {...props}>
       <Container className="flex flex-col gap-16">
         <div className="flex flex-col gap-32">
-          {/* Hero content with slide up animation */}
-          <div
-            className={clsx(
-              'flex flex-col items-start gap-6 transition-[translate,opacity] duration-700 ease-out',
-              isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
-            )}
-          >
+          {/* Keep critical hero copy visible while the transform-only entrance runs. */}
+          <div className="above-fold-slide-up flex flex-col items-start gap-6">
             {eyebrow}
             <Heading className="max-w-5xl">{headline}</Heading>
             <Text size="lg" className="flex max-w-3xl flex-col gap-4">
@@ -44,13 +34,10 @@ export function HeroLeftAlignedWithPhoto({
             </Text>
             {cta}
           </div>
-          {/* Photo with delayed slide up animation */}
+          {/* Keep the LCP photo paintable during its delayed transform-only entrance. */}
           <div
-            className={clsx(
-              'overflow-hidden rounded-xl transition-[translate,opacity] duration-700 ease-out [&_img]:outline [&_img]:-outline-offset-1 [&_img]:outline-black/10 dark:[&_img]:outline-white/10',
-              isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
-            )}
-            style={{ transitionDelay: '150ms' }}
+            className="above-fold-slide-up overflow-hidden rounded-xl [&_img]:outline [&_img]:-outline-offset-1 [&_img]:outline-black/10 dark:[&_img]:outline-white/10"
+            style={{ '--above-fold-slide-delay': '150ms' } as CSSProperties}
           >
             {photo}
           </div>

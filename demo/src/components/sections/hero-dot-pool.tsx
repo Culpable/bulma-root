@@ -2,16 +2,15 @@
 
 import { clsx } from 'clsx/lite'
 import dynamic from 'next/dynamic'
-import { useEffect, useRef, type ComponentProps, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { Container } from '../elements/container'
 import { Heading } from '../elements/heading'
 import { Text } from '../elements/text'
 
 // The WebGL pool is client-only and code-split; the copy still server-renders for SEO.
-const DotPoolBackground = dynamic(
-  () => import('../elements/dot-pool-background').then((m) => m.DotPoolBackground),
-  { ssr: false },
-)
+const DotPoolBackground = dynamic(() => import('../elements/dot-pool-background').then((m) => m.DotPoolBackground), {
+  ssr: false,
+})
 
 /**
  * "Take the stage" tunables for the product screenshot (large viewports only).
@@ -69,6 +68,35 @@ export function HeroDotPool({
   const sectionRef = useRef<HTMLElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
+  const [poolReady, setPoolReady] = useState(false)
+
+  // Keep the three.js chunk off the LCP critical path. Mount the unchanged Dot Pool only
+  // after the document has loaded and the browser has an idle window.
+  useEffect(() => {
+    let idleId: number | null = null
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+
+    const schedulePool = () => {
+      if ('requestIdleCallback' in window) {
+        idleId = window.requestIdleCallback(() => setPoolReady(true), { timeout: 2000 })
+        return
+      }
+
+      timeoutId = setTimeout(() => setPoolReady(true), 200)
+    }
+
+    if (document.readyState === 'complete') {
+      schedulePool()
+    } else {
+      window.addEventListener('load', schedulePool, { once: true })
+    }
+
+    return () => {
+      window.removeEventListener('load', schedulePool)
+      if (idleId !== null) window.cancelIdleCallback(idleId)
+      if (timeoutId !== null) window.clearTimeout(timeoutId)
+    }
+  }, [])
 
   // Scroll-driven stage: write the frame's transform/opacity straight to the element from one
   // rAF-throttled scroll handler (no React state on scroll). Progress is the track's scrolled-through
@@ -119,9 +147,7 @@ export function HeroDotPool({
     <section ref={sectionRef} className={clsx('relative', className)} {...props}>
       {/* Sticky pool layer: pinned for the whole hero so the still water reads under the pinned screenshot */}
       <div className="sticky top-0 z-0 -mb-[100svh] h-[100svh]" aria-hidden="true">
-        <div className="absolute inset-0">
-          <DotPoolBackground sectionRef={sectionRef} />
-        </div>
+        <div className="absolute inset-0">{poolReady && <DotPoolBackground sectionRef={sectionRef} />}</div>
       </div>
 
       <div className="relative z-10">
@@ -141,9 +167,14 @@ export function HeroDotPool({
             {eyebrow && <div className="hero-animate hero-delay-0">{eyebrow}</div>}
             {/* Headline - appears second */}
             {/* Headline: fluid 9vw under sm (28-36px) keeps the longest cycling phrase (~82vw) on one line down to ~270px */}
-            <Heading className="hero-animate hero-delay-1 max-w-5xl max-sm:text-[clamp(1.75rem,9vw,2.25rem)]/[1.1] lg:text-[4.5rem]/[1.05]!">{headline}</Heading>
+            <Heading className="hero-animate hero-delay-1 max-w-5xl max-sm:text-[clamp(1.75rem,9vw,2.25rem)]/[1.1] lg:text-[4.5rem]/[1.05]!">
+              {headline}
+            </Heading>
             {/* Subheadline - appears third */}
-            <Text size="lg" className="hero-animate hero-delay-2 flex max-w-2xl flex-col items-center gap-4 text-center max-sm:text-base/7">
+            <Text
+              size="lg"
+              className="hero-animate hero-delay-2 flex max-w-2xl flex-col items-center gap-4 text-center max-sm:text-base/7"
+            >
               {subheadline}
             </Text>
             {/* CTA buttons - appear fourth */}

@@ -1,12 +1,13 @@
 import { Link } from '@/components/elements/link'
 import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
-import { pageMetadata } from '@/lib/metadata'
 import { HeroSimpleCentered } from '@/components/sections/hero-simple-centered'
+import { pageMetadata } from '@/lib/metadata'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: pageMetadata.notFound.title,
   description: pageMetadata.notFound.description,
+  alternates: { canonical: null },
 }
 
 export default function Page() {

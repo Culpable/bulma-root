@@ -9,7 +9,8 @@ export function ChatBubbleRectangleIcon({ className, ...props }: ComponentProps<
       viewBox="0 0 13 13"
       fill="none"
       strokeWidth={1}
-      role="image"
+      aria-hidden="true"
+      focusable="false"
       className={clsx('inline-block', className)}
       {...props}
     >

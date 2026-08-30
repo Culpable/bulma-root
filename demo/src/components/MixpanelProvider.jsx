@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import { useEffect } from 'react'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 const analyticsIdleDelay = 1200
@@ -11,17 +11,38 @@ function requestAnalyticsIdle(callback) {
     return () => {}
   }
 
-  if ('requestIdleCallback' in window) {
-    const idleId = window.requestIdleCallback(callback, { timeout: 3000 })
-    return () => window.cancelIdleCallback(idleId)
+  let idleId = null
+  let timeoutId = null
+  let cancelled = false
+
+  const scheduleIdle = () => {
+    if (cancelled) return
+
+    if ('requestIdleCallback' in window) {
+      idleId = window.requestIdleCallback(callback, { timeout: 3000 })
+      return
+    }
+
+    timeoutId = window.setTimeout(callback, analyticsIdleDelay)
   }
 
-  const timeoutId = window.setTimeout(callback, analyticsIdleDelay)
-  return () => window.clearTimeout(timeoutId)
+  if (document.readyState === 'complete') {
+    scheduleIdle()
+  } else {
+    window.addEventListener('load', scheduleIdle, { once: true })
+  }
+
+  return () => {
+    if (cancelled) return
+    cancelled = true
+    window.removeEventListener('load', scheduleIdle)
+    if (idleId !== null) window.cancelIdleCallback(idleId)
+    if (timeoutId !== null) window.clearTimeout(timeoutId)
+  }
 }
 
 /**
- * Client component that initializes Mixpanel after the page has had idle time.
+ * Client component that initializes Mixpanel after load and an idle window.
  */
 export default function MixpanelProvider() {
   const pathname = usePathname()
@@ -43,7 +64,6 @@ export default function MixpanelProvider() {
       cancelIdle()
     }
   }, [])
-
 
   useEffect(() => {
     if (isDevelopment) {

@@ -1,12 +1,14 @@
 import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
+import { StructuredData } from '@/components/elements/structured-data'
 import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
-import { pageMetadata } from '@/lib/metadata'
-import { bulmaCoveredLenderCount } from '@/lib/supported-lenders'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { HeroLeftAlignedWithPhoto } from '@/components/sections/hero-left-aligned-with-photo'
 import { StatAnimated, StatsAnimatedGraph } from '@/components/sections/stats-animated-graph'
 import { TeamFourColumnGrid, TeamMember } from '@/components/sections/team-four-column-grid'
 import { TestimonialTwoColumnWithLargePhoto } from '@/components/sections/testimonial-two-column-with-large-photo'
+import { pageMetadata, siteMetadata } from '@/lib/metadata'
+import { bulmaCoveredLenderCount } from '@/lib/supported-lenders'
+import { buildWebPageSchema, organizationSchema, websiteSchema } from '@/schemas/organization-schema'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 
@@ -23,6 +25,17 @@ const aboutPortraitAlt = (name: string) => aboutAlt(`Portrait of ${name}`)
 export default function Page() {
   return (
     <>
+      <StructuredData
+        graph={[
+          organizationSchema,
+          websiteSchema,
+          buildWebPageSchema({
+            path: '/about/',
+            name: `${pageMetadata.about.title} | ${siteMetadata.name}`,
+            description: pageMetadata.about.description,
+          }),
+        ]}
+      />
       {/* Hero */}
       <HeroLeftAlignedWithPhoto
         id="hero"
@@ -35,9 +48,27 @@ export default function Page() {
         }
         photo={
           <picture>
-            <source srcSet="/img/photos/1-720.webp" media="(max-width: 639px)" type="image/webp" width={720} height={378} />
-            <source srcSet="/img/photos/1-1200.webp" media="(max-width: 1279px)" type="image/webp" width={1200} height={630} />
-            <source srcSet="/img/photos/1-1600.webp" media="(max-width: 1919px)" type="image/webp" width={1600} height={840} />
+            <source
+              srcSet="/img/photos/1-720.webp"
+              media="(max-width: 639px)"
+              type="image/webp"
+              width={720}
+              height={378}
+            />
+            <source
+              srcSet="/img/photos/1-1200.webp"
+              media="(max-width: 1279px)"
+              type="image/webp"
+              width={1200}
+              height={630}
+            />
+            <source
+              srcSet="/img/photos/1-1600.webp"
+              media="(max-width: 1919px)"
+              type="image/webp"
+              width={1600}
+              height={840}
+            />
             <img
               src="/img/photos/1.webp"
               alt={aboutAlt('Bulma team photo')}
@@ -60,7 +91,8 @@ export default function Page() {
         subheadline={
           <p>
             Bulma helps mortgage brokers across Australia find policy answers faster, match clients to the right
-            lenders, and close more deals with confidence. We&apos;re growing every day alongside the brokers who use us.
+            lenders, and close more deals with confidence. We&apos;re growing every day alongside the brokers who use
+            us.
           </p>
         }
       >
@@ -99,8 +131,8 @@ export default function Page() {
         headline="Our team"
         subheadline={
           <p>
-            Bulma&apos;s team combines deep expertise in mortgage broking with AI and product development. We understand the
-            challenges you face because we&apos;ve been there ourselves.
+            Bulma&apos;s team combines deep expertise in mortgage broking with AI and product development. We understand
+            the challenges you face because we&apos;ve been there ourselves.
           </p>
         }
       >

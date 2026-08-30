@@ -50,7 +50,6 @@ export const organizationSchema = {
   },
 }
 
-
 /**
  * Describe the marketing site as a WebSite entity.
  */
@@ -66,7 +65,6 @@ export const websiteSchema = {
     '@id': ORGANIZATION_ID,
   },
 }
-
 
 /**
  * Highlight the Bulma application as a SoftwareApplication entity.
@@ -85,6 +83,26 @@ export const softwareApplicationSchema = {
   },
 }
 
+/**
+ * Build the route-specific WebPage node that links each page to the shared site identity.
+ */
+export function buildWebPageSchema({ path, name, description }: { path: string; name: string; description: string }) {
+  const normalizedPath = path === '/' ? '/' : `/${path.replace(/^\/+|\/+$/g, '')}/`
+  const url = normalizedPath === '/' ? SITE_URL : `${BASE_URL}${normalizedPath}`
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': url,
+    url,
+    name,
+    description,
+    isPartOf: { '@id': WEBSITE_ID },
+    publisher: { '@id': ORGANIZATION_ID },
+    about: { '@id': ORGANIZATION_ID },
+    inLanguage: siteMetadata.locale,
+  }
+}
 
 export type FaqEntry = {
   question: string
@@ -111,15 +129,7 @@ function toPlainText(value: string) {
 /**
  * Build a FAQPage JSON-LD schema for a given route and FAQ list.
  */
-export function buildFaqPageSchema({
-  path,
-  name,
-  faqs,
-}: {
-  path: string
-  name: string
-  faqs: FaqEntry[]
-}) {
+export function buildFaqPageSchema({ path, name, faqs }: { path: string; name: string; faqs: FaqEntry[] }) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
   const url = normalizedPath === '/' ? SITE_URL : `${BASE_URL}${normalizedPath}`
   const mainEntity = faqs

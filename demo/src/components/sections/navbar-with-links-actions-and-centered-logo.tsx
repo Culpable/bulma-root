@@ -1,137 +1,15 @@
-'use client'
-
-import { TransitionLink } from '@/components/elements/transition-link'
-import { ElDialog, ElDialogPanel } from '@tailwindplus/elements/react'
 import { clsx } from 'clsx/lite'
-import { usePathname } from 'next/navigation'
-import { useCallback, useEffect, useRef, useState, type ComponentProps, type MouseEvent, type ReactNode } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
+import { NavbarController } from './navbar-controller'
 
 /**
- * Hook to track whether user has scrolled past a threshold.
- * Returns true when scrollY exceeds the threshold.
- *
- * Performance optimised:
- * - RAF throttled to max 60 checks/sec
- * - State de-duplicated to only update on value change
+ * Render the global navigation as server markup and hydrate only its controller.
  */
-function useScrolled(threshold = 20) {
-  const [scrolled, setScrolled] = useState(false)
-  // Track RAF and previous value to avoid redundant updates
-  const rafRef = useRef<number | null>(null)
-  const scrolledRef = useRef(false)
-
-  const updateScrolledState = useCallback(() => {
-    const isScrolled = window.scrollY > threshold
-    // Only update state when value actually changes
-    if (isScrolled !== scrolledRef.current) {
-      scrolledRef.current = isScrolled
-      setScrolled(isScrolled)
-    }
-  }, [threshold])
-
-  useEffect(() => {
-    const scheduleScrolledStateUpdate = () => {
-      // RAF throttling - skip if already scheduled
-      if (rafRef.current !== null) return
-
-      rafRef.current = requestAnimationFrame(() => {
-        updateScrolledState()
-        rafRef.current = null
-      })
-    }
-
-    // Schedule the initial check outside the effect body to avoid a synchronous state cascade.
-    scheduleScrolledStateUpdate()
-
-    window.addEventListener('scroll', scheduleScrolledStateUpdate, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', scheduleScrolledStateUpdate)
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current)
-      }
-    }
-  }, [updateScrolledState])
-
-  return scrolled
-}
-
-/**
- * Determine if a nav link should be considered active based on the current pathname.
- * Handles exact matches and nested routes.
- */
-function useIsActive(href: string) {
-  const pathname = usePathname()
-
-  // Skip external links
-  if (href.startsWith('http')) {
-    return false
-  }
-
-  // Exact match for home or short paths
-  if (href === '/') {
-    return pathname === '/'
-  }
-
-  // For other paths, check if pathname starts with href (handles nested routes)
-  return pathname === href || pathname.startsWith(`${href}/`)
-}
-
-export function NavbarLink({ children, href, className, ...props }: ComponentProps<typeof TransitionLink>) {
-  const isActive = useIsActive(href)
-
-  return (
-    <TransitionLink
-      href={href}
-      className={clsx(
-        'group relative inline-flex min-h-11 cursor-pointer items-center justify-between gap-2 text-3xl/10 font-medium lg:min-h-10 lg:text-sm/7',
-        // Text color: active state is slightly bolder
-        isActive
-          ? 'text-mist-950 dark:text-white'
-          : 'text-mist-700 hover:text-mist-950 dark:text-mist-300 dark:hover:text-white',
-        // Transition for smooth color changes
-        'transition-colors duration-200',
-        className,
-      )}
-      aria-current={isActive ? 'page' : undefined}
-      {...props}
-    >
-      {children}
-      {/* Active indicator - animated underline (desktop only) */}
-      <span
-        className={clsx(
-          'absolute -bottom-1 left-0 h-0.5 rounded-full max-lg:hidden',
-          // Gradient underline using mist palette
-          'bg-gradient-to-r from-mist-500 via-mist-400 to-mist-500',
-          'dark:from-mist-400 dark:via-mist-300 dark:to-mist-400',
-          // Animation: scale from center
-          'origin-center transition-[width,opacity] duration-300 ease-out',
-          isActive ? 'w-full opacity-100' : 'w-0 opacity-0 group-hover:w-full group-hover:opacity-50',
-        )}
-        aria-hidden="true"
-      />
-      {/* Mobile chevron indicator */}
-      <span className="inline-flex p-1.5 opacity-0 group-hover:opacity-100 lg:hidden" aria-hidden="true">
-        <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-          <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-        </svg>
-      </span>
-    </TransitionLink>
-  )
-}
-
-export function NavbarLogo({ className, href, ...props }: ComponentProps<typeof TransitionLink>) {
-  return (
-    <TransitionLink
-      href={href}
-      {...props}
-      className={clsx('inline-flex size-11 cursor-pointer items-center justify-center lg:size-10', className)}
-    />
-  )
-}
-
 export function NavbarWithLinksActionsAndCenteredLogo({
   links,
   logo,
+  mobileLinks,
+  mobileLogo,
   actions,
   mobileActions,
   className,
@@ -139,65 +17,25 @@ export function NavbarWithLinksActionsAndCenteredLogo({
 }: {
   links: ReactNode
   logo: ReactNode
+  mobileLinks?: ReactNode
+  mobileLogo?: ReactNode
   actions: ReactNode
   mobileActions?: ReactNode
 } & ComponentProps<'header'>) {
-  const scrolled = useScrolled(20)
-  const mobileMenuDialogRef = useRef<HTMLDialogElement>(null)
-
-  const openMobileMenu = () => {
-    const dialog = mobileMenuDialogRef.current
-    if (!dialog) return
-
-    if (dialog.open) {
-      return
-    }
-
-    if (typeof dialog.showModal === 'function') {
-      dialog.showModal()
-      return
-    }
-
-    dialog.setAttribute('open', '')
-  }
-
-  const closeMobileMenu = () => {
-    const dialog = mobileMenuDialogRef.current
-    if (!dialog) return
-
-    if (dialog.open && typeof dialog.close === 'function') {
-      dialog.close()
-      return
-    }
-
-    dialog.removeAttribute('open')
-  }
-
-  // Close the mobile dialog when a navigation link is clicked so it doesn't block the viewport.
-  const handleMobileMenuLinkClick = (event: MouseEvent<HTMLDivElement>) => {
-    const target = event.target as HTMLElement | null
-    const link = target?.closest('a')
-    if (!link) return
-
-    closeMobileMenu()
-  }
+  const navbarId = props.id ?? 'navbar'
 
   return (
     <header
+      data-navbar-root
       className={clsx(
-        'sticky top-0 z-10 transition-[background-color,backdrop-filter,box-shadow] duration-300',
-        scrolled && 'navbar-scrolled',
-        // Base background - solid when at top
-        !scrolled && 'bg-mist-100 dark:bg-mist-950',
-        // Glassmorphism when scrolled - semi-transparent with blur
-        scrolled && 'bg-mist-100/80 backdrop-blur-xl backdrop-saturate-150 dark:bg-mist-950/80',
-        // Subtle shadow when scrolled for depth
-        scrolled && 'shadow-sm shadow-mist-950/5 dark:shadow-black/20',
+        'sticky top-0 z-10 bg-mist-100 transition-[background-color,backdrop-filter,box-shadow] duration-300 dark:bg-mist-950',
         className,
       )}
       {...props}
+      id={navbarId}
     >
       <style>{`:root { --scroll-padding-top: 5.25rem }`}</style>
+      <NavbarController navbarId={navbarId} />
       <nav>
         <div className="mx-auto flex h-(--scroll-padding-top) max-w-7xl items-center gap-4 px-6 lg:px-10">
           <div className="flex flex-1 gap-8 max-lg:hidden">{links}</div>
@@ -206,11 +44,14 @@ export function NavbarWithLinksActionsAndCenteredLogo({
             <div className="flex shrink-0 items-center gap-5">{actions}</div>
 
             <button
+              type="button"
               aria-label="Open menu"
-              onClick={openMobileMenu}
+              aria-controls="mobile-menu"
+              aria-expanded="false"
+              data-open-mobile-menu
               className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-mist-950 transition-colors duration-200 hover:bg-mist-950/10 lg:hidden dark:text-white dark:hover:bg-white/10"
             >
-              <svg viewBox="0 0 24 24" fill="currentColor" className="size-6">
+              <svg viewBox="0 0 24 24" fill="currentColor" className="size-6" aria-hidden="true">
                 <path
                   fillRule="evenodd"
                   d="M3.748 8.248a.75.75 0 0 1 .75-.75h15a.75.75 0 0 1 0 1.5h-15a.75.75 0 0 1-.75-.75ZM3.748 15.75a.75.75 0 0 1 .75-.751h15a.75.75 0 0 1 0 1.5h-15a.75.75 0 0 1-.75-.75Z"
@@ -221,47 +62,48 @@ export function NavbarWithLinksActionsAndCenteredLogo({
           </div>
         </div>
 
-        <ElDialog className="lg:hidden">
-          <dialog ref={mobileMenuDialogRef} id="mobile-menu" className="mobile-menu-dialog backdrop:bg-transparent">
-            <ElDialogPanel
-              aria-labelledby="mobile-menu-title"
-              className="mobile-menu-panel fixed inset-0 flex min-h-dvh flex-col overflow-y-auto bg-mist-100/90 px-6 py-6 backdrop-blur-xl backdrop-saturate-150 lg:px-10 dark:bg-mist-950/90"
-            >
-              <h2 id="mobile-menu-title" className="sr-only">
-                Mobile navigation
-              </h2>
-              <div className="flex items-center justify-between gap-4">
-                <div className="inline-flex" onClick={handleMobileMenuLinkClick}>
-                  {logo}
-                </div>
-                <button
-                  aria-label="Close menu"
-                  onClick={closeMobileMenu}
-                  className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-mist-950 transition-colors duration-200 hover:bg-mist-950/10 dark:text-white dark:hover:bg-white/10"
+        <dialog id="mobile-menu" className="mobile-menu-dialog backdrop:bg-transparent lg:hidden">
+          <div
+            data-mobile-menu-panel
+            aria-labelledby="mobile-menu-title"
+            className="mobile-menu-panel fixed inset-0 flex min-h-dvh flex-col overflow-y-auto bg-mist-100/90 px-6 py-6 backdrop-blur-xl backdrop-saturate-150 lg:px-10 dark:bg-mist-950/90"
+          >
+            <h2 id="mobile-menu-title" className="sr-only">
+              Mobile navigation
+            </h2>
+            <div className="flex items-center justify-between gap-4">
+              <div className="inline-flex" data-close-mobile-menu-on-link>
+                {mobileLogo ?? logo}
+              </div>
+              <button
+                type="button"
+                aria-label="Close menu"
+                data-close-mobile-menu
+                className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-mist-950 transition-colors duration-200 hover:bg-mist-950/10 dark:text-white dark:hover:bg-white/10"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="mobile-menu-close-icon size-6"
+                  aria-hidden="true"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="mobile-menu-close-icon size-6"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                  </svg>
-                </button>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="mobile-menu-links mt-6 flex flex-col gap-6" data-close-mobile-menu-on-link>
+              {mobileLinks ?? links}
+            </div>
+            {mobileActions && (
+              <div className="mobile-menu-actions mt-auto grid gap-3 pt-10" data-close-mobile-menu-on-link>
+                {mobileActions}
               </div>
-              <div className="mobile-menu-links mt-6 flex flex-col gap-6" onClick={handleMobileMenuLinkClick}>
-                {links}
-              </div>
-              {mobileActions && (
-                <div className="mobile-menu-actions mt-auto grid gap-3 pt-10" onClick={handleMobileMenuLinkClick}>
-                  {mobileActions}
-                </div>
-              )}
-            </ElDialogPanel>
-          </dialog>
-        </ElDialog>
+            )}
+          </div>
+        </dialog>
       </nav>
       <span className="navbar-glow" aria-hidden="true" />
     </header>

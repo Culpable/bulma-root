@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bug_report>
+  <bug_1>
+    <summary>
+      <title>[Hero Runtime] WebGL initialisation failure unmounts the homepage</title>
+      <one_line_description>A browser that cannot create a WebGL context shows a full-page application error after the deferred Dot Pool mounts.</one_line_description>
+    </summary>
+    <file_locations>
+- /Users/sacino/bulma-root/demo/src/components/elements/dot-pool-background.tsx - function: `DotPoolBackground`, Lines 169-188
+- /Users/sacino/bulma-root/demo/src/components/sections/hero-dot-pool.tsx - function: `HeroDotPool`, Lines 68-99 and 146-151
+</file_locations>
+    <issue_description>
+      <description>The deferred load gate correctly starts the Dot Pool chunk after the document load event, but `DotPoolBackground` constructs `WebGLRenderer` without checking WebGL availability or catching renderer construction errors. Three.js throws when a browser, graphics driver, enterprise policy, or execution environment cannot create a WebGL context. Because no fallback or local error boundary contains that exception, React unmounts the page and replaces the marketing site with a client-side application error. This was reproduced at 412 x 900 in Chromium with WebGL context creation unavailable: the Dot Pool chunk began after `loadEventEnd`, `WebGLRenderer` threw at line 187, and the document lost its navbar, main content, and images. The decorative pool should fail closed while the server-rendered page remains usable. Add a WebGL capability/failure fallback around renderer creation and retain the existing non-canvas hero when initialisation fails.</description>
+      <code_example>```tsx
+# File: demo/src/components/elements/dot-pool-background.tsx, Lines 169-188
+
+useEffect(() =&gt; {
+  const canvas = canvasRef.current
+  const host = canvas?.parentElement
+  if (!canvas || !host) return
+
+  // Renderer construction throws when WebGL is unavailable.
+  const renderer = new WebGLRenderer({
+    canvas,
+    alpha: true,
+    antialias: false,
+    powerPreference: 'high-performance',
+  })
+  renderer.setClearColor(0x000000, 0)
+}, [sectionRef])
+```</code_example>
+      <expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **WebGL unavailable** | Omit the decorative Dot Pool and keep the marketing page interactive | `WebGLRenderer` throws during the deferred effect |
+| **Failure scope** | Canvas-only degradation | React unmounts the homepage client root |
+| **User impact** | Hero copy, navigation, CTAs, and content remain usable | Browser displays a full-page application error after load |
+</expected_vs_actual>
+    </issue_description>
+  </bug_1>
+  <bug_2>
+    <summary>
+      <title>[Metadata] 404 output duplicates robots directives and disables recovery-link crawling</title>
+      <one_line_description>The generated 404 page emits both noindex and noindex, nofollow directives, so crawlers are told not to follow its recovery links.</one_line_description>
+    </summary>
+    <file_locations>
+- /Users/sacino/bulma-root/demo/src/app/404/page.tsx - metadata export, Lines 7-12
+- /Users/sacino/bulma-root/demo/src/app/not-found.tsx - metadata export, Lines 7-12
+- /Users/sacino/bulma-root/demo/out/404.html - generated head metadata, minified Line 1
+- /Users/sacino/bulma-root/demo/test/agent-readiness.test.mjs - metadata assertions, Lines 43-59
+</file_locations>
+    <issue_description>
+      <description>Next.js already emits a noindex robots tag for the exported 404 document. Both 404 metadata exports also set robots to index false and follow false, which adds a second noindex, nofollow tag. The built 404 therefore contains two robots directives. Their combined effective policy is noindex, nofollow, so compliant crawlers cannot follow the branded Go back home link or the navbar recovery links that the readiness plan relies on. The regression tests inspect metadata only for the five indexable routes and do not assert the 404 contract, so all tests pass despite the duplicate and over-restrictive output. Consolidate the generated 404 metadata to one noindex-only directive while retaining canonical suppression, then add a build-output assertion for exactly one robots tag and no nofollow token.</description>
+      <code_example>```tsx
+// Files: demo/src/app/404/page.tsx and demo/src/app/not-found.tsx, Lines 7-12
+
+export const metadata: Metadata = {
+  title: pageMetadata.notFound.title,
+  description: pageMetadata.notFound.description,
+  robots: { index: false, follow: false },
+  alternates: { canonical: null },
+}
+```
+
+```html
+&lt;!-- File: demo/out/404.html, generated minified Line 1 --&gt;
+&lt;meta name="robots" content="noindex"/&gt;
+&lt;meta name="robots" content="noindex, nofollow"/&gt;
+```</code_example>
+      <expected_vs_actual>
+| Aspect | Expected | Actual |
+|--------|----------|--------|
+| **404 indexing** | One noindex directive | Two noindex directives |
+| **Recovery links** | Crawlers may follow links back to valid pages | nofollow blocks recovery-link crawling |
+| **Regression coverage** | Built 404 metadata contract is asserted | Tests cover only indexable-route metadata |
+</expected_vs_actual>
+    </issue_description>
+  </bug_2>
+</bug_report>

@@ -3,7 +3,7 @@
  *
  * Renders the dark-mode variant of an image pair. The site is dark-only for
  * every visitor (see the `dark` class on <html> in app/layout.tsx), so no
- * prefers-color-scheme switching happens here: only `srcDark` is requested and
+ * system-theme switching happens here: only `srcDark` is requested and
  * the light variant is never downloaded.
  *
  * `srcLight` and `bgLight` are retained so existing call sites keep compiling
