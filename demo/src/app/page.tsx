@@ -55,19 +55,6 @@ const MagneticWrapper = dynamic(() => import('@/components/elements/magnetic-wra
 // Metallic sheen sweep on headlines - decorative entrance animation
 const LuminanceSweep = dynamic(() => import('@/components/elements/luminance-sweep').then((m) => m.LuminanceSweep))
 
-// =============================================================================
-// PRELOAD FUNCTIONS FOR ANIMATION COMPONENTS (B-3)
-// Preload on hover reduces perceived latency when user is about to interact.
-// Export for use in client components that need to trigger preloading.
-// Usage: Add onMouseEnter={preloadAnimationComponents} to CTA buttons.
-// =============================================================================
-
-export const preloadAnimationComponents = () => {
-  void import('@/components/elements/blur-transition-text')
-  void import('@/components/elements/magnetic-wrapper')
-  void import('@/components/elements/luminance-sweep')
-}
-
 // Homepage uses absolute title to bypass the " | Bulma" suffix from layout template
 export const metadata: Metadata = {
   title: {

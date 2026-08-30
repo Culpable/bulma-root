@@ -1,7 +1,7 @@
 # Cloudflare Pages Migration Plan 🔄 **IN PROGRESS**
 
 <critical_warning>
-> **CRITICAL WARNING:** Connecting `bulma.com.au` to Cloudflare Pages changes production DNS. Immediately before that change, the executor must record the complete live state of every `bulma.com.au` and `www.bulma.com.au` DNS record in `documents/guides/_hosting.md`. Only the recorded web-serving A records may be replaced. MX, TXT, mail, verification, nameserver, and unrelated Cloudflare resources must not change. GitHub Pages must remain live until the Cloudflare custom domain passes every hosted check so the recorded A records can restore service immediately.
+> **CRITICAL WARNING:** Connecting `bulma.com.au` to Cloudflare Pages changes production DNS and activates zone delivery settings. Immediately before that change, the executor must record the complete live state of every `bulma.com.au` and `www.bulma.com.au` DNS record, every named delivery setting, and every ruleset in `documents/guides/_hosting.md`. Only the recorded web-serving A records and `browser_cache_ttl` may change. MX, TXT, mail, verification, nameserver, unrelated settings, and unrelated Cloudflare resources must not change. GitHub Pages must remain live until the Cloudflare custom domain passes every hosted check so the recorded A records and `browser_cache_ttl: 14400` can restore the prior state immediately.
 </critical_warning>
 
 <important_note>
@@ -14,13 +14,15 @@ Move the existing Bulma marketing site from GitHub Pages to Cloudflare Pages wit
 
 The migration must first publish the same committed static export to a noindexed Cloudflare preview hostname. The user must be able to open the GitHub Pages production URL and Cloudflare preview URL side by side and receive a repeatable speed comparison before any production DNS change. After approval, the agent must connect `bulma.com.au`, preserve `www.bulma.com.au` as a one-hop redirect to the apex, make Cloudflare Pages the only continuous deployment target, and retire GitHub Pages.
 
-The user subsequently authorised a second noindexed comparison deployment containing the complete local implementation from `documents/todo/agent_readiness_and_page_speed_plan.md`. This refreshed preview is an application-and-host comparison against the unchanged GitHub Pages baseline, not the host-only parity comparison completed in Steps 3 through 5. It must carry explicit dirty-source provenance, pass the readiness plan's 23-test and browser contracts, and remain ineligible for production cutover until the readiness changes are committed and a matching deployable revision is verified.
+The user subsequently authorised a second noindexed comparison deployment containing the complete local implementation from `documents/todo/agent_readiness_and_page_speed_plan.md`. That intermediate preview was an application-and-host comparison against the older GitHub Pages build. The readiness and performance work is now committed as `854b85f576910a5a5c3576bdf9fef62a6da4df81`, deployed successfully to GitHub Pages, and published as a clean Cloudflare preview from the same commit. The final Step 5 comparison therefore uses matched source and rendered behaviour; only provider-controlled delivery headers and independently generated Next.js build identifiers differ.
 
 The migration is complete when:
 
 - The app remains Next.js `16.1.5` with `output: 'export'`; no Astro conversion occurs.
 - The exact same commit and static output are verified on GitHub Pages and a Cloudflare preview before cutover.
 - A comparison report names both URLs and records reproducible median Lighthouse and network timings.
+- The remaining representative unused-JavaScript opportunity falls from `103-170 KiB` to the route budgets in REQ-19 on both hosts without delaying code merely to hide it from Lighthouse.
+- The About image-delivery opportunity, shared JavaScript, render-blocking diagnosis, and Cloudflare delivery settings all pass their regression gates before the cutover decision is reopened.
 - No custom domain, DNS record, or production Pages deployment changes before the user approves cutover.
 - `https://bulma.com.au/` is served by Cloudflare Pages with the existing route, trailing-slash, canonical, sitemap, robots, 404, form, analytics, and dark-only contracts intact.
 - `https://www.bulma.com.au/<path>?<query>` returns one permanent redirect to the matching apex path and query.
@@ -42,7 +44,7 @@ The migration is complete when:
 - Static configuration: `demo/next.config.ts` sets `output: 'export'`, empty `basePath`, unoptimised images, and `trailingSlash: true`.
 - Build command: `npm run build`, which creates `demo/out` and then regenerates `demo/public/sitemap.xml`.
 - `demo/src/scripts/generate-sitemap.js` stamps build time into sitemap entries. Two independent builds of the same commit are therefore not guaranteed to produce byte-identical output. The comparison must reuse the exact `github-pages` artifact from one successful workflow run rather than rebuilding once per host.
-- Current inspected export: 178 files, 6.7 MB total, largest file 488,789 bytes. This is below Wrangler Direct Upload's 20,000-file and 25 MiB-per-file limits.
+- Current inspected export: 183 files, 6,770,784 uncompressed bytes, largest file 488,911 bytes. Cloudflare parses `_headers` rather than serving it, so the hosted export exposes 182 files. This remains below Wrangler Direct Upload's 20,000-file and 25 MiB-per-file limits.
 - Runtime services remain browser-side: the contact form posts to Formspree form `xojvwybl`, and Mixpanel uses the existing public project token. There is no application server, database, API route, middleware, Pages Function, or Worker.
 - Canonical and discovery output use `https://bulma.com.au`; `demo/public/robots.txt` points to `https://bulma.com.au/sitemap.xml`.
 - `NEXT_PUBLIC_SITE_URL` is not set in the current local environment; production code falls back to `https://bulma.com.au`.
@@ -81,15 +83,44 @@ Use these identifiers as validation targets, but query them again before every w
 | Nameservers | `vita.ns.cloudflare.com`, `will.ns.cloudflare.com` |
 | Cloudflare credential | macOS Keychain service `cloudflare-global-api-key`, account `jake.sacino@gmail.com` |
 | Cloudflare member role | Super Administrator - All Privileges |
-| Existing Pages projects in target account | None |
+| Pages project | `bulma-root`, project ID `d427c772-9189-45c4-ab72-e83683e233ea` |
+| Pages project state | Direct Upload, `source: null`, production branch `main`, `uses_functions: false` |
+| Pages domains | `bulma-root.pages.dev` only; no custom domain |
+| Current clean comparison deployment | `62181028-c315-4134-b11b-7c61971bc9f6`, branch `cloudflare-comparison`, commit `854b85f576910a5a5c3576bdf9fef62a6da4df81` |
+| Pages production deployment | None |
+| Existing account-owned deploy token | `bulma-root-cloudflare-pages-deploy`, token ID `9dd6d8eb748379192f4d2d9b7fb4fc3b` |
 | Existing account redirect lists | None |
 | Existing account `http_request_redirect` ruleset | None |
-| Existing zone Page Rules | None |
-| Existing zone `http_request_dynamic_redirect` ruleset | None |
+| Existing active zone Page Rules | None |
+| Existing custom zone rulesets | None; only Cloudflare-managed normalisation, WAF, and DDoS rulesets exist |
+| Existing proxied DNS records | None |
 
-The preferred Pages project name is `bulma-root`. Neither `bulma-root.pages.dev` nor the deterministic fallback `bulma-com-au.pages.dev` currently returns a DNS answer. The Pages API response remains the authority because project names can be claimed between planning and execution.
+The selected Pages project name is `bulma-root`, and the current noindexed comparison alias is `https://cloudflare-comparison.bulma-root.pages.dev/`. Query the project API before every deployment and use the returned `name`, `subdomain`, and deployment identifiers instead of assuming this recorded state is still current.
 
-The target account exposes the `Pages Write` permission group with ID `8d28297797f24fb8a0c332fe0866ec89` and the `Account API Tokens Write` permission group with ID `5bc3f8b21c554832afc660159ab75fa4`. It currently has no account-owned API tokens. The executor must query permission groups again by name instead of assuming those IDs remain unchanged.
+The target account exposes the `Pages Write` permission group with ID `8d28297797f24fb8a0c332fe0866ec89` and the `Account API Tokens Write` permission group with ID `5bc3f8b21c554832afc660159ab75fa4`. The existing deploy token has only `Pages Write` on the target account. The executor must query permission groups and the token policy again by name instead of assuming the recorded IDs or scope remain unchanged.
+
+#### Current Cloudflare Delivery Settings
+
+These zone settings do not affect the current DNS-only GitHub Pages records or the `pages.dev` preview. They become relevant when `bulma.com.au` is proxied to Pages:
+
+| Setting | Current value | Planned treatment |
+| --- | --- | --- |
+| Plan | Free Website | Preserve |
+| Brotli | On | Preserve; verify `br` on compressible custom-domain responses |
+| HTTP/2 | On, not editable | Preserve |
+| HTTP/3 | On | Preserve; verify browser negotiation after custom-domain activation |
+| TLS 1.3 | On | Preserve |
+| IPv6 | On | Preserve; re-run IPv4 and IPv6 checks |
+| Cache level | Aggressive | Preserve; Pages already supplies its own static-asset and Tiered Cache behaviour |
+| Browser Cache TTL | 14,400 seconds | Before the apex becomes proxied, change the zone value to `0` (`Respect Existing Headers`) so Pages HTML keeps revalidation and hashed assets keep their longer `_headers` value; restore 14,400 on rollback |
+| Development Mode | Off | Preserve |
+| Early Hints zone toggle | Off | Preserve; Pages enables Early Hints automatically on `pages.dev` and custom domains |
+| Speed Brain | Off | Preserve during migration; Next.js already prefetches internal links, and a zone-wide speculative-fetch change lacks a no-regression result |
+| 0-RTT | Off | Preserve; it is zone-wide and is not required to solve the measured cold-render gap |
+| Rocket Loader | Off | Preserve; script rewriting would risk Next.js hydration, analytics ordering, and animation timing |
+| Polish and Mirage | Off, not editable on this plan | Preserve; use repository-owned responsive image variants instead |
+
+The zone currently has no proxied DNS records, custom Cache Rules, compression rules, configuration rules, redirect rules, or active Page Rules. Record the complete live settings and rulesets again before changing Browser Cache TTL.
 
 ### 2.4 Current DNS Baseline
 
@@ -115,7 +146,7 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 - `demo/next.config.ts` contains GitHub Pages-specific comments, while its static-export settings remain valid for Cloudflare Pages.
 - `README.md`, `github-pages-setup.md`, and the environment/folder descriptions in `AGENTS.md` identify GitHub Pages as production.
 - `demo/test/runtime-and-browser-rules.test.mjs` reads `github-pages-setup.md` and asserts the Node pin in the current workflow.
-- `documents/todo/agent_readiness_and_page_speed_plan.md` and its completed local implementation are now explicitly included in the refreshed Cloudflare preview requested after the original host-only comparison. The migration must not stage, commit, push, or deploy these changes to the production branch without separate authorisation.
+- `documents/todo/agent_readiness_and_page_speed_plan.md` is implemented in commit `854b85f576910a5a5c3576bdf9fef62a6da4df81`, which both hosts now serve. The remaining speed work in this plan must start from that committed state and must not include unrelated working-tree changes.
 
 ### 2.6 Core Migration Risks
 
@@ -127,6 +158,35 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 - Pages domain association and conflicting GitHub A records can change DNS. The association must be created first, then only the snapshotted A records may be replaced if Cloudflare has not created the required proxied CNAME records.
 - Bulk Redirects are account-level resources. Any existing lists or account rules that appear before execution must be preserved byte-for-byte when adding Bulma's canonical-host redirects.
 - Formspree submissions communicate externally. Hosted verification must intercept the request and inspect it without sending a real enquiry.
+
+### 2.7 Remaining Speed Baseline and Investigation
+
+The current commit-matched baseline contains 30 Lighthouse `13.4.1` mobile reports, three runs per host and route. The values below are route-and-host medians from the saved JSON, not single-run estimates:
+
+| Route | CF unused JS | GH unused JS | CF document | GH document | CF render-blocking FCP estimate | GH render-blocking FCP estimate | CF main thread | GH main thread | Image waste |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `/` | 159 KiB | 170 KiB | 443 ms | 131 ms | 750 ms | 250 ms | 2,100 ms | 2,140 ms | 0 KiB |
+| `/about/` | 111 KiB | 120 KiB | 407 ms | 66 ms | 850 ms | 100 ms | 1,271 ms | 1,318 ms | 46 KiB |
+| `/pricing/` | 132 KiB | 142 KiB | 408 ms | 79 ms | 0 ms | 250 ms | 2,034 ms | 2,381 ms | 0 KiB |
+| `/contact/` | 111 KiB | 121 KiB | 417 ms | 54 ms | 850 ms | 250 ms | 1,085 ms | 974 ms | 0 KiB |
+| `/privacy-policy/` | 103 KiB | 124 KiB | 416 ms | 61 ms | 850 ms | 250 ms | 1,153 ms | 820 ms | 0 KiB |
+
+The saved reports and a current Turbopack production analysis identify these causes and boundaries:
+
+| Finding | Evidence | Planning decision |
+| --- | --- | --- |
+| Mixpanel is the dominant shared removable payload | `mixpanel-browser/dist/mixpanel.module.js` contributes about 95,277 compressed bytes to every route; Lighthouse attributes about 66-76 KiB of unused bytes to its current chunk | Import Mixpanel's official async-recorder entry point so the core remains on every session and the recorder loads only for the existing 20% sample. Keep the current load/idle schedule and every analytics option |
+| The official async-recorder entry point is materially smaller | A disposable esbuild spike measured the installed `2.73.0` default entry at 100,243 gzip bytes and `loader-module-with-async-recorder` at 31,513 gzip bytes | Use the official async entry point first. Reject any result whose built core chunk exceeds 40 KiB gzip or changes event/replay behaviour |
+| Three.js is the homepage-specific floor | Lighthouse attributes about 52 KiB of unused bytes to the deferred Dot Pool chunk | Preserve the animation and current package entry. A disposable named-import build measured 119,938 gzip bytes; deep `three/src` imports measured 123,691 gzip bytes, so deep imports are a measured regression rather than a remedy |
+| Tailwind Plus is removable from active client routes | `@tailwindplus/elements/dist/index.js` contributes about 22,825 compressed bytes on Home and Pricing | Replace only the active FAQ and mobile plan-tab controllers with local equivalents that preserve the exact animation, hash, ARIA, keyboard, focus, and rapid-reversal contracts. Leave inactive reference components alone unless they enter a shipped route |
+| Shared button code contains a dead client boundary | `preloadOnHover` and `preloadAnimationComponents` have no caller, while `button.tsx` is marked client-only to support them | Remove the unused prop, callbacks, imports, helper module, and duplicate homepage export; keep the rendered classes and interaction states byte-for-byte equivalent |
+| Framework/router code is not a local optimisation target | The shared React/Next chunk contributes about 70 KiB transfer and 23-29 KiB representative unused code | Do not fork or replace framework internals. Reassess only after the owned modules above are removed |
+
+The two render-blocking stylesheets are 162,721 and 3,422 uncompressed bytes and transfer at about 25.5 KiB and 1.3 KiB. Lighthouse reports zero removable CSS bytes. Inlining them would duplicate shared CSS into every document and remove cross-page cache reuse. Preserve the current stylesheet model unless a disposable critical-CSS experiment passes the Step 5F non-inferiority gate on both hosts.
+
+The About mobile audit identifies the 1,400x1,000 testimonial portrait and 720x378 hero photo. They transfer 32,020 and 23,032 bytes while rendering at 348x249 and 364x191 CSS pixels in the mobile profile. Disposable 640-pixel-wide quality-80 WebP candidates measured 10,240 and 20,224 bytes. Use those only after source-image and screenshot comparison proves no visible regression; preserve the existing larger candidates for wider or higher-density displays.
+
+The local IPv4 and IPv6 checks returned HTTP 200 on both hosts and did not reproduce the approximately 400 ms Cloudflare document time observed by Lighthouse. The remaining regional evidence gap is browser rendering, not Melbourne/Sydney transport: Globalping already supplies fixed-probe HTTP measurements in both cities, while Cloudflare's Speed API currently exposes 50 page tests and a Sydney browser region (`australia-southeast1`) but no Melbourne browser region. Step 5G therefore uses the Speed API for Sydney render metrics and keeps Melbourne explicitly transport-only.
 
 ---
 
@@ -149,9 +209,18 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 - **REQ-13 (MUST):** After successful cutover, redirect `www.bulma.com.au` and all project `pages.dev` aliases to `https://bulma.com.au` while preserving path and query string.
 - **REQ-14 (MUST):** Make `.github/workflows/deploy.yml` deploy only to Cloudflare Pages from `main`, then disable the GitHub Pages site and remove GitHub-only CNAME files and instructions.
 - **REQ-15 (MUST):** Update project documentation and regression assertions so no active file identifies GitHub Pages as the production host.
-- **REQ-16 (SHOULD):** Use Cloudflare Pages defaults for edge caching, ETags, compression, Tiered Cache, `nosniff`, and referrer policy during the matched-artifact host comparison. After that comparison is complete, an explicitly authorised performance-remediation preview may use `demo/public/_headers` only for a one-year immutable browser TTL on content-hashed `/_next/static/*` assets. Do not add custom Cache Rules, CSP, HSTS, or unrelated headers before production cutover.
+- **REQ-16 (SHOULD):** Use Cloudflare Pages defaults for edge caching, ETags, compression, Tiered Cache, `nosniff`, and referrer policy during the matched-artifact host comparison. After that comparison is complete, an explicitly authorised performance-remediation preview may use `demo/public/_headers` only for a one-year immutable browser TTL on content-hashed `/_next/static/*` assets. Do not add custom Cache Rules, CSP, HSTS, `X-Robots-Tag`, `Vary`, same-URL content negotiation, middleware, Workers, or unrelated headers.
 - **REQ-17 (MUST):** For the user-authorised readiness refresh, build the complete current `demo/` source in an isolated directory, identify it as `HEAD` plus dirty working-tree changes, deploy it only to the existing `cloudflare-comparison` preview branch, and preserve the original host-only benchmark separately.
-- **REQ-18 (MUST):** Re-run lint, production build, all 23 readiness tests, static-output assertions, five-route browser checks at `1440x900` and `390x900`, interaction checks, deployed response checks, Lighthouse, curl timings, and deployed-file parity against the refreshed local export.
+- **REQ-18 (MUST):** Re-run lint, production build, every current test, static-output assertions, five-route browser checks at `1440x900` and `390x900`, interaction checks, deployed response checks, Lighthouse, curl timings, and deployed-file parity against the selected export.
+- **REQ-19 (MUST):** Reduce the representative unused-JavaScript median on both hosts by at least 40 KiB on every route and meet these route ceilings: Home at or below 105 KiB, Pricing at or below 80 KiB, and About, Contact, and Privacy Policy at or below 70 KiB. Do not extend an idle timeout, delay a request beyond the measurement window, block Lighthouse, or remove a user-facing feature to meet the budgets.
+- **REQ-20 (MUST):** Keep Mixpanel `2.73.0`, its token, cookie persistence, cross-subdomain identity, manual Page View events, custom event payloads, referral first-touch properties, global readiness/disabled events, 20% session replay sampling, heatmaps, masking, font collection, and recorder timing contracts intact. The recorder must load for sampled sessions and remain absent from unsampled sessions.
+- **REQ-21 (MUST):** Preserve every current animation's appearance, timing, trigger, focus/hover/active state, rapid-reversal behaviour, cleanup, and WebGL fallback. Do not remove or rewrite the Dot Pool, and do not add reduced-motion or system-colour branches.
+- **REQ-22 (MUST):** Reduce the About route's mobile image-delivery estimate from 46 KiB to at most 20 KiB while preserving existing aspect ratios, alt text, eager/high-priority hero loading, lazy testimonial loading, desktop sharpness, and visually equivalent output at both required viewports.
+- **REQ-23 (MUST):** Keep the current shared stylesheets unless a disposable critical-CSS prototype reduces median FCP on both hosts without increasing any route's compressed document-plus-CSS bytes, repeat-navigation transfer, CLS, unstyled-frame duration, or dark-theme failure count. A failed prototype is discarded and recorded, not shipped.
+- **REQ-24 (MUST):** Snapshot every current Cloudflare delivery setting, proxied hostname, Cache Rule, compression rule, configuration rule, and rollback payload before a setting write. Preserve Brotli, HTTP/2, HTTP/3, TLS 1.3, IPv6, Pages Early Hints, Development Mode off, Rocket Loader off, Speed Brain off, and 0-RTT off unless this plan names a tested change.
+- **REQ-25 (MUST):** Immediately before the apex becomes proxied, change zone setting `browser_cache_ttl` from `14400` to `0` (`Respect Existing Headers`) after recording a rollback payload. Do not change edge caching. Restore `14400` if cutover rolls back. Pages HTML must then return `public, max-age=0, must-revalidate`, while content-hashed `/_next/static/*` assets retain their one-year immutable response.
+- **REQ-26 (MUST):** Compare one committed, byte-matched GitHub Pages artifact on both hosts after remediation. Use all five routes, fixed tools, alternating host order, fresh profiles, the current Melbourne/Sydney Globalping probe set, and the Sydney Cloudflare Speed API region. Label Melbourne render performance unresolved because no authorised browser runner exists there.
+- **REQ-27 (MUST):** Treat performance as non-inferior only when each host and route stays within measurement noise of its own pre-change baseline: no median FCP, LCP, Speed Index, or TBT regression larger than 100 ms or 5%, whichever is greater; no performance-score loss larger than two points; no CLS increase larger than 0.005; and no deterministic compressed route-JavaScript increase. Any failure blocks release until fixed or reverted.
 
 ### 3.2 Defaults and Fallbacks
 
@@ -168,6 +237,12 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 - **Cutover rollback:** Before GitHub Pages is disabled, restore the exact recorded A records, disable the Bulma redirect rule, verify GitHub Pages serves the apex again, and only then detach the Pages custom domains.
 - **Credential fallback:** There is no manual-dashboard fallback. If the existing Global API Key cannot create and verify the least-privilege account token, stop before repository, Pages-project, or DNS writes and report the missing machine-usable permission.
 - **Compatibility:** Keep `demo/public/CNAME` and root `CNAME` through the parallel-host phase; Cloudflare ignores them. Remove them only after Cloudflare custom-domain and continuous-deployment checks pass.
+- **Analytics implementation:** Use `mixpanel-browser/src/loaders/loader-module-with-async-recorder` with the current provider schedule and configuration. If the built core chunk exceeds 40 KiB gzip or any analytics contract test fails, do not ship the change and do not substitute a reduced-feature analytics client.
+- **Three.js implementation:** Keep the current named imports from `three`. Do not use measured-larger deep `three/src` imports and do not rewrite the Dot Pool renderer.
+- **Tailwind Plus implementation:** Remove the package only from shipped FAQ and plan-tab client graphs. Preserve inactive reference components unless they enter a routed build.
+- **CSS implementation:** Preserve external shared stylesheets by default. Treat critical CSS as a disposable experiment governed by REQ-23, not a required source change.
+- **Cloudflare setting implementation:** Keep every current performance toggle unchanged except `browser_cache_ttl`, which changes from `14400` to `0` at cutover under REQ-25. Reassess Speed Brain and 0-RTT only as a later, separately baselined production experiment because both are zone-wide and neither solves the current first-load evidence gap.
+- **Regional browser evidence:** Use the current free Cloudflare Speed API quota for five Sydney tests per host and route. Each test returns desktop and mobile reports, consuming all 50 available tests without creating a recurring schedule. Keep Melbourne measurements transport-only through the fixed Globalping probes.
 
 ### 3.3 Verification Checklist
 
@@ -176,11 +251,17 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 - [ ] GitHub Pages and Cloudflare preview identify the same commit SHA.
 - [ ] Comparison alias and deployment-specific preview URL return `X-Robots-Tag: noindex`.
 - [ ] Five public routes and representative assets have matching response-body hashes.
+- [ ] Every route meets the REQ-19 unused-JavaScript ceiling on both hosts, and its deterministic compressed JavaScript is smaller than the commit-matched baseline.
+- [ ] Mixpanel event, identity, referral, heatmap, and sampled/unsampled replay checks pass without changing the current load/idle schedule.
+- [ ] The About image-delivery estimate is at most 20 KiB, and both responsive viewports pass visual comparison.
+- [ ] Every host-and-route metric passes the REQ-27 non-inferiority gate against its own baseline.
 - [ ] Both direct URLs and the measured comparison are delivered before approval is requested.
 
 **Production host:**
 
 - [ ] Apex returns HTTP 200 from Cloudflare with no redirect.
+- [ ] Apex HTML returns `Cache-Control: public, max-age=0, must-revalidate`; hashed `/_next/static/*` responses return the one-year immutable policy.
+- [ ] Brotli, HTTP/3, IPv6, Pages Early Hints, and `browser_cache_ttl: 0` match the recorded intended state; Rocket Loader, Speed Brain, and 0-RTT remain off.
 - [ ] `www` returns one HTTP 301 to the same apex path and query.
 - [ ] Unknown paths return the built custom page with HTTP 404.
 - [ ] Canonicals, sitemap, robots, metadata, and structured data still name `https://bulma.com.au`.
@@ -203,16 +284,21 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 - The site must remain Next.js; the Build Astro Websites skill is used only for its Cloudflare Pages-specific static-host guidance.
 - The user wants GitHub Pages and a Cloudflare subdomain available side by side before connecting the production domain so speed can be compared.
 - All technical work must be agentic and use existing Cloudflare connections.
+- The user now wants every remaining speed-report gap planned and remediated across all five routes before the hosting recommendation is repeated.
+- The user explicitly requires the `103-170 KiB` representative unused-JavaScript finding and current Cloudflare settings to be included, with no regression on either host.
 - The native question tool returned no selections. This plan applies the recommended defaults: Direct Upload CI, a user approval gate after the comparison, and a canonical redirect for `pages.dev` after cutover.
 
 ### 4.2 Architecture Decisions
 
 - Direct Upload was selected because the existing Global API Key, exact account, zone, and Super Administrator membership are verified. The Cloudflare account has no Pages projects, and native Cloudflare GitHub App access to `Culpable/bulma-root` cannot be verified through the available APIs without attempting an external setup.
 - Direct Upload keeps the existing deterministic GitHub Actions build model. GitHub builds `demo/out`; Wrangler uploads only those prebuilt assets. Cloudflare performs no framework build and needs no project root, build command, build image, environment variables, adapter, or runtime configuration.
-- The preview uses a Wrangler non-production branch alias so Cloudflare supplies its default noindex header without changing the static files. No temporary `_headers` file is needed.
-- The comparison uses the unmodified host defaults. Adding cache or security policies before comparison would mix a hosting migration with an application-policy change and prevent an isolated result.
+- The preview uses a Wrangler non-production branch alias so Cloudflare supplies its platform noindex header. The committed `_headers` file changes only the browser TTL of content-hashed `/_next/static/*` assets and does not provide the noindex policy.
+- The original host comparison used unmodified host defaults. The completed remediation comparison then added the approved immutable hashed-asset policy. Remaining code work must be tested on both hosts from one GitHub Pages artifact so application and delivery effects stay attributable.
 - The canonical origin does not change, so no metadata, sitemap, robots, JSON-LD, analytics URL, or application-link rewrite is required.
 - GitHub Pages remains active until the custom domain passes live checks. This makes DNS rollback a restoration of four recorded A records rather than a reconstruction of a deleted host.
+- The current CSS is small after compression and Lighthouse reports no removable CSS. The plan attacks owned JavaScript and responsive image waste first, then ships a critical-CSS change only if a disposable two-host experiment clears REQ-23.
+- Cloudflare's four-hour zone Browser Cache TTL would override Pages' lower HTML browser TTL after the apex becomes proxied. Changing that setting to `0` at cutover makes Cloudflare respect Pages and `_headers` response values without adding a Cache Rule or an edge-cache override. The rollback restores `14400`.
+- Pages enables Early Hints automatically. The zone toggle remains off, and the static-host contract does not permit generated `Link` headers, middleware, or a Worker.
 
 ### 4.3 Current Authoritative Provider Guidance
 
@@ -222,6 +308,12 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 - [Cloudflare Pages preview deployments](https://developers.cloudflare.com/pages/configuration/preview-deployments/) defines the default `X-Robots-Tag: noindex` response.
 - [Cloudflare Pages custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/) requires Pages domain association before relying on a CNAME and requires the apex zone to be in the same account.
 - [Cloudflare Pages serving behaviour](https://developers.cloudflare.com/pages/configuration/serving-pages/) defines route matching, custom 404 behaviour, caching defaults, ETags, compression, default headers, and Tiered Cache.
+- [Cloudflare Pages custom headers](https://developers.cloudflare.com/pages/configuration/headers/) defines the one-year immutable policy for fingerprinted assets.
+- [Cloudflare Pages Early Hints](https://developers.cloudflare.com/pages/configuration/early-hints/) confirms that Early Hints is automatic on `pages.dev` and custom domains.
+- [Cloudflare Browser Cache TTL](https://developers.cloudflare.com/cache/how-to/edge-browser-cache-ttl/) confirms that a numeric zone TTL overrides a lower response `max-age`, while `Respect Existing Headers` leaves the response policy intact.
+- [Cloudflare Speed API](https://developers.cloudflare.com/api/resources/speed/subresources/pages/subresources/tests/methods/create/) provides non-recurring Lighthouse tests in the Sydney `australia-southeast1` region.
+- [Cloudflare Speed Brain](https://developers.cloudflare.com/speed/optimization/content/speed-brain/) and [0-RTT](https://developers.cloudflare.com/speed/optimization/protocol/0-rtt-connection-resumption/) define the zone-wide candidates that remain off under the no-regression requirement.
+- [Mixpanel's official browser SDK](https://github.com/mixpanel/mixpanel-js) documents the async-recorder loader that preserves session replay while excluding the recorder from unsampled sessions.
 - [Cloudflare Pages API](https://developers.cloudflare.com/api/resources/pages/) provides agentic project, deployment, custom-domain, and rollback operations.
 - [Cloudflare Bulk Redirects API](https://developers.cloudflare.com/rules/url-forwarding/bulk-redirects/create-api/) provides the account-level canonical redirects for `www` and `pages.dev`.
 
@@ -392,13 +484,127 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 - All 182 served export files match the local build, all 240 Globalping samples return HTTP 200, and all 30 Lighthouse reports complete.
 - The Pages project remains preview-only. DNS, custom domains, GitHub Pages, Git branches, commits, pushes, and production settings remain unchanged.
 
+### ~~Step 5C: Commit and Recheck the Remediated Build on Both Hosts~~ ✅ **COMPLETED**
+
+**Objective:** Remove the application-version mismatch and make the hosting recommendation from the same committed source.
+
+#### 5C.1 High-Level Approach
+
+- Commit and push the complete readiness and first performance-remediation scope as one revision.
+- Wait for GitHub Pages to deploy that revision, then build the same revision and publish a clean Cloudflare comparison preview.
+- Verify route behaviour, static-output parity, Melbourne/Sydney transport, and three mobile Lighthouse runs per host and route.
+- Record the provider-controlled build-ID differences separately from rendered behaviour and delivery timing.
+
+**Success Criteria:**
+
+- Both hosts identify commit `854b85f576910a5a5c3576bdf9fef62a6da4df81`, and GitHub Actions run `33314166806` plus Cloudflare deployment `62181028-c315-4134-b11b-7c61971bc9f6` report success.
+- All 182 Cloudflare-served files match the committed local export; all non-build-generated GitHub files match, and the independently generated Next.js IDs are the only body differences.
+- All five routes pass the two-viewport hosted behaviour matrix on both hosts.
+- The 240 Globalping samples and 30 Lighthouse files are complete and recorded in `documents/guides/_hosting.md`.
+- The result recommends keeping GitHub Pages until the remaining cold-render work below is implemented and remeasured.
+
+### ~~Step 5D: Add Durable Performance Budgets and Regression Fixtures~~ ✅ **COMPLETED**
+
+**Objective:** Turn the current reports into deterministic release gates before changing JavaScript or images.
+
+#### 5D.1 High-Level Approach
+
+- Add `demo/performance-budgets.json` as the machine-readable source of truth for REQ-19, the 40 KiB per-route reduction, the 40 KiB gzip Mixpanel-core ceiling, the About image ceiling, and deterministic compressed route-JavaScript non-regression.
+- Add `demo/src/scripts/report-performance-budgets.mjs` to map each emitted route to its initial and deferred JavaScript, gzip each owned chunk, identify Mixpanel, Three.js, and Tailwind Plus contributions without relying on content-hash filenames, and summarise Lighthouse JSON supplied through an explicit input directory.
+- Extend `demo/test/performance-regressions.test.mjs` to run after `npm run build` and assert the budget file schema, emitted chunk identities, approved `_headers` scope, and absence of timing tricks that defer Mixpanel beyond the existing 1,200 ms fallback and 3,000 ms idle timeout.
+- Add `demo/test/analytics-runtime.test.mjs` with a browser-independent fake `window`, document, idle scheduler, Mixpanel instance, and recorder loader. Cover production and development paths, one initial Page View, client route changes, custom events, identity, first-touch referral properties, readiness/disabled events, and sampled/unsampled recorder outcomes.
+- Copy the compact pre-change route medians, exact tool versions, report locations, and bundle-analysis summary into `documents/guides/_hosting.md`. Do not commit full transient Lighthouse traces or `.next/diagnostics` output.
+
+**Success Criteria:**
+
+- `demo/performance-budgets.json` parses without comments or duplicate keys and contains all five route keys plus explicit units.
+- `report-performance-budgets.mjs` reproduces the current `103-170 KiB` unused-JavaScript range from the saved 30-report baseline and exits non-zero for a synthetic over-budget fixture.
+- The performance regression suite fails when the default Mixpanel entry, a shipped Tailwind Plus client import, a delayed analytics timeout, or an over-budget owned chunk is injected into a disposable fixture.
+- The analytics suite fails if any current event name, property, identity operation, replay percentage, heatmap option, masking selector, or readiness event is removed or reordered beyond the existing idle-load contract.
+- Lint, production build, and the complete Node test suite exit 0 before implementation proceeds.
+
+### ~~Step 5E: Reduce Owned JavaScript Without Behaviour Loss~~ ✅ **COMPLETED**
+
+**Objective:** Remove the common analytics recorder payload, active Tailwind Plus client payload, and dead button hydration boundary while preserving all site and analytics behaviour.
+
+#### 5E.1 High-Level Approach
+
+- In `demo/src/lib/mixpanelClient.js`, replace the default `mixpanel-browser` import with `mixpanel-browser/src/loaders/loader-module-with-async-recorder`. Keep Mixpanel `2.73.0`, the token, every current `init` option, global exposure, and readiness events unchanged.
+- Keep `demo/src/components/MixpanelProvider.jsx` on the current load-then-idle schedule. Do not increase either timeout. Ensure the SDK initialises once, Page View events queue safely before readiness, and client route changes emit once per pathname.
+- Update `demo/src/lib/analytics.js` and `demo/public/scripts/referral-tracking.js` only as required to queue calls until readiness without losing the current event names, properties, first-touch profile fields, or super properties. Never send a real analytics request during automated tests.
+- Create one focused local disclosure controller for `demo/src/components/sections/faqs-accordion.tsx` and `demo/src/components/sections/faqs-two-column-accordion.tsx`. Preserve the current grid-track animation, contextual icon crossfade, `#lenders` direct-load and same-page opening, rapid toggle reversal, trusted answer markup, focus, IDs, and cleanup.
+- Replace `ElTabGroup`, `ElTabList`, and `ElTabPanels` in `demo/src/components/sections/plan-comparison-table.tsx` with the existing controlled plan state plus complete WAI-ARIA tab semantics. Preserve click and focus selection, add ArrowLeft, ArrowRight, Home, and End keyboard movement, retain the live `Viewing <plan>` text, and render only the selected mobile panel while leaving the desktop table unchanged.
+- Remove `preloadOnHover`, its `useCallback`, its helper import, `demo/src/lib/preload-animation-components.ts`, and the duplicate unused homepage preload export. Remove the `use client` boundary from `demo/src/components/elements/button.tsx` if its remaining imports and props stay server-compatible; otherwise split only the interactive button consumer into a focused client file.
+- Keep the installed Tailwind Plus dependency for inactive source/reference components, but verify it no longer enters any routed client graph. Keep the current `three` imports and Dot Pool implementation unchanged.
+- Read `documents/guides/_animations.md` before implementation and update its FAQ/tab ownership notes if control logic moves. Do not change documented timing or visual behaviour.
+
+**Success Criteria:**
+
+- The built Mixpanel core contribution is at most 40 KiB gzip, compared with the measured 100,243-byte default entry, and the full recorder is absent from an unsampled session.
+- A forced sampled session loads the official recorder successfully and retains `record_sessions_percent: 20`, heatmap collection, font collection, masking, minimum duration, and idle timeout.
+- No emitted route chunk contains the active `@tailwindplus/elements` client runtime; Home and Pricing each shed its approximately 22,825-byte gzip contribution.
+- `rg` finds no `preloadOnHover`, no `preloadAnimationComponents`, and no dead animation preloader module; every button renders the same class string and passes hover, focus, active, internal-link, external-link, and form-submit checks.
+- Direct `/#lenders`, same-page `#lenders`, every pricing FAQ, and the mobile plan tabs pass mouse, touch, keyboard, focus, ARIA, rapid-reversal, and route-navigation checks at `1440x900` and `390x900`.
+- The permanent dark class, exact pricing copy, equal-height cards, contact field contract, mobile menu, Dot Pool timing/pointer/fallback, and all other animation contracts remain unchanged.
+- Lint, production build, every Node test, and the deterministic performance budget script exit 0.
+
+### ~~Step 5F: Reduce About Image Waste and Resolve the CSS Finding~~ ✅ **COMPLETED**
+
+**Objective:** Remove the measured mobile image excess and close the render-blocking CSS finding without trading first-load speed for cache or visual regressions.
+
+#### 5F.1 High-Level Approach
+
+- Generate a 640-pixel-wide About hero candidate from the highest-resolution team-photo source and a 640-pixel-wide testimonial candidate from the current portrait source with `cwebp -m 6 -q 80`. Keep the existing large source files and aspect ratios as desktop/high-density fallbacks.
+- Add width-descriptor `srcSet` and `sizes` selection in `demo/src/app/about/page.tsx` so the `390x900`, DPR 1.75 profile selects the 640-pixel candidates while desktop and higher-density displays retain an adequate larger source. Preserve hero `loading="eager"`, `fetchPriority="high"`, and `decoding="async"`; preserve lazy loading for the below-fold testimonial.
+- Add source assertions for dimensions, aspect ratios, file-size ceilings, alt text, load priority, and responsive markup. Record the exact encoder command and source digest in `documents/guides/_hosting.md` so the assets are reproducible.
+- Capture matching About screenshots at both required viewports before and after the asset selection. Compare crop, colour, facial detail, text integration, layout, LCP element, and selected `currentSrc`; reject the candidates if a visible difference appears at normal and 200% inspection.
+- Re-run CSS coverage on all five routes at both viewports after Step 5E, including menu, FAQ, pricing, form, hover, focus, and yearly states. Preserve the two external stylesheets when coverage and Lighthouse still report no removable bytes.
+- If the post-JavaScript baseline still reports more than 200 ms median render-blocking FCP savings on either host, create a disposable critical-CSS prototype outside the working tree. Test it against REQ-23. Move the prototype to Trash if any gate fails; only then record that CSS is closed with no shipped source change.
+
+**Success Criteria:**
+
+- The 640-pixel hero candidate is at most 21 KiB and the 640-pixel testimonial candidate is at most 11 KiB; both retain their current aspect ratios.
+- At `390x900` with DPR 1.75, About selects the 640-pixel candidates, keeps the hero as the intended eager/high-priority image, and reports at most 20 KiB total Lighthouse image-delivery waste.
+- At `1440x900`, the browser selects a source with enough physical pixels for its rendered size, and the before/after screenshots show no visible crop, colour, sharpness, or layout regression.
+- All five routes retain zero horizontal overflow, zero unexpected console/page errors, zero failed first-party requests, dark-only rendering, and CLS within REQ-27.
+- No critical-CSS source change ships unless compressed document-plus-CSS bytes, cold FCP, repeat-navigation transfer, unstyled-frame duration, and CLS all pass REQ-23 on GitHub and Cloudflare.
+- Lint, production build, every Node test, and targeted image/performance assertions exit 0.
+
+### Step 5G: Publish One Matched Artifact and Re-run the Full Speed Matrix 🔄 **IN PROGRESS**
+
+**Objective:** Prove the completed speed work on both hosts, across every route, before changing the migration recommendation.
+
+#### 5G.1 High-Level Approach
+
+- Complete local lint, build, tests, performance-budget reporting, and two-viewport browser verification first. Stop if any REQ-19 through REQ-27 gate fails.
+- Begin the hosted proof only when the execution request explicitly authorises GAC and push. Commit only task-owned files under the repository's mixed-file rules, push `main`, wait for the GitHub Pages workflow, and verify the deployed SHA.
+- Download the exact unexpired `github-pages` artifact from that successful workflow and deploy its extracted contents to the existing Cloudflare `cloudflare-comparison` branch. Do not rebuild for Cloudflare. Record the artifact digest, deployment ID, immutable URL, branch alias, clean commit flag, and `uses_functions: false`.
+- Re-run decoded-body parity for every served file and route. Allow only provider headers; any body, status, content type, canonical, discovery, or interaction mismatch blocks benchmarking.
+- Run ten alternating fresh-profile Lighthouse mobile reports and five alternating desktop reports per host and route from the same machine. Add three DevTools-throttled mobile runs per host and route to distinguish observed delivery from Lighthouse simulation.
+- Re-query Cloudflare Speed API availability before hosted testing. Start no Sydney run unless at least 50 tests remain. If fewer remain, wait for quota renewal or use a pre-authorised equivalent Sydney Chromium runner for the complete 50-test matrix; never compare a partial or mixed-runner sample.
+- Use the Cloudflare Speed API without a recurring schedule for five `australia-southeast1` tests per host and route. Preserve all 50 returned test IDs and both desktop/mobile report summaries. Do not describe these Sydney tests as Cloudflare-only; the same API runner must request both host URLs.
+- Re-run the fixed four-probe Melbourne and four-probe Sydney Globalping matrix for three alternating rounds per host and route, preserving all 240 HTTP rows. Re-run explicit IPv4 and IPv6 curl samples from the execution machine.
+- Repeat the hosted browser matrix on all five routes and both viewports for both hosts, including analytics interception, forced sampled/unsampled replay, FAQs, pricing states, mobile menu, contact error/success, image `currentSrc`, Dot Pool, WebGL fallback, focus states, overflow, and error checks.
+- Update `documents/guides/_hosting.md`, this plan's implemented-solution record, and the existing cold-reader HTML report with per-host before/after tables, cross-host tables, deterministic byte changes, all failures, regional scope, and a new hosting recommendation.
+
+**Success Criteria:**
+
+- The selected GitHub artifact and Cloudflare deployment identify one commit and produce zero decoded-body or status mismatches across the complete served manifest.
+- All 150 local Lighthouse reports complete: 2 hosts x 5 routes x 10 mobile runs plus 2 hosts x 5 routes x 5 desktop runs. All 30 DevTools-throttled reports complete separately.
+- All 50 Sydney Speed API tests complete and return both mobile and desktop reports; all 240 Globalping rows return HTTP 200; IPv4 and IPv6 checks succeed on both hosts.
+- Both hosts meet every REQ-19 route ceiling, About meets REQ-22, and every host-and-route comparison passes REQ-27 against its own pre-change baseline.
+- Hosted analytics requests are intercepted rather than sent. One initial and one per-route Page View are observed, custom/referral payloads match, unsampled sessions omit the recorder, and sampled sessions load it.
+- Every route and interaction passes at both viewports with permanent dark rendering, no overflow, no visual regression, no unexpected console/page error, and no failed first-party request.
+- The report distinguishes Perth/local browser results, Sydney browser results, Melbourne/Sydney transport results, cold and warm behaviour, application bytes, and provider delivery. It does not infer Melbourne render performance from Globalping.
+- Steps 6 through 10 remain blocked until the user receives both URLs, the full result, and explicitly approves production cutover.
+
 ### Step 6: Add a Parallel Cloudflare Deployment to GitHub Actions
 
 **Objective:** Prove the permanent CI path while GitHub Pages remains available for rollback.
 
 #### 6.1 High-Level Approach
 
-- Begin only after the user approves cutover.
+- Begin only after Step 5G passes and the user approves cutover from its matched-artifact report.
 - Add exact dev dependency `wrangler@4.127.1` to `demo/package.json` and `demo/package-lock.json`; do not add a Wrangler configuration file.
 - Update `.github/workflows/deploy.yml` so one build on `main` uses Node.js `22.23.1`, runs `npm ci`, `npm run lint`, `npm run build`, and `npm test`, uploads the existing GitHub Pages artifact, deploys it to GitHub Pages, and uploads the same `demo/out` directory to the Cloudflare Pages production branch `main` with Wrangler.
 - Use GitHub secret `CLOUDFLARE_PAGES_API_TOKEN` and repository variable `CLOUDFLARE_ACCOUNT_ID`. Pass the project name, branch `main`, and `GITHUB_SHA` explicitly. Do not interpolate commit-message text directly into a shell command.
@@ -422,21 +628,26 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 
 #### 7.1 High-Level Approach
 
-- Immediately before DNS mutation, re-query all records named `bulma.com.au` and `www.bulma.com.au`, all account redirect lists/rulesets, all zone redirect rulesets/Page Rules, the Pages production deployment, and the GitHub Pages state. Replace the provisional DNS section in `documents/guides/_hosting.md` with this final pre-cutover snapshot and commit it before changing DNS.
+- Immediately before DNS mutation, re-query all records named `bulma.com.au` and `www.bulma.com.au`, every proxied hostname, all account redirect lists/rulesets, all zone Cache Rules, compression rules, configuration rules, redirect rulesets/Page Rules, every setting listed in Current Cloudflare Delivery Settings, the Pages production deployment, and the GitHub Pages state. Replace the provisional DNS/settings sections in `documents/guides/_hosting.md` with this final pre-cutover snapshot and commit it before changing DNS.
 - Compare the four web A records to the current-state baseline. If an unexpected web record, redirect, custom domain, Pages deployment, or third-party change exists, stop and request direction. Do not delete or overwrite it.
+- Record an exact Cloudflare API rollback payload for `browser_cache_ttl: 14400`, then change only that zone setting to `0` (`Respect Existing Headers`). Re-query the complete settings list and prove every other value is unchanged. This setting write precedes the proxied Pages records, so it does not alter the current DNS-only GitHub Pages responses.
 - Through the Pages custom-domain API, associate `bulma.com.au` and `www.bulma.com.au` with the verified project before manually creating any CNAME.
 - Inspect the DNS response after each association. If Cloudflare created the required proxied CNAME, do not add another. If the domain is `pending` and the old A records remain, delete only the exact snapshotted A records for that hostname, re-query DNS, and create one proxied CNAME to the API-returned Pages subdomain only when none exists.
 - Poll the Pages domain API in bounded intervals until both custom domains report `active` and certificate validation is active. Do not use a blocking wait longer than 60 seconds without a user update.
-- Verify apex HTTPS before adding redirects. Keep the GitHub Pages site and its last deployment intact throughout this step.
+- Verify apex HTTPS, HTML revalidation, hashed-asset immutability, Brotli, HTTP/2 or HTTP/3, IPv4, and IPv6 before adding redirects. Keep the GitHub Pages site and its last deployment intact throughout this step.
+- If any cutover gate fails, restore the exact web A records and `browser_cache_ttl: 14400` before detaching the Pages domains. Re-query both resources and verify GitHub Pages serves the apex again.
 
 **Success Criteria:**
 
 - The final pre-cutover snapshot is committed and contains sufficient JSON-equivalent fields to recreate every apex and `www` record exactly.
+- The snapshot contains every listed Cloudflare setting and ruleset plus tested request payloads for `browser_cache_ttl: 0` and rollback to `14400`.
+- Immediately before domain association, the API reports `browser_cache_ttl: 0`; every other Cloudflare setting and every ruleset is unchanged from the snapshot.
 - Pages domain API returns `active` for both `bulma.com.au` and `www.bulma.com.au` with no validation error.
 - DNS API returns exactly one proxied Cloudflare-managed web record for the apex and one for `www`, each targeting the API-returned project subdomain directly or through Cloudflare's Pages association.
 - The three apex A records and one `www` A record are absent only after the Pages association exists.
 - The existing MX record and all three TXT records match the final pre-cutover snapshot in every recorded field.
-- `curl -I https://bulma.com.au/` returns HTTP 200, a valid Cloudflare-served certificate, `server: cloudflare`, and no redirect.
+- `curl -I https://bulma.com.au/` returns HTTP 200, a valid Cloudflare-served certificate, `server: cloudflare`, no redirect, and `Cache-Control: public, max-age=0, must-revalidate`.
+- A content-hashed `/_next/static/*` response returns the one-year immutable policy; compressible responses negotiate Brotli when the client offers it; IPv4 and IPv6 both return the same status and decoded body.
 - GitHub Pages remains enabled and its last successful artifact remains available for rollback.
 
 ### Step 8: Enforce One Canonical Host and Verify Production
@@ -451,9 +662,11 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
   - The API-returned project `pages.dev` hostname to `https://bulma.com.au`, covering all paths and subdomains so the production, branch, and deployment-specific aliases redirect.
 - Create or append one enabled account Bulk Redirect rule that references only this list. Record list, operation, ruleset, and rule IDs in `documents/guides/_hosting.md`. Poll list-item operations until `completed` before enabling the rule.
 - Run direct header checks for apex, `www`, root `pages.dev`, the comparison alias, and the immutable deployment URL. Verify path and query preservation with a value such as `/pricing/?source=host-check`.
+- Re-query `browser_cache_ttl`, Brotli, HTTP/3, IPv6, Early Hints, Speed Brain, 0-RTT, Rocket Loader, Development Mode, Cache Rules, compression rules, and configuration rules. Confirm only Browser Cache TTL differs from the pre-cutover setting snapshot.
 - Repeat hosted browser checks for all five public routes at `1440x900` and `390x900`, emulating `prefers-color-scheme: light`. Check route rendering, navigation, pricing states, FAQ hash behaviour, overflow, console errors, page errors, and first-party network failures.
-- Run three Lighthouse measurements for the custom apex on `/` and `/pricing/` in both viewport modes. Compare medians with the Cloudflare preview medians. If apex FCP, LCP, or server response time is more than 10% slower than the corresponding Cloudflare preview median, treat it as a failed cutover gate and investigate or roll back before decommissioning GitHub Pages.
-- If any critical route, TLS, redirect, body, browser, or performance gate fails, disable the new Bulk Redirect rule, restore the exact four A records from the snapshot, verify GitHub Pages serves the apex and `www` again, then detach the Pages custom domains. Do not disable GitHub Pages.
+- Run three Lighthouse measurements for the custom apex on every public route in both viewport modes. Compare route medians with the Step 5G Cloudflare preview medians and apply REQ-27. Treat any failed route as a failed cutover gate before decommissioning GitHub Pages.
+- Verify Chrome negotiates HTTP/3 on a repeated eligible request and that an `Accept-Encoding: br` request receives Brotli for HTML, CSS, and JavaScript. Record a provider limitation rather than adding a compression rule if Pages itself selects another valid compressed representation and the Step 5G transfer/non-inferiority gates still pass.
+- If any critical route, TLS, redirect, body, cache, browser, or performance gate fails, disable the new Bulk Redirect rule, restore the exact four A records and `browser_cache_ttl: 14400` from the snapshot, verify GitHub Pages serves the apex and `www` again, then detach the Pages custom domains. Do not disable GitHub Pages.
 
 **Success Criteria:**
 
@@ -461,8 +674,10 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 - Root, comparison, and deployment-specific `pages.dev` URLs return HTTP 301 to the matching apex path and query.
 - `https://bulma.com.au/` and all five public routes return HTTP 200 without a host redirect, and a random unknown path returns HTTP 404 with the built custom page.
 - Apex responses contain no `X-Robots-Tag: noindex`; `robots.txt`, sitemap, canonicals, Open Graph data, and JSON-LD all retain the apex origin.
+- Apex HTML keeps `public, max-age=0, must-revalidate`; hashed `/_next/static/*` assets keep the one-year immutable policy; no custom Cache Rule exists.
+- The settings API reports `browser_cache_ttl: 0`, Brotli/HTTP/3/IPv6/TLS 1.3 on, Development Mode/Rocket Loader/Speed Brain/0-RTT off, and no unexpected setting or ruleset change.
 - Browser checks pass at both required viewports with zero console errors, page errors, horizontal overflow, and failed first-party requests.
-- Custom-domain median FCP, LCP, and server response time are each no more than 10% slower than the corresponding Cloudflare preview median.
+- Every route's custom-domain performance passes REQ-27 against the corresponding Step 5G Cloudflare preview median.
 - The redirect list and rule IDs, exact item configuration, live DNS state, and tested rollback result are recorded in `documents/guides/_hosting.md`.
 
 ### Step 9: Make Cloudflare the Sole Deployment Target and Retire GitHub Pages
@@ -489,7 +704,7 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 - Root `CNAME`, `demo/public/CNAME`, and `github-pages-setup.md` no longer exist in the final commit.
 - `README.md`, `AGENTS.md`, `documents/guides/_hosting.md`, `demo/next.config.ts`, and `demo/test/runtime-and-browser-rules.test.mjs` contain no active claim that GitHub Pages hosts production.
 - `rg -n "GitHub Pages|github-pages|actions/deploy-pages|upload-pages-artifact"` returns only explicit historical or rollback context in `documents/guides/_hosting.md` and this completed plan.
-- No animation, design, page, component, metadata, sitemap, robots, contact-field, or analytics implementation changes as part of the migration.
+- Step 9 makes no additional animation, design, page, component, metadata, sitemap, robots, contact-field, or analytics implementation change beyond the already approved and verified Step 5 remediation.
 
 ### Step 10: Complete Final Hosted and Repository Verification
 
@@ -499,8 +714,9 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 
 - Run local lint, build, and tests with absolute project targeting. Inspect `demo/out` for all expected routes and the absence of GitHub/Cloudflare runtime-only files.
 - Query the Pages project, deployments, and domains. Confirm Direct Upload, `source: null`, `uses_functions: false`, production branch `main`, both custom domains active, and the latest deployment SHA equal to `origin/main`.
-- Query DNS and redirect resources. Confirm only intended Bulma web records and canonical redirects changed; compare MX and TXT records to the final pre-cutover snapshot.
+- Query DNS, redirects, all delivery settings, and every ruleset phase. Confirm only intended Bulma web records, canonical redirects, and `browser_cache_ttl` changed; compare MX, TXT, all other settings, and all unrelated rules to the final pre-cutover snapshot.
 - Re-run apex, `www`, `pages.dev`, discovery, asset, unknown-path, browser, and performance checks from Steps 4 and 8.
+- Re-run the deterministic bundle and image budgets. Confirm the final Cloudflare-only workflow builds the same REQ-19-through-REQ-27-compliant application tested in Step 5G.
 - Review the complete committed diff and the final commit contents. Confirm the unrelated plan and all unrelated worktree/index changes remain intact.
 - Add final commands, results, deployment IDs, redirect IDs, DNS state, benchmark summary, and rollback verification to `documents/guides/_hosting.md`. Do not include secret values or raw headers that expose authentication data.
 
@@ -512,6 +728,8 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 - The final Pages project returns `source: null`, `uses_functions: false`, `production_branch: main`, active apex and `www` domains, and a latest production deployment SHA equal to `git -C /Users/sacino/bulma-root rev-parse origin/main`.
 - Apex, `www`, `pages.dev`, route, 404, discovery, content-type, body, browser, and performance checks meet every Step 8 assertion.
 - DNS comparison proves MX and TXT records are byte-for-byte unchanged from the committed pre-cutover snapshot.
+- Cloudflare comparison proves `browser_cache_ttl: 0` is the only intended delivery-setting change, no custom Cache Rule exists, and every rollback payload remains valid.
+- Every final route retains the Step 5G JavaScript and image budgets and passes REQ-27 against the approved Cloudflare baseline.
 - The final GitHub Actions run succeeds, GitHub Pages is disabled, and no custom domain points to GitHub's `185.199.108.153` through `185.199.111.153` addresses.
 - `git show --stat --oneline HEAD` and `git show --name-status HEAD` contain only the authorised migration files, while unrelated working-tree and index state remains unchanged.
 
@@ -529,14 +747,20 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 | `https://bulma.com.au/` and its current headers | Live GitHub Pages baseline and canonical URL | Same URL and content are served by Cloudflare after cutover | Full response and headers |
 | GitHub Pages API for `Culpable/bulma-root` | Current host state: workflow build, CNAME, HTTPS, active site | Active through rollback verification, then disabled after Cloudflare-only deploy succeeds | Repository Pages resource |
 | Cloudflare zone `0534ecfcfde9d322566af12ec11c1bef` DNS records | Exact rollback source and mail/verification safety boundary | Four web A records are replaced; MX and TXT records are unchanged | Every record named apex or `www` |
-| Cloudflare account `213ab3604485056376263d22fa242742` Pages and redirect inventories | Proves there is no pre-existing project, list, or redirect rule to overwrite | One Direct Upload project and one Bulma-specific canonical redirect list/rule exist | Exact account resources |
+| Cloudflare account `213ab3604485056376263d22fa242742` Pages and redirect inventories | Identifies the existing Direct Upload project and proves unrelated redirect resources will not be overwritten | Existing `bulma-root` project is preserved; one Bulma-specific canonical redirect list/rule exists after cutover | Exact account resources |
+| Cloudflare zone delivery settings and rulesets | Controls custom-domain caching, compression, protocol, script rewriting, and speculative loading | Only `browser_cache_ttl` changes from `14400` to `0`; every named toggle and ruleset matches the recorded decision | Full settings list, all ruleset phases, and rollback payloads |
+| `demo/performance-budgets.json` and `demo/src/scripts/report-performance-budgets.mjs` | Durable byte and hosted-report gates | All five routes meet REQ-19 and deterministic compressed JavaScript cannot grow silently | Full files and generated summary |
+| `demo/src/lib/mixpanelClient.js`, `demo/src/components/MixpanelProvider.jsx`, `demo/src/lib/analytics.js`, and `demo/public/scripts/referral-tracking.js` | Analytics, attribution, replay, and heatmap contracts | Official async recorder split with unchanged events, configuration, sampling, timing, and readiness | Full runtime contract |
+| FAQ, plan-tab, and button source files named in Step 5E | Removes owned client runtime without changing interactions | No shipped Tailwind Plus runtime or dead preload boundary; identical visual, hash, ARIA, keyboard, and button behaviour | Full active component graph |
+| `demo/src/app/about/page.tsx` and responsive About assets | Current 46 KiB image-delivery opportunity | Mobile selects verified 640-pixel candidates; desktop retains adequate sources; no visible change | Markup, assets, encoder provenance, and screenshots |
+| `demo/public/_headers` | Approved Cloudflare browser caching boundary | Only content-hashed `/_next/static/*` receives one-year immutable caching | Full file and hosted headers |
 | `demo/public/robots.txt`, `demo/public/sitemap.xml`, and built metadata | Production-origin discovery contract | Continue to name only `https://bulma.com.au` on preview and production | Full files and emitted HTML |
 | `demo/src/app/contact/contact-form.tsx` | Exact external form destination and field contract | Same endpoint and four fields; migration tests send no real enquiry | Full form contract |
 | `demo/test/runtime-and-browser-rules.test.mjs` | Existing deployment/runtime documentation assertions | Asserts Cloudflare workflow, Node pin, and hosting guide | Full test file |
-| `documents/todo/agent_readiness_and_page_speed_plan.md` and the current dirty `demo/` source | User-authorised readiness implementation for the refreshed preview | Included in the isolated preview build and validation; remains uncommitted and outside production | Complete plan plus source/output manifests |
+| `documents/todo/agent_readiness_and_page_speed_plan.md` and commit `854b85f576910a5a5c3576bdf9fef62a6da4df81` | Committed starting point for remaining speed work | Remains the recorded before state; later speed work is measured against it on each host | Complete plan, commit, and baseline manifests |
 
 <critical_warning>
-> **CRITICAL WARNING:** The live DNS records, GitHub Pages API state, selected commit export, and hosted response bodies are the rollback and parity sources of truth. Re-query and record them immediately before writes. Do not replace them with example records, dashboard screenshots, a newly generated synthetic site, or assumptions copied from this plan. If they differ from the inspected baseline, stop before deleting records or disabling GitHub Pages.
+> **CRITICAL WARNING:** The live DNS records, Cloudflare settings/rulesets, GitHub Pages API state, selected commit export, and hosted response bodies are the rollback and parity sources of truth. Re-query and record them immediately before writes. Do not replace them with example records, dashboard screenshots, a newly generated synthetic site, or assumptions copied from this plan. If they differ from the inspected baseline, stop before changing settings, deleting records, or disabling GitHub Pages.
 </critical_warning>
 
 ### 6.2 Automated Checks
@@ -546,6 +770,11 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 | Lint | ESLint via `npm --prefix /Users/sacino/bulma-root/demo run lint` | Exit 0, zero errors |
 | Static build | Next.js via `npm --prefix /Users/sacino/bulma-root/demo run build` | Exit 0; `demo/out` contains all public routes, assets, top-level `404.html`, robots, and sitemap |
 | Regression suite | Node test runner via `npm --prefix /Users/sacino/bulma-root/demo test` | Exit 0; existing and migration assertions pass |
+| Performance budgets | `demo/src/scripts/report-performance-budgets.mjs` against `demo/out`, gzip output, and supplied Lighthouse JSON | Every route meets REQ-19; Mixpanel core is at most 40 KiB gzip; deterministic compressed JavaScript does not increase |
+| Analytics runtime | `demo/test/analytics-runtime.test.mjs` with network and scheduler fakes | Event names/properties, identity, referral, readiness, timing, heatmaps, and 20% replay sampling remain intact; no real request is sent |
+| Active client graph | Turbopack production analysis plus source assertions | No default Mixpanel entry, shipped Tailwind Plus runtime, dead preload helper, or deep Three.js import enters a route |
+| Responsive images | Dimension/file-size assertions plus browser `currentSrc` | About mobile candidates meet Step 5F ceilings and desktop retains adequate physical pixels |
+| CSS decision gate | Browser coverage, compressed byte manifest, and Lighthouse render-blocking audit | Shared CSS remains external unless every REQ-23 condition passes on both hosts |
 | Direct Upload limits | `find`, `wc`, `stat` against the selected `out` directory | Fewer than 20,000 files; no file exceeds 25 MiB |
 | Static-only contract | `find` and `rg` against repository and `out` | No Pages Functions, `_worker.js`, `_routes.json`, adapter, runtime binding, or request-time route |
 | Body parity | `curl`, `shasum -a 256`, and generated manifest | Named responses match local output and one another after decoding transport compression |
@@ -554,6 +783,7 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 | Deployment identity | GitHub and Cloudflare APIs | Each compared and final deployment reports the selected commit SHA |
 | Credential scope | Cloudflare account-token API and `gh secret list` | One Pages Write account token; secret exists by name; no value is printed |
 | DNS preservation | Cloudflare DNS API and committed snapshot | MX/TXT fields unchanged; only recorded web records differ |
+| Cloudflare delivery state | Zone settings API plus every ruleset endpoint | Pre-cutover state matches the snapshot; final state changes only `browser_cache_ttl` from `14400` to `0` and has a tested rollback |
 | CI ownership | Source assertions and GitHub Actions API | Final workflow deploys only to Cloudflare and latest run succeeds |
 
 ### 6.3 Hosted Integration Tests
@@ -569,9 +799,9 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
    - Verify: SHA-256 manifest plus raw status/header summary.
 
 3. **Side-by-side speed comparison**
-   - Action: Run five alternating Lighthouse measurements per host, route, and viewport plus twenty alternating network timings per host and resource.
-   - Expected: Complete median/range/delta tables for the same commit; no missing or failed run silently excluded.
-   - Verify: 40 Lighthouse JSON files and 120 measured network rows before aggregation.
+   - Action: Run the Step 5G alternating local Lighthouse matrix, Sydney Speed API matrix, fixed-probe Globalping matrix, and IPv4/IPv6 checks against one artifact on both hosts.
+   - Expected: Every route meets REQ-19, REQ-22, and REQ-27; complete median/range/delta tables preserve every run and state its geographic scope.
+   - Verify: 150 standard Lighthouse JSON files, 30 DevTools-throttled files, 50 Sydney test records with both device reports, 240 Globalping rows, deterministic gzip manifests, and raw failure records before aggregation.
 
 4. **Dark-only responsive rendering**
    - Action: Open every public route on both hosts at `1440x900` and `390x900` while emulating `prefers-color-scheme: light`.
@@ -590,13 +820,13 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 
 7. **Custom-domain routing**
    - Action: Request apex, `www`, Pages aliases, discovery files, assets, and an unknown path after cutover.
-   - Expected: Apex serves Cloudflare content; `www` and Pages aliases redirect once with path/query preserved; unknown path returns 404; discovery remains apex-only.
-   - Verify: `curl --location --max-redirs`, Pages API, DNS API, and redirect API.
+   - Expected: Apex serves Cloudflare content with revalidating HTML and immutable hashed assets; `www` and Pages aliases redirect once with path/query preserved; unknown path returns 404; discovery remains apex-only.
+   - Verify: `curl --location --max-redirs`, Pages API, DNS API, redirect API, settings API, content negotiation, and browser protocol inspection.
 
 8. **Rollback before GitHub decommissioning**
    - Action: Validate the stored recreation payloads against the final pre-cutover snapshot without mutating production; if any cutover gate fails, execute them.
-   - Expected: The payload recreates the three apex A records and one `www` A record exactly, disables the Bulma redirect rule, and returns traffic to the still-active GitHub Pages deployment.
-   - Verify: JSON schema/field comparison before cutover; live `server: GitHub.com` and current `www` redirect only if rollback is triggered.
+   - Expected: The payload recreates the three apex A records and one `www` A record exactly, restores `browser_cache_ttl: 14400`, disables the Bulma redirect rule, and returns traffic to the still-active GitHub Pages deployment.
+   - Verify: JSON schema/field comparison before cutover; settings/DNS API equality plus live `server: GitHub.com` and current `www` redirect only if rollback is triggered.
 
 9. **Cloudflare-only continuous deployment**
    - Action: Push the final authorised migration commit and wait for `.github/workflows/deploy.yml`.
@@ -608,14 +838,24 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
    - Expected: GitHub Pages API reports no active site; apex remains HTTP 200 from Cloudflare; `www` and Pages aliases retain canonical redirects.
    - Verify: GitHub API, Cloudflare API, DNS API, and live HTTP requests.
 
+11. **Analytics and replay preservation**
+    - Action: Intercept Mixpanel endpoints while loading each route, navigating client-side, firing custom/referral events, and forcing sampled and unsampled replay paths.
+    - Expected: Existing events, properties, identity, first-touch values, timing, heatmaps, and readiness events remain exact; only sampled sessions request the recorder; no request reaches Mixpanel during the test.
+    - Verify: Intercepted request/queue records, recorder request count, cookie state, and zero completed third-party analytics requests.
+
+12. **Cloudflare delivery-setting verification**
+    - Action: Compare every named setting and ruleset before and after cutover, then request HTML, CSS, JavaScript, and images over supported protocols and encodings.
+    - Expected: Only Browser Cache TTL changes from `14400` to `0`; HTML revalidates; hashed Next assets remain immutable; Brotli, HTTP/3, IPv6, and Pages Early Hints work where eligible; Rocket Loader, Speed Brain, and 0-RTT remain off.
+    - Verify: Full API snapshots, exact rollback payload, response headers, decoded body hashes, Chrome protocol data, and IPv4/IPv6 curl output.
+
 ---
 
 ## 7. Implemented Solution
 
 ### Completed Scope
 
-- Completed Steps 1 through 5 only. Steps 6 through 10 remain unstarted and require a later execution request after the production cutover approval gate.
-- Completed Step 5A after the user explicitly requested a refreshed Cloudflare comparison containing all agent-readiness changes.
+- Completed Steps 1 through 5C only. Steps 5D through 10 remain unstarted and require a later execution request; Steps 6 through 10 also remain behind the production cutover approval gate.
+- Completed Steps 5A, 5B, and 5C after the user explicitly requested the readiness refresh, first remediation pass, commit/push, and commit-matched recheck.
 - Kept the aggregate plan status `IN PROGRESS` because the full migration is not complete.
 
 ### Repository Files
@@ -690,3 +930,38 @@ Only the four A records are web-host migration targets. The missing fourth GitHu
 - Re-ran 240 Globalping requests from four fixed Melbourne and four fixed Sydney probes. All returned HTTP 200. When both hosts were warm, GitHub route medians were 12-14 ms versus Cloudflare's 36-51 ms; both hosts retained their warm state in round 3.
 - Re-ran 30 mobile Lighthouse reports. Cloudflare About LCP improved from 4,385 to 1,908 ms and Contact from 2,582 to 1,831 ms. The new cross-host medians favour Cloudflare for About and Contact, show an effective tie on Pricing and Privacy, and give Cloudflare a 347ms homepage LCP lead; homepage, pricing, and privacy results still show substantial run-to-run variance.
 - Kept the aggregate migration status `IN PROGRESS`. No production, DNS, custom-domain, GitHub Pages, Git branch, commit, or push action was performed.
+
+### Step 5C Commit-Matched Production Recheck
+
+- Committed the complete agent-readiness and performance work as `854b85f576910a5a5c3576bdf9fef62a6da4df81` and pushed `main` to GitHub.
+- Verified GitHub Actions run `33314166806` completed successfully and GitHub Pages serves the new build, including HTTP 200 for `/llms.txt`.
+- Published Cloudflare preview deployment `62181028-c315-4134-b11b-7c61971bc9f6` on branch `cloudflare-comparison`. It reports the same commit, `commit_dirty: false`, `uses_functions: false`, no custom domain, and no production deployment.
+- Compared all 182 served files with the committed local export. Cloudflare matched every byte. GitHub matched all 123 non-build-generated files; 59 HTML, React flight, 404, and build-manifest files differ only because GitHub Actions and the local Cloudflare upload are independent Next.js builds. Both hosted route and interaction matrices produced the same rendered behaviour.
+- Re-ran the five-route browser matrix at `1440x900` and `390x900` with light colour-scheme emulation. Both hosts returned HTTP 200, retained the permanent dark class, had zero horizontal overflow, and passed mobile menu, yearly pricing, direct and same-page `#lenders`, About visibility, and contact-field checks.
+- Re-ran 240 Globalping requests from the same four Melbourne and four Sydney probes. All returned HTTP 200. Cloudflare's combined end-to-end TTFB median was `39 ms`; GitHub's was `220 ms`. City medians were `42 ms` versus `222 ms` in Melbourne and `34 ms` versus `213.5 ms` in Sydney.
+- Re-ran 30 Lighthouse mobile reports, three per host and route. GitHub produced the stronger median rendered result on all five routes: scores `98-100` versus Cloudflare's `87-95`, and LCP `1,083-2,360 ms` versus `2,686-3,351 ms` except for no route-level exception.
+- Recommended keeping GitHub Pages as production for now. Cloudflare has the stronger Melbourne/Sydney HTML delivery in this run, but it did not convert that transport lead into faster cold-browser rendering. The comparison does not yet support a performance-led production cutover.
+- Kept the aggregate migration status `IN PROGRESS`. Steps 5D through 10 remain unstarted. No DNS, custom-domain, redirect, Cloudflare production, or GitHub Pages setting changed.
+
+### Remaining Speed Planning Investigation
+
+- Re-read the current application, tests, animation/design contracts, migration evidence, and full Lighthouse JSON before adding Steps 5D through 5G.
+- Ran the Next.js Turbopack production analyser. It identified Mixpanel as the dominant shared owned payload, Tailwind Plus as an active Home/Pricing payload, and Three.js as the preserved homepage-specific floor.
+- Measured the installed Mixpanel `2.73.0` entries in disposable bundles: the default entry was 100,243 gzip bytes and the official async-recorder entry was 31,513 gzip bytes. This supports a recorder split without reducing analytics features.
+- Measured Three.js in disposable bundles: current named imports were 119,938 gzip bytes and deep source imports were 123,691 gzip bytes. The plan rejects deep imports and preserves the Dot Pool implementation.
+- Confirmed the two shared stylesheets transfer about 26.8 KiB combined and Lighthouse reports zero removable CSS bytes. Critical CSS is now a strict disposable experiment rather than an assumed implementation.
+- Measured quality-80 640-pixel About candidates at 20,224 bytes for the hero and 10,240 bytes for the testimonial portrait. The plan retains a visual and responsive-selection gate before either can ship.
+- Queried the live Pages project, zone, rulesets, Page Rules, DNS proxy scope, and delivery settings through the Cloudflare API without changing them. The project remains preview-only, there are no proxied DNS records or custom rules, and the only planned setting change is Browser Cache TTL from `14400` to `0` immediately before cutover.
+- Verified the Cloudflare Speed API has 50 free tests and the Sydney `australia-southeast1` browser region. Melbourne remains transport-only because the available API has no Melbourne browser region.
+- Changed only this plan during the new investigation. No application source, dependency, generated output, deployment, Cloudflare setting, DNS record, GitHub setting, Git branch, commit, or push changed.
+
+### Steps 5D-5F Performance Implementation
+
+- Added `demo/performance-budgets.json`, `demo/src/scripts/report-performance-budgets.mjs`, and regression fixtures for the five route ceilings, the recorded `103-170 KiB` baseline, deterministic gzip non-regression, Mixpanel core, active client graph, analytics contracts, and About media.
+- Changed Mixpanel `2.73.0` to its official async-recorder entry. The built core is 30,951 bytes gzip, below the 40 KiB ceiling. The token, load/idle timing, cookie and identity configuration, Page View and custom events, referral first touch, heatmaps, masking, fonts, and 20% replay sampling remain unchanged.
+- Replaced the routed Tailwind Plus FAQ and mobile plan-tab controllers with focused local React state. Browser checks passed direct and same-page `#lenders`, rapid FAQ reversal, glow/icon state, ARIA, ArrowLeft/ArrowRight/Home/End plan selection, single-panel rendering, Monthly/Yearly pricing, and exact annual copy.
+- Removed the unused animation preload module, homepage export, `preloadOnHover`, and shared button client boundary. The built routed graph contains no Tailwind Plus contribution and preserves the existing Three.js Dot Pool chunk.
+- Added a 20,224-byte 640x336 About hero and a 10,240-byte 640x458 testimonial portrait. Mobile selected both 640-pixel sources; desktop retained the 1,600-pixel hero and 1,400-pixel testimonial sources. Visual inspection found no crop, colour, sharpness, or layout regression.
+- Rejected and trashed a disposable critical-CSS prototype. It saved only 102-243 compressed bytes on a cold route but added 25,904-26,045 bytes to repeat navigation, so the shared external stylesheets remain unchanged under REQ-23.
+- Passed lint, production build, all 32 tests, the synthetic failure fixture, deterministic budget reporting, five-route browser checks at `1440x900` and `390x900`, permanent dark rendering under light scheme emulation, interaction checks, image selection, equal-height pricing cards after animation settles, overflow checks, and first-party error checks.
+- Kept Step 5G in progress. The local Python static server does not provide production compression, so hosted Lighthouse results remain required for REQ-19 and REQ-27 before the cutover approval gate can reopen.

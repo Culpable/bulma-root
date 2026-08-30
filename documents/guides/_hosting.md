@@ -8,7 +8,7 @@ This guide records the hosting control plane, deployment revision, credential bo
 - Production host: GitHub Pages at `https://bulma.com.au/`.
 - Cloudflare custom domains: none.
 - Production DNS changes: none.
-- Selected revision: `2a475b50527f3d81593b0a9d3036cde94b974adc` from `origin/main`.
+- Selected revision: `854b85f576910a5a5c3576bdf9fef62a6da4df81` from `origin/main`.
 - Approval gate: do not associate a custom domain, create a production Pages deployment, change DNS, or disable GitHub Pages until the user approves cutover after reviewing the comparison report.
 
 ## Provider Inventory
@@ -20,8 +20,8 @@ This guide records the hosting control plane, deployment revision, credential bo
 | Repository | `Culpable/bulma-root` |
 | Repository ID | `1126720966` |
 | Default branch | `main` |
-| Selected workflow run | `33259142714` |
-| Workflow head SHA | `2a475b50527f3d81593b0a9d3036cde94b974adc` |
+| Selected workflow run | `33314166806` |
+| Workflow head SHA | `854b85f576910a5a5c3576bdf9fef62a6da4df81` |
 | Workflow result | `completed / success` |
 | GitHub Pages deployment | `6156985652` |
 | Deployment result | `success` |
@@ -563,3 +563,87 @@ Values are medians from three fresh Lighthouse `13.4.1` processes per host and r
 3. **Add smaller responsive About media:** Lighthouse still estimates about 47 KiB across the 720px hero source and the 1400px testimonial portrait. Add an approximately 400px hero candidate for single-density mobile and responsive testimonial portrait candidates; preserve the current crop, dimensions, and eager/lazy priorities.
 4. **Reduce render-blocking CSS:** Lighthouse still estimates roughly 100-270 ms on representative routes. Measure the emitted CSS coverage before splitting because the current global stylesheet owns shared design tokens and animation contracts.
 5. **Monitor Cloudflare cold fill:** the first regional round remains slower than GitHub. Keep HTML on revalidation through cutover, then test the apex for at least ten cold/warm rounds before considering a short HTML edge TTL with purge-on-deploy behaviour.
+
+## Commit-Matched Step 5C Comparison
+
+### Deployment Identity and Scope
+
+- GitHub Pages and Cloudflare Pages now serve source commit `854b85f576910a5a5c3576bdf9fef62a6da4df81`.
+- GitHub Actions run `33314166806` completed successfully and deployed the commit to `https://bulma.com.au/`.
+- Cloudflare deployment `62181028-c315-4134-b11b-7c61971bc9f6` completed successfully at `https://62181028.bulma-root.pages.dev/` and branch alias `https://cloudflare-comparison.bulma-root.pages.dev/`.
+- The Cloudflare deployment reports branch `cloudflare-comparison`, the selected commit, and `commit_dirty: false`. It remains a noindexed preview with no custom domain and no production deployment.
+- The comparison includes provider limits. GitHub keeps `Cache-Control: max-age=600` on every response. Cloudflare keeps HTML on `max-age=0, must-revalidate` and serves only content-hashed `/_next/static/*` assets with `public, max-age=31556952, immutable`.
+- Cloudflare matched all 182 files in the committed local export byte-for-byte. GitHub matched all 123 non-build-generated files. Its 59 mismatches are HTML, React flight, 404, and build-manifest artefacts produced by the independent GitHub Actions Next.js build. Hosted browser behaviour and application assets match.
+
+### Melbourne and Sydney Network Result
+
+Globalping reused four fixed Melbourne probes and four fixed Sydney probes for three rounds, five routes, and both hosts. Host order alternated by route and round. All 240 requests returned HTTP 200. End-to-end TTFB is DNS + TCP + TLS + first byte.
+
+| City | Samples per host | GitHub median | Cloudflare median | Faster median |
+| --- | ---: | ---: | ---: | --- |
+| Melbourne | 60 | 222 ms | 42 ms | Cloudflare by 180 ms |
+| Sydney | 60 | 213.5 ms | 34 ms | Cloudflare by 179.5 ms |
+| Combined | 120 | 220 ms | 39 ms | Cloudflare by 181 ms |
+
+- Cloudflare's first measured route fills were about 281-379 ms, then its route medians settled near 30-40 ms.
+- GitHub produced one fully warm round near 11-14 ms, but most first- and third-round requests were about 200-275 ms despite `x-cache: HIT` on many responses. One Sydney homepage request reached 1,120 ms.
+- Cloudflare therefore had the stronger retained Australian network result. GitHub still had the faster best-case warm edge.
+
+### All-Page Mobile Lighthouse Result
+
+Lighthouse `13.4.1` used Chrome `151.0.7922.174`, three fresh mobile performance runs per host and route, and alternating host order. Values are medians.
+
+| Route | GitHub score | Cloudflare score | GitHub FCP | Cloudflare FCP | GitHub LCP | Cloudflare LCP | Rendered winner |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `/` | 98 | 87 | 1,276 ms | 2,024 ms | 2,262 ms | 3,351 ms | GitHub |
+| `/about/` | 100 | 95 | 1,006 ms | 1,699 ms | 1,522 ms | 2,699 ms | GitHub |
+| `/pricing/` | 98 | 91 | 1,235 ms | 1,896 ms | 2,360 ms | 3,004 ms | GitHub |
+| `/contact/` | 100 | 95 | 1,103 ms | 1,711 ms | 1,777 ms | 2,686 ms | GitHub |
+| `/privacy-policy/` | 100 | 93 | 1,076 ms | 1,702 ms | 1,083 ms | 2,902 ms | GitHub |
+
+- GitHub won the median mobile score, FCP, LCP, and Speed Index on every route from the Perth Lighthouse runner.
+- Cloudflare transferred about 7-13 KB fewer bytes per route and matched or beat GitHub TBT on the homepage and Pricing, but those smaller payloads did not offset its slower initial document and render-blocking CSS arrival in these cold-browser runs.
+- Both hosts kept CLS at zero or negligible levels. Browser checks found no route, interaction, console, page, or overflow defect that would explain the result.
+
+### Recommendation and Remaining Performance Work
+
+Keep GitHub Pages as production for now. Cloudflare is the stronger Australian HTML transport in this run, but GitHub is the stronger complete mobile page experience across every route. A performance-led cutover needs Cloudflare to reproduce its regional network advantage in browser rendering, ideally through at least ten cold and warm mobile runs from Melbourne and Sydney against a custom-apex staging state before DNS changes.
+
+The next application work is shared across both hosts:
+
+1. Reduce the `103-170 KiB` representative unused-JavaScript estimates. Start with shared Next/React navigation code, then profile the homepage Dot Pool and Pricing boundary without changing their interaction or animation contracts.
+2. Reduce render-blocking CSS. Representative estimated savings are about `250 ms` on GitHub and up to `870 ms` on Cloudflare. Measure emitted CSS coverage before changing the shared global bundle.
+3. Add a smaller About hero and responsive testimonial portrait candidate. Lighthouse still estimates about `46 KiB` of image savings on About.
+4. Reduce homepage main-thread work of about `2.0-2.1 s` and Pricing main-thread work of about `2.0-2.6 s` without removing the approved animations or billing interactions.
+5. Treat Cloudflare's cold-browser document and stylesheet delay as a deployment investigation. Both hosts use HTTP/2 and the same application routes, so inspect TLS connection setup, edge selection, and critical CSS request timing before changing application code solely for the preview result.
+
+Complete derived evidence is stored in the canonical HTML report under `evidence/regional-au-commit-matched/`, `evidence/lighthouse-all-pages-commit-matched/`, and `evidence/commit-matched-parity/`.
+
+## Step 5D-5F Performance Implementation
+
+### Durable Budgets and JavaScript Ownership
+
+- Added `demo/performance-budgets.json` with the five REQ-19 route ceilings, the recorded `103-170 KiB` host baseline, the 40 KiB minimum reduction, deterministic route gzip baselines, the 40 KiB Mixpanel-core ceiling, and About image ceilings.
+- Added `demo/src/scripts/report-performance-budgets.mjs`. It maps emitted route scripts from HTML, measures gzip bytes, identifies Mixpanel, Three.js, and Tailwind Plus by content rather than hashed filenames, accepts an explicit Lighthouse JSON directory, and exits non-zero for route, chunk, or report failures.
+- The local production build reports a 30,951-byte gzip Mixpanel core, one preserved 122,050-byte gzip Three.js contribution, no active Tailwind Plus route chunk, and deterministic initial JavaScript below the recorded baseline on all five routes.
+- The existing Lighthouse baseline medians remain the hosted comparison authority. The local Python static server does not compress responses, so its unused-JavaScript transfer estimates are not comparable with either hosted baseline and are excluded from the REQ-19 decision.
+
+### Runtime and Interaction Changes
+
+- Changed Mixpanel `2.73.0` to its official `loader-module-with-async-recorder` entry. The token, cookie persistence, cross-subdomain identity, Page View ownership, event payloads, 20% replay sampling, heatmaps, masking, font collection, recorder duration, and current 1,200 ms fallback / 3,000 ms idle timeout remain unchanged.
+- Replaced the routed Tailwind Plus FAQ and mobile plan-tab controllers with focused local React ownership. FAQ state retains 400 ms enter, 300 ms leave, rapid reversal, icon/glow coupling, ARIA, cleanup, trusted answer markup, and both direct and same-page `#lenders` opening. Mobile plan tabs retain focus selection and add ArrowLeft, ArrowRight, Home, and End movement while rendering one active panel.
+- Removed the unused animation preload helper, duplicate homepage export, `preloadOnHover`, and the shared button client boundary. Rendered button classes and interaction states remain unchanged.
+- `npm run lint`, `npm run build`, all 32 Node tests, the synthetic over-budget fixture, and the deterministic performance report pass.
+
+### About Responsive Media
+
+- Generated `/img/photos/1-640.webp` with `cwebp 1.6.0 -m 6 -q 80 -resize 640 0` from source SHA-256 `310430fdc1dc9384d610a058abea02f5532f52563f98045d2e160ac4d1884e94`. The output is 640x336 and 20,224 bytes.
+- Generated `/img/avatars/16-h-458-w-640.webp` with the same encoder settings from source SHA-256 `9d497ea774f528f9d0d60363f6c850621c9bae32a6d6445b9399f30d07225756`. The output is 640x458 and 10,240 bytes.
+- At `390x900`, light colour-scheme emulation selected both 640-pixel candidates. The hero rendered at 342x180 with eager/high-priority loading; the testimonial rendered at 326x233 and remained lazy. At `1440x900`, the hero selected the 1,600-pixel source and the testimonial selected the 1,400-pixel source.
+- Normal and close visual inspection found no crop, colour, facial-detail, text-integration, or layout change. All five routes retained the permanent dark class, zero horizontal overflow, zero page errors, and zero failed first-party requests at both required viewports.
+
+### CSS Decision
+
+- Post-change CSS coverage exercised all five routes plus mobile navigation, FAQ, yearly pricing, plan-tab keyboard selection, and contact focus states. The primary 162,713-byte stylesheet used 108,520-126,105 bytes per tested route/state; the 3,422-byte shared stylesheet remained cross-route infrastructure.
+- A disposable prototype inlined both stylesheets into every route. It reduced compressed first-load document-plus-CSS bytes by only 102-243 bytes, but increased every repeat navigation by 25,904-26,045 bytes because the shared stylesheet could no longer be reused from cache.
+- The prototype failed REQ-23 and was moved to Trash. The two external stylesheets remain unchanged.

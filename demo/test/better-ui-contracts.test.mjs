@@ -74,16 +74,20 @@ test('FAQ disclosures and icons use reversible enter and leave contracts', () =>
   const globalStyles = readDemoFile('src/app/globals.css')
   const homepageFaq = readDemoFile('src/components/sections/faqs-two-column-accordion.tsx')
   const pricingFaq = readDemoFile('src/components/sections/faqs-accordion.tsx')
+  const controller = readDemoFile('src/components/sections/faq-disclosure-controller.tsx')
 
-  for (const source of [homepageFaq, pricingFaq]) {
-    assert.match(source, /className="faq-disclosure"/)
-    assert.match(source, /className="faq-disclosure__viewport"/)
-    assert.match(source, /className="faq-disclosure__body/)
-    assert.doesNotMatch(source, /faq-disclosure__viewport[^"]*pb-6/)
-    assert.match(source, /faq-context-icon--plus/)
-    assert.match(source, /faq-context-icon--minus/)
-    assert.doesNotMatch(source, /faq-spring-content/)
-  }
+  assert.match(controller, /className="faq-disclosure"/)
+  assert.match(controller, /className="faq-disclosure__viewport"/)
+  assert.match(controller, /className="faq-disclosure__body/)
+  assert.doesNotMatch(controller, /faq-disclosure__viewport[^"]*pb-6/)
+  assert.match(controller, /faq-context-icon--plus/)
+  assert.match(controller, /faq-context-icon--minus/)
+  assert.doesNotMatch(controller, /faq-spring-content/)
+  assert.match(controller, /aria-expanded=\{expanded\}/)
+  assert.match(controller, /data-enter=\{phase === 'enter'/)
+  assert.match(controller, /data-leave=\{phase === 'leave'/)
+  assert.match(homepageFaq, /FaqDisclosureController/)
+  assert.match(pricingFaq, /FaqDisclosureController/)
 
   assert.match(globalStyles, /\.faq-disclosure\[data-enter\][\s\S]*transition-duration: 400ms/)
   assert.match(

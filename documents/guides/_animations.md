@@ -345,11 +345,12 @@ const animatedChildren = Children.map(children, (child, index) => (
 
 ## 11. FAQ Disclosure Transitions
 
-`faqs-two-column-accordion.tsx::Faq` and `faqs-accordion.tsx::Faq` use Tailwind Plus disclosure lifecycle attributes so enter and exit can retarget during rapid toggles.
+`faqs-two-column-accordion.tsx::Faq` and `faqs-accordion.tsx::Faq` share `faq-disclosure-controller.tsx::FaqDisclosureController`. The focused controller owns the disclosure lifecycle attributes so enter and exit can retarget during rapid toggles without shipping the Tailwind Plus client runtime.
 
 **Files:**
 - `globals.css` - disclosure and icon transition states
 - `faqs-two-column-accordion.tsx`, `faqs-accordion.tsx` - disclosure structure
+- `faq-disclosure-controller.tsx` - expanded state, ARIA ownership, transition phases, reversal, and timer/frame cleanup
 
 **State Easing Curve:** `cubic-bezier(0.2, 0, 0, 1)`
 
@@ -360,7 +361,7 @@ const animatedChildren = Children.map(children, (child, index) => (
 | Content enter | Grid row, opacity, and translate | 400ms | `translateY(-8px)` to `0` |
 | Content exit | Grid row, opacity, and translate | 300ms | Uses balanced ease-in-out motion before `hidden` settles |
 
-`ElDisclosure` supplies `data-transition`, `data-enter`, `data-leave`, and `data-closed`. `globals.css` overrides native `hidden` display only while `data-transition` is active, including the `hidden` plus `data-enter` state used when an unfinished enter reverses into exit. Each disclosure uses a padding-free `.faq-disclosure__viewport` as the direct grid child; `.faq-disclosure__body` owns answer spacing so the `0fr` closed track resolves to exactly `0px` without an end snap. The homepage hash logic still opens `#lenders` and forces the targeted wrapper visible. `.faq-spring-content` remains scoped to contact-form recovery and success messages, not FAQ disclosure state.
+`FaqDisclosureController` supplies `data-transition`, `data-enter`, `data-leave`, and `data-closed`, and keeps `aria-expanded`, `aria-controls`, and the labelled region synchronised. `globals.css` overrides native `hidden` display only while `data-transition` is active, including the hidden exit state used when an unfinished enter reverses into exit. Each disclosure uses a padding-free `.faq-disclosure__viewport` as the direct grid child; `.faq-disclosure__body` owns answer spacing so the `0fr` closed track resolves to exactly `0px` without an end snap. The homepage hash logic still opens `#lenders` and forces the targeted wrapper visible. `.faq-spring-content` remains scoped to contact-form recovery and success messages, not FAQ disclosure state.
 
 ---
 
@@ -1534,7 +1535,7 @@ Glow effect that follows the expanding content edge when FAQ items open.
 **Integration:**
 ```tsx
 <div className="faq-glow-trail">
-  <ElDisclosure>{content}</ElDisclosure>
+  <FaqDisclosureController>{content}</FaqDisclosureController>
 </div>
 ```
 

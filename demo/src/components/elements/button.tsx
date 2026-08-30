@@ -1,9 +1,6 @@
-'use client'
-
 import { clsx } from 'clsx/lite'
 import Link from 'next/link'
-import { useCallback, type ComponentProps, type MouseEvent } from 'react'
-import { preloadAnimationComponents } from '@/lib/preload-animation-components'
+import type { ComponentProps } from 'react'
 
 const sizes = {
   md: 'min-h-11 min-w-11 px-3 py-1 has-[>svg:last-child]:pr-2.5 lg:min-h-10 lg:min-w-10',
@@ -80,26 +77,12 @@ export function ButtonLink({
   className,
   href,
   static: isStatic = false,
-  preloadOnHover = false,
-  onMouseEnter,
   ...props
 }: {
   href: string
   size?: keyof typeof sizes
   color?: 'dark/light' | 'light'
-  /** Preload animation chunks on hover to reduce CTA latency */
-  preloadOnHover?: boolean
 } & ButtonInteractionProps & Omit<ComponentProps<'a'>, 'href'>) {
-  const handleMouseEnter = useCallback(
-    (event: MouseEvent<HTMLAnchorElement>) => {
-      if (preloadOnHover) {
-        preloadAnimationComponents()
-      }
-      onMouseEnter?.(event)
-    },
-    [preloadOnHover, onMouseEnter]
-  )
-
   return (
     <Link
       href={href}
@@ -112,7 +95,6 @@ export function ButtonLink({
         sizes[size],
         className,
       )}
-      onMouseEnter={handleMouseEnter}
       {...props}
     />
   )

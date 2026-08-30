@@ -1,4 +1,4 @@
-import mixpanel from 'mixpanel-browser'
+import mixpanel from 'mixpanel-browser/src/loaders/loader-module-with-async-recorder'
 
 // Mixpanel project token - hardcoded for reliability
 const MIXPANEL_TOKEN = 'd6d41f4f948512ee3e388559f7b1686e'

@@ -1,8 +1,7 @@
 'use client'
 
-import { ElTabGroup, ElTabList, ElTabPanels } from '@tailwindplus/elements/react'
 import { clsx } from 'clsx/lite'
-import { useState, type ComponentProps, type ReactNode } from 'react'
+import { useRef, useState, type ComponentProps, type KeyboardEvent, type ReactNode } from 'react'
 import { Container } from '../elements/container'
 import { CheckmarkIcon } from '../icons/checkmark-icon'
 import { MinusIcon } from '../icons/minus-icon'
@@ -121,6 +120,24 @@ export function PlanComparisonTable<const Plan extends string>({
   const sectionId = id ?? 'plan-comparison'
   const headingId = `${sectionId}-heading`
   const [mobileSelectedPlan, setMobileSelectedPlan] = useState<Plan>(plans[0] ?? ('' as Plan))
+  const mobileTabRefs = useRef<(HTMLButtonElement | null)[]>([])
+
+  const selectMobilePlan = (index: number) => {
+    const normalizedIndex = (index + plans.length) % plans.length
+    const plan = plans[normalizedIndex]
+    if (!plan) return
+    setMobileSelectedPlan(plan)
+    mobileTabRefs.current[normalizedIndex]?.focus()
+  }
+
+  const handleMobileTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    if (event.key === 'ArrowRight') selectMobilePlan(index + 1)
+    else if (event.key === 'ArrowLeft') selectMobilePlan(index - 1)
+    else if (event.key === 'Home') selectMobilePlan(0)
+    else if (event.key === 'End') selectMobilePlan(plans.length - 1)
+    else return
+    event.preventDefault()
+  }
 
   return (
     <section ref={containerRef} id={sectionId} aria-labelledby={headingId} className={clsx('py-16', className)} {...props}>
@@ -171,33 +188,41 @@ export function PlanComparisonTable<const Plan extends string>({
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
           )}
         >
-          <ElTabGroup>
+          <div>
             <div className="sticky top-[calc(var(--scroll-padding-top)+0.75rem)] z-10 -mx-1 rounded-2xl bg-mist-100/90 p-1.5 shadow-sm shadow-mist-950/5 ring-1 ring-mist-950/5 backdrop-blur-xl dark:bg-mist-950/90 dark:shadow-black/20 dark:ring-white/10">
-              <ElTabList className="flex gap-3 rounded-xl bg-mist-950/5 p-1 dark:bg-white/5">
-                {plans.map((plan) => (
+              <div role="tablist" aria-label="Choose a plan" className="flex gap-3 rounded-xl bg-mist-950/5 p-1 dark:bg-white/5">
+                {plans.map((plan, index) => (
                   <button
                     key={plan}
+                    ref={(node) => {
+                      mobileTabRefs.current[index] = node
+                    }}
                     id={`${sectionId}-${plan}-tab`}
                     aria-controls={`${sectionId}-${plan}-panel`}
+                    aria-selected={mobileSelectedPlan === plan}
+                    role="tab"
+                    tabIndex={mobileSelectedPlan === plan ? 0 : -1}
                     type="button"
                     onClick={() => setMobileSelectedPlan(plan)}
                     onFocus={() => setMobileSelectedPlan(plan)}
+                    onKeyDown={(event) => handleMobileTabKeyDown(event, index)}
                     className="relative flex-1 cursor-pointer rounded-lg px-2 py-3 text-sm/5 font-medium text-mist-500 transition-colors duration-200 aria-selected:bg-white aria-selected:text-mist-950 aria-selected:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mist-950/40 dark:aria-selected:bg-white/10 dark:aria-selected:text-white dark:focus-visible:ring-white/50"
                   >
                     {plan}
                   </button>
                 ))}
-              </ElTabList>
+              </div>
               <p aria-live="polite" className="px-2 pt-2 text-xs/5 font-medium text-mist-600 dark:text-mist-400">
                 Viewing {mobileSelectedPlan}
               </p>
             </div>
-            <ElTabPanels>
-              {plans.map((plan) => (
+            <div>
+              {plans.filter((plan) => plan === mobileSelectedPlan).map((plan) => (
                 <table
                   key={plan}
                   id={`${sectionId}-${plan}-panel`}
                   aria-labelledby={`${sectionId}-${plan}-tab`}
+                  role="tabpanel"
                   className="mt-5 w-full border-collapse text-left text-sm/5"
                 >
                   <caption className="sr-only">{plan} feature details</caption>
@@ -210,8 +235,8 @@ export function PlanComparisonTable<const Plan extends string>({
                   ))}
                 </table>
               ))}
-            </ElTabPanels>
-          </ElTabGroup>
+            </div>
+          </div>
         </div>
       </Container>
     </section>

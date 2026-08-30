@@ -49,7 +49,8 @@ export default function Page() {
         photo={
           <picture>
             <source
-              srcSet="/img/photos/1-720.webp"
+              srcSet="/img/photos/1-640.webp 640w, /img/photos/1-720.webp 720w"
+              sizes="calc(100vw - 48px)"
               media="(max-width: 639px)"
               type="image/webp"
               width={720}
@@ -113,13 +114,22 @@ export default function Page() {
           </p>
         }
         img={
-          <Image
-            src="/img/avatars/16-h-1000-w-1400.webp"
-            alt={aboutPortraitAlt("Liam O'Connor")}
-            className="not-dark:bg-white/75 dark:bg-black/75"
-            width={1400}
-            height={1000}
-          />
+          <picture>
+            <source
+              srcSet="/img/avatars/16-h-458-w-640.webp 640w, /img/avatars/16-h-1000-w-1400.webp 1400w"
+              sizes="(max-width: 639px) calc(100vw - 48px), 50vw"
+              type="image/webp"
+            />
+            <img
+              src="/img/avatars/16-h-1000-w-1400.webp"
+              alt={aboutPortraitAlt("Liam O'Connor")}
+              className="not-dark:bg-white/75 dark:bg-black/75"
+              width={1400}
+              height={1000}
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
         }
         name="Liam O'Connor"
         byline="Credit Adviser, Sydney"

@@ -1,14 +1,12 @@
 'use client'
 
 import { useScrollAnimation } from '@/hooks/use-scroll-animation'
-import { ElDisclosure } from '@tailwindplus/elements/react'
 import { clsx } from 'clsx/lite'
 import { Children, useEffect, useId, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { Container } from '../elements/container'
 import { Subheading } from '../elements/subheading'
 import { Text } from '../elements/text'
-import { MinusIcon } from '../icons/minus-icon'
-import { PlusIcon } from '../icons/plus-icon'
+import { FaqDisclosureController } from './faq-disclosure-controller'
 
 export function Faq({
   id,
@@ -105,32 +103,13 @@ export function Faq({
 
   return (
     <div id={faqId} data-hash-target={isHashTarget ? 'true' : undefined} {...props}>
-      <button
-        type="button"
-        ref={buttonRef}
-        id={`${faqId}-question`}
-        command="--toggle"
-        commandfor={`${faqId}-answer`}
-        className="group flex w-full cursor-pointer items-start justify-between gap-6 py-5 text-left text-base/7 text-mist-950 dark:text-white"
-      >
-        {question}
-        {/* Crossfade the contextual icons so rapid toggles remain reversible. */}
-        <span className="relative flex h-lh w-4 shrink-0 items-center justify-center">
-          <PlusIcon className="faq-context-icon faq-context-icon--plus absolute h-lh" />
-          <MinusIcon className="faq-context-icon faq-context-icon--minus absolute h-lh" />
-        </span>
-      </button>
-      {/* Keep the glow attached to the disclosure so both animations share one lifecycle. */}
-      <div className="faq-glow-trail">
-        <ElDisclosure id={`${faqId}-answer`} hidden className="faq-disclosure">
-          {/* Keep spacing inside a padding-free viewport so the grid track can reach exactly zero. */}
-          <div className="faq-disclosure__viewport">
-            <div className="faq-disclosure__body flex flex-col gap-2 pr-12 pb-6 text-sm/7 text-mist-700 dark:text-mist-400">
-              {renderedAnswer}
-            </div>
-          </div>
-        </ElDisclosure>
-      </div>
+      <FaqDisclosureController
+        id={faqId}
+        question={question}
+        answer={renderedAnswer}
+        buttonRef={buttonRef}
+        glow
+      />
     </div>
   )
 }

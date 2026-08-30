@@ -7,6 +7,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --test test/*.test.mjs",
+    "performance:budgets": "node src/scripts/report-performance-budgets.mjs",
     "generate-sitemap": "node src/scripts/generate-sitemap.js",
     "generate-llms": "node src/scripts/generate-llms-txt.js"
   },
