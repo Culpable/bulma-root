@@ -1,5 +1,7 @@
 # Agent Readiness and Page Speed Plan 🧪 **PENDING TESTING**
 
+> **Implemented status (verified 2026-08-31):** Implemented and ready to archive from documents/todo. Evidence: demo/src/app/layout.tsx, demo/src/components/sections/hero-dot-pool.tsx, demo/src/components/elements/structured-data.tsx, demo/src/lib/llms.js, demo/src/scripts/generate-llms-txt.js, demo/test/agent-readiness.test.mjs, documents/guides/_hosting.md.
+
 <critical_warning>
 > **CRITICAL WARNING:** `demo/AGENTS.md` (`<animation_standards>`) forbids removing, simplifying, or rewriting marketing-site animations "unless the user explicitly asks for that exact animation change". The user **has explicitly authorised** Step 1 of this plan: deferring the Three.js Dot Pool hero background's *chunk load* until after first paint, while keeping its visual design, timing curve, and interaction model byte-for-byte identical. Do not treat Step 1 as a policy violation, and do not extend that authorisation to any other animation. Every other animation in `documents/guides/_animations.md` must render exactly as it does today.
 </critical_warning>
