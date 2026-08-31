@@ -83,10 +83,37 @@ test('llms.txt is valid UTF-8 with ordered unique canonical links', () => {
   assert.equal(lines.filter((line) => /^# /.test(line)).length, 1)
   assert.doesNotMatch(body, /â€™|Ã|Â|�|example\.com|^---$/m)
 
-  const urls = [...body.matchAll(/^- \[[^\]]+\]\((https:\/\/bulma\.com\.au\/[^)]*)\): .+$/gm)].map((match) => match[1])
-  assert.equal(urls.length, 5)
+  const urls = [...body.matchAll(/^- \[[^\]]+\]\((https:\/\/[^)]*)\): .+$/gm)].map((match) => match[1])
+  assert.equal(urls.length, 6)
   assert.equal(new Set(urls).size, urls.length)
-  assert.ok(urls.every((url) => new URL(url).pathname.endsWith('/')))
+  // Marketing pages keep the trailing-slash policy; the product application owns its own paths.
+  const origins = new Set(urls.map((url) => new URL(url).origin))
+  assert.deepEqual([...origins].sort(), ['https://app.bulma.com.au', 'https://bulma.com.au'])
+  assert.ok(
+    urls
+      .filter((url) => new URL(url).origin === 'https://bulma.com.au')
+      .every((url) => new URL(url).pathname.endsWith('/')),
+  )
+})
+
+test('llms.txt operating block describes Bulma rather than this website', () => {
+  const body = readOutput('llms.txt')
+  const line = (label) => body.split('\n').find((candidate) => candidate.startsWith(`**${label}:**`)) ?? ''
+
+  for (const label of ['When to use', 'When not to use', 'How to get started']) {
+    const value = line(label)
+    assert.ok(value, `${label} must be rendered`)
+    // The subject must be the product. `Use these pages to ...` indexes the site instead.
+    assert.doesNotMatch(value, /\b(?:these|this|the)\s+(?:pages?|site|website|resources?|links?)\b/i)
+    assert.match(value, /Bulma/)
+  }
+
+  // `When to use` carries the capability inventory, not a summary of the navigation.
+  assert.ok(line('When to use').split(';').length >= 4)
+  // Canonical action URLs belong inside the instruction, never in a trailing list.
+  assert.match(line('How to get started'), /https:\/\/app\.bulma\.com\.au\/register/)
+  assert.match(line('How to get started'), /https:\/\/bulma\.com\.au\/contact\//)
+  assert.doesNotMatch(body, /Actions: https/)
 })
 
 test('sitemap and source preserve the file-only readiness profile', () => {
