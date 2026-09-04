@@ -6,7 +6,7 @@ This guide records the hosting control plane, deployment revision, credential bo
 
 This section is the Step 1 source of truth for the Astro-on-Workers migration. It was captured read-only on `2026-09-04T04:12:51Z` (`2026-09-04 12:12:51 AWST`). No Cloudflare resource, GitHub setting, branch, DNS record, or `demo/` source file changed during the capture.
 
-Current state: Steps 1 through 7 are complete. Step 8 has started with the committed pre-staging control-plane snapshot. No Bulma custom domain or staging DNS record exists yet. Production remains unchanged on GitHub Pages.
+Current state: Steps 1 through 7 are complete. Step 8 staging proof is complete and awaits the user's explicit cutover decision. `staging.bulma.com.au` serves the Git-connected production Worker with noindex protection. Production remains unchanged on GitHub Pages.
 
 ### Baseline identity and repository state
 
@@ -186,9 +186,9 @@ Fresh `https://bulma.com.au` captures on `2026-09-04` proved that seven Step 1 s
 
 #### Step 6 local gate
 
-- `pnpm --dir site check`: 278 files, zero errors, warnings, or hints after the hosted charset regression test was added.
+- `pnpm --dir site check`: 283 files, zero errors, warnings, or hints after the deterministic island UID regression test was added.
 - `pnpm --dir site build`: six static pages and the three discovery endpoints built successfully.
-- `pnpm --dir site test`: 34 Node tests passed; build-output, trust-page, and performance-budget validation passed; Playwright passed 78 tests with 6 intentional viewport-specific skips and zero failures.
+- `pnpm --dir site test`: 37 Node tests passed; build-output, trust-page, and performance-budget validation passed; Playwright passed 78 tests with 6 intentional viewport-specific skips and zero failures.
 - Strict local visual parity passed for all six routes at `1440x900` and `390x900`, plus the mobile menu, direct `/#lenders`, yearly pricing, contact success/error, and keyboard plan-tab states. The threshold stayed at `1.0%`; only the Dot Pool canvas was excluded as the declared nondeterministic region.
 - Initial JavaScript gzip was `93,025` bytes for `/`, `75,634` for `/about/`, `81,597` for `/pricing/`, `72,629` for `/contact/`, and `68,255` for `/privacy-policy/`. Every route remained below its Next.js baseline.
 - `demo/` remained unchanged. Its required lint, build, and 33-test baseline passed before the port and again after the page implementation.
@@ -198,7 +198,7 @@ Fresh `https://bulma.com.au` captures on `2026-09-04` proved that seven Step 1 s
 #### Deployment identity and DNS result
 
 - `staging.bulma.com.au` is attached to service `bulma-root`, environment `production`, as custom-domain ID `ac7956c2e528fe295b9bcc8f3398664815ff855c`.
-- The staging attach deployed Worker version `05fccc79-5a9c-4c39-8d26-698bd0fac11d`. The final Git-connected deployment is recorded in the cutover packet below.
+- The staging attach deployed Worker version `05fccc79-5a9c-4c39-8d26-698bd0fac11d`. Git-connected build `c89d5d13-8a96-4568-a874-a269808d254b` then deployed final proof version `5770e5db-f36a-4340-b8cf-a9f4947134ce` from site commit `f844cab4e16a9cc12900e914aab76f73df093307`.
 - Cloudflare created exactly one DNS record: read-only proxied AAAA record `b84080eb0e2fdf451c777a0829f391fa`, content `100::`, automatic TTL, and `meta.origin_worker_id` equal to the custom-domain ID.
 - Certificate pack `b10d5b68-e58f-4395-944f-4a2449cdd770` is active. Its RSA certificate is `8bee60ca-354e-4f3f-983c-93bf9d842c24`; its ECDSA certificate is `440d8dda-c12b-43b6-8fcd-283f015315af`; both expire on `2026-12-03`.
 - Authoritative DNS and public resolvers `1.1.1.1` and `8.8.8.8` returned Cloudflare anycast A and AAAA answers. Direct IPv4 and native IPv6 requests both returned HTTP 200.
@@ -206,6 +206,8 @@ Fresh `https://bulma.com.au` captures on `2026-09-04` proved that seven Step 1 s
 - GitHub Pages remains built, uses workflow deployment, retains `bulma.com.au`, and continues to serve production with `server: GitHub.com` and its fixed `max-age=600` cache policy.
 
 The first staging body comparison found that the zone-level Cloudflare managed robots setting prepended 61 policy lines to the project file and added crawler-specific disallow rules. The before-state had `is_robots_txt_managed: true`; all AI, content-bot, crawler, JavaScript, and fight-mode controls were disabled. Only `is_robots_txt_managed` was changed to `false`. The hosted `robots.txt` then became byte-identical to `dist/robots.txt`; GPTBot, ClaudeBot, and ChatGPT-User all receive HTTP 200 and the project allow policy.
+
+The first proof after build `df2ac4f0-9c4c-4282-a37a-827515b5256e` found that all six hosted HTML bodies differed from a local build only in 23 `astro-island` `uid` values. Independent reproduction showed that Astro 7.3.1 hashes its absolute checkout path into those values while its production hydration runtime never reads them. Commit `f844cab4e16a9cc12900e914aab76f73df093307` added a post-build normaliser that keeps the attribute and assigns stable document-local IDs before headers and agent files are generated. The regression tests cover stable replacement, static documents, and missing attributes; two consecutive local builds produced identical HTML hashes. The final Git-connected build restored exact local-to-hosted parity without changing rendered content or interaction behaviour.
 
 #### HTTP, transport, cache, and body parity
 
@@ -250,8 +252,9 @@ Initial JavaScript gzip remains below every Next.js baseline: `/` `93,025`, `/ab
 | --- | --- |
 | Production URL | `https://bulma.com.au/`, still GitHub Pages |
 | Staging URL | `https://staging.bulma.com.au/`, Cloudflare Worker with noindex |
-| Site commit | Pending the final Step 8 Git-connected deployment |
-| Worker and version | `bulma-root`; pending the final Git-connected deployment version |
+| Site commit | `f844cab4e16a9cc12900e914aab76f73df093307` |
+| Workers build | `c89d5d13-8a96-4568-a874-a269808d254b`, successful |
+| Worker and version | `bulma-root`; `5770e5db-f36a-4340-b8cf-a9f4947134ce` at 100% |
 | Staging custom domain | `ac7956c2e528fe295b9bcc8f3398664815ff855c` |
 | Staging DNS record | `b84080eb0e2fdf451c777a0829f391fa` |
 | Staging certificate pack | `b10d5b68-e58f-4395-944f-4a2449cdd770`, active |
@@ -262,7 +265,9 @@ Initial JavaScript gzip remains below every Next.js baseline: `/` `93,025`, `/ab
 | DNS before-state | The complete 16-record committed pre-staging snapshot above |
 | Intended Step 9 DNS change | Replace only the three apex GitHub A records and the one `www` A record after explicit approval; preserve every other record byte for byte |
 | DNS rollback | Delete only migration-created production records, then recreate the four recorded GitHub A payloads exactly; verify `server: GitHub.com` |
-| Code rollback | Deploy the previously active production Worker version `819c213c-45b4-416d-bcfd-0884b6fb3294`; production traffic currently needs no code rollback because it still uses GitHub Pages |
+| Code rollback | Deploy the previously active Worker version `bb10cf9d-52df-4761-bc9d-3a2c392266ab`; production traffic currently needs no code rollback because it still uses GitHub Pages |
+
+Final revalidation against version `5770e5db-f36a-4340-b8cf-a9f4947134ce` passed 18/18 HTTP cases, 9/9 byte comparisons, 12/12 browser route and viewport combinations, 10/10 analytics route loads, and the full 78-pass hosted Playwright matrix. It returned HTTP/2 and HTTP/3, the intended CSP and security headers, noindex, `Vary: Accept`, revalidating HTML, and immutable hashed assets. The custom-domain certificate remained active. Cloudflare DNS still contained the same 16 pre-staging records plus only the migration-created staging AAAA record; every pre-existing ID, value, TTL, proxy flag, comment, and `modified_on` value matched the committed snapshot.
 
 Step 9 remains prohibited until the user records an explicit cutover decision after reviewing both URLs and this packet.
 
