@@ -4,14 +4,14 @@
 
 The animation system provides scroll-triggered entrance animations for page sections and a 3D parallax tilt effect for screenshots. Scroll-triggered visibility still uses React state via IntersectionObserver, while high-frequency pointer effects write transform and CSS-variable updates directly through refs and `requestAnimationFrame` to avoid render loops. No external animation libraries are required.
 
-**Colour scheme: the site is dark-only for every visitor.** `globals.css` redefines the Tailwind variant as `@custom-variant dark (&:where(.dark, .dark *))` and `app/layout.tsx` keeps a permanent `dark` class on `<html>`, so `prefers-color-scheme` never selects a theme. Every "Light mode" row in the colour tables below documents the unprefixed default that a `dark:` utility or `@variant dark` block overrides; those light values are retained in source but never render. Only the dark row ships.
+**Colour scheme: the site is dark-only for every visitor.** `site/src/styles/global.css` redefines the Tailwind variant as `@custom-variant dark (&:where(.dark, .dark *))` and `site/src/layouts/BaseLayout.astro` keeps a permanent `dark` class on `<html>`, so `prefers-color-scheme` never selects a theme. Every "Light mode" row in the colour tables below documents the unprefixed default that a `dark:` utility or `@variant dark` block overrides; those light values are retained in source but never render. Only the dark row ships.
 
 ---
 
 ## 2. File Structure
 
 ```
-demo/src/
+site/src/
 ├── hooks/
 │   ├── use-scroll-animation.ts          # Reusable IntersectionObserver hook
 │   ├── use-hero-parallax.ts             # Hero depth parallax scroll effect
@@ -21,8 +21,8 @@ demo/src/
 ├── lib/
 │   ├── mist-palette.ts                  # Mist oklch tokens -> sRGB triples for WebGL uniforms
 │   └── supported-lenders.ts             # Canonical lender metadata for hero field + FAQ answer
-├── app/
-│   └── globals.css                       # CSS keyframes and utility classes
+├── styles/
+│   └── global.css                        # CSS keyframes and utility classes
 └── components/
     ├── elements/
     │   ├── animated-counter.tsx          # Scroll-triggered number counting
@@ -169,7 +169,7 @@ FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with
 
 `cursor-spotlight.tsx::CursorSpotlight` creates an ambient radial gradient that follows the cursor, producing a "flashlight" illumination effect.
 
-**File:** `demo/src/components/elements/cursor-spotlight.tsx`
+**File:** `site/src/components/elements/cursor-spotlight.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -204,7 +204,7 @@ FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with
 
 `magnetic-wrapper.tsx::MagneticWrapper` creates a subtle cursor-attraction effect where wrapped elements pull toward the cursor when nearby, creating a tactile, interactive feel.
 
-**File:** `demo/src/components/elements/magnetic-wrapper.tsx`
+**File:** `site/src/components/elements/magnetic-wrapper.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -242,7 +242,7 @@ FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with
 
 `blur-transition-text.tsx::BlurTransitionText` creates a dreamy blur in/out effect that cycles through phrases, perfect for hero headlines communicating multiple value propositions without layout shift.
 
-**File:** `demo/src/components/elements/blur-transition-text.tsx`
+**File:** `site/src/components/elements/blur-transition-text.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -396,7 +396,7 @@ The hover state changes only `transform` and `box-shadow`; it does not add a gra
 
 `gradient-border-wrapper.tsx::GradientBorderWrapper` wraps primary CTA buttons with a continuously rotating conic gradient border, creating an eye-catching focal point that draws attention to conversion elements.
 
-**File:** `demo/src/components/elements/gradient-border-wrapper.tsx`
+**File:** `site/src/components/elements/gradient-border-wrapper.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -475,7 +475,7 @@ The component includes a periodic shimmer effect - a diagonal shine sweep that c
 
 `floating-orbs.tsx::FloatingOrbs` renders ambient, pulsing orbs in the hero background that gently drift and pulse, creating an atmospheric "living" effect that metaphorically represents "questions floating to answers."
 
-**File:** `demo/src/components/elements/floating-orbs.tsx`
+**File:** `site/src/components/elements/floating-orbs.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -532,7 +532,7 @@ The component includes a periodic shimmer effect - a diagonal shine sweep that c
 
 `animated-counter.tsx::AnimatedCounter` animates numbers counting up from 0 to a target value when the element scrolls into view, creating engagement and emphasizing statistical impact.
 
-**File:** `demo/src/components/elements/animated-counter.tsx`
+**File:** `site/src/components/elements/animated-counter.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -584,7 +584,7 @@ The `StatAnimated` component in `stats-animated-graph.tsx` accepts optional `cou
 
 `logo-marquee.tsx::LogoMarquee` creates an infinite horizontal scrolling display of logos, commonly used for partner/lender logos to create visual movement and imply scale.
 
-**File:** `demo/src/components/elements/logo-marquee.tsx`
+**File:** `site/src/components/elements/logo-marquee.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -647,7 +647,7 @@ The navbar components implement a glassmorphism effect that activates when the u
 
 `border-beam.tsx::BorderBeam` creates a traveling light effect around the perimeter of an element, producing a premium "scan line" effect for featured cards.
 
-**File:** `demo/src/components/elements/border-beam.tsx`
+**File:** `site/src/components/elements/border-beam.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -686,7 +686,7 @@ The navbar components implement a glassmorphism effect that activates when the u
 
 `animated-checkmark-icon.tsx::AnimatedCheckmarkIcon` draws itself in with a satisfying stroke animation using stroke-dasharray/dashoffset technique.
 
-**File:** `demo/src/components/icons/animated-checkmark-icon.tsx`
+**File:** `site/src/components/icons/animated-checkmark-icon.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -725,9 +725,9 @@ const checkmarkBaseDelay = baseDelay + 300 // start after card fades in
 The pricing toggle includes enhanced transitions when switching between Monthly/Yearly options, creating a morph-like feel.
 
 **Files:**
-- `demo/src/components/elements/morphing-price.tsx` — `MorphingPrice` component (available for advanced use)
-- `demo/src/components/sections/pricing-hero-multi-tier.tsx` — Tab panel transitions
-- `demo/src/app/globals.css` — CSS keyframes
+- `site/src/components/elements/morphing-price.tsx` — `MorphingPrice` component (available for advanced use)
+- `site/src/components/sections/pricing-hero-multi-tier.tsx` — Tab panel transitions
+- `site/src/styles/global.css` — CSS keyframes
 
 **Tab panel morph animation:**
 When switching tabs, the new panel slides up with a subtle fade:
@@ -757,7 +757,7 @@ Applied to price elements to enable `tabular-nums` and smooth transitions.
 
 `dot-matrix.tsx::DotMatrix` creates a subtle dot grid pattern with cursor proximity effect, where dots near the cursor brighten to create a wave that follows mouse movement.
 
-**File:** `demo/src/components/elements/dot-matrix.tsx`
+**File:** `site/src/components/elements/dot-matrix.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -801,7 +801,7 @@ Applied to price elements to enable `tabular-nums` and smooth transitions.
 
 The Plan Comparison Table features enhanced row and cell hover states for improved usability and visual polish.
 
-**File:** `demo/src/components/sections/plan-comparison-table.tsx`
+**File:** `site/src/components/sections/plan-comparison-table.tsx`
 
 **Row highlight behavior:**
 | Element | Hover Effect |
@@ -842,7 +842,7 @@ The Plan Comparison Table features enhanced row and cell hover states for improv
 
 `screenshot.tsx::Screenshot` can display a blurred, faded reflection below screenshots, simulating a polished glass surface.
 
-**File:** `demo/src/components/elements/screenshot.tsx`
+**File:** `site/src/components/elements/screenshot.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -881,9 +881,9 @@ The Plan Comparison Table features enhanced row and cell hover states for improv
 
 **Files:**
 
-- `demo/src/components/sections/pricing-hero-multi-tier.tsx`
-- `demo/src/components/sections/pricing-multi-tier.tsx`
-- `demo/src/components/sections/pricing-toggle-shared.ts`
+- `site/src/components/sections/pricing-hero-multi-tier.tsx`
+- `site/src/components/sections/pricing-multi-tier.tsx`
+- `site/src/components/sections/pricing-toggle-shared.ts`
 
 **Animation behavior:**
 - Pill indicator slides between tab positions
@@ -1034,17 +1034,17 @@ Ghost shadow card that appears behind cards during entrance animation, creating 
 
 ## 29. Page Route Transitions
 
-`transition-link.tsx::TransitionLink` uses the View Transitions API for supported internal navigation. `main.tsx::Main` is layout-neutral and no longer adds a mount-time entrance, preventing full loads from stacking global page motion over the hero entrance.
+Cross-document View Transitions are native. `site/src/styles/global.css` declares `@view-transition { navigation: auto; }`, while `transition-link.tsx::TransitionLink` renders a normal internal anchor. `main.tsx::Main` stays layout-neutral and adds no mount-time entrance, which prevents full loads from stacking global page motion over the hero entrance.
 
 **Files:**
-- `demo/src/components/elements/transition-link.tsx` - internal navigation coordinator
-- `demo/src/components/elements/main.tsx` - isolation and overflow wrapper only
-- `demo/src/app/globals.css` - old/new root snapshot timing and keyframes
+- `site/src/components/elements/transition-link.tsx` - normal internal and external anchor contract
+- `site/src/components/elements/main.tsx` - isolation and overflow wrapper only
+- `site/src/styles/global.css` - old/new root snapshot timing and keyframes
 
 **Animation behavior:**
 - Full page loads render `Main` content directly and retain each page's intentional section entrances.
-- Supported internal navigation starts `document.startViewTransition`, then commits the route update.
-- The outgoing root snapshot fades while moving up 8px; the incoming snapshot starts 12px below and settles at full opacity.
+- Supporting browsers start the cross-document transition automatically after an internal anchor navigation.
+- The outgoing root snapshot fades while moving up 8px; the incoming document snapshot starts 12px below and settles at full opacity.
 - Unsupported browsers use normal navigation without a separate mount animation.
 
 **Configuration:**
@@ -1056,7 +1056,7 @@ Ghost shadow card that appears behind cards during entrance animation, creating 
 | Outgoing distance | 8px | Upward root snapshot movement |
 | Incoming distance | 12px | Upward settling distance |
 
-Set `disableTransition` on an individual `TransitionLink` when a navigation must bypass the API. Do not add a mount animation to `Main`; that duplicates first-load hero motion.
+There is no JavaScript transition coordinator and no `document.startViewTransition` call. Do not add a mount animation to `Main`; that duplicates first-load hero motion.
 
 ---
 
@@ -1065,9 +1065,9 @@ Set `disableTransition` on an individual `TransitionLink` when a navigation must
 CSS classes and wrapper components that add subtle hover animations to SVG icons, making the interface feel more responsive and alive.
 
 **Files:**
-- `demo/src/components/elements/animated-icon.tsx` — Reusable wrapper component
-- `demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx` — SocialLink with built-in animation
-- `demo/src/app/globals.css` — CSS keyframes and animation classes
+- `site/src/components/elements/animated-icon.tsx` — Reusable wrapper component
+- `site/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx` — SocialLink with built-in animation
+- `site/src/styles/global.css` — CSS keyframes and animation classes
 
 **Available animation types:**
 
@@ -1214,8 +1214,8 @@ import { XIcon } from '@/components/icons/social/x-icon'
 Cards enter from different directions based on grid position with subtle color temperature shift, creating an organic "dealing from deck" sensation.
 
 **Files:**
-- `demo/src/app/globals.css` — Keyframes and prismatic-enter classes
-- `demo/src/components/sections/testimonials-glassmorphism.tsx` — Applied to testimonial cards
+- `site/src/styles/global.css` — Keyframes and prismatic-enter classes
+- `site/src/components/sections/testimonials-glassmorphism.tsx` — Applied to testimonial cards
 
 **Animation behavior:**
 - Corner cards enter diagonally (top-left, top-right, bottom-left, bottom-right)
@@ -1259,9 +1259,9 @@ Cards enter from different directions based on grid position with subtle color t
 Pricing cards remain equally readable while pointer hover adds controlled depth to the active plan.
 
 **Files:**
-- `demo/src/app/globals.css` — Focus group and focus card classes
-- `demo/src/components/sections/pricing-multi-tier.tsx` — Applied to home page pricing grid
-- `demo/src/components/sections/pricing-hero-multi-tier.tsx` — Applied to pricing page grid
+- `site/src/styles/global.css` — Focus group and focus card classes
+- `site/src/components/sections/pricing-multi-tier.tsx` — Applied to home page pricing grid
+- `site/src/components/sections/pricing-hero-multi-tier.tsx` — Applied to pricing page grid
 
 **Animation behavior:**
 - Parent container uses `pricing-focus-group` class
@@ -1298,8 +1298,8 @@ Pricing cards remain equally readable while pointer hover adds controlled depth 
 Radial ripple emanating from CTA buttons when cursor enters the magnetic field, providing anticipation feedback.
 
 **Files:**
-- `demo/src/app/globals.css` — Ripple keyframes and classes
-- `demo/src/components/elements/magnetic-wrapper.tsx` — Ripple integration
+- `site/src/styles/global.css` — Ripple keyframes and classes
+- `site/src/components/elements/magnetic-wrapper.tsx` — Ripple integration
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -1341,8 +1341,8 @@ Radial ripple emanating from CTA buttons when cursor enters the magnetic field, 
 Gradient wipe that "materializes" screenshots from left to right with glowing leading edge.
 
 **Files:**
-- `demo/src/app/globals.css` — Reveal keyframes and classes
-- `demo/src/components/elements/screenshot.tsx` — Reveal integration
+- `site/src/styles/global.css` — Reveal keyframes and classes
+- `site/src/components/elements/screenshot.tsx` — Reveal integration
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -1383,8 +1383,8 @@ Gradient wipe that "materializes" screenshots from left to right with glowing le
 Horizontal lines that draw from center outward with traveling light pulse, creating visual rhythm between sections.
 
 **Files:**
-- `demo/src/app/globals.css` — Divider keyframes and classes
-- `demo/src/components/elements/section-divider.tsx` — Divider component
+- `site/src/styles/global.css` — Divider keyframes and classes
+- `site/src/components/elements/section-divider.tsx` — Divider component
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -1419,9 +1419,9 @@ import { SectionDivider } from '@/components/elements/section-divider'
 Animated gradient glow line along navbar bottom edge when scrolled, adding life to glassmorphism state.
 
 **Files:**
-- `demo/src/app/globals.css` — Glow keyframes and classes
-- `demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx` — Glow integration
-- `demo/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx` — Glow integration for the active site layout
+- `site/src/styles/global.css` — Glow keyframes and classes
+- `site/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx` — Glow integration
+- `site/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx` — Glow integration for the active site layout
 
 **Animation behavior:**
 - Glow line appears when navbar is scrolled (glassmorphism state)
@@ -1449,8 +1449,8 @@ Animated gradient glow line along navbar bottom edge when scrolled, adding life 
 Slow floating animation for decorative quote marks, adding organic breathing life to testimonial cards.
 
 **Files:**
-- `demo/src/app/globals.css` — Float keyframe
-- `demo/src/components/sections/testimonials-glassmorphism.tsx` — Applied to quote marks
+- `site/src/styles/global.css` — Float keyframe
+- `site/src/components/sections/testimonials-glassmorphism.tsx` — Applied to quote marks
 
 **Animation behavior:**
 - Quote mark floats up 4px and down over 8s cycle
@@ -1482,8 +1482,8 @@ Slow floating animation for decorative quote marks, adding organic breathing lif
 Traveling dots along graph line suggesting live data activity.
 
 **Files:**
-- `demo/src/app/globals.css` — Pulse keyframes and classes
-- `demo/src/components/sections/stats-animated-graph.tsx` — Pulse integration
+- `site/src/styles/global.css` — Pulse keyframes and classes
+- `site/src/components/sections/stats-animated-graph.tsx` — Pulse integration
 
 **Animation behavior:**
 - Small glowing dots travel along graph path
@@ -1513,8 +1513,8 @@ Traveling dots along graph line suggesting live data activity.
 Glow effect that follows the expanding content edge when FAQ items open.
 
 **Files:**
-- `demo/src/app/globals.css` — Glow trail keyframes and classes
-- `demo/src/components/sections/faqs-two-column-accordion.tsx` — Glow integration
+- `site/src/styles/global.css` — Glow trail keyframes and classes
+- `site/src/components/sections/faqs-two-column-accordion.tsx` — Glow integration
 
 **Animation behavior:**
 - A fixed 2px glow line stays attached to the bottom edge of the expanding content.
@@ -1548,8 +1548,8 @@ Glow effect that follows the expanding content edge when FAQ items open.
 Global scroll velocity tracking that influences animation timing and visual intensity.
 
 **Files:**
-- `demo/src/hooks/use-scroll-velocity.ts` — Velocity tracking hook
-- `demo/src/app/globals.css` — CSS custom properties and velocity-responsive classes
+- `site/src/hooks/use-scroll-velocity.ts` — Velocity tracking hook
+- `site/src/styles/global.css` — CSS custom properties and velocity-responsive classes
 
 **Hook return values:**
 
@@ -1619,7 +1619,7 @@ function Page() {
 
 `aurora-background.tsx::AuroraBackground` renders ambient, morphing gradient layers that create an organic, living atmosphere in the hero section.
 
-**File:** `demo/src/components/elements/aurora-background.tsx`
+**File:** `site/src/components/elements/aurora-background.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -1677,7 +1677,7 @@ function Page() {
 
 `luminance-sweep.tsx::LuminanceSweep` creates a metallic sheen that sweeps across headlines when they enter the viewport, creating a premium "light catching metal" reveal effect.
 
-**File:** `demo/src/components/elements/luminance-sweep.tsx`
+**File:** `site/src/components/elements/luminance-sweep.tsx`
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -1733,7 +1733,7 @@ function Page() {
 
 `use-hero-parallax.ts::useHeroParallax` provides multi-layer scroll parallax where different hero elements move at different speeds as user scrolls, creating depth perception.
 
-**File:** `demo/src/hooks/use-hero-parallax.ts`
+**File:** `site/src/hooks/use-hero-parallax.ts`
 
 **Hook return values:**
 
@@ -1832,9 +1832,9 @@ function CustomHero() {
 `icon-path-motion.tsx::IconPathMotion` animates icons along curved bezier paths when they enter the viewport, creating organic, premium motion instead of linear translate-up animations.
 
 **Files:**
-- `demo/src/components/elements/icon-path-motion.tsx` — Wrapper component
-- `demo/src/hooks/use-scroll-animation.ts` — Visibility detection (reused)
-- `demo/src/app/globals.css` — CSS keyframes and path definitions
+- `site/src/components/elements/icon-path-motion.tsx` — Wrapper component
+- `site/src/hooks/use-scroll-animation.ts` — Visibility detection (reused)
+- `site/src/styles/global.css` — CSS keyframes and path definitions
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -1904,9 +1904,9 @@ import { IconPathMotion, getIconPathDelay } from '@/components/elements/icon-pat
 `sticky-eyebrow.tsx::StickyEyebrow` creates section eyebrow labels that become fixed at the top of the viewport with backdrop blur as the user scrolls through that section.
 
 **Files:**
-- `demo/src/components/elements/sticky-eyebrow.tsx` — Component
-- `demo/src/hooks/use-sticky-section.ts` — Sticky and active state detection
-- `demo/src/app/globals.css` — CSS styles for stuck/active states
+- `site/src/components/elements/sticky-eyebrow.tsx` — Component
+- `site/src/hooks/use-sticky-section.ts` — Sticky and active state detection
+- `site/src/styles/global.css` — CSS styles for stuck/active states
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -1971,9 +1971,9 @@ import { StickyEyebrow, StickySectionWrapper } from '@/components/elements/stick
 `use-hue-shift.ts::useHueShift` tracks scroll position and subtly shifts accent colors as the user scrolls between major sections, creating a sense of journey through the page.
 
 **Files:**
-- `demo/src/hooks/use-hue-shift.ts` — Hook for scroll tracking
-- `demo/src/components/elements/hue-shift-provider.tsx` — Provider component
-- `demo/src/app/globals.css` — CSS custom properties and hue-shift classes
+- `site/src/hooks/use-hue-shift.ts` — Hook for scroll tracking
+- `site/src/components/elements/hue-shift-provider.tsx` — Provider component
+- `site/src/styles/global.css` — CSS custom properties and hue-shift classes
 
 **Section Hue Map:**
 
@@ -1997,17 +1997,14 @@ import { StickyEyebrow, StickySectionWrapper } from '@/components/elements/stick
 - `[data-section-hue="{name}"]` — Section identifier for tracking
 - `[data-hue-active="true"]` — Applied when section is active
 
-**Integration:**
+**Integration:** `HomePage` mounts `HueShiftProvider` inside the homepage hero island, so the hook can observe every `data-section-hue` section in the document without crossing an Astro island boundary.
 ```tsx
-// In app/page.tsx - enable homepage hue shift tracking
+// In components/pages/home-sections.tsx
 import { HueShiftProvider } from '@/components/elements/hue-shift-provider'
 
-export default function Page() {
-  return (
-    <HueShiftProvider>
-      {/* Homepage sections with data-section-hue attributes */}
-    </HueShiftProvider>
-  )
+export function HomePage({ section }: HomePageProps) {
+  if (section === 'hero') return <><HueShiftProvider /><HomeHero /></>
+  // Return the requested independently hydrated page section.
 }
 
 // In page sections - add data attribute and optional class
@@ -2033,9 +2030,9 @@ export default function Page() {
 `scroll-highlight.tsx::ScrollHighlight` highlights key phrases with subtle glow and color intensification as they pass through the viewport center, creating a reading focus guide.
 
 **Files:**
-- `demo/src/components/elements/scroll-highlight.tsx` — Component
-- `demo/src/hooks/use-scroll-highlight.ts` — Center detection hook
-- `demo/src/app/globals.css` — CSS styles for highlight states
+- `site/src/components/elements/scroll-highlight.tsx` — Component
+- `site/src/hooks/use-scroll-highlight.ts` — Center detection hook
+- `site/src/styles/global.css` — CSS styles for highlight states
 
 | Prop | Type | Default | Purpose |
 |------|------|---------|---------|
@@ -2251,12 +2248,12 @@ After optimisations:
 
 | File | Optimisation |
 |------|-------------|
-| `demo/src/hooks/use-sticky-section.ts` | RAF throttling + state de-duplication |
-| `demo/src/hooks/use-hue-shift.ts` | Threshold reduction (11→3) |
-| `demo/src/hooks/use-hero-parallax.ts` | State→ref conversion + isScrolling de-duplication |
-| `demo/src/hooks/use-scroll-velocity.ts` | Timeout-based decay (replaces continuous setInterval) |
-| `demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx` | RAF throttling + state de-duplication in `useScrolled` |
-| `demo/src/components/sections/navbar-controller.tsx` | RAF-throttled class updates without React scroll state |
+| `site/src/hooks/use-sticky-section.ts` | RAF throttling + state de-duplication |
+| `site/src/hooks/use-hue-shift.ts` | Threshold reduction (11→3) |
+| `site/src/hooks/use-hero-parallax.ts` | State→ref conversion + isScrolling de-duplication |
+| `site/src/hooks/use-scroll-velocity.ts` | Timeout-based decay (replaces continuous setInterval) |
+| `site/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx` | RAF throttling + state de-duplication in `useScrolled` |
+| `site/src/components/sections/navbar-controller.tsx` | RAF-throttled class updates without React scroll state |
 
 ---
 
@@ -2266,11 +2263,11 @@ After optimisations:
 
 **Files:**
 
-- `demo/src/components/elements/supported-lenders-field.tsx`
-- `demo/src/lib/supported-lenders.ts`
-- `demo/src/app/globals.css`
-- `demo/src/app/page.tsx`
-- `demo/src/app/pricing/page.tsx`
+- `site/src/components/elements/supported-lenders-field.tsx`
+- `site/src/lib/supported-lenders.ts`
+- `site/src/styles/global.css`
+- `site/src/components/pages/home-sections.tsx`
+- `site/src/components/pages/pricing-sections.tsx`
 
 **Data model:**
 
@@ -2308,7 +2305,7 @@ After optimisations:
 **Verification requirements:**
 
 - Run `npm run build` in `demo/` and confirm `demo/out/index.html` contains the lender names.
-- Run targeted ESLint for `src/app/page.tsx`, `src/components/elements/supported-lenders-field.tsx`, and `src/lib/supported-lenders.ts` when full-project lint is blocked by unrelated lint debt.
+- Run `pnpm --dir site check` and the focused browser parity cases for `site/src/components/pages/home-sections.tsx`, `site/src/components/elements/supported-lenders-field.tsx`, and `site/src/lib/supported-lenders.ts`.
 - Visually verify desktop, wide desktop, and mobile layouts with `dev-browser`.
 - Check announcement badge scrolling, pointer tracking, pointer leave reset, click persistence, keyboard focus, touch-style selection, and horizontal overflow.
 - Record a short performance trace while moving across the list; pointer event work should remain below the 16.7ms frame budget.
@@ -2321,27 +2318,27 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 
 **Files:**
 
-- `demo/src/components/sections/footer-wordmark.tsx::FooterWordmark`
-- `demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx::FooterWithNewsletterFormCategoriesAndSocialIcons`
-- `demo/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx::FooterLink`
-- `demo/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx::NavbarWithLinksActionsAndCenteredLogo`
-- `demo/src/components/sections/navbar-controller.tsx::NavbarController`
-- `demo/src/components/sections/navbar-links.tsx::NavbarMobileLink`
-- `demo/src/components/sections/navbar-with-logo-actions-and-centered-links.tsx::NavbarWithLogoActionsAndCenteredLinks`
-- `demo/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx::NavbarWithLogoActionsAndLeftAlignedLinks`
-- `demo/src/app/contact/contact-form.tsx::ContactForm`
-- `demo/src/components/elements/text.tsx::Text`
-- `demo/src/app/globals.css`
+- `site/src/components/sections/footer-wordmark.tsx::FooterWordmark`
+- `site/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx::FooterWithNewsletterFormCategoriesAndSocialIcons`
+- `site/src/components/sections/footer-with-newsletter-form-categories-and-social-icons.tsx::FooterLink`
+- `site/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx::NavbarWithLinksActionsAndCenteredLogo`
+- `site/src/components/sections/navbar-controller.tsx::NavbarController`
+- `site/src/components/sections/navbar-links.tsx::NavbarMobileLink`
+- `site/src/components/sections/navbar-with-logo-actions-and-centered-links.tsx::NavbarWithLogoActionsAndCenteredLinks`
+- `site/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx::NavbarWithLogoActionsAndLeftAlignedLinks`
+- `site/src/components/pages/contact-form.tsx::ContactForm`
+- `site/src/components/elements/text.tsx::Text`
+- `site/src/styles/global.css`
 
 **Footer wordmark:**
 
-- `FooterWordmark` is the only client component added to the footer. It observes the absolute wordmark with `useScrollAnimation` and sets `data-visible="true"` once the cropped text enters the viewport.
+- `NavbarShell` and `FooterShell` render static markup from `site/src/components/shell/site-shell.tsx`. The single route-level `ShellController` island owns the navbar controller and the footer wordmark observer. It sets `data-visible="true"` once the cropped text enters the viewport.
 - `globals.css` owns `.footer-wordmark`, `.footer-wordmark__text`, and `footer-wordmark-sweep`. The wordmark uses the Mona Sans display variable, `clamp(5.25rem, 14vw, 18rem)`, `letter-spacing: 0`, gradient-clipped transparent text, and parent `overflow-hidden` to crop the lower edge.
 - The sweep is a one-time `background-position` and `opacity` animation on the text pseudo-element. Footer links now transition only `color` and `transform` for the 200ms hover/focus translate treatment.
 
 **Mobile menu:**
 
-- `navbar-with-links-actions-and-centered-logo.tsx::NavbarWithLinksActionsAndCenteredLogo` server-renders the native `dialog#mobile-menu`; `navbar-controller.tsx::NavbarController` owns its open, cancel, backdrop, link, and close events without hydrating the menu markup.
+- `site-shell.tsx::NavbarShell` server-renders the native `dialog#mobile-menu`; `navbar-controller.tsx::NavbarController` inside `ShellController` owns its open, cancel, backdrop, link, and close events without re-rendering the menu markup.
 - `globals.css` owns `.mobile-menu-dialog`, `.mobile-menu-panel`, `.mobile-menu-links`, and `.mobile-menu-close-icon`. The panel uses `data-enter`, `data-leave`, and `data-closed` transition states rather than one-shot keyframes.
 - The controller applies the enter state across two animation frames, waits 170ms before native `dialog.close()` on exit, and clears every frame and timer on unmount. The glass panel enters over 200ms and exits over 150ms with opacity plus `translateY(-12px)`. A reversed `data-enter` plus `data-closed` state is explicitly reduced to 150ms; link delays are cleared and the close icon also uses 150ms during exit. Pinned `.mobile-menu-actions` remain at the bottom of the flex panel without their own JS timeline.
 - `navbar-links.tsx::NavbarMobileLink` uses a native anchor inside the dialog. This lets the controller start the exit transition while the browser completes navigation; desktop links retain the site View Transition path.
@@ -2367,14 +2364,14 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 
 ## 55. Dot Pool Hero Background (Three.js) and the "Take the stage" screenshot
 
-`dot-pool-background.tsx::DotPoolBackground` renders the homepage hero background: a perspective field of soft mist-coloured discs that behaves like a pool. Concentric waves radiate from under the primary CTA, two slow swells cross the field, the pointer stirs ripples, the pool rises from under the fold on load, and on scroll it calms to still water under the pinned product screenshot before fading out at the supported-lenders field. `hero-dot-pool.tsx::HeroDotPool` is the section that hosts it and owns the scroll-driven screenshot stage. This is the site's only WebGL surface and its only runtime dependency beyond React/Next (`three` ^0.170).
+`dot-pool-background.tsx::DotPoolBackground` renders the homepage hero background: a perspective field of soft mist-coloured discs that behaves like a pool. Concentric waves radiate from under the primary CTA, two slow swells cross the field, the pointer stirs ripples, the pool rises from under the fold on load, and on scroll it calms to still water under the pinned product screenshot before fading out at the supported-lenders field. `hero-dot-pool.tsx::HeroDotPool` is the section that hosts it and owns the scroll-driven screenshot stage. This is the site's only WebGL surface and its only runtime dependency beyond React (`three` 0.170.0).
 
 **Files:**
 
-- `demo/src/components/elements/dot-pool-background.tsx::DotPoolBackground` and `DOT_POOL_CONFIG`
-- `demo/src/components/sections/hero-dot-pool.tsx::HeroDotPool` and `STAGE_CONFIG`
-- `demo/src/lib/mist-palette.ts::mistRgb`
-- `demo/src/app/page.tsx` (homepage integration)
+- `site/src/components/elements/dot-pool-background.tsx::DotPoolBackground` and `DOT_POOL_CONFIG`
+- `site/src/components/sections/hero-dot-pool.tsx::HeroDotPool` and `STAGE_CONFIG`
+- `site/src/lib/mist-palette.ts::mistRgb`
+- `site/src/components/pages/home-sections.tsx` (homepage integration)
 
 **Section structure (`HeroDotPool`):**
 
@@ -2383,7 +2380,7 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 - Scrim: an absolutely positioned page-colour gradient (`-inset-x-[2%] -inset-y-6`, radial to transparent at 66%; linear top-to-55% below `lg`) sits inside the `isolate` copy container at `-z-10`, keeping the copy clean where the horizon crosses it without hiding the pool around it.
 - Stage track (`demo`): `relative pt-6 lg:-mt-[30svh]` wrapper holding a `lg:sticky lg:top-0 lg:h-[100svh]` centred panel with the screenshot frame, followed by a `lg:h-[100svh]` spacer, so the frame is pinned for 100svh of extra scroll. The `-30svh` margin overlaps the empty bottom of the copy stage so the panel pins while the CTAs are still leaving; the frame itself stays below the fold at load (no peek). Frame width: `max-w-5xl`, `lg:max-w-[min(1152px, (100svh-6rem)*1.45)]`, `2xl:max-w-[min(1440px, 72vw, (100svh-6rem)*1.45)]` (the height term keeps the padded frame inside the viewport).
 - Supported-lenders field (`footer`): normal `Container` with `pt-16 pb-24 lg:pt-24 lg:pb-28` after the track.
-- `DotPoolBackground` loads via `next/dynamic` with `ssr: false`; the copy still server-renders. `HeroDotPool` keeps the sticky host mounted, waits for the document `load` event, then mounts the pool in `requestIdleCallback` (`timeout: 2000`) or a 200ms timeout fallback. Cleanup removes the load listener and cancels either scheduled path. This gate keeps the 123 KiB three.js chunk off the first-paint critical path; the pool's animation, tunables, timing curves, and interaction model are unchanged.
+- `DotPoolBackground` loads through `React.lazy` and `Suspense` only after the existing readiness gate; the copy still server-renders in the hero island's initial HTML. `HeroDotPool` keeps the sticky host mounted, waits for the document `load` event, then mounts the pool in `requestIdleCallback` (`timeout: 2000`) or a 200ms timeout fallback. Cleanup removes the load listener and cancels either scheduled path. This gate keeps the Three.js chunk out of the initial HTML and first-paint critical path; the pool's animation, tunables, timing curves, and interaction model are unchanged.
 
 **Stage scroll controller (`HeroDotPool`, large viewports only):**
 
@@ -2422,6 +2419,23 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 - The stage's `lg:-mt-[30svh]` overlaps the copy stage's empty bottom band only; growing the copy block (extra lines, a taller CTA row) shrinks that band and can put the pinned panel over the CTAs. Check the overlap at 1440x900 and 1024x768 after copy changes.
 - The frame's scale/translate transform is on the outer frame element; the `Screenshot` hover tilt is on an inner element. Putting both on one element makes the last writer win and drops one effect.
 - The pool fade is timed to the section's scroll range; adding or removing content after the lenders field (or changing the track height) moves where p = 0.66..0.94 lands and must be re-checked in the browser.
-- `mistRgb` converts oklch through a canvas `fillStyle` round-trip; if a browser cannot parse oklch it silently falls back to the precomputed sRGB table, which must be kept in step with the ramp in `globals.css`.
+- `mistRgb` converts oklch through a canvas `fillStyle` round-trip; if a browser cannot parse oklch it silently falls back to the precomputed sRGB table, which must be kept in step with the ramp in `site/src/styles/global.css`.
 - The wave origin lookup assumes exactly one `[data-glass-press-button]` inside the hero section (the primary CTA). A second Glass Press button in the hero would move the origin to whichever comes first in DOM order.
 - `three` is bundled from `node_modules`; do not load it from a CDN.
+
+---
+
+## 56. Astro Island Boundaries and Hydration
+
+`site/src/pages/` renders the complete document and initial section markup. React hydrates only the smallest section that owns interaction or animation state. Every route also hydrates one `ShellController` with `client:load`; its static navbar and footer markup remains owned by `BaseLayout.astro` and `site-shell.tsx`.
+
+| Route | Hydrated islands | Timing |
+| --- | ---: | --- |
+| `/` | 8 | Shell and hero `client:load`; FAQ `client:idle`; features, stats, testimonials, pricing, and CTA `client:visible` with a 200px root margin |
+| `/pricing/` | 5 | Shell and hero `client:load`; FAQ `client:idle`; comparison and CTA `client:visible` with a 200px root margin |
+| `/about/` | 6 | Shell and hero `client:load`; stats, testimonial, team, and CTA `client:visible` with a 200px root margin |
+| `/contact/` | 2 | Shell and contact grid/form `client:load` |
+| `/privacy-policy/` | 1 | Shell only; document content is static |
+| `/404.html` | 1 | Shell only; recovery content is static |
+
+Animated wrappers must preserve their section's layout contract before hydration. Above-fold content renders visible and uses the transform-only entrance classes. Below-fold `client:visible` islands hydrate before they enter the viewport, so their existing observers, animation states, and cleanup remain unchanged. Do not share React context across islands; lift state only to the nearest section island or coordinate document-owned state through data attributes and CSS variables.

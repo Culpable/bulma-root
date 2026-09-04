@@ -1,0 +1,152 @@
+import { clsx } from 'clsx/lite'
+import type { ComponentProps, ReactNode } from 'react'
+import { Container } from '../elements/container'
+import { AnimatedArrowIcon } from '../icons/animated-arrow-icon'
+import { FooterWordmark } from './footer-wordmark'
+
+export function FooterCategory({ title, children, ...props }: { title: ReactNode } & ComponentProps<'div'>) {
+  return (
+    <div {...props}>
+      <h3>{title}</h3>
+      <ul role="list" className="mt-2 flex flex-col gap-2">
+        {children}
+      </ul>
+    </div>
+  )
+}
+
+export function FooterLink({ href, className, ...props }: { href: string } & Omit<ComponentProps<'a'>, 'href'>) {
+  return (
+    <li className={clsx('text-mist-700 dark:text-mist-400', className)}>
+      <a
+        href={href}
+        className="inline-flex min-h-11 cursor-pointer items-center transition-[color,translate] duration-200 ease-out hover:translate-x-0.5 hover:text-mist-950 focus-visible:translate-x-0.5 focus-visible:text-mist-950 focus-visible:outline-none lg:min-h-10 dark:hover:text-white dark:focus-visible:text-white"
+        {...props}
+      />
+    </li>
+  )
+}
+
+/**
+ * Social media link with optional micro-animated icon effect.
+ *
+ * Icons within this link will animate on hover using the specified animation type.
+ * Available animations: 'wiggle', 'pulse', 'bounce', 'float', 'spin', 'sparkle'
+ *
+ * To disable animation: Set iconAnimation to undefined or remove the prop.
+ */
+export function SocialLink({
+  href,
+  name,
+  className,
+  iconAnimation = 'pulse',
+  children,
+  ...props
+}: {
+  href: string
+  name: string
+  /** Icon hover animation type. Set to undefined to disable. */
+  iconAnimation?: 'wiggle' | 'pulse' | 'bounce' | 'float' | 'spin' | 'sparkle'
+} & Omit<ComponentProps<'a'>, 'href'>) {
+  const rel = props.rel
+    ? Array.from(new Set([...props.rel.split(' '), 'noopener', 'noreferrer'])).join(' ')
+    : 'noopener noreferrer'
+
+  // Map animation type to CSS class
+  const animationClass = iconAnimation ? `icon-${iconAnimation}` : ''
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel={rel}
+      aria-label={name}
+      className={clsx('group inline-flex size-11 cursor-pointer items-center justify-center text-mist-950 lg:size-10 dark:text-white', className)}
+      {...props}
+    >
+      {/* Wrap children in animated container */}
+      <span className={clsx('inline-flex size-6', animationClass)}>{children}</span>
+    </a>
+  )
+}
+
+/**
+ * @deprecated Footer newsletter signups are deprecated; avoid adding this form to new layouts.
+ */
+export function NewsletterForm({
+  headline,
+  subheadline,
+  className,
+  ...props
+}: {
+  headline: ReactNode
+  subheadline: ReactNode
+} & ComponentProps<'form'>) {
+  return (
+    <form className={clsx('flex max-w-sm flex-col gap-2', className)} {...props}>
+      <p>{headline}</p>
+      <div className="flex flex-col gap-4 text-mist-700 dark:text-mist-400">{subheadline}</div>
+      {/* Label the submission so downstream tooling can distinguish footer newsletter signups. */}
+      <input type="hidden" name="form_source" value="footer_newsletter" />
+      <div className="flex items-center border-b border-mist-950/20 py-2 has-[input:focus]:border-mist-950 dark:border-white/20 dark:has-[input:focus]:border-white">
+        <input
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+          placeholder="Email"
+          aria-label="Email"
+          className="flex-1 text-mist-950 focus:outline-hidden dark:text-white"
+        />
+        <button
+          type="submit"
+          aria-label="Subscribe"
+          className="group relative inline-flex size-11 cursor-pointer items-center justify-center rounded-full hover:bg-mist-950/10 lg:size-10 dark:hover:bg-white/10"
+        >
+          <AnimatedArrowIcon />
+        </button>
+      </div>
+    </form>
+  )
+}
+
+export function FooterWithNewsletterFormCategoriesAndSocialIcons({
+  cta,
+  links,
+  fineprint,
+  socialLinks,
+  className,
+  ...props
+}: {
+  cta?: ReactNode
+  links: ReactNode
+  fineprint: ReactNode
+  socialLinks?: ReactNode
+} & ComponentProps<'footer'>) {
+  const hasCta = Boolean(cta)
+
+  return (
+    <footer className={clsx('pt-16', className)} {...props}>
+      <div className="relative isolate overflow-hidden bg-mist-950/2.5 py-16 text-mist-950 dark:bg-white/5 dark:text-white">
+        <Container className="relative z-10 flex flex-col gap-16">
+          <div
+            className={clsx(
+              'grid grid-cols-1 gap-x-6 gap-y-16 text-sm/7',
+              hasCta ? 'lg:grid-cols-2' : 'lg:grid-cols-1',
+            )}
+          >
+            {cta}
+            <nav className="grid grid-cols-2 gap-6 sm:has-[>:last-child:nth-child(3)]:grid-cols-3 sm:has-[>:nth-child(5)]:grid-cols-3 md:has-[>:last-child:nth-child(4)]:grid-cols-4 lg:max-xl:has-[>:last-child:nth-child(4)]:grid-cols-2">
+              {links}
+            </nav>
+          </div>
+          <div className="flex items-center justify-between gap-10 text-sm/7">
+            <div className="text-mist-600 dark:text-mist-400">{fineprint}</div>
+            {socialLinks && <div className="flex items-center gap-4 sm:gap-10">{socialLinks}</div>}
+          </div>
+        </Container>
+        <FooterWordmark />
+      </div>
+    </footer>
+  )
+}

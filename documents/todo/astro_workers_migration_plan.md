@@ -1,11 +1,11 @@
-# Astro on Cloudflare Workers Migration Plan
+# Astro on Cloudflare Workers Migration Plan 🔄 **IN PROGRESS**
 
 <critical_warning>
 > **CRITICAL WARNING:** Production cutover changes DNS for `bulma.com.au` and `www.bulma.com.au` only. Immediately before that write, record the complete live state of every record in zone `0534ecfcfde9d322566af12ec11c1bef`, every Workers custom domain, every zone ruleset, and the GitHub Pages site state in `documents/guides/_hosting.md`, then commit it. Only the three apex `A` records and the one `www` `A` record may change. The `app.bulma.com.au` CNAME to Vercel, every MX, TXT, DKIM, DMARC, autodiscover, and `send.auth` record must remain byte-identical. GitHub Pages stays live and undisabled until the Worker passes every production check so the four recorded `A` records can restore the previous host within minutes.
 </critical_warning>
 
 <important_note>
-> **IMPORTANT NOTE:** This plan supersedes `documents/todo/cloudflare_pages_migration_plan.md`. That plan kept Next.js and targeted Cloudflare Pages; it stalled at its Step 5G performance gate and is archived by Step 10 of this plan. Its Pages project `bulma-root`, preview deployments, `Pages Write` token, and GitHub secret are obsolete and are removed after cutover. Every Cloudflare and GitHub action in this plan is agent-run through the macOS Keychain credential, the Cloudflare API, Wrangler, and `gh`. The GitHub App grant is already done: `Culpable/bulma-root` was granted to the Cloudflare Workers and Pages GitHub App on 2026-09-04 and the repository is visible in the Cloudflare dashboard's **Import a repository** list. Exactly one action is now guaranteed to need the user: the explicit approval to cut over after reviewing `https://staging.bulma.com.au/`. One action may need the user: creating the Workers Builds repository connection and triggers in Step 7, because Cloudflare publishes no API for it (see D-3).
+> **IMPORTANT NOTE:** This plan supersedes `documents/todo/cloudflare_pages_migration_plan.md`. That plan kept Next.js and targeted Cloudflare Pages; it stalled at its Step 5G performance gate and is archived by Step 10 of this plan. Its Pages project `bulma-root`, preview deployments, `Pages Write` token, and GitHub secret are obsolete and are removed after cutover. Every Cloudflare and GitHub action in this plan is agent-run through the macOS Keychain credential, the Cloudflare API, Wrangler, and `gh`. The GitHub App grant is already done: `Culpable/bulma-root` was granted to the Cloudflare Workers and Pages GitHub App on 2026-09-04 and the repository is visible in the Cloudflare dashboard's **Import a repository** list. Cloudflare published the Workers Builds repository-connection API on 2026-08-13, so the executor can now create the connection and triggers without a dashboard step. Exactly one action needs the user: the explicit approval to cut over after reviewing `https://staging.bulma.com.au/`.
 </important_note>
 
 <autonomy>
@@ -151,7 +151,7 @@ flowchart LR
 
 - **Defaults:** Astro site directory `site/`; Worker `bulma-root`, preview Worker `bulma-root-preview`; staging hostname `staging.bulma.com.au`; production custom domain `bulma.com.au`; `www` redirect via zone Single Redirect rule named `Redirect www to the Bulma apex`; canonical origin `https://bulma.com.au`; dev and preview-server port `4331`; pnpm; Node `22.23.1`; Workers Builds; negotiated Markdown profile; header-only CSP with build-generated script hashes; Formspree contact form; native cross-document view transitions; Playwright plus axe; React islands.
 - **Worker name fallback:** `bulma-root` -> delete obsolete Pages project `bulma-root` if it blocks the name -> `bulma-site` / `bulma-site-preview`.
-- **Font fallback order:** `fontProviders.local()` with the `@fontsource-variable/mona-sans` file that carries both `wght` and `wdth` axes (`stretch` range declared) -> `fontProviders.fontsource()` for Mona Sans if the local file cannot expose `wdth` and the H1 width gate still passes -> stop and report if `'wdth' 112.5` cannot be reproduced. Inter uses `fontProviders.fontsource()` with the variable file, or `local()` from `@fontsource-variable/inter` if the provider fetch fails at build time.
+- **Font fallback order:** Astro `fontProviders.google()` with `subsets: ['latin']`, Mona Sans weights `200 900`, stretch `75 125`, and the experimental `wdth` variable axis -> `fontProviders.local()` with a verified production-equivalent woff2 if the provider fetch fails -> stop and report if the exact production font hashes and `'wdth' 112.5` rendering cannot both be reproduced. Inter uses the same Google provider with its latin variable file.
 - **CSP fallback order:** header CSP with hashes generated from `dist/**/*.html` inline scripts by `site/scripts/generate-headers.mjs` -> Astro `security.csp` for `script-src` and `style-src` with the header carrying only non-script directives -> stop and report if island hydration still produces a CSP violation. Never `'unsafe-inline'` in `script-src`.
 - **Islands fallback:** if a section cannot hydrate as one island because two React roots must share state, lift the state to the nearest shared parent island; if that parent becomes page-sized, split the section by DOM-owned coordination (data attributes and CSS variables) instead. Never use React context across islands.
 - **Workers Builds fallback:** the GitHub App grant is already complete, so the only remaining gap is the connection itself. If the connection cannot be created by API, ask the user for the one dashboard step described in Step 7 and continue. If the user is unavailable, finish every local and bootstrap step, deploy `bulma-root` and attach `staging.bulma.com.au` with Wrangler from the agent's machine, run the full Step 8 proof against staging, and report that the Git-connected release path is the only outstanding item. Never substitute GitHub Actions for Workers Builds without the user's decision; D-3 option (b) stays rejected.
@@ -221,9 +221,9 @@ flowchart LR
 - **Why:** Proven in this account, gives automatic branch previews to an isolated Worker, and is the skill's default stack.
 - **Why not (b):** second deploy path to maintain and no automatic previews.
 - **Status (2026-09-04):** The grant is complete. `Culpable/bulma-root` was granted to the Cloudflare Workers and Pages GitHub App and confirmed visible in the dashboard's **Import a repository** list. No further GitHub-side action is required.
-- **Known API gap:** Cloudflare publishes no endpoint to list Git installations or create a Workers Builds repository connection. Verified on 2026-09-04 with the Global API Key against account `213ab3604485056376263d22fa242742`: `builds/repos`, `builds/repos/github`, `builds/repos/providers/github/accounts`, `builds/connections`, `builds/repo_connections`, and `builds/accounts` all return `12000 Not found`; `builds/repos/{provider_type}/{provider_account_id}/{repo_id}/config_autofill` routes but rejects GitHub's own numeric IDs with `12013 Invalid query parameter`, because it expects Cloudflare's internal provider-account ID, which exists only after a connection is made. Confirmed as a dashboard-only flow by `cloudflare/workers-sdk#12058`. Read-only build and trigger endpoints (`builds/workers/{external_script_id}/builds`, `builds/builds/{build_uuid}`, the triggers list) do exist and are used for verification.
-- **Consequence:** Step 7 must attempt connection creation by API, and fall back to a single user-performed dashboard step if the API still has no route. Everything else in Steps 1-8 stays agent-run.
-- **Reconsider when:** the dashboard step is refused, or Cloudflare ships a public Builds connection API (then Step 7 becomes fully autonomous).
+- **API status:** Cloudflare published `PUT /accounts/{account_id}/builds/repos/connections` on 2026-08-13. It accepts the GitHub provider account and repository IDs directly. The Builds token, trigger, environment-variable, manual-build, and build-status endpoints are also public. The dashboard fallback is retained only for an unexpected API failure after the documented request is attempted.
+- **Consequence:** Step 7 is fully autonomous through the Cloudflare API.
+- **Reconsider when:** Cloudflare changes or removes the public Workers Builds API.
 
 #### D-4: Staging hostname
 - **Options:** (a) `staging.bulma.com.au`; (b) `preview.bulma.com.au`; (c) `new.bulma.com.au`.
@@ -310,7 +310,8 @@ flowchart LR
 - **Reconsider when:** hash generation changes on every build (non-deterministic stubs).
 
 #### D-17: Fonts
-- **Decision:** Plan writer. Astro Fonts API with `fontProviders.local()` reading the `@fontsource-variable/mona-sans` woff2 that carries `wght` and `wdth`, `weights: ['200 900']`, `stretch: '75% 125%'`, `display: 'swap'`, `subsets: ['latin']`, no preload; Inter through `fontProviders.fontsource()` variable file, `display: 'swap'`, no preload.
+- **Decision:** Implemented with the Astro Fonts API and `fontProviders.google()` for both faces. Mona Sans uses weights `200 900`, stretch `75 125`, the `wdth` variable axis, `display: 'swap'`, the latin subset, and no preload; Inter uses its latin variable file with `display: 'swap'` and no preload.
+- **Evidence:** The emitted Mona Sans and Inter woff2 files are byte-identical to the corresponding production Next.js font files. This preserves both font metrics and the widened Mona Sans display setting.
 - **Why:** The Google provider's `wdth` support is unverified; the local provider guarantees the axis file is the one served.
 - **Reconsider when:** the H1 width gate fails.
 
@@ -344,8 +345,8 @@ flowchart LR
 
 | Route | Astro page | React section components (`site/src/components/pages/`) and directive |
 | --- | --- | --- |
-| `/` | `index.astro` | `HomeHero` (`HeroDotPool` with `BlurTransitionText`, CTAs, `HeroScreenshot`, `SupportedLendersField`) `client:load`; `HueShiftController` `client:idle`; `HomeFeatures` `client:visible`; `HomeStats` `client:visible`; `HomeTestimonials` `client:visible`; `HomePricing` `client:visible`; `HomeFaq` `client:idle`; `HomeCta` `client:visible` |
-| `/pricing/` | `pricing/index.astro` | `PricingHero` (toggle, morphing prices, plans) `client:load`; `PricingComparison` (tabs) `client:visible`; `PricingLogos` and `PricingTestimonial` `client:visible`; `PricingFaq` `client:idle`; `PricingCta` `client:visible` |
+| `/` | `index.astro` | `ShellController` `client:load`; `HomePage` hero (including hue-shift control, `HeroDotPool`, `BlurTransitionText`, CTAs, `HeroScreenshot`, and `SupportedLendersField`) `client:load`; features, stats, testimonials, pricing, and CTA sections `client:visible`; FAQ `client:idle` |
+| `/pricing/` | `pricing/index.astro` | `ShellController` `client:load`; `PricingPage` hero (toggle, morphing prices, plans) `client:load`; comparison and CTA sections `client:visible`; FAQ `client:idle` |
 | `/about/` | `about/index.astro` | `AboutHero` `client:load`; `AboutStats`, `AboutTeam`, `AboutTestimonial`, `AboutCta` `client:visible` |
 | `/contact/` | `contact/index.astro` | `ContactGrid` (`ContactForm`, `ContactDetails`, scroll animation) `client:load`; heading copy static |
 | `/privacy-policy/` | `privacy-policy/index.astro` | `DocumentCentered` rendered statically (no directive) unless it imports a hook |
@@ -362,7 +363,7 @@ flowchart LR
 
 ## 5. Implementation Plan
 
-### Step 1: Revalidate authority, snapshot the baseline, and stage the hosting guide
+### ~~Step 1: Revalidate authority, snapshot the baseline, and stage the hosting guide~~ ✅ **COMPLETED**
 **Objective:** Fix the exact inputs before any write and give later steps a single evidence document.
 
 #### 1.1 High-Level Approach
@@ -381,7 +382,7 @@ flowchart LR
 - `demo/` lint and tests exit 0; the recorded gzip baselines match `demo/performance-budgets.json`.
 - No Cloudflare resource, GitHub setting, branch, DNS record, or `demo/` source file changes.
 
-### Step 2: Scaffold the Astro project in `site/`
+### ~~Step 2: Scaffold the Astro project in `site/`~~ ✅ **COMPLETED**
 **Objective:** Create the static-first project skeleton with the skill's mandatory structure and the pinned toolchain.
 
 #### 2.1 High-Level Approach
@@ -400,7 +401,7 @@ flowchart LR
 - `documents/AGENTS/` contains the six guides with zero `{{` tokens (`rg -n "\{\{" documents/AGENTS` returns nothing).
 - `git -C /Users/sacino/bulma-root status --short` shows only `site/`, `documents/AGENTS/`, `.gitignore`, and files this plan owns.
 
-### Step 3: Port the design system, shell, fonts, metadata, structured data, analytics, and discovery files
+### ~~Step 3: Port the design system, shell, fonts, metadata, structured data, analytics, and discovery files~~ ✅ **COMPLETED**
 **Objective:** Make every page share one head, one layout, one stylesheet, and one analytics boot with production-identical output.
 
 #### 3.1 High-Level Approach
@@ -421,7 +422,7 @@ flowchart LR
 - With `dev-browser` at `1440x900`, the homepage H1 and the pricing H2 bounding-box widths match the production screenshots' element widths within 2 px.
 - With Mixpanel, recorder, and Formspree hosts intercepted, one page load produces exactly one `Page View` with `url` and `page` equal to the pathname, `window.mixpanelLoaded === true`, a `bulma:mixpanel-ready` event, and one `Referral Source Identified` event; `import.meta.env.DEV` mode produces none and dispatches `bulma:mixpanel-disabled`.
 
-### Step 4: Port the pages and React islands
+### ~~Step 4: Port the pages and React islands~~ ✅ **COMPLETED**
 **Objective:** Reproduce every route and interaction with the existing components as islands.
 
 #### 4.1 High-Level Approach
@@ -437,12 +438,12 @@ flowchart LR
 - `pnpm --dir site check` reports 0 errors and 0 warnings; `pnpm --dir site build` exits 0.
 - `rg -n "next/|'use client'|process.env" site/src` returns nothing.
 - For every route, extracted visible text (whitespace-normalised) and the sorted list of `href` values equal the production manifest in `documents/guides/parity/production-baseline.json`.
-- `site/dist` contains exactly one `<astro-island>` per planned island on each route (8 on `/`, 6 on `/pricing/`, 5 on `/about/`, 2 on `/contact/`, 1 on `/privacy-policy/`, 1 on the 404 page), each with the planned `client` directive; the counts are asserted in `site/test/build-output.test.ts`.
+- `site/dist` contains exactly one `<astro-island>` per planned island on each route (8 on `/`, 5 on `/pricing/`, 6 on `/about/`, 2 on `/contact/`, 1 on `/privacy-policy/`, 1 on the 404 page), each with the planned `client` directive; the counts are asserted in the build-output tests. The count includes the shared shell controller on every route.
 - The Three.js chunk is a separate `dist/_astro/*.js` file that is not referenced by any `<script>` or `modulepreload` in `index.html` and is fetched after `loadEventEnd` in `dev-browser` (performance entries prove the order).
 - Every scenario in Section 6.3 passes locally at `1440x900` and `390x900` with light scheme emulated: zero console errors, zero page errors, `document.documentElement.scrollWidth <= clientWidth`, `document.documentElement.classList.contains('dark') === true`.
 - Full-page screenshots of every route at both viewports differ from the production references by at most 1.0% of pixels with the Dot Pool canvas region masked; the diff images are stored under `documents/guides/parity/screenshots/diff/` and named in `_hosting.md`.
 
-### Step 5: Add the Worker, negotiated Markdown, headers, and Wrangler configuration
+### ~~Step 5: Add the Worker, negotiated Markdown, headers, and Wrangler configuration~~ ✅ **COMPLETED**
 **Objective:** Deliver the Workers runtime contract locally before any hosted resource exists.
 
 #### 5.1 High-Level Approach
@@ -460,7 +461,7 @@ flowchart LR
 - In `dev-browser` against `wrangler dev`, every route and interaction runs with zero `securitypolicyviolation` events and zero console errors; the CSP report is recorded in `_hosting.md`.
 - No production credential is used; `.dev.vars` is absent because the Worker needs no secret.
 
-### Step 6: Port the tests, add Playwright plus axe, and pass the local gate
+### ~~Step 6: Port the tests, add Playwright plus axe, and pass the local gate~~ ✅ **COMPLETED**
 **Objective:** Make the parity, readiness, accessibility, and runtime contracts repeatable before anything is hosted.
 
 #### 6.1 High-Level Approach
@@ -478,7 +479,7 @@ flowchart LR
 - The per-route gzip JavaScript report shows every route at or below its `baselineInitialJavaScriptGzipBytes` and the values are recorded in `_hosting.md`.
 - `demo/` tests still pass (`npm --prefix /Users/sacino/bulma-root/demo test` exits 0).
 
-### Step 7: Provision the Workers, the build token, and Workers Builds
+### Step 7: Provision the Workers, the build token, and Workers Builds 🔄 **IN PROGRESS**
 **Objective:** Create the minimum Cloudflare resources and the Git-connected release path without any custom domain.
 
 #### 7.1 High-Level Approach

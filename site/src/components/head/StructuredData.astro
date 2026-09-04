@@ -1,0 +1,12 @@
+---
+import { serialiseJsonLd } from '../../lib/structured-data.ts';
+
+interface Props {
+  graph: unknown;
+}
+
+const { graph } = Astro.props;
+const json = serialiseJsonLd(graph);
+---
+
+<script is:inline type="application/ld+json" set:html={json}></script>

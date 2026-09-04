@@ -1,0 +1,55 @@
+---
+import PageMetadata from '../components/head/PageMetadata.astro';
+import StructuredData from '../components/head/StructuredData.astro';
+import SitewideBodyEnd from '../components/scripts/SitewideBodyEnd.astro';
+import SitewideBodyStart from '../components/scripts/SitewideBodyStart.astro';
+import SitewideHead from '../components/scripts/SitewideHead.astro';
+import { Font } from 'astro:assets';
+import type { PageMetadataInput } from '../lib/metadata.ts';
+import '../styles/global.css';
+
+interface Props {
+  metadata: PageMetadataInput;
+  structuredData?: unknown;
+}
+
+const { metadata, structuredData } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <!-- Establish layout-neutral island wrappers before the browser can paint streamed body content. -->
+    <style is:global>astro-island, astro-slot, astro-static-slot { display: contents; }</style>
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0d0e" />
+    <link rel="dns-prefetch" href="https://app.bulma.com.au" />
+    <link rel="dns-prefetch" href="https://api-js.mixpanel.com" />
+    <link rel="describedby" href="https://bulma.com.au/llms.txt" />
+    <Font cssVariable="--font-mona-sans" />
+    <Font cssVariable="--font-inter" />
+    <PageMetadata metadata={metadata} />
+    {structuredData && <StructuredData graph={structuredData} />}
+    <SitewideHead />
+  </head>
+  <body>
+    <SitewideBodyStart />
+    <a
+      href="#main-content"
+      class="sr-only z-50 rounded-md bg-mist-950 px-4 py-2 text-white focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:outline-2 focus:outline-offset-2 focus:outline-white"
+    >
+      Skip to main content
+    </a>
+    <slot name="navbar" />
+    <main id="main-content" tabindex="-1" class="isolate overflow-clip">
+      <slot />
+    </main>
+    <slot name="footer" />
+    <SitewideBodyEnd />
+    <script>
+      import '../scripts/analytics-boot'
+    </script>
+  </body>
+</html>

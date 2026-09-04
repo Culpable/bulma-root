@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import AboutPage from '../../components/pages/about-sections'
+import { FooterShell, NavbarShell, ShellController } from '../../components/shell/site-shell'
+import { site } from '../../config/site'
+import { buildWebPageSchema, organizationSchema, websiteSchema } from '../../lib/organization-schema'
+
+const metadata = {
+  title: 'About',
+  description: 'Learn about Bulma and our mission to help Australian mortgage brokers work smarter with AI-powered policy assistance.',
+  canonicalPath: '/about/',
+}
+const structuredData = [
+  organizationSchema,
+  websiteSchema,
+  buildWebPageSchema({ path: '/about/', name: `About | ${site.name}`, description: metadata.description }),
+]
+---
+
+<BaseLayout {metadata} {structuredData}>
+  <NavbarShell slot="navbar" currentPath="/about/" />
+  <ShellController client:load />
+  <AboutPage section="hero" client:load />
+  <AboutPage section="stats" client:visible={{ rootMargin: '200px' }} />
+  <AboutPage section="testimonial" client:visible={{ rootMargin: '200px' }} />
+  <AboutPage section="team" client:visible={{ rootMargin: '200px' }} />
+  <AboutPage section="cta" client:visible={{ rootMargin: '200px' }} />
+  <FooterShell slot="footer" />
+</BaseLayout>

@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import PricingPage, { pricingFaqs } from '../../components/pages/pricing-sections'
+import { FooterShell, NavbarShell, ShellController } from '../../components/shell/site-shell'
+import { site } from '../../config/site'
+import { buildFaqPageSchema, buildWebPageSchema, organizationSchema, websiteSchema } from '../../lib/organization-schema'
+
+const metadata = {
+  title: 'Pricing',
+  description: 'Simple, transparent pricing for Bulma. Choose the plan that fits your brokerage. Start free, upgrade when you need more.',
+  canonicalPath: '/pricing/',
+}
+const structuredData = [
+  organizationSchema,
+  websiteSchema,
+  buildWebPageSchema({ path: '/pricing/', name: `Pricing | ${site.name}`, description: metadata.description }),
+  buildFaqPageSchema({ path: '/pricing/', name: 'Bulma Pricing FAQs', faqs: pricingFaqs }),
+]
+---
+
+<BaseLayout {metadata} {structuredData}>
+  <NavbarShell slot="navbar" currentPath="/pricing/" />
+  <ShellController client:load />
+  <PricingPage section="hero" client:load />
+  <PricingPage section="comparison" client:visible={{ rootMargin: '200px' }} />
+  <PricingPage section="faqs" client:idle />
+  <PricingPage section="cta" client:visible={{ rootMargin: '200px' }} />
+  <FooterShell slot="footer" />
+</BaseLayout>

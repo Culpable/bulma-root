@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import PrivacyPage from '../../components/pages/privacy-page'
+import { FooterShell, NavbarShell, ShellController } from '../../components/shell/site-shell'
+import { site } from '../../config/site'
+import { buildWebPageSchema, organizationSchema, websiteSchema } from '../../lib/organization-schema'
+
+const metadata = {
+  title: 'Privacy Policy',
+  description: 'Read the Bulma privacy policy to understand how we collect, use, and protect your personal information.',
+  canonicalPath: '/privacy-policy/',
+}
+const structuredData = [
+  organizationSchema,
+  websiteSchema,
+  buildWebPageSchema({ path: '/privacy-policy/', name: `Privacy Policy | ${site.name}`, description: metadata.description }),
+]
+---
+
+<BaseLayout {metadata} {structuredData}>
+  <NavbarShell slot="navbar" currentPath="/privacy-policy/" />
+  <ShellController client:load />
+  <PrivacyPage />
+  <FooterShell slot="footer" />
+</BaseLayout>

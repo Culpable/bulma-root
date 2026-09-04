@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import HomePage, { homeStructuredData } from '../components/pages/home-sections'
+import { FooterShell, NavbarShell, ShellController } from '../components/shell/site-shell'
+
+const metadata = {
+  title: 'AI Assistant for Australian Mortgage Brokers',
+  titleMode: 'prefixed' as const,
+  description: 'Built for Australian mortgage brokers, Bulma is an AI assistant that helps with scenario planning, credit assessment, policy matching, and lender selection. Ask any policy question in plain English and get instant, grounded answers with source attribution.',
+  canonicalPath: '/',
+}
+---
+
+<BaseLayout {metadata} structuredData={homeStructuredData}>
+  <NavbarShell slot="navbar" currentPath="/" />
+  <ShellController client:load />
+  <HomePage section="hero" client:load />
+  <HomePage section="features" client:visible={{ rootMargin: '200px' }} />
+  <HomePage section="stats" client:visible={{ rootMargin: '200px' }} />
+  <HomePage section="testimonials" client:visible={{ rootMargin: '200px' }} />
+  <HomePage section="faqs" client:idle />
+  <HomePage section="pricing" client:visible={{ rootMargin: '200px' }} />
+  <HomePage section="cta" client:visible={{ rootMargin: '200px' }} />
+  <FooterShell slot="footer" />
+</BaseLayout>

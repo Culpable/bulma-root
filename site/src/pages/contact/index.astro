@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import ContactPage from '../../components/pages/contact-page'
+import { FooterShell, NavbarShell, ShellController } from '../../components/shell/site-shell'
+import { site } from '../../config/site'
+import { buildWebPageSchema, organizationSchema, websiteSchema } from '../../lib/organization-schema'
+
+const metadata = {
+  title: 'Contact',
+  description: 'Get in touch with the Bulma team. We are here to help with questions, feedback, or partnership enquiries.',
+  canonicalPath: '/contact/',
+}
+const structuredData = [
+  organizationSchema,
+  websiteSchema,
+  buildWebPageSchema({ path: '/contact/', name: `Contact | ${site.name}`, description: metadata.description }),
+]
+---
+
+<BaseLayout {metadata} {structuredData}>
+  <NavbarShell slot="navbar" currentPath="/contact/" />
+  <ShellController client:load />
+  <ContactPage client:load />
+  <FooterShell slot="footer" />
+</BaseLayout>

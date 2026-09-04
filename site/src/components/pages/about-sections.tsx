@@ -1,0 +1,266 @@
+import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
+import { AnimatedArrowIcon } from '@/components/icons/animated-arrow-icon'
+import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
+import { HeroLeftAlignedWithPhoto } from '@/components/sections/hero-left-aligned-with-photo'
+import { StatAnimated, StatsAnimatedGraph } from '@/components/sections/stats-animated-graph'
+import { TeamFourColumnGrid, TeamMember } from '@/components/sections/team-four-column-grid'
+import { TestimonialTwoColumnWithLargePhoto } from '@/components/sections/testimonial-two-column-with-large-photo'
+import { bulmaCoveredLenderCount } from '@/lib/supported-lenders'
+
+const aboutSeoAltContext =
+  'About Bulma and our mission to help Australian mortgage brokers work smarter with AI policy assistance'
+const aboutAlt = (text: string) => `${text} - ${aboutSeoAltContext}`
+const aboutPortraitAlt = (name: string) => aboutAlt(`Portrait of ${name}`)
+
+export type AboutSection = 'hero' | 'stats' | 'testimonial' | 'team' | 'cta'
+
+export default function Page({ section }: { section: AboutSection }) {
+  return (
+    <>
+      {/* Hero */}
+      {section === 'hero' && (
+        <HeroLeftAlignedWithPhoto
+        id="hero"
+        headline="Built by brokers, for brokers."
+        subheadline={
+          <p>
+            We know firsthand how much time gets lost to policy research. Bulma was created to give that time back - so
+            you can focus on what matters most: your clients.
+          </p>
+        }
+        photo={
+          <picture>
+            <source
+              srcSet="/img/photos/1-640.webp 640w, /img/photos/1-720.webp 720w"
+              sizes="calc(100vw - 48px)"
+              media="(max-width: 639px)"
+              type="image/webp"
+              width={720}
+              height={378}
+            />
+            <source
+              srcSet="/img/photos/1-1200.webp"
+              media="(max-width: 1279px)"
+              type="image/webp"
+              width={1200}
+              height={630}
+            />
+            <source
+              srcSet="/img/photos/1-1600.webp"
+              media="(max-width: 1919px)"
+              type="image/webp"
+              width={1600}
+              height={840}
+            />
+            <img
+              src="/img/photos/1.webp"
+              alt={aboutAlt('Bulma team photo')}
+              width={1800}
+              height={945}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              className="not-dark:bg-white/75 dark:bg-black/75"
+            />
+          </picture>
+        }
+        />
+      )}
+      {/* Stats */}
+      {section === 'stats' && (
+        <StatsAnimatedGraph
+        id="stats"
+        className="content-visibility-stats"
+        eyebrow="Growing with brokers"
+        headline="The policy assistant Australian brokers rely on."
+        subheadline={
+          <p>
+            Bulma helps mortgage brokers across Australia find policy answers faster, match clients to the right
+            lenders, and close more deals with confidence. We&apos;re growing every day alongside the brokers who use
+            us.
+          </p>
+        }
+      >
+        <StatAnimated
+          countTo={bulmaCoveredLenderCount}
+          text="Major Australian lenders covered, with policies updated regularly."
+        />
+        <StatAnimated stat="Seconds" text="Average time to answer - compared to hours of manual research." />
+        </StatsAnimatedGraph>
+      )}
+      {/* Testimonial */}
+      {section === 'testimonial' && (
+        <TestimonialTwoColumnWithLargePhoto
+        id="testimonial"
+        className="content-visibility-testimonials"
+        quote={
+          <p>
+            Bulma has genuinely changed how I work. I used to dread the policy research part of complex applications.
+            Now it&apos;s the fastest part of my day.
+          </p>
+        }
+        img={
+          <picture>
+            <source
+              srcSet="/img/avatars/16-h-458-w-640.webp 640w, /img/avatars/16-h-1000-w-1400.webp 1400w"
+              sizes="(max-width: 639px) calc(100vw - 48px), 50vw"
+              type="image/webp"
+            />
+            <img
+              src="/img/avatars/16-h-1000-w-1400.webp"
+              alt={aboutPortraitAlt("Liam O'Connor")}
+              className="not-dark:bg-white/75 dark:bg-black/75"
+              width={1400}
+              height={1000}
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+        }
+        name="Liam O'Connor"
+        byline="Credit Adviser, Sydney"
+        />
+      )}
+      {/* Team */}
+      {section === 'team' && (
+        <TeamFourColumnGrid
+        id="team"
+        className="content-visibility-team"
+        headline="Our team"
+        subheadline={
+          <p>
+            Bulma&apos;s team combines deep expertise in mortgage broking with AI and product development. We understand
+            the challenges you face because we&apos;ve been there ourselves.
+          </p>
+        }
+      >
+        <TeamMember
+          img={
+            <img
+              src="/img/avatars/1-h-1000-w-800.webp"
+              alt={aboutPortraitAlt('Leslie Alexander')}
+              className="not-dark:bg-white/75 dark:bg-black/75"
+              width={800}
+              height={1000}
+            />
+          }
+          name="Leslie Alexander"
+          byline="Co-Founder / CEO"
+        />
+        <TeamMember
+          img={
+            <img
+              src="/img/avatars/2-h-1000-w-800.webp"
+              alt={aboutPortraitAlt('Michael Foster')}
+              className="not-dark:bg-white/75 dark:bg-black/75"
+              width={800}
+              height={1000}
+            />
+          }
+          name="Michael Foster"
+          byline="Co-Founder / CTO"
+        />
+        <TeamMember
+          img={
+            <img
+              src="/img/avatars/7-h-1000-w-800.webp"
+              alt={aboutPortraitAlt('Dries Vincent')}
+              className="not-dark:bg-white/75 dark:bg-black/75"
+              width={800}
+              height={1000}
+            />
+          }
+          name="Dries Vincent"
+          byline="Business Relations"
+        />
+        <TeamMember
+          img={
+            <img
+              src="/img/avatars/4-h-1000-w-800.webp"
+              alt={aboutPortraitAlt('Lindsay Walton')}
+              className="not-dark:bg-white/75 dark:bg-black/75"
+              width={800}
+              height={1000}
+            />
+          }
+          name="Lindsay Walton"
+          byline="Front-end Developer"
+        />
+        <TeamMember
+          img={
+            <img
+              src="/img/avatars/5-h-1000-w-800.webp"
+              alt={aboutPortraitAlt('Noor Hasan')}
+              className="not-dark:bg-white/75 dark:bg-black/75"
+              width={800}
+              height={1000}
+            />
+          }
+          name="Noor Hasan"
+          byline="Designer"
+        />
+        <TeamMember
+          img={
+            <img
+              src="/img/avatars/6-h-1000-w-800.webp"
+              alt={aboutPortraitAlt('Tom Cook')}
+              className="not-dark:bg-white/75 dark:bg-black/75"
+              width={800}
+              height={1000}
+            />
+          }
+          name="Tom Cook"
+          byline="Director of Product"
+        />
+        <TeamMember
+          img={
+            <img
+              src="/img/avatars/8-h-1000-w-800.webp"
+              alt={aboutPortraitAlt('Whitney Francis')}
+              className="not-dark:bg-white/75 dark:bg-black/75"
+              width={800}
+              height={1000}
+            />
+          }
+          name="Whitney Francis"
+          byline="Copywriter"
+        />
+        <TeamMember
+          img={
+            <img
+              src="/img/avatars/3-h-1000-w-800.webp"
+              alt={aboutPortraitAlt('Leonard Wu')}
+              className="not-dark:bg-white/75 dark:bg-black/75"
+              width={800}
+              height={1000}
+            />
+          }
+          name="Leonard Wu"
+          byline="Senior Designer"
+        />
+        </TeamFourColumnGrid>
+      )}
+      {/* Call To Action */}
+      {section === 'cta' && (
+        <CallToActionSimple
+        id="call-to-action"
+        headline="Have questions?"
+        subheadline={
+          <p>We&apos;d love to hear from you. Get in touch to learn more about how Bulma can help your brokerage.</p>
+        }
+        cta={
+          <div className="flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4">
+            <ButtonLink href="/contact" size="lg" className="w-full sm:w-auto">
+              Contact us
+            </ButtonLink>
+
+            <PlainButtonLink href="/contact" size="lg" className="group w-full sm:w-auto">
+              Book a demo <AnimatedArrowIcon />
+            </PlainButtonLink>
+          </div>
+        }
+        />
+      )}
+    </>
+  )
+}

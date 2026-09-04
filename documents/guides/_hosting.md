@@ -1,8 +1,162 @@
-# Hosting and Cloudflare Pages Migration
+# Hosting and Cloudflare Workers
 
-This guide records the hosting control plane, deployment revision, credential boundaries, DNS rollback data, and validation evidence for the migration from GitHub Pages to Cloudflare Pages. It contains identifiers and configuration only. It must never contain a credential value.
+This guide records the hosting control plane, deployment revision, credential boundaries, DNS rollback data, and validation evidence for the migration from GitHub Pages to Cloudflare Workers Static Assets. It contains identifiers and configuration only. It must never contain a credential value.
 
-## Migration State
+## Workers Migration
+
+This section is the Step 1 source of truth for the Astro-on-Workers migration. It was captured read-only on `2026-09-04T04:12:51Z` (`2026-09-04 12:12:51 AWST`). No Cloudflare resource, GitHub setting, branch, DNS record, or `demo/` source file changed during the capture.
+
+Current state: Steps 1 through 6 are complete. Step 7 has provisioned both Workers and the Git-connected release control plane. No custom domain or DNS record exists yet. Production remains unchanged on GitHub Pages.
+
+### Baseline identity and repository state
+
+| Field | Captured value |
+| --- | --- |
+| Repository | `Culpable/bulma-root` |
+| Checked-out branch | `main`, ahead of `origin/main` by 3 commits |
+| Local HEAD | `10e42f12b20e561a2ce623b1ea575ff8c161bc9b` |
+| Production GitHub Pages revision | `4a005a64b8b44b91d168602049cbef38867f79be` |
+| Production workflow run | `33351476104`, completed successfully |
+| Initial dirty worktree | `documents/todo/astro_workers_migration_plan.md` only |
+| Initial index | Clean |
+| Production origin | `https://bulma.com.au/` |
+| Parity manifest | `documents/guides/parity/production-baseline.json` |
+| Production screenshots | `documents/guides/parity/screenshots/production/` |
+
+The production manifest records decoded response hashes, status, content type, complete response headers, visible-text hashes, sorted link targets, and normalised JSON-LD for the five public routes and the real 404 response. It also records the three discovery files and all 84 paths under `demo/public/img/**`. The screenshot set contains the six route states at `1440x900` and `390x900`, plus mobile navigation open, pricing Yearly, homepage FAQ open, contact error, and contact success.
+
+### Cloudflare inventory
+
+| Field | Captured value |
+| --- | --- |
+| Account | `Jake.sacino@gmail.com's Account` (`213ab3604485056376263d22fa242742`) |
+| Membership | `accepted`; `Super Administrator - All Privileges` |
+| Zone | `bulma.com.au` (`0534ecfcfde9d322566af12ec11c1bef`), active, full, not paused |
+| Nameservers | `vita.ns.cloudflare.com`, `will.ns.cloudflare.com` |
+| Workers subdomain | `webpop` |
+| Workers custom domains | `taxgenie.com.au` -> `taxgenie-root` production only; no Bulma Worker domain |
+| Cloudflare Pages project | `bulma-root`; `bulma-root.pages.dev`; production branch `main`; source `null`; no custom domain |
+| Account token | `bulma-root-cloudflare-pages-deploy` (`9dd6d8eb748379192f4d2d9b7fb4fc3b`), active, `Pages Write` |
+| User token | `TaxGenie Root Workers Builds deploy` (`2cf009f2720d453e2e584a8d2f8fae4b`), active; not scoped to Bulma |
+| Builds token registry | One entry: `TaxGenie Root Workers Builds deploy`, UUID `a103becf-9c9c-4b46-ad27-0c9fc9ee6806`, Cloudflare token ID `2cf009f2720d453e2e584a8d2f8fae4b` |
+| Bulma Workers Builds token | None |
+
+Workers scripts at capture:
+
+| Worker | Assets | Modules | Usage model |
+| --- | --- | --- | --- |
+| `hfmlegal` | true | true | standard |
+| `musclehacking-astro-preview` | true | true | standard |
+| `taxgenie-root` | true | true | standard |
+| `taxgenie-root-preview` | true | true | standard |
+
+Zone settings relevant to the migration were `browser_cache_ttl: 14400`, `always_use_https: off`, `ssl: full`, and `min_tls_version: 1.0`. The zone had only Cloudflare-managed rulesets: `DDoS L7 ruleset` (`4d21379b4f9f4bb088e0729962c8b3cf`), `Cloudflare Managed Free Ruleset` (`77454fe2d30c4220b5701f6fdfb893ba`), and `Cloudflare Normalization Ruleset` (`70339d97bdb34195bbf054b1ebe81f76`). No custom Bulma redirect ruleset or Worker custom domain existed.
+
+Complete DNS inventory at capture:
+
+| ID | Type | Name | Content | Proxied | TTL | Priority | Comment |
+| --- | --- | --- | --- | --- | ---: | ---: | --- |
+| `5295629a0f6f885fbde3718271e35016` | TXT | `_dmarc.bulma.com.au` | `"v=DMARC1; p=none;"` | false | 1 | null | null |
+| `75cf4f7e6ce408098cf70affe7a3b054` | CNAME | `app.bulma.com.au` | `d6e8538622622cb8.vercel-dns-017.com` | false | 1 | null | `Vercel; added 01/01/26` |
+| `797da0a47de88cafe72d4a3783b5693c` | CNAME | `autodiscover.bulma.com.au` | `autodiscover.outlook.com` | false | 3600 | null | null |
+| `31b4ad370c84b9fd0c443af8af34f096` | A | `bulma.com.au` | `185.199.108.153` | false | 1 | null | null |
+| `5c2d843829044e88737e52479e6059f4` | A | `bulma.com.au` | `185.199.110.153` | false | 1 | null | null |
+| `f4126d8a14cbaef48bdb01475469868a` | A | `bulma.com.au` | `185.199.111.153` | false | 1 | null | null |
+| `00832e9d4a08edb5072892b6cba436a1` | MX | `bulma.com.au` | `bulma-com-au.mail.protection.outlook.com` | false | 3600 | 0 | null |
+| `c27e9cb54e6e6a0a93132dbf71c34da3` | TXT | `bulma.com.au` | `"MS=ms59823863"` | false | 3600 | null | null |
+| `0b3b817b0b6f152c44ba7a5018dd5e7c` | TXT | `bulma.com.au` | `"google-site-verification=0tckke5_vKtAzc4213cMKkKfJCBOwhYwTdA3Pe9hE0o"` | false | 1 | null | `GSC; added 04/03/26` |
+| `b6ff3371f8fefbd584bf8c6a30afe7d7` | TXT | `bulma.com.au` | `"v=spf1 include:spf.protection.outlook.com ~all"` | false | 3600 | null | null |
+| `13b9d4e8d09dfa4d13358277bd4542da` | TXT | `resend._domainkey.auth.bulma.com.au` | DKIM public key beginning `p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQ` | false | 1 | null | null |
+| `c7a1e091840c41852b2831a1221c92bf` | CNAME | `selector1._domainkey.bulma.com.au` | `selector1-bulma-com-au._domainkey.getbulma.p-v1.dkim.mail.microsoft` | false | 3600 | null | null |
+| `b35398f3563319d481198eed6e444902` | CNAME | `selector2._domainkey.bulma.com.au` | `selector2-bulma-com-au._domainkey.getbulma.p-v1.dkim.mail.microsoft` | false | 3600 | null | null |
+| `7e0cf81ae4b9613723923122169b87a7` | MX | `send.auth.bulma.com.au` | `feedback-smtp.ap-northeast-1.amazonses.com` | false | 1 | 10 | null |
+| `e510f8d48578acedb6db82d7b4803fac` | TXT | `send.auth.bulma.com.au` | `"v=spf1 include:amazonses.com ~all"` | false | 1 | null | null |
+| `c8e82fc2b97b87587bca888d574a8869` | A | `www.bulma.com.au` | `185.199.109.153` | false | 1 | null | null |
+
+Only the three apex `A` records and the one `www` `A` record are migration targets. Immediately before any later DNS write, refresh this full inventory and record the complete API payloads required for exact rollback.
+
+### GitHub inventory
+
+GitHub Pages reported `built`, `build_type: workflow`, custom domain `bulma.com.au`, HTTPS enforced, and source `main` at `/`. Repository secret names contained only `CLOUDFLARE_PAGES_API_TOKEN`. Repository variables contained only `CLOUDFLARE_ACCOUNT_ID=213ab3604485056376263d22fa242742`. Secret values were not readable and no value was requested.
+
+### Workers token naming convention
+
+The dedicated Step 7 token name and Keychain services are fixed before creation:
+
+| Item | Name |
+| --- | --- |
+| Cloudflare account API token | `bulma-root-cloudflare-build-api-token` |
+| Keychain token service | `bulma-root-cloudflare-build-api-token` |
+| Keychain token-ID service | `bulma-root-cloudflare-build-api-token-id` |
+| Keychain Builds-token UUID service | `bulma-root-cloudflare-build-api-token-uuid` |
+| Keychain account | `jake.sacino@gmail.com` |
+
+Only names and identifiers belong in this guide. The token value must remain in Keychain and must never enter Git, command output, temporary files, logs, or documentation.
+
+### Step 7 Workers Builds control plane
+
+Cloudflare's official Workers Builds API added repository-connection support on `2026-08-13`. The migration therefore uses the API directly and needs no dashboard action.
+
+| Field | Value |
+| --- | --- |
+| API token name | `bulma-root-cloudflare-build-api-token` |
+| API token status | Active; verified through `/user/tokens/verify` |
+| Account permissions | `Workers CI Write`, `Workers Scripts Write`, `Account Settings Read` |
+| Zone permission | `Workers Routes Write`, scoped only to `bulma.com.au` |
+| Builds token registry name | `bulma-root-cloudflare-build-api-token` |
+| Secret storage | The three Keychain services in the naming table above |
+| Repository connection | `Culpable/bulma-root`, GitHub account ID `31677655`, repository ID `1126720966` |
+| Repository connection UUID | `3aa4c43c-784c-49b7-8794-75841cf3ee4c` |
+| Connection created | `2026-09-04T05:30:39.313Z` |
+| Production Worker | `bulma-root`, script tag `79bf696e3bf44fd8a3c63cce810c89da`, bootstrap version `bfe62d41-5651-4896-92de-408295c44e62` |
+| Preview Worker | `bulma-root-preview`, deployed version `30cb81d5-e8eb-4f09-bb26-6802b0e904a0` |
+| Preview migration version | `0d298109-17f4-455c-9596-7015a995ec4a` |
+| Version preview URL | `https://migration-bulma-root-preview.webpop.workers.dev/` |
+| Production trigger | `75e49326-fa92-4140-8132-546585b00422`; `main`; `pnpm build`; `pnpm deploy` |
+| Preview trigger | `c0f21f31-c757-4887-a8da-218cdb64d410`; every branch except `main`; `pnpm deploy:preview` |
+| Trigger root and paths | Root `site`; include `site/*`; no excludes |
+| Build variables | `NODE_VERSION=22.23.1`; `PNPM_VERSION=11.22.0` |
+
+The account API token and its Workers Builds registration were created in one process. The one-time secret was passed directly to Keychain and the Builds token endpoint. It was not printed or written to a file.
+
+The preview Worker passed all 18 negotiated HTTP cases. The initial hosted browser run passed 34 cases and intentionally skipped 6 viewport-specific cases; two pricing clicks occurred before their `client:load` island hydrated. After the harness waited for the owning island, the failed desktop and mobile pricing states passed. No app change was required for that timing correction.
+
+### Step 1 validation baseline
+
+- `npm run lint`: passed with zero ESLint errors.
+- `npm run build`: passed because port `3001` was not serving a development server. The static export generated all 8 pages.
+- `npm test`: passed all 33 Node tests with zero failures.
+- `npm run performance:budgets`: passed with zero failures. Current initial JavaScript was `196672`, `184512`, `185311`, `178997`, and `175347` gzip bytes for `/`, `/about/`, `/pricing/`, `/contact/`, and `/privacy-policy/`. The locked `baselineInitialJavaScriptGzipBytes` values in `demo/performance-budgets.json` are `197318`, `185344`, `185927`, `179506`, and `176182`; current output remains below each locked baseline by `646`, `832`, `616`, `509`, and `835` bytes respectively.
+- Browser capture used a task-owned `dev-browser` instance with `prefers-color-scheme: light`. All six route states retained the permanent dark class at `1440x900` and `390x900`; the five successful routes had no horizontal overflow, console errors, or page errors. The 404 document returned the expected HTTP `404` and Chromium logged the document's expected failed-resource message.
+- State captures verified the open mobile menu, the open `#lenders` FAQ, Yearly selected with `Save $98 compared with monthly`, and the contact error and success panels. Formspree traffic was aborted or fulfilled inside the browser, so no real enquiry was sent.
+- Visual inspection confirmed the dark navbar, hero, content cards, pricing controls, contact statuses, privacy document, 404 recovery link, and footer were present without clipped or overlapping target content. Mobile pages reflowed within the viewport and desktop pricing cards retained their shared grid alignment.
+
+The baseline artefacts are inputs to the staging parity gate. Never regenerate them from the Astro implementation.
+
+#### Step 6 production screenshot corrections
+
+Fresh `https://bulma.com.au` captures on `2026-09-04` proved that seven Step 1 screenshots recorded incomplete, stale, or unrasterised states. The replacement commands used `site/scripts/capture-production-parity.mjs --update` for the named screenshots. They used the locked `1440x900` and `390x900` viewports with light colour-scheme emulation, loaded every first-party image, completed the full-page scroll, required explicit reveal owners to reach their final state, waited two animation frames plus the longest transition, and hid only canvas pixels. For pages taller than Chromium's texture limit, the capture scrolled each 4,000px document segment into the raster viewport before taking that clip and hid the fixed header after the first segment. Every replacement came from live production, never from Astro.
+
+| Screenshot | Previous SHA-256 and dimensions | Replacement SHA-256 and dimensions | Evidence |
+| --- | --- | --- | --- |
+| `home-desktop.webp` | `54b7226cbebb7a201ff71c60c9388b26e37c9cbabd155c64124ce8835e2307ff`, `1429x7844` | `7d32a44de1916751e44b71f77ab5e9b59f4b01118e629acc885713d7c03d72df`, `1429x7844` | The old CDP capture did not rasterise all offscreen clips. Fresh production differed by `3.3113%`; the scrolled-raster replacement passed the strict local `1.0%` gate. |
+| `about-desktop.webp` | `169d2bd05cd5677b261fdf3986895ce9ecacf1bf9911dab4f4662040eb320c75`, `1429x4314` | `cd75c5604126d1eefd14ace80e6c8bc25eee66509e6a8a37b1acdfc34c734d0d`, `1429x4314` | Fresh production first differed by `4.0744%`. The final scrolled-raster repeat changed one decoded pixel from the immediately preceding live capture and passed the strict local gate. |
+| `about-mobile.webp` | `66ba4e84ad194af0bdeb89713359683eb4c55b4d4be20f80e9eb99c13602b793`, `379x4952` | `b7a3a33b282e06ea1e7e5dc7d7c03889fd1233a84320fa7de4cf734eb8064f14`, `379x4967` | The old capture was 15px short. An intermediate live capture left the testimonial and team at `opacity-0`, producing a `14.9883%` diff bounded by `(24,1753)-(365,4016)`. Explicit reveal-state waits produced two subsequent live captures with identical decoded pixels. |
+| `home-mobile.webp` | `17c17298bb836442004edf861b86ef72b6151ea187d0a21d33146f60d1d3b4c0`, `379x9996` | `75a2e19c5248841b50f174dcdc772ed063d6337cc15bd78434e69258829666a6`, `379x9858` | Fresh production and Astro independently measured `9858px`. The first correction still contained blank offscreen raster segments. Two independent scrolled-raster production captures differed by `0.1825%`, below the `1.0%` parity threshold; the residual pixels are active animation phase. |
+| `home-mobile-menu-open.webp` | `60a7b297f941f49f15be02fa48f73677a0be132315053df17779ba5a763d36c6`, `379x9996` | `81f6816f1131efb186550cc48dc0ef268b9a3772cb15a3451dacab89fd54847e`, `379x9858` | Fresh production retained the corrected document height with the native mobile dialog open. The first correction still contained blank offscreen raster segments. Two independent scrolled-raster production captures differed by `0.0467%`, below the parity threshold. |
+| `pricing-mobile.webp` | `cc9b78d9638db66278480cc967834b58f8dc1dc79a3b879ffba5e6bb11ce27ca`, `379x5951` | `9aac6550161a46bf9a412f11ef2e89931f2eda63d303da773df6c91859ed5673`, `379x5802` | Fresh production measured `5802px`, matching Astro. The old reference retained the pre-fix pricing layout height. |
+| `privacy-policy-mobile.webp` | `ce69cc341687809319b346d063a704fcb5f0496eae7543f8534f6104ac395eb4`, `379x2992` | `230cca9871b3b7f9669af9343baffe41b57a2e69d277afb3d9bde71ca07a6016`, `379x2936` | Fresh production measured `2936px`, matching Astro. The old reference retained a stale document height. |
+
+#### Step 6 local gate
+
+- `pnpm --dir site check`: 278 files, zero errors, warnings, or hints after the hosted charset regression test was added.
+- `pnpm --dir site build`: six static pages and the three discovery endpoints built successfully.
+- `pnpm --dir site test`: 34 Node tests passed; build-output, trust-page, and performance-budget validation passed; Playwright passed 78 tests with 6 intentional viewport-specific skips and zero failures.
+- Strict local visual parity passed for all six routes at `1440x900` and `390x900`, plus the mobile menu, direct `/#lenders`, yearly pricing, contact success/error, and keyboard plan-tab states. The threshold stayed at `1.0%`; only the Dot Pool canvas was excluded as the declared nondeterministic region.
+- Initial JavaScript gzip was `93,025` bytes for `/`, `75,634` for `/about/`, `81,597` for `/pricing/`, `72,629` for `/contact/`, and `68,255` for `/privacy-policy/`. Every route remained below its Next.js baseline.
+- `demo/` remained unchanged. Its required lint, build, and 33-test baseline passed before the port and again after the page implementation.
+
+## Historical Cloudflare Pages Migration State
 
 - Migration phase: Steps 1 through 5F are complete. Step 5G finished two exact-artifact hosted proof runs but has one failed release gate and one blocked release gate. Steps 6 through 10 remain blocked.
 - Production host: GitHub Pages at `https://bulma.com.au/`.

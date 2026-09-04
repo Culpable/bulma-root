@@ -1,0 +1,66 @@
+---
+import {
+  assertProductionMetadataReady,
+  resolvePageMetadata,
+  type PageMetadataInput,
+} from '../../lib/metadata.ts';
+import { site } from '../../config/site.ts';
+
+interface Props {
+  metadata: PageMetadataInput;
+}
+
+const { metadata } = Astro.props;
+const resolved = resolvePageMetadata(metadata);
+assertProductionMetadataReady(resolved, site);
+
+if (!Astro.site) {
+  throw new Error('Set Astro site to the canonical production origin.');
+}
+
+const canonicalURL = metadata.canonicalPath === null
+  ? undefined
+  : new URL(metadata.canonicalPath ?? Astro.url.pathname, Astro.site);
+if (canonicalURL && canonicalURL.origin !== Astro.site.origin) {
+  throw new Error('Canonical URLs must use the configured production origin.');
+}
+if (canonicalURL && (canonicalURL.search || canonicalURL.hash)) {
+  throw new Error('Canonical URLs must not contain a query string or fragment.');
+}
+
+const socialImageURL = resolved.socialImage
+  ? new URL(resolved.socialImage.src, Astro.site).toString()
+  : undefined;
+---
+
+<title>{resolved.documentTitle}</title>
+<meta name="description" content={resolved.description} />
+{canonicalURL && <link rel="canonical" href={canonicalURL.toString()} />}
+{resolved.robots && <meta name="robots" content={resolved.robots} />}
+
+<meta property="og:title" content={resolved.documentTitle} />
+<meta property="og:description" content={resolved.description} />
+<meta property="og:type" content={resolved.contentType} />
+{canonicalURL && <meta property="og:url" content={canonicalURL.toString()} />}
+
+<meta name="twitter:card" content={socialImageURL ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={resolved.documentTitle} />
+<meta name="twitter:description" content={resolved.description} />
+
+{socialImageURL && resolved.socialImage && (
+  <Fragment>
+    <meta property="og:image" content={socialImageURL} />
+    <meta property="og:image:alt" content={resolved.socialImage.alt} />
+    <meta name="twitter:image" content={socialImageURL} />
+    <meta name="twitter:image:alt" content={resolved.socialImage.alt} />
+    {resolved.socialImage.width && (
+      <meta property="og:image:width" content={String(resolved.socialImage.width)} />
+    )}
+    {resolved.socialImage.height && (
+      <meta property="og:image:height" content={String(resolved.socialImage.height)} />
+    )}
+    {resolved.socialImage.type && (
+      <meta property="og:image:type" content={resolved.socialImage.type} />
+    )}
+  </Fragment>
+)}

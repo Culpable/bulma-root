@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import NotFoundPage from '../components/pages/not-found-page'
+import { FooterShell, NavbarShell, ShellController } from '../components/shell/site-shell'
+
+const metadata = {
+  title: 'Page Not Found',
+  description: 'The page you are looking for could not be found. Return to the Bulma homepage.',
+  robots: 'noindex',
+  canonicalPath: null,
+}
+---
+
+<BaseLayout {metadata}>
+  <NavbarShell slot="navbar" currentPath="/404.html" />
+  <ShellController client:load />
+  <NotFoundPage />
+  <FooterShell slot="footer" />
+</BaseLayout>

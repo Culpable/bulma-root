@@ -51,3 +51,13 @@ next-env.d.ts
 
 # Caches
 .eslintcache
+
+# Astro site
+site/node_modules
+site/dist
+site/.astro
+site/.wrangler
+site/test-results
+site/playwright-report
+site/.dev.vars*
+site/worker-configuration.d.ts
