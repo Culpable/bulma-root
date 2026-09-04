@@ -500,8 +500,10 @@ flowchart LR
 - Builds API shows one repository connection for `Culpable/bulma-root`, one production trigger (`branch_includes: ['main']`, `root_directory: 'site'`, `build_command: 'pnpm build'`, `deploy_command: 'pnpm deploy'`, `path_includes: ['site/*']`) and one preview trigger (`branch_excludes: ['main']`, `deploy_command: 'pnpm deploy:preview'`); the first production build reports `success` and its deployment version equals the version served by `bulma-root`.
 - No DNS record, GitHub Pages setting, Pages production deployment, or custom domain changed; if the Pages project was deleted, `_hosting.md` records the deletion and its last deployment ID.
 
-### Step 8: Attach `staging.bulma.com.au`, run the hosted proof, and request approval 🔄 **IN PROGRESS**
+### ~~Step 8: Attach `staging.bulma.com.au`, run the hosted proof, and request approval~~ ✅ **COMPLETED**
 **Objective:** Put the production Worker on a real zone hostname and give the user everything needed to decide.
+
+**Decision state (2026-09-04):** The approval request presented both URLs, the parity result, Lighthouse medians, header proof, and rollback packet after every hosted gate passed. No decision was submitted. This is not cutover approval: staging remains live, production remains on GitHub Pages, and Step 9 must not start without a later explicit approval.
 
 #### 8.1 High-Level Approach
 - Commit the `site/` work and documentation changes on `main` under `<git_rules>` and push. The `<autonomy>` block authorises this push; do not stop to request it. Wait for the Workers Builds production build to succeed and confirm the deployed version.

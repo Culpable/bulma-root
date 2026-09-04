@@ -6,7 +6,7 @@ This guide records the hosting control plane, deployment revision, credential bo
 
 This section is the Step 1 source of truth for the Astro-on-Workers migration. It was captured read-only on `2026-09-04T04:12:51Z` (`2026-09-04 12:12:51 AWST`). No Cloudflare resource, GitHub setting, branch, DNS record, or `demo/` source file changed during the capture.
 
-Current state: Steps 1 through 7 are complete. Step 8 staging proof is complete and awaits the user's explicit cutover decision. `staging.bulma.com.au` serves the Git-connected production Worker with noindex protection. Production remains unchanged on GitHub Pages.
+Current state: Steps 1 through 8 are complete. The user submitted no cutover decision, so no approval is recorded. `staging.bulma.com.au` serves the Git-connected production Worker with noindex protection. Production remains unchanged on GitHub Pages, and Step 9 must not start without later explicit approval.
 
 ### Baseline identity and repository state
 
