@@ -271,6 +271,54 @@ Final revalidation against version `5770e5db-f36a-4340-b8cf-a9f4947134ce` passed
 
 Step 9 remains prohibited until the user records an explicit cutover decision after reviewing both URLs and this packet.
 
+### Steps 1-8 re-verification and corrections (2026-09-04)
+
+An independent re-verification of Steps 1-8 re-ran the local gate, re-queried every Cloudflare and GitHub resource, and compared the live staging Worker against live production directly.
+
+#### Confirmed correct
+
+- `site/dist` is byte-identical to what `https://staging.bulma.com.au/` serves on all six documents and all three discovery files. Two consecutive local builds produce identical hashes.
+- Visible text, sorted `href` lists, and parsed JSON-LD are identical to production on all five public routes.
+- `robots.txt` and `llms.txt` are byte-identical to production. `sitemap.xml` publishes the same five URLs with the home page first and no `lastmod`; see the accepted drift below.
+- The Worker HTTP contract holds on staging: Markdown negotiation with `Vary: Accept`, `307` on `/pricing`, `406` on an unacceptable `Accept`, `404` on `/_agent-markdown/*`, the Markdown recovery document on an unknown path, `text/plain; charset=utf-8` on `/llms.txt`, and `public, max-age=31536000, immutable` on `/_astro/*`. Every staging response carries `X-Robots-Tag: noindex`, the hash-based CSP, Permissions Policy, Referrer Policy, nosniff, and frame denial.
+- Cloudflare state matches the record: `bulma-root` (`workers_dev` and previews disabled) and `bulma-root-preview` (both enabled) exist; the only Workers custom domains in the account are `taxgenie.com.au` and `staging.bulma.com.au`; zone `browser_cache_ttl` is still `14400`; the zone has no custom rulesets; bot management still shows only `is_robots_txt_managed: false` with every other control disabled.
+- DNS holds exactly the 16 recorded pre-staging records plus the one migration-created staging `AAAA` record `b84080eb0e2fdf451c777a0829f391fa`. Every pre-existing record ID, value, and proxy flag matches the committed snapshot. The three apex `A` records and the `www` `A` record are unchanged and unproxied.
+- Workers Builds is the live release controller. Build `c89d5d13-8a96-4568-a874-a269808d254b` from commit `f844cab` deployed the active production version `5770e5db-f36a-4340-b8cf-a9f4947134ce` at 100%. Cloudflare's account-level `builds/repos/connections` and `builds/triggers` list routes return `12000 Not found` to the Global API Key; the per-build endpoint `builds/builds/{uuid}` resolves and confirms the successful Git-connected build.
+- GitHub Pages is still `built`, `build_type: workflow`, `cname: bulma.com.au`, HTTPS enforced, and `https://bulma.com.au/` still answers with `server: GitHub.com`.
+- Local gate: `astro check` 284 files with zero errors, warnings, and hints; `pnpm build` clean; 43 Node tests pass; build-output, trust-page, and performance-budget validation pass; Playwright passes 78 with 6 intentional viewport skips. Maximum visual parity difference `0.0970%` against a `1.0%` threshold. `demo/` still passes its 33 tests.
+
+#### Defects found and corrected
+
+The hosted proof compared staging bodies against `site/dist` and compared rendered screenshots and visible text against production. It never compared `site/dist` discovery bytes or head metadata against production, and its href comparison used set membership rather than counts, so seven defects and one accepted difference passed every gate.
+
+| Defect | Production | Shipped staging | Requirement | Fix |
+| --- | --- | --- | --- | --- |
+| `og:locale` absent | `en-AU` | absent | REQ-9 | `openGraphLocale` in `site/src/config/site.ts`, emitted by `PageMetadata.astro` |
+| `og:site_name` absent | `Bulma` | absent | REQ-9 | emitted by `PageMetadata.astro` |
+| Viewport lost `initial-scale=1` | `width=device-width, initial-scale=1` | `width=device-width` | parity | `BaseLayout.astro` |
+| `og:image:alt` copy changed | `Bulma: AI Assistant for Australian Mortgage Brokers` | `Bulma AI assistant for Australian mortgage brokers` | REQ-27 | `site/src/config/site.ts` |
+| `referral-tracking.js` trailing whitespace | `demo/public/scripts/referral-tracking.js` | six differing whitespace runs | REQ-12 | re-copied verbatim |
+| Unused runtime dependencies | not in the REQ-1 list | `@fontsource-variable/inter`, `@fontsource-variable/mona-sans` | REQ-1 | removed; lockfile regenerated |
+| Internal links lost the trailing slash | `/contact/`, `/pricing/` | `/contact`, `/pricing`; every nav click paid a `307` | REQ-22 | `resolveInternalHref` in `site/src/lib/internal-href.ts`, applied in all ten anchor components |
+
+`/robots.txt` was also served as `text/plain` while production serves `text/plain; charset=utf-8`. A `/robots.txt` charset rule was added to `site/public/_headers` beside the existing `/llms.txt` rule.
+
+`site/test/production-parity.test.ts` now asserts the discovery bytes and the head metadata against `documents/guides/parity/production-baseline.json` on every build, so none of these can regress silently.
+
+#### Accepted sitemap difference
+
+`sitemap.xml` is not byte-identical to production. The shared renderer in `site/src/lib/sitemap.ts` sorts URLs by location and ends the document with a newline, so the emitted file lists `/contact/` before `/pricing/` and is 417 bytes against production's 416. The home page is still the first URL, the five-URL set is unchanged, and neither document carries `lastmod`.
+
+The user reviewed this on 2026-09-04 and withdrew the byte-identical rule for the sitemap: sitemap URL order carries no crawler meaning, and adding site-specific ordering code to reproduce the previous host's hand-written order is unnecessary complexity. REQ-11 in the migration plan is amended accordingly. `site/test/production-parity.test.ts` asserts the URL set, the leading home page, uniqueness, and the absence of `lastmod` instead of a byte hash.
+
+#### Recorded Open Graph drift, approved
+
+Production's Next.js layout never overrides `openGraph` per route, so `/about/`, `/pricing/`, `/contact/`, and `/privacy-policy/` all repeat the homepage `og:title`, `og:description`, and `og:url` even though their `<title>` and `<meta name="description">` are correct. The Astro site emits per-route Open Graph values and a self-referencing `og:url`. This is kept as a deliberate correction of a production defect. The Astro head additionally emits `og:image:type` and `twitter:image:alt`, which production omits.
+
+#### Outstanding
+
+The corrected build has not yet been deployed to staging. The Step 8 hosted proof and the cutover packet above describe version `5770e5db-f36a-4340-b8cf-a9f4947134ce`, which predates these fixes. Re-run the hosted proof and re-issue the packet after the corrected commit builds, before any cutover approval is requested.
+
 ## Historical Cloudflare Pages Migration State
 
 - Migration phase: Steps 1 through 5F are complete. Step 5G finished two exact-artifact hosted proof runs but has one failed release gate and one blocked release gate. Steps 6 through 10 remain blocked.

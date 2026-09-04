@@ -6,6 +6,7 @@ import pixelmatch from 'pixelmatch'
 import sharp from 'sharp'
 
 import { blockExternalRequests, waitForStableDocument } from './agent-accessibility.routes'
+import { resolveInternalHref } from '../src/lib/internal-href'
 
 interface BaselineRoute {
   id: string
@@ -205,7 +206,14 @@ for (const route of pageRoutes) {
     expect(response?.status()).toBe(route.id === '404' ? 404 : 200)
     await waitForStableDocument(page)
     const evidence = await readProductionContentEvidence(page, route.id)
-    for (const href of route.links) expect(evidence.hrefs, `${route.id} lost href ${href}`).toContain(href)
+    // Compare route targets, not literal strings. Production shipped a mix of
+    // `/contact` and `/contact/` because Next.js only rewrote some of them;
+    // under `trailingSlash: 'always'` both name the same document and the
+    // unslashed form only adds a 307. Normalise the manifest side so the gate
+    // still catches a genuinely lost or retargeted link.
+    for (const href of route.links) {
+      expect(evidence.hrefs, `${route.id} lost href ${href}`).toContain(resolveInternalHref(href))
+    }
     // The production manifest was captured at the canonical desktop viewport.
     // Mobile intentionally hides the desktop navigation links until the menu opens.
     if (testInfo.project.name === 'desktop') {

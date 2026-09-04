@@ -52,7 +52,7 @@
     function isLinkedInSource() {
         return (
             referringDomain && (
-                referringDomain.includes('linkedin.com') ||
+                referringDomain.includes('linkedin.com') || 
                 referringDomain.includes('lnkd.in')
             )
         );
@@ -65,12 +65,12 @@
     const utmSource = getQueryParam('utm_source');
     const liclid = getQueryParam('liclid'); // LinkedIn click identifier
     const utmPage = getQueryParam('utm_page'); // Capture which page the referral came from
-
+    
     // Additional parameters to capture for Google Ads
     const campaignId = getQueryParam('campaign');
     const adGroupId = getQueryParam('adgroup');
     const keyword = getQueryParam('keyword');
-
+    
     // Store additional data for tracking
     let additionalReferralData = {};
 
@@ -86,12 +86,12 @@
             if (campaignId) additionalReferralData['Campaign ID'] = campaignId;
             if (adGroupId) additionalReferralData['Ad Group ID'] = adGroupId;
             if (keyword) additionalReferralData['Keyword Match'] = keyword;
-
+            
             // New parameters with human-readable names
             const creative = getQueryParam('creative');
             const deviceType = getQueryParam('device');
             const adPosition = getQueryParam('adposition');
-
+            
             if (creative) additionalReferralData['Ad Creative'] = creative;
             if (deviceType) {
                 // Convert device code to readable format
@@ -99,7 +99,7 @@
                 if (deviceType === 'c') deviceName = 'Computer';
                 else if (deviceType === 'm') deviceName = 'Mobile';
                 else if (deviceType === 't') deviceName = 'Tablet';
-
+                
                 additionalReferralData['Device Type'] = deviceName;
             }
             if (adPosition) additionalReferralData['Ad Position'] = adPosition;

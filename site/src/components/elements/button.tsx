@@ -1,5 +1,6 @@
 import { clsx } from 'clsx/lite'
 import type { ComponentProps } from 'react'
+import { resolveInternalHref } from '../../lib/internal-href'
 
 const sizes = {
   md: 'min-h-11 min-w-11 px-3 py-1 has-[>svg:last-child]:pr-2.5 lg:min-h-10 lg:min-w-10',
@@ -84,7 +85,7 @@ export function ButtonLink({
 } & ButtonInteractionProps & Omit<ComponentProps<'a'>, 'href'>) {
   return (
     <a
-      href={href}
+      href={resolveInternalHref(href)}
       className={clsx(
         'inline-flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-full text-sm/7 font-medium',
         primaryEnhancements(isStatic),
@@ -134,7 +135,7 @@ export function SoftButtonLink({
 } & ButtonInteractionProps & Omit<ComponentProps<'a'>, 'href'>) {
   return (
     <a
-      href={href}
+      href={resolveInternalHref(href)}
       className={clsx(
         'inline-flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-full bg-mist-950/10 text-sm/7 font-medium text-mist-950 hover:bg-mist-950/15 dark:bg-white/10 dark:text-white dark:hover:bg-white/20',
         softEnhancements(isStatic),
@@ -187,7 +188,7 @@ export function PlainButtonLink({
 } & ButtonInteractionProps & Omit<ComponentProps<'a'>, 'href'>) {
   return (
     <a
-      href={href}
+      href={resolveInternalHref(href)}
       className={clsx(
         'inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full text-sm/7 font-medium',
         plainEnhancements(isStatic),

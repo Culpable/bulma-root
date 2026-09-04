@@ -1,6 +1,7 @@
 import { clsx } from 'clsx/lite'
 import type { ComponentProps, ReactNode } from 'react'
 import { AnimatedArrowIcon } from '../icons/animated-arrow-icon'
+import { resolveInternalHref } from '../../lib/internal-href'
 
 export function AnnouncementBadge({
   text,
@@ -17,7 +18,7 @@ export function AnnouncementBadge({
 } & Omit<ComponentProps<'a'>, 'href' | 'children'>) {
   return (
     <a
-      href={href}
+      href={resolveInternalHref(href)}
       {...props}
       data-variant={variant}
       className={clsx(

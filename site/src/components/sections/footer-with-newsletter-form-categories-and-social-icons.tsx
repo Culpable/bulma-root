@@ -3,6 +3,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Container } from '../elements/container'
 import { AnimatedArrowIcon } from '../icons/animated-arrow-icon'
 import { FooterWordmark } from './footer-wordmark'
+import { resolveInternalHref } from '@/lib/internal-href'
 
 export function FooterCategory({ title, children, ...props }: { title: ReactNode } & ComponentProps<'div'>) {
   return (
@@ -19,7 +20,7 @@ export function FooterLink({ href, className, ...props }: { href: string } & Omi
   return (
     <li className={clsx('text-mist-700 dark:text-mist-400', className)}>
       <a
-        href={href}
+        href={resolveInternalHref(href)}
         className="inline-flex min-h-11 cursor-pointer items-center transition-[color,translate] duration-200 ease-out hover:translate-x-0.5 hover:text-mist-950 focus-visible:translate-x-0.5 focus-visible:text-mist-950 focus-visible:outline-none lg:min-h-10 dark:hover:text-white dark:focus-visible:text-white"
         {...props}
       />
@@ -57,7 +58,7 @@ export function SocialLink({
 
   return (
     <a
-      href={href}
+      href={resolveInternalHref(href)}
       target="_blank"
       rel={rel}
       aria-label={name}

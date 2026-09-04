@@ -1,5 +1,6 @@
 import { clsx } from 'clsx/lite'
 import type { ComponentProps } from 'react'
+import { resolveInternalHref } from '../../lib/internal-href'
 
 interface TransitionLinkProps extends ComponentProps<'a'> {
   href: string
@@ -21,7 +22,7 @@ export function TransitionLink({
 }: TransitionLinkProps) {
   return (
     <a
-      href={href}
+      href={resolveInternalHref(href)}
       className={className}
       onClick={(event) => {
         onBeforeNavigate?.()
@@ -40,7 +41,7 @@ export function TransitionLink({
 export function StyledTransitionLink({ href, className, ...props }: TransitionLinkProps) {
   return (
     <TransitionLink
-      href={href}
+      href={resolveInternalHref(href)}
       className={clsx(
         'link-underline-grow inline-flex w-fit cursor-pointer items-center gap-2',
         'text-sm/7 font-medium text-mist-950 dark:text-white',

@@ -2,6 +2,7 @@
 import { TransitionLink } from '@/components/elements/transition-link'
 import { clsx } from 'clsx/lite'
 import type { ComponentProps } from 'react'
+import { resolveInternalHref } from '@/lib/internal-href'
 
 /**
  * Return whether an internal navigation link matches the active route.
@@ -64,7 +65,7 @@ export function NavbarMobileLink({ children, href, className, currentPath = '/',
 
   return (
     <a
-      href={href}
+      href={resolveInternalHref(href)}
       className={clsx(
         'group relative inline-flex min-h-11 cursor-pointer items-center justify-between gap-2 text-3xl/10 font-medium transition-colors duration-200',
         isActive ? 'text-white' : 'text-mist-300 hover:text-white',

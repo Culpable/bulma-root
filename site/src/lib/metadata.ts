@@ -16,6 +16,11 @@ export interface SiteTitleConfig {
 
 export interface SiteMetadataConfig extends SiteTitleConfig {
   readonly language: string;
+  /**
+   * Open Graph locale in `language_TERRITORY` or BCP 47 form. Kept separate from
+   * `language` because the document language tag and the social locale differ.
+   */
+  readonly openGraphLocale?: string;
   readonly readiness: 'draft' | 'production';
   readonly defaultSocialImage?: SocialImageMetadata;
 }
@@ -162,6 +167,9 @@ export function assertProductionMetadataReady(
   config: SiteMetadataConfig,
 ): void {
   requireBcp47Language(config.language);
+  // Validate the social locale with the same syntax gate so a malformed value
+  // cannot reach the emitted `og:locale` tag.
+  if (config.openGraphLocale !== undefined) requireBcp47Language(config.openGraphLocale);
   if (config.readiness !== 'production') return;
 
   // Scan the resolved route input and the complete runtime config. The config

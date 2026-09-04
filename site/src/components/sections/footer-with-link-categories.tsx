@@ -1,6 +1,7 @@
 import { clsx } from 'clsx/lite'
 import type { ComponentProps, ReactNode } from 'react'
 import { Container } from '../elements/container'
+import { resolveInternalHref } from '@/lib/internal-href'
 
 export function FooterCategory({ title, children, ...props }: { title: ReactNode } & ComponentProps<'div'>) {
   return (
@@ -16,7 +17,7 @@ export function FooterCategory({ title, children, ...props }: { title: ReactNode
 export function FooterLink({ href, className, ...props }: { href: string } & Omit<ComponentProps<'a'>, 'href'>) {
   return (
     <li className={clsx('text-mist-700 dark:text-mist-400', className)}>
-      <a href={href} className="cursor-pointer" {...props} />
+      <a href={resolveInternalHref(href)} className="cursor-pointer" {...props} />
     </li>
   )
 }

@@ -41,6 +41,8 @@ const socialImageURL = resolved.socialImage
 <meta property="og:title" content={resolved.documentTitle} />
 <meta property="og:description" content={resolved.description} />
 <meta property="og:type" content={resolved.contentType} />
+<meta property="og:site_name" content={site.name} />
+{site.openGraphLocale && <meta property="og:locale" content={site.openGraphLocale} />}
 {canonicalURL && <meta property="og:url" content={canonicalURL.toString()} />}
 
 <meta name="twitter:card" content={socialImageURL ? 'summary_large_image' : 'summary'} />

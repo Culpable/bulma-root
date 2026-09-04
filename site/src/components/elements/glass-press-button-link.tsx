@@ -1,6 +1,8 @@
 import { clsx } from 'clsx/lite'
 import type { ComponentProps } from 'react'
 
+import { resolveInternalHref } from '../../lib/internal-href'
+
 /**
  * Glass Press primary CTA (design trial, round 2 variant 4 of the primary
  * button prototype in /prototypes/primary-button-prototype.html).
@@ -21,9 +23,14 @@ const GLASS_PRESS_CLASSES =
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mist-700/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-mist-200/70 dark:focus-visible:ring-offset-mist-950'
 
 
-export function GlassPressButtonLink({ className, children, ...props }: ComponentProps<'a'>) {
+export function GlassPressButtonLink({ className, children, href, ...props }: ComponentProps<'a'>) {
   return (
-    <a className={clsx(GLASS_PRESS_CLASSES, className)} data-glass-press-button="true" {...props}>
+    <a
+      className={clsx(GLASS_PRESS_CLASSES, className)}
+      data-glass-press-button="true"
+      href={href === undefined ? undefined : resolveInternalHref(href)}
+      {...props}
+    >
       {children}
     </a>
   )

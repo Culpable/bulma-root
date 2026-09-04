@@ -1,5 +1,6 @@
 import { clsx } from 'clsx/lite'
 import type { ComponentProps } from 'react'
+import { resolveInternalHref } from '../../lib/internal-href'
 
 /**
  * Styled link component with animated underline hover effect.
@@ -19,7 +20,7 @@ export function Link({
 } & Omit<ComponentProps<'a'>, 'href'>) {
   return (
     <a
-      href={href}
+      href={resolveInternalHref(href)}
       className={clsx(
         // Base link styling with w-fit to prevent stretching in flex containers
         'link-underline-grow inline-flex w-fit cursor-pointer items-center gap-2',
