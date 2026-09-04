@@ -4,12 +4,13 @@ This guide records the hosting control plane, deployment revision, credential bo
 
 ## Migration State
 
-- Migration phase: Steps 1 through 5 complete; waiting at the production cutover approval gate.
+- Migration phase: Steps 1 through 5F are complete. Step 5G finished two exact-artifact hosted proof runs but has one failed release gate and one blocked release gate. Steps 6 through 10 remain blocked.
 - Production host: GitHub Pages at `https://bulma.com.au/`.
+- Current production revision: `4a005a64b8b44b91d168602049cbef38867f79be`.
 - Cloudflare custom domains: none.
 - Production DNS changes: none.
-- Selected revision: `854b85f576910a5a5c3576bdf9fef62a6da4df81` from `origin/main`.
-- Approval gate: do not associate a custom domain, create a production Pages deployment, change DNS, or disable GitHub Pages until the user approves cutover after reviewing the comparison report.
+- Selected current Step 5G comparison revision: `4a005a64b8b44b91d168602049cbef38867f79be`.
+- Approval gate: do not request or accept cutover approval while Step 5G is incomplete. Do not associate a custom domain, create a production Pages deployment, change DNS, or disable GitHub Pages until a later complete Step 5G run passes and the user explicitly approves cutover.
 
 ## Provider Inventory
 
@@ -20,20 +21,20 @@ This guide records the hosting control plane, deployment revision, credential bo
 | Repository | `Culpable/bulma-root` |
 | Repository ID | `1126720966` |
 | Default branch | `main` |
-| Selected workflow run | `33314166806` |
-| Workflow head SHA | `854b85f576910a5a5c3576bdf9fef62a6da4df81` |
+| Selected current workflow run | `33351476104` |
+| Workflow head SHA | `4a005a64b8b44b91d168602049cbef38867f79be` |
 | Workflow result | `completed / success` |
-| GitHub Pages deployment | `6156985652` |
+| GitHub Pages deployment | `6174133038` |
 | Deployment result | `success` |
 | Deployment URL | `https://bulma.com.au/` |
 | Pages build type | `workflow` |
 | Pages status | `built` |
 | Custom domain | `bulma.com.au` |
 | HTTPS enforced | `true` |
-| Artifact ID | `9716735629` |
+| Artifact ID | `9743765230` |
 | Artifact name | `github-pages` |
-| Artifact size | `4,139,492` bytes |
-| Artifact expires | `2026-08-30T15:02:45Z` |
+| Artifact size | `4,058,528` bytes |
+| Artifact expires | `2026-09-01T02:42:22Z` |
 | Artifact expired at selection | `false` |
 
 ### Cloudflare
@@ -61,7 +62,7 @@ This guide records the hosting control plane, deployment revision, credential bo
 | Pages production branch | `main` |
 | Pages source integration | None (`source: null`) |
 | Pages custom domains | None |
-| Pages deployments after provisioning | None |
+| Latest comparison deployment | `3712aa0a-8883-4c46-bf42-3dc1e46be404`, preview branch `cloudflare-comparison` |
 
 The `Pages Write` permission group was revalidated by name as ID `8d28297797f24fb8a0c332fe0866ec89`. The `Account API Tokens Write` permission group was revalidated by name as ID `5bc3f8b21c554832afc660159ab75fa4`. Query permission groups by name again before any later token write.
 
@@ -647,3 +648,76 @@ Complete derived evidence is stored in the canonical HTML report under `evidence
 - Post-change CSS coverage exercised all five routes plus mobile navigation, FAQ, yearly pricing, plan-tab keyboard selection, and contact focus states. The primary 162,713-byte stylesheet used 108,520-126,105 bytes per tested route/state; the 3,422-byte shared stylesheet remained cross-route infrastructure.
 - A disposable prototype inlined both stylesheets into every route. It reduced compressed first-load document-plus-CSS bytes by only 102-243 bytes, but increased every repeat navigation by 25,904-26,045 bytes because the shared stylesheet could no longer be reused from cache.
 - The prototype failed REQ-23 and was moved to Trash. The two external stylesheets remain unchanged.
+
+## Step 5G Matched-Artifact Hosted Proof
+
+### Deployment Identity and Parity
+
+- Committed the Steps 5D-5F implementation as `3b131b8bd02c9cf29fe9f0396bcbb1cecfd78416` and pushed `main` to GitHub. GitHub Actions run `33321153005` completed successfully and deployed GitHub Pages.
+- Downloaded that successful workflow's exact `github-pages` artifact. Its `artifact.tar` SHA-256 is `ae117694ca17e55eb12be7de0d1b2b04418001cdfd286eded3df82cabd461a17`.
+- Uploaded the extracted artifact without rebuilding to Cloudflare preview deployment `8eafed9f-a947-4b88-9449-b2d09f58c29a`. The immutable URL is `https://8eafed9f.bulma-root.pages.dev/`; the branch alias is `https://cloudflare-comparison.bulma-root.pages.dev/`.
+- The Cloudflare deployment reports branch `cloudflare-comparison`, the exact selected commit, `commit_dirty: false`, `uses_functions: false`, and success. The project retains no custom domain and no production deployment.
+- Compared every hosted body and status against the 179-file artifact manifest. GitHub and Cloudflare returned zero decoded-body, status, content-type, canonical, discovery, or unknown-route mismatches. Cloudflare also parsed the artifact's `_headers` file, which is not itself served as an asset.
+- Verified expected provider headers. The Cloudflare preview remains noindexed; HTML revalidates; content-hashed `/_next/static/*` files use the one-year immutable rule. GitHub retains its provider-fixed ten-minute cache.
+
+### Local and Hosted Performance Result
+
+- Passed `npm run lint`, `npm run build`, all 32 Node tests, the synthetic budget failure fixture, and `npm run performance:budgets` before publishing.
+- Deterministic initial JavaScript decreased on every route: `646` bytes gzip on `/`, `832` on `/about/`, `616` on `/pricing/`, `509` on `/contact/`, and `835` on `/privacy-policy/`. Mixpanel core is `30,951` bytes gzip; no routed Tailwind Plus contribution remains.
+- Completed all 150 standard Lighthouse reports: ten alternating mobile runs and five alternating desktop runs for every host and route. Completed all 30 separate DevTools-throttled mobile reports. One launcher-only failure was preserved and rerun; no completed report was excluded.
+- Current mobile GitHub / Cloudflare score and LCP medians are: `/` `93.5 / 2,851 ms` versus `93 / 2,947 ms`; `/about/` `96 / 2,551 ms` versus `96.5 / 2,628 ms`; `/pricing/` `95 / 2,777 ms` versus `97 / 2,499 ms`; `/contact/` `96.5 / 2,551 ms` versus `96 / 2,570 ms`; `/privacy-policy/` `97 / 2,515 ms` versus `97 / 2,457 ms`.
+- Both hosts pass every REQ-19 mobile route ceiling. About mobile image-delivery waste is `13.36 KiB`, below the REQ-22 `20 KiB` ceiling. Desktop scores are `99-100`.
+- REQ-27 passes all five Cloudflare before/after route comparisons. It fails all five GitHub comparisons. Every GitHub route exceeds its FCP, LCP, Speed Index, and performance-score allowance, even though deterministic JavaScript decreased. The result suggests measurement-window or delivery variance, but the fixed gate does not permit that inference to override a failure.
+
+### Regional Transport and Sydney Browser Gate
+
+- Reused four fixed Melbourne and four fixed Sydney Globalping probes for three alternating rounds, both hosts, and all five routes. All 240 rows returned HTTP 200.
+- City medians were GitHub `222 ms` versus Cloudflare `41.5 ms` in Melbourne and GitHub `13 ms` versus Cloudflare `34 ms` in Sydney. The combined medians were GitHub `209 ms` and Cloudflare `38 ms`. These are transport results, not regional render results.
+- Explicit IPv4 and IPv6 requests succeeded on both hosts. The GitHub IPv6 observation used an IPv4-mapped address; Cloudflare returned native IPv6.
+- The Cloudflare Speed API accepted and completed one Sydney GitHub homepage test, ID `ab317c80-b832-43b9-ae7c-b38eb2c3334a`. Its desktop result was score `95`, FCP `402 ms`, LCP `1,251 ms`, Speed Index `1,525 ms`, and TBT `48 ms`; its mobile result was score `80`, FCP `1,803 ms`, LCP `2,478 ms`, Speed Index `3,154 ms`, and TBT `636 ms`.
+- The preserved corresponding create request for the Cloudflare `pages.dev` URL returned HTTP 500 with API error `1004`, `speed.errors.generic`. The response establishes the API failure, not the service's reason for rejecting the URL or the account's later quota state.
+- Stopped the matrix instead of spending quota on 49 more GitHub-only tests. The plan prohibits a partial or mixed-runner comparison, so the required 50-test Sydney same-runner gate remains blocked and incomplete.
+
+### Hosted Browser and Analytics Result
+
+- Re-ran all five routes on both hosts at `1440x900` and `390x900` with light colour-scheme emulation. Both hosts passed permanent dark rendering, horizontal overflow, navigation, mobile menu, direct and same-page `#lenders`, rapid FAQ reversal, pricing state and keyboard control, exact yearly copy, desktop equal-height cards, contact error and success paths, responsive About sources, and first-party request checks.
+- The retained hosted browser lacked WebGL and exercised the complete Dot Pool fallback. Earlier local validation exercised the normal canvas path. No animation implementation or guide change followed from the hosted fallback result.
+- Forced sampled and unsampled analytics profiles on both hosts with all Mixpanel, recorder, and Formspree traffic intercepted. Each host produced the five normalised Page Views, exact Google Ads referral fixture, custom migration-check event, and first-touch profile values. Unsampled sessions requested no recorder; sampled sessions reached the recorder-load boundary.
+- The sampled browser proof used a minimal intercepted recorder constructor. It proves the sampling and lazy-load boundary, not the internal rrweb recording implementation; the Node analytics contracts cover that implementation.
+
+### Decision and Evidence Boundary
+
+- Step 5G does not pass because GitHub fails REQ-27 on all five routes and the required Sydney same-runner matrix could not run against the Cloudflare preview URL.
+- After the measurement completed, concurrent commit `4a005a64b8b44b91d168602049cbef38867f79be` deployed to GitHub Pages through successful workflow `33351476104`. It is a direct child of the comparison commit and changes only `demo/src/lib/llms.js`, `demo/src/scripts/generate-llms-txt.js`, `demo/public/llms.txt`, and `demo/test/agent-readiness.test.mjs`.
+- The later deployment did not change the five rendered routes measured by Lighthouse or rescue either failed gate. It temporarily ended the live byte-matched state because GitHub's `llms.txt` differed from the first Cloudflare comparison artifact. The current rerun below restored an exact-artifact pair.
+- Keep GitHub Pages in production. Do not request cutover approval, associate a custom domain, create a Cloudflare production deployment, change DNS, create redirects, or disable GitHub Pages.
+- The canonical cold-reader report is `/Users/sacino/.agents/skills/post-work-response/tmp/bulma-root/20260830-1457-agent-readiness-page-speed/index.html`. Its `evidence/step5g-20260831/` directory retains the first hosted proof, and `evidence/step5g-current-20260831/` retains the current exact-pair parity and Lighthouse rerun.
+- A later run must pass REQ-27 and complete the Sydney gate before Step 6 may begin. If the plan's baseline or Sydney-hostname rules need to change, that is a user decision and must be recorded before any new external mutation.
+- The current exact pair uses GitHub artifact `9743765230` from successful workflow `33351476104` for commit `4a005a64b8b44b91d168602049cbef38867f79be` and Cloudflare deployment `3712aa0a-8883-4c46-bf42-3dc1e46be404`.
+
+### Current Exact-Pair Rerun
+
+- Downloaded artifact `9743765230` from successful GitHub workflow `33351476104`. Its `artifact.tar` SHA-256 is `4f146bab8d4e16e3ae7d342d19cd761ed7820a5e9ebc6acf941441645b98cb6e`.
+- Uploaded the extracted artifact without rebuilding to clean Cloudflare preview deployment `3712aa0a-8883-4c46-bf42-3dc1e46be404` at `https://3712aa0a.bulma-root.pages.dev/`. The deployment reports commit `4a005a64b8b44b91d168602049cbef38867f79be`, branch `cloudflare-comparison`, `commit_dirty: false`, `uses_functions: false`, and success.
+- Compared all 179 served files with both hosts. Decoded bodies, statuses, and normalised media types produced zero mismatches. Cloudflare parsed the artifact's `_headers` control file, giving 180 artifact files in total.
+- Re-ran local validation against the current revision. Lint, production build, all 33 tests, and deterministic performance budgets passed. Routed JavaScript remained unchanged from the prior Step 5G implementation.
+- Completed a new exact-pair Lighthouse matrix with 100 mobile and 50 desktop reports. Mobile GitHub / Cloudflare score and LCP medians were: `/` `94 / 2,889 ms` versus `93 / 2,951 ms`; `/about/` `96 / 2,552 ms` versus `100 / 1,913 ms`; `/pricing/` `95 / 2,776 ms` versus `97 / 2,497 ms`; `/contact/` `96.5 / 2,551 ms` versus `97.5 / 2,194 ms`; `/privacy-policy/` `97 / 2,508 ms` versus `97 / 2,462 ms`.
+- REQ-27 again passed every Cloudflare route and failed every GitHub route against the locked Step 5C host baseline. GitHub exceeded FCP and LCP allowances on every route, lost 3-4 performance points, and exceeded Speed Index on four routes.
+- The Cloudflare Speed API reported 49 of 50 free tests remaining and Sydney available. The plan prohibits starting the 50-test matrix without at least 50 remaining, so no test was consumed and the Sydney same-runner gate remains blocked.
+- Stopped the rerun after REQ-27 failed and the Sydney gate remained blocked. The separate DevTools, Globalping, hosted-browser, and analytics matrices were not repeated because they cannot rescue REQ-27 or supply the unavailable 50-test Sydney quota.
+- Preserve GitHub Pages as production. No DNS record, custom domain, production Cloudflare deployment, GitHub Pages setting, branch, commit, or push changed during this rerun.
+- Current rerun evidence is stored in the canonical report under `evidence/step5g-current-20260831/`.
+
+### Calibrated Lighthouse Test Continuation - 4 September 2026
+
+- Rechecked the current exact pair at `https://bulma.com.au/` and `https://3712aa0a.bulma-root.pages.dev/`. Decoded response hashes still match for all five public routes, `llms.txt`, `robots.txt`, and `sitemap.xml`.
+- Ran Lighthouse `13.4.1` with Chrome `152.0.7977.76` through the Lighthouse Test workflow. The host benchmark index was `3050`, which selected a `10.5x` calibrated mobile CPU slowdown.
+- Completed 100 calibrated mobile scoring reports, 30 DevTools-throttled mobile diagnostics, 50 desktop scoring reports, and one calibration report. All 181 JSON files parse, no report has a runtime error, and every requested scoring category is numeric.
+- Mobile GitHub / Cloudflare score and LCP medians were: `/` `91 / 2,874 ms` versus `90 / 2,307 ms`; `/about/` `98 / 2,018 ms` versus `96.5 / 2,070 ms`; `/pricing/` `95 / 2,782 ms` versus `98 / 1,857 ms`; `/contact/` `99 / 1,529 ms` versus `99 / 1,925 ms`; `/privacy-policy/` `99 / 1,896 ms` versus `97.5 / 1,902 ms`.
+- Desktop scores were `99-100` on both hosts. Every median desktop TBT was `0 ms`; route-level LCP medians were `425-885 ms` on GitHub and `422-938 ms` on Cloudflare.
+- The DevTools-throttled profile favoured Cloudflare on Home and About, GitHub on Pricing, and produced effective ties on Contact and Privacy Policy. Pricing median TBT was `253 ms` on GitHub and `547 ms` on Cloudflare.
+- The random 20% Mixpanel recorder sampler was uneven. It loaded in one GitHub homepage run and six Cloudflare homepage runs. The Cloudflare unsampled homepage median was score `96.5`, LCP `2,231 ms`, and TBT `178 ms`, compared with the all-run median of score `90`, LCP `2,307 ms`, and TBT `324 ms`. All-run medians remain the official result.
+- Two first-round mobile reports warned that browser-cache clearing timed out. Both completed with numeric scores and no runtime error; they remain in the evidence and the ten-run medians.
+- The Cloudflare Speed API again reported 50 tests available and Sydney present, then rejected the first `pages.dev` request with error `1004`, `speed.errors.generic`. The failed request consumed no quota. Stopped before any GitHub-only request, so the required same-runner Sydney matrix remains blocked.
+- This calibrated result must not be compared directly with the fixed-4x Step 5C baseline. It updates the current cross-host evidence but does not change the failed REQ-27 decision or complete Step 5G.
+- Durable evidence is stored at `/Users/sacino/Documents/codex/web-performance/bulma-hosting/step5g-speed-20260904/`. No production deployment, DNS record, custom domain, GitHub Pages setting, branch, commit, or push changed.
