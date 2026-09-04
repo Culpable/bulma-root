@@ -479,7 +479,7 @@ flowchart LR
 - The per-route gzip JavaScript report shows every route at or below its `baselineInitialJavaScriptGzipBytes` and the values are recorded in `_hosting.md`.
 - `demo/` tests still pass (`npm --prefix /Users/sacino/bulma-root/demo test` exits 0).
 
-### Step 7: Provision the Workers, the build token, and Workers Builds 🔄 **IN PROGRESS**
+### ~~Step 7: Provision the Workers, the build token, and Workers Builds~~ ✅ **COMPLETED**
 **Objective:** Create the minimum Cloudflare resources and the Git-connected release path without any custom domain.
 
 #### 7.1 High-Level Approach
@@ -500,7 +500,7 @@ flowchart LR
 - Builds API shows one repository connection for `Culpable/bulma-root`, one production trigger (`branch_includes: ['main']`, `root_directory: 'site'`, `build_command: 'pnpm build'`, `deploy_command: 'pnpm deploy'`, `path_includes: ['site/*']`) and one preview trigger (`branch_excludes: ['main']`, `deploy_command: 'pnpm deploy:preview'`); the first production build reports `success` and its deployment version equals the version served by `bulma-root`.
 - No DNS record, GitHub Pages setting, Pages production deployment, or custom domain changed; if the Pages project was deleted, `_hosting.md` records the deletion and its last deployment ID.
 
-### Step 8: Attach `staging.bulma.com.au`, run the hosted proof, and request approval
+### Step 8: Attach `staging.bulma.com.au`, run the hosted proof, and request approval 🔄 **IN PROGRESS**
 **Objective:** Put the production Worker on a real zone hostname and give the user everything needed to decide.
 
 #### 8.1 High-Level Approach

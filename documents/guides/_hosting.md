@@ -6,7 +6,7 @@ This guide records the hosting control plane, deployment revision, credential bo
 
 This section is the Step 1 source of truth for the Astro-on-Workers migration. It was captured read-only on `2026-09-04T04:12:51Z` (`2026-09-04 12:12:51 AWST`). No Cloudflare resource, GitHub setting, branch, DNS record, or `demo/` source file changed during the capture.
 
-Current state: Steps 1 through 6 are complete. Step 7 has provisioned both Workers and the Git-connected release control plane. No custom domain or DNS record exists yet. Production remains unchanged on GitHub Pages.
+Current state: Steps 1 through 7 are complete. Step 8 has started with the committed pre-staging control-plane snapshot. No Bulma custom domain or staging DNS record exists yet. Production remains unchanged on GitHub Pages.
 
 ### Baseline identity and repository state
 
@@ -109,17 +109,54 @@ Cloudflare's official Workers Builds API added repository-connection support on 
 | Repository connection UUID | `3aa4c43c-784c-49b7-8794-75841cf3ee4c` |
 | Connection created | `2026-09-04T05:30:39.313Z` |
 | Production Worker | `bulma-root`, script tag `79bf696e3bf44fd8a3c63cce810c89da`, bootstrap version `bfe62d41-5651-4896-92de-408295c44e62` |
-| Preview Worker | `bulma-root-preview`, deployed version `30cb81d5-e8eb-4f09-bb26-6802b0e904a0` |
+| Preview Worker | `bulma-root-preview`, bootstrap deployment version `30cb81d5-e8eb-4f09-bb26-6802b0e904a0` |
 | Preview migration version | `0d298109-17f4-455c-9596-7015a995ec4a` |
 | Version preview URL | `https://migration-bulma-root-preview.webpop.workers.dev/` |
 | Production trigger | `75e49326-fa92-4140-8132-546585b00422`; `main`; `pnpm build`; `pnpm deploy` |
-| Preview trigger | `c0f21f31-c757-4887-a8da-218cdb64d410`; every branch except `main`; `pnpm deploy:preview` |
+| Preview trigger | `9432fe3a-1bea-4307-acc0-408173ca33d9`; owned by script tag `8bd55784bbfe4f2194024fd204343d7e`; every branch except `main`; `pnpm deploy:preview` |
 | Trigger root and paths | Root `site`; include `site/*`; no excludes |
 | Build variables | `NODE_VERSION=22.23.1`; `PNPM_VERSION=11.22.0` |
 
 The account API token and its Workers Builds registration were created in one process. The one-time secret was passed directly to Keychain and the Builds token endpoint. It was not printed or written to a file.
 
 The preview Worker passed all 18 negotiated HTTP cases. The initial hosted browser run passed 34 cases and intentionally skipped 6 viewport-specific cases; two pricing clicks occurred before their `client:load` island hydrated. After the harness waited for the owning island, the failed desktop and mobile pricing states passed. No app change was required for that timing correction.
+
+The first Git preview build exposed that trigger `c0f21f31-c757-4887-a8da-218cdb64d410` was attached to the production script tag. Cloudflare therefore overrode the `--env preview` name and uploaded inactive version `345363c3-9993-4169-8a2f-b23296949ad7` to `bulma-root`. The active production deployment stayed on version `819c213c-45b4-416d-bcfd-0884b6fb3294`; no traffic changed. The defective trigger was deleted and replaced by trigger `9432fe3a-1bea-4307-acc0-408173ca33d9` on the preview script tag. A second throwaway-branch push started build `543149c2-a3a2-4ba6-952c-af52b5b8cad6`, which completed successfully and uploaded version `74f8672a-c6ce-47f8-b70f-6f86127e24f4` to `bulma-root-preview`. Production build `9af49bec-599e-4ada-b259-ad4cbc1a0dcd` completed successfully from commit `dc2b21c9305b13d537cbd1322b16c283f8658f06` and deployed production version `819c213c-45b4-416d-bcfd-0884b6fb3294`. The throwaway branch `codex/astro-workers-preview-check` was then deleted locally and remotely.
+
+### Committed pre-staging control-plane snapshot
+
+This snapshot was captured at `2026-09-04T06:20:49Z` (`2026-09-04 14:20:49 AWST`) immediately before attaching `staging.bulma.com.au`. It is the exact before-state for the first DNS write. Cloudflare represents automatic TTL as `1`. Every DNS response field needed for exact comparison or recreation is recorded below.
+
+| ID | Type | Name | Content | Proxiable | Proxied | TTL | Priority | Settings | Meta | Comment | Tags | Created | Modified |
+| --- | --- | --- | --- | --- | --- | ---: | ---: | --- | --- | --- | --- | --- | --- |
+| `f4126d8a14cbaef48bdb01475469868a` | A | `bulma.com.au` | `185.199.111.153` | true | false | 1 | null | `{}` | `{}` | null | `[]` | `2026-01-02T13:44:43.68224Z` | `2026-01-02T13:44:43.68224Z` |
+| `5c2d843829044e88737e52479e6059f4` | A | `bulma.com.au` | `185.199.110.153` | true | false | 1 | null | `{}` | `{}` | null | `[]` | `2026-01-02T13:44:35.310541Z` | `2026-01-02T13:44:35.310541Z` |
+| `31b4ad370c84b9fd0c443af8af34f096` | A | `bulma.com.au` | `185.199.108.153` | true | false | 1 | null | `{}` | `{}` | null | `[]` | `2025-12-28T04:47:35.261723Z` | `2026-01-02T13:44:15.264091Z` |
+| `c8e82fc2b97b87587bca888d574a8869` | A | `www.bulma.com.au` | `185.199.109.153` | true | false | 1 | null | `{}` | `{}` | null | `[]` | `2025-12-28T04:47:35.273331Z` | `2026-01-02T13:44:22.613143Z` |
+| `75cf4f7e6ce408098cf70affe7a3b054` | CNAME | `app.bulma.com.au` | `d6e8538622622cb8.vercel-dns-017.com` | true | false | 1 | null | `{"flatten_cname":false}` | `{}` | `Vercel; added 01/01/26` | `[]` | `2026-01-01T02:27:59.34763Z` | `2026-01-01T02:27:59.34763Z` |
+| `797da0a47de88cafe72d4a3783b5693c` | CNAME | `autodiscover.bulma.com.au` | `autodiscover.outlook.com` | true | false | 3600 | null | `{"flatten_cname":false}` | `{}` | null | `[]` | `2026-02-06T05:21:22.871964Z` | `2026-02-06T05:21:22.871964Z` |
+| `c7a1e091840c41852b2831a1221c92bf` | CNAME | `selector1._domainkey.bulma.com.au` | `selector1-bulma-com-au._domainkey.getbulma.p-v1.dkim.mail.microsoft` | true | false | 3600 | null | `{"flatten_cname":false}` | `{}` | null | `[]` | `2026-02-06T05:21:22.670789Z` | `2026-02-06T05:21:22.670789Z` |
+| `b35398f3563319d481198eed6e444902` | CNAME | `selector2._domainkey.bulma.com.au` | `selector2-bulma-com-au._domainkey.getbulma.p-v1.dkim.mail.microsoft` | true | false | 3600 | null | `{"flatten_cname":false}` | `{}` | null | `[]` | `2026-02-06T05:21:22.66898Z` | `2026-02-06T05:21:22.66898Z` |
+| `00832e9d4a08edb5072892b6cba436a1` | MX | `bulma.com.au` | `bulma-com-au.mail.protection.outlook.com` | false | false | 3600 | 0 | `{}` | `{}` | null | `[]` | `2026-02-06T05:21:22.984424Z` | `2026-02-06T05:21:22.984424Z` |
+| `7e0cf81ae4b9613723923122169b87a7` | MX | `send.auth.bulma.com.au` | `feedback-smtp.ap-northeast-1.amazonses.com` | false | false | 1 | 10 | `{}` | `{}` | null | `[]` | `2025-12-28T04:49:31.907161Z` | `2025-12-28T04:49:31.907161Z` |
+| `b6ff3371f8fefbd584bf8c6a30afe7d7` | TXT | `bulma.com.au` | `"v=spf1 include:spf.protection.outlook.com ~all"` | false | false | 3600 | null | `{}` | `{}` | null | `[]` | `2026-02-06T05:21:22.670437Z` | `2026-02-06T05:21:22.670437Z` |
+| `c27e9cb54e6e6a0a93132dbf71c34da3` | TXT | `bulma.com.au` | `"MS=ms59823863"` | false | false | 3600 | null | `{}` | `{}` | null | `[]` | `2026-02-06T05:14:17.76886Z` | `2026-02-06T05:14:17.76886Z` |
+| `0b3b817b0b6f152c44ba7a5018dd5e7c` | TXT | `bulma.com.au` | `"google-site-verification=0tckke5_vKtAzc4213cMKkKfJCBOwhYwTdA3Pe9hE0o"` | false | false | 1 | null | `{}` | `{}` | `GSC; added 04/03/26` | `[]` | `2026-01-04T04:47:10.261785Z` | `2026-01-04T04:47:22.468493Z` |
+| `5295629a0f6f885fbde3718271e35016` | TXT | `_dmarc.bulma.com.au` | `"v=DMARC1; p=none;"` | false | false | 1 | null | `{}` | `{}` | null | `[]` | `2025-12-28T04:50:17.709439Z` | `2025-12-28T04:50:17.709439Z` |
+| `13b9d4e8d09dfa4d13358277bd4542da` | TXT | `resend._domainkey.auth.bulma.com.au` | `"p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDnqxw9oYB2JeMt+z8Kg/3F6Qen0zDtJeEemPvcB4zUn3VCQ1cnIeXyQWSmR4Hlq8M0K6s5A2jzQYlcHdjEmmXKNUf7ItkX96BnO5ph7RiScaW5xT4afOClzQ+5fxgqby3KTmxjhOYWTTN//sw+ik9DMWl2bjFllpDj4LMJV+592wIDAQAB"` | false | false | 1 | null | `{}` | `{}` | null | `[]` | `2025-12-28T04:49:07.695147Z` | `2025-12-28T04:49:07.695147Z` |
+| `e510f8d48578acedb6db82d7b4803fac` | TXT | `send.auth.bulma.com.au` | `"v=spf1 include:amazonses.com ~all"` | false | false | 1 | null | `{}` | `{}` | null | `[]` | `2025-12-28T04:49:45.383102Z` | `2025-12-28T04:49:45.383102Z` |
+
+The Workers custom-domain list contained only `taxgenie.com.au` with domain ID `1e50d39091ecc025024430208266c45e0bc93be2`, service `taxgenie-root`, environment `production`, zone `ce76f15eb5f7065b52ed9d8046020b4a`, and certificate ID `716ecedf-d3ce-4970-8a28-5384264d4124`. No Bulma Worker custom domain existed.
+
+The zone ruleset list contained only these Cloudflare-managed rulesets:
+
+| ID | Name | Kind | Version | Phase | Last updated |
+| --- | --- | --- | --- | --- | --- |
+| `70339d97bdb34195bbf054b1ebe81f76` | Cloudflare Normalization Ruleset | managed | 6 | `http_request_sanitize` | `2024-08-01T17:37:11.538019Z` |
+| `77454fe2d30c4220b5701f6fdfb893ba` | Cloudflare Managed Free Ruleset | managed | 74 | `http_request_firewall_managed` | `2026-08-17T16:24:51.912839Z` |
+| `4d21379b4f9f4bb088e0729962c8b3cf` | DDoS L7 ruleset | managed | 3408 | `ddos_l7` | `2026-09-03T20:46:57.66225Z` |
+
+GitHub Pages remained `built` with `build_type: workflow`, source `main` at `/`, custom domain `bulma.com.au`, public access, and its approved certificate covering `bulma.com.au` and `www.bulma.com.au` until `2026-11-29`. No Pages setting changed.
 
 ### Step 1 validation baseline
 
