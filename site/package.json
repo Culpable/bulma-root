@@ -12,7 +12,7 @@
     "precheck": "wrangler types",
     "check": "astro check",
     "prebuild": "wrangler types",
-    "build": "astro check && astro build && node scripts/generate-agent-markdown.mjs dist https://bulma.com.au && node scripts/generate-headers.mjs",
+    "build": "astro check && astro build && node scripts/normalise-astro-island-uids.mjs dist && node scripts/generate-agent-markdown.mjs dist https://bulma.com.au && node scripts/generate-headers.mjs",
     "preview": "astro preview",
     "preview:static": "node scripts/preview-server.mjs",
     "test": "pnpm test:unit && pnpm test:build-output && playwright test",
