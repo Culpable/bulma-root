@@ -315,9 +315,22 @@ The user reviewed this on 2026-09-04 and withdrew the byte-identical rule for th
 
 Production's Next.js layout never overrides `openGraph` per route, so `/about/`, `/pricing/`, `/contact/`, and `/privacy-policy/` all repeat the homepage `og:title`, `og:description`, and `og:url` even though their `<title>` and `<meta name="description">` are correct. The Astro site emits per-route Open Graph values and a self-referencing `og:url`. This is kept as a deliberate correction of a production defect. The Astro head additionally emits `og:image:type` and `twitter:image:alt`, which production omits.
 
+#### Corrected build deployed and re-proved
+
+Commit `79838f3` was pushed to `main`. Workers Builds deployed production Worker version `77d21bbe-202c-440a-97c0-2c4b7e61f024` at `2026-09-04T11:47:39Z`. Re-proof against the new version:
+
+- All nine decoded staging bodies are byte-identical to the local `site/dist`: the five public documents, the real 404, `robots.txt`, `sitemap.xml`, and `llms.txt`.
+- Every route now serves `viewport width=device-width, initial-scale=1`, `og:site_name Bulma`, `og:locale en-AU`, and the production `og:image:alt`.
+- `/robots.txt` now returns `text/plain; charset=utf-8`.
+- Zero unslashed internal route links remain on any of the five public routes, so no navigation pays a `307`.
+- The HTTP contract still holds: 7/7 security headers on `/`, Markdown negotiation returning `text/markdown; charset=utf-8`, `307` on `/pricing`, `406` on an unacceptable `Accept`, `404` on `/_agent-markdown/*` and on an unknown path, `text/plain; charset=utf-8` on `/llms.txt`, and `public, max-age=31536000, immutable` on `/_astro/*`.
+- The hosted Playwright matrix against `https://staging.bulma.com.au` passed 78 with 6 intentional viewport skips and zero failures. Maximum visual difference `0.8362%` against the `1.0%` threshold, matching the pre-fix figures.
+- Local gate on the corrected tree: `astro check` 285 files with zero errors, warnings, and hints; 44 Node tests; build-output, trust-page, and performance-budget validation; Playwright 78 passed with 6 skips.
+- Production is untouched: `https://bulma.com.au/` still answers `server: GitHub.com` with `max-age=600`, GitHub Pages is still `built` on `build_type: workflow` with `cname: bulma.com.au`, and the zone still holds 17 records with the three apex `A` records and the `www` `A` record unproxied and unchanged.
+
 #### Outstanding
 
-The corrected build has not yet been deployed to staging. The Step 8 hosted proof and the cutover packet above describe version `5770e5db-f36a-4340-b8cf-a9f4947134ce`, which predates these fixes. Re-run the hosted proof and re-issue the packet after the corrected commit builds, before any cutover approval is requested.
+The Step 8 cutover packet above still names version `5770e5db-f36a-4340-b8cf-a9f4947134ce` and site commit `f844cab`. Re-issue it against version `77d21bbe-202c-440a-97c0-2c4b7e61f024` and commit `79838f3`, and re-run the Lighthouse matrix if the user wants current numbers, before requesting cutover approval.
 
 ## Historical Cloudflare Pages Migration State
 
