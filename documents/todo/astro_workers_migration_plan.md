@@ -161,23 +161,23 @@ flowchart LR
 ### 3.3 Verification Checklist
 
 **Functional:**
-- [ ] All five routes, `/404.html`, `/robots.txt`, `/sitemap.xml`, `/llms.txt` exist in `site/dist` and match the parity gates.
-- [ ] Every Section 6.3 interaction passes locally and on staging at `1440x900` and `390x900` with light-scheme emulation.
-- [ ] `#lenders` direct load and same-page click open the FAQ; `#supported-lenders` scrolls to the field.
-- [ ] Contact form intercepted POST targets Formspree with exactly four fields; error, pending, and success states render.
-- [ ] Mixpanel init, one Page View per load, referral event, sampled and unsampled recorder behaviour observed with traffic intercepted.
+- [x] All five routes, `/404.html`, `/robots.txt`, `/sitemap.xml`, `/llms.txt` exist in `site/dist` and match the parity gates.
+- [x] Every Section 6.3 interaction passes locally and on staging at `1440x900` and `390x900` with light-scheme emulation.
+- [x] `#lenders` direct load and same-page click open the FAQ; `#supported-lenders` scrolls to the field.
+- [x] Contact form intercepted POST targets Formspree with exactly four fields; error, pending, and success states render.
+- [x] Mixpanel init, one Page View per load, referral event, sampled and unsampled recorder behaviour observed with traffic intercepted.
 
 **Defaults/Fallbacks:**
-- [ ] Worker names, staging hostname, ports, and package manager match Section 3.2 or the recorded fallback.
-- [ ] Font `wdth` gate and CSP gate pass with the primary option or the recorded fallback.
+- [x] Worker names, staging hostname, ports, and package manager match Section 3.2 or the recorded fallback.
+- [x] Font `wdth` gate and CSP gate pass with the primary option or the recorded fallback.
 
 **Compatibility:**
-- [ ] `demo/` lint, build, and tests still pass until Step 10 removes it.
-- [ ] `https://bulma.com.au/` stays on GitHub Pages until the approved cutover.
+- [x] `demo/` lint, build, and tests still pass until Step 10 removes it.
+- [x] `https://bulma.com.au/` stays on GitHub Pages until the approved cutover.
 - [ ] MX, TXT, DKIM, DMARC, autodiscover, `send.auth`, and `app` records are unchanged after cutover (byte comparison with the snapshot).
 
 **Ops/Docs:**
-- [ ] `documents/guides/_hosting.md` holds the Workers inventory, token map, DNS before-state, cutover packet, rollback payloads, Lighthouse tables, and release evidence.
+- [x] `documents/guides/_hosting.md` holds the Workers inventory, token map, DNS before-state, cutover packet, rollback payloads, Lighthouse tables, and release evidence.
 - [ ] `AGENTS.md`, `DESIGN.md`, `README.md`, `_animations.md`, `dev-browser.mdc`, `launch.json`, and `documents/AGENTS/*` describe the Astro site only.
 
 ---

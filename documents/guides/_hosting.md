@@ -193,6 +193,79 @@ Fresh `https://bulma.com.au` captures on `2026-09-04` proved that seven Step 1 s
 - Initial JavaScript gzip was `93,025` bytes for `/`, `75,634` for `/about/`, `81,597` for `/pricing/`, `72,629` for `/contact/`, and `68,255` for `/privacy-policy/`. Every route remained below its Next.js baseline.
 - `demo/` remained unchanged. Its required lint, build, and 33-test baseline passed before the port and again after the page implementation.
 
+### Step 8 staging deployment and hosted proof
+
+#### Deployment identity and DNS result
+
+- `staging.bulma.com.au` is attached to service `bulma-root`, environment `production`, as custom-domain ID `ac7956c2e528fe295b9bcc8f3398664815ff855c`.
+- The staging attach deployed Worker version `05fccc79-5a9c-4c39-8d26-698bd0fac11d`. The final Git-connected deployment is recorded in the cutover packet below.
+- Cloudflare created exactly one DNS record: read-only proxied AAAA record `b84080eb0e2fdf451c777a0829f391fa`, content `100::`, automatic TTL, and `meta.origin_worker_id` equal to the custom-domain ID.
+- Certificate pack `b10d5b68-e58f-4395-944f-4a2449cdd770` is active. Its RSA certificate is `8bee60ca-354e-4f3f-983c-93bf9d842c24`; its ECDSA certificate is `440d8dda-c12b-43b6-8fcd-283f015315af`; both expire on `2026-12-03`.
+- Authoritative DNS and public resolvers `1.1.1.1` and `8.8.8.8` returned Cloudflare anycast A and AAAA answers. Direct IPv4 and native IPv6 requests both returned HTTP 200.
+- All 16 pre-existing DNS record IDs and `modified_on` values remained byte-identical to the committed pre-staging snapshot. The only seventeenth record is the staging AAAA record.
+- GitHub Pages remains built, uses workflow deployment, retains `bulma.com.au`, and continues to serve production with `server: GitHub.com` and its fixed `max-age=600` cache policy.
+
+The first staging body comparison found that the zone-level Cloudflare managed robots setting prepended 61 policy lines to the project file and added crawler-specific disallow rules. The before-state had `is_robots_txt_managed: true`; all AI, content-bot, crawler, JavaScript, and fight-mode controls were disabled. Only `is_robots_txt_managed` was changed to `false`. The hosted `robots.txt` then became byte-identical to `dist/robots.txt`; GPTBot, ClaudeBot, and ChatGPT-User all receive HTTP 200 and the project allow policy.
+
+#### HTTP, transport, cache, and body parity
+
+- All 18 negotiated HTTP contract cases passed after the robots correction. HTML, Markdown, invalid media negotiation, HEAD, slash redirect, internal-file denial, discovery files, immutable asset, and real 404 cases returned their required status and media type.
+- Nine decoded bodies matched `dist` byte for byte: the five public documents, `llms.txt`, `sitemap.xml`, `robots.txt`, and the real 404 body. No decoded body, canonical, Open Graph URL, JSON-LD, sitemap, or llms value contains `staging.bulma.com.au` or `workers.dev`.
+- Every sampled staging document, asset, discovery response, and 404 response carried `X-Robots-Tag: noindex`. The production canonical and Open Graph origin remained `https://bulma.com.au`.
+- The homepage returned HTTP/2 and HTTP/3 successfully. HTML and JavaScript negotiated both Brotli and gzip. IPv4 and IPv6 returned the same built body.
+- HTML returned `cache-control: public, max-age=0, must-revalidate`; content-hashed `/_astro/*` returned `public, max-age=31536000, immutable`. A successful exact-URL purge followed by first and repeated requests reported `cf-cache-status: HIT`; Workers Static Assets retained its internal edge object through the zone purge, so an observable `MISS` was not available from the Perth edge. Both cold-attempt and warm requests returned the intended response policy and identical body.
+- The root header set passed: `server: cloudflare`, `Vary: Accept`, noindex, the generated hash-based CSP, Permissions Policy, Referrer Policy, nosniff, and frame denial. No header-based production-only policy was added.
+
+#### Browser, accessibility, analytics, and visual parity
+
+- The full hosted Playwright matrix passed 78 tests with 6 intentional viewport-specific skips and zero failures at `1440x900` and `390x900`, with light colour-scheme emulation. Agent readiness passed for ChatGPT-User, Claude-User, and Perplexity-User on all five public routes; axe and interaction-state checks passed.
+- A separate hosted browser proof passed all 12 route and viewport combinations with the permanent dark class, zero horizontal overflow, zero console errors, zero page errors, zero CSP violations, and zero failed first-party requests. `dev-browser` independently loaded the same 12 combinations against the current staging Worker; its initial `networkidle` wait was replaced with the page load and dark-root signals because delayed analytics makes network-idle unsuitable.
+- Visual parity passed the `1.0%` threshold in every declared state. Desktop: home `0.0039%`, about `0.0000%`, pricing `0.0970%`, contact `0.0004%`, privacy `0.0000%`, 404 `0.0001%`, FAQ open `0.0000%`, Yearly pricing `0.0922%`, contact error `0.8362%`, contact success `0.7439%`. Mobile: home `0.0000%`, about `0.2909%`, pricing `0.0000%`, contact `0.0010%`, privacy `0.0000%`, 404 `0.0006%`, menu open `0.0000%`.
+- Hosted analytics interception passed 10 isolated route loads. Every route produced exactly one `Page View` whose `url` and `page` equal its pathname plus the Google Ads referral event and first-touch operations. Five forced sampled sessions reached the intercepted recorder boundary; five forced unsampled sessions requested no recorder. No request completed to Mixpanel or Formspree.
+
+#### Lighthouse 13.4.1 result
+
+The matrix used Chrome `152.0.0.0`, a fresh profile and CLI process for every report, alternating host order for every pair. It completed 100 mobile and 50 desktop performance reports: 10 mobile and 5 desktop runs per route and host. Three launcher-only DevTools endpoint races were preserved and retried with new profiles; all 150 accepted reports have no runtime error and no accepted report was discarded. Values are median `[minimum-maximum]`; delta is staging minus production. LCP is milliseconds.
+
+| Mode | Route | Production score | Staging score | Score delta / % | Production LCP | Staging LCP | LCP delta / % |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| mobile | `/` | 91.5 [84-98] | 100 [94-100] | 8.5 / 9.3% | 3086 [2340-3561] | 1550 [1473-3048] | -1537 / -49.8% |
+| mobile | `/about/` | 94.5 [85-100] | 99 [99-100] | 4.5 / 4.8% | 2748 [1889-3954] | 1929 [1721-2001] | -819 / -29.8% |
+| mobile | `/pricing/` | 94 [93-96] | 100 [95-100] | 6 / 6.4% | 2781 [2776-2933] | 1042 [967-2393] | -1739 / -62.5% |
+| mobile | `/contact/` | 96 [93-100] | 100 [100-100] | 4 / 4.2% | 2555 [1297-2903] | 1091 [1080-1102] | -1465 / -57.3% |
+| mobile | `/privacy-policy/` | 97 [90-100] | 100 [95-100] | 3 / 3.1% | 2511 [1788-3206] | 1085 [1075-2517] | -1427 / -56.8% |
+| desktop | `/` | 99 [99-99] | 100 [99-100] | 1 / 1.0% | 884 [883-890] | 718 [658-836] | -166 / -18.8% |
+| desktop | `/about/` | 100 [100-100] | 100 [100-100] | 0 / 0.0% | 596 [388-780] | 542 [519-571] | -54 / -9.1% |
+| desktop | `/pricing/` | 100 [98-100] | 100 [98-100] | 0 / 0.0% | 671 [665-1174] | 535 [527-1138] | -136 / -20.3% |
+| desktop | `/contact/` | 100 [100-100] | 100 [100-100] | 0 / 0.0% | 508 [502-510] | 310 [307-348] | -198 / -39.0% |
+| desktop | `/privacy-policy/` | 100 [100-100] | 100 [100-100] | 0 / 0.0% | 511 [504-538] | 310 [306-319] | -201 / -39.4% |
+
+Separate staging category reports produced Accessibility / Best Practices / SEO / Agentic Browsing scores of: `/` `100/100/69/100`; `/about/` `96/100/69/100`; `/pricing/` `99/100/69/100`; `/contact/` `100/100/69/100`; `/privacy-policy/` `100/100/69/100`. SEO is excluded from the host comparison because staging is intentionally noindexed. The machine-readable summary is `documents/guides/parity/lighthouse-step8-summary.json`, SHA-256 `77b1cbbc75380b57b2cf1ebaad8d2b69c32b2939e9f9a6f0e5a9e33b3a852cbc`.
+
+Initial JavaScript gzip remains below every Next.js baseline: `/` `93,025`, `/about/` `75,634`, `/pricing/` `81,597`, `/contact/` `72,629`, and `/privacy-policy/` `68,255` bytes. The Three.js chunk remains separate from initial route scripts and loads only after the homepage load event.
+
+#### Step 8 cutover packet
+
+| Field | Verified value |
+| --- | --- |
+| Production URL | `https://bulma.com.au/`, still GitHub Pages |
+| Staging URL | `https://staging.bulma.com.au/`, Cloudflare Worker with noindex |
+| Site commit | Pending the final Step 8 Git-connected deployment |
+| Worker and version | `bulma-root`; pending the final Git-connected deployment version |
+| Staging custom domain | `ac7956c2e528fe295b9bcc8f3398664815ff855c` |
+| Staging DNS record | `b84080eb0e2fdf451c777a0829f391fa` |
+| Staging certificate pack | `b10d5b68-e58f-4395-944f-4a2449cdd770`, active |
+| HTTP proof | 18/18 contract cases; 9/9 decoded body comparisons |
+| Browser proof | 78 passed, 6 intentional skips; 12/12 error-state combinations passed |
+| Visual parity | Every state at or below `0.8362%`; threshold `1.0%` |
+| Lighthouse proof | 150/150 performance reports and 5/5 category reports complete |
+| DNS before-state | The complete 16-record committed pre-staging snapshot above |
+| Intended Step 9 DNS change | Replace only the three apex GitHub A records and the one `www` A record after explicit approval; preserve every other record byte for byte |
+| DNS rollback | Delete only migration-created production records, then recreate the four recorded GitHub A payloads exactly; verify `server: GitHub.com` |
+| Code rollback | Deploy the previously active production Worker version `819c213c-45b4-416d-bcfd-0884b6fb3294`; production traffic currently needs no code rollback because it still uses GitHub Pages |
+
+Step 9 remains prohibited until the user records an explicit cutover decision after reviewing both URLs and this packet.
+
 ## Historical Cloudflare Pages Migration State
 
 - Migration phase: Steps 1 through 5F are complete. Step 5G finished two exact-artifact hosted proof runs but has one failed release gate and one blocked release gate. Steps 6 through 10 remain blocked.

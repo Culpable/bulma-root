@@ -1,0 +1,985 @@
+{
+  "lighthouseVersion": "13.4.1",
+  "generatedAt": "2026-09-04T07:00:15.196Z",
+  "performanceReportCount": 150,
+  "stagingCategoryReportCount": 5,
+  "performanceSummary": [
+    {
+      "mode": "mobile",
+      "route": "/",
+      "production": {
+        "score": {
+          "median": 91.5,
+          "min": 84,
+          "max": 98
+        },
+        "fcpMs": {
+          "median": 1973.867,
+          "min": 1365.4969999999998,
+          "max": 2547.1185
+        },
+        "lcpMs": {
+          "median": 3086.367,
+          "min": 2340.497,
+          "max": 3561.1185
+        },
+        "speedIndexMs": {
+          "median": 3254.5465863537556,
+          "min": 1749.2496433373485,
+          "max": 4866.3552086656855
+        },
+        "tbtMs": {
+          "median": 19.75,
+          "min": 5.5,
+          "max": 39.5
+        },
+        "cls": {
+          "median": 0.0006143823660921985,
+          "min": 0,
+          "max": 0.001228767239997179
+        }
+      },
+      "staging": {
+        "score": {
+          "median": 100,
+          "min": 94,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 1248.6580000000001,
+          "min": 1231.942,
+          "max": 1267.446
+        },
+        "lcpMs": {
+          "median": 1549.694,
+          "min": 1472.621,
+          "max": 3048.123
+        },
+        "speedIndexMs": {
+          "median": 1521.951074948507,
+          "min": 1268.3176463033449,
+          "max": 1969.1163909493107
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 11.5
+        },
+        "cls": {
+          "median": 0,
+          "min": 0,
+          "max": 0.004618635867280915
+        }
+      },
+      "deltas": {
+        "score": {
+          "absolute": 8.5,
+          "percent": 9.289617486338798
+        },
+        "fcpMs": {
+          "absolute": -725.2089999999998,
+          "percent": -36.74052000464063
+        },
+        "lcpMs": {
+          "absolute": -1536.6730000000002,
+          "percent": -49.78905619454848
+        },
+        "speedIndexMs": {
+          "absolute": -1732.5955114052485,
+          "percent": -53.23615641791653
+        },
+        "tbtMs": {
+          "absolute": -19.75,
+          "percent": -100
+        },
+        "cls": {
+          "absolute": -0.0006143823660921985,
+          "percent": -100
+        }
+      }
+    },
+    {
+      "mode": "mobile",
+      "route": "/about/",
+      "production": {
+        "score": {
+          "median": 94.5,
+          "min": 85,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 1665.3094999999998,
+          "min": 910.096,
+          "max": 1974.112
+        },
+        "lcpMs": {
+          "median": 2747.8869999999997,
+          "min": 1889.174,
+          "max": 3953.7389999999996
+        },
+        "speedIndexMs": {
+          "median": 2331.158624602903,
+          "min": 910.096,
+          "max": 4070.447416811471
+        },
+        "tbtMs": {
+          "median": 4,
+          "min": 0,
+          "max": 12.5
+        },
+        "cls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "staging": {
+        "score": {
+          "median": 99,
+          "min": 99,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 1101.0439999999999,
+          "min": 1082.9969999999998,
+          "max": 1126.165
+        },
+        "lcpMs": {
+          "median": 1929.06825,
+          "min": 1721.384,
+          "max": 2000.5594999999998
+        },
+        "speedIndexMs": {
+          "median": 1101.0439999999999,
+          "min": 1082.9969999999998,
+          "max": 1691.6311188659906
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "deltas": {
+        "score": {
+          "absolute": 4.5,
+          "percent": 4.761904761904762
+        },
+        "fcpMs": {
+          "absolute": -564.2655,
+          "percent": -33.88352135143647
+        },
+        "lcpMs": {
+          "absolute": -818.8187499999997,
+          "percent": -29.798123066923775
+        },
+        "speedIndexMs": {
+          "absolute": -1230.114624602903,
+          "percent": -52.76837927802723
+        },
+        "tbtMs": {
+          "absolute": -4,
+          "percent": -100
+        },
+        "cls": {
+          "absolute": 0,
+          "percent": null
+        }
+      }
+    },
+    {
+      "mode": "mobile",
+      "route": "/pricing/",
+      "production": {
+        "score": {
+          "median": 94,
+          "min": 93,
+          "max": 96
+        },
+        "fcpMs": {
+          "median": 1953.78725,
+          "min": 1219.204,
+          "max": 1958.2060000000001
+        },
+        "lcpMs": {
+          "median": 2780.6195,
+          "min": 2776.0370000000003,
+          "max": 2933.206
+        },
+        "speedIndexMs": {
+          "median": 1953.78725,
+          "min": 1292.7701116299163,
+          "max": 1958.2060000000001
+        },
+        "tbtMs": {
+          "median": 8.5,
+          "min": 1,
+          "max": 21
+        },
+        "cls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "staging": {
+        "score": {
+          "median": 100,
+          "min": 95,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 969.71525,
+          "min": 955.5765,
+          "max": 2113.714
+        },
+        "lcpMs": {
+          "median": 1042.04,
+          "min": 966.5765,
+          "max": 2393.214
+        },
+        "speedIndexMs": {
+          "median": 1129.962924875652,
+          "min": 955.5765,
+          "max": 3626.0340233213556
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "median": 0.01584040407031692,
+          "min": 0,
+          "max": 0.01584040407031692
+        }
+      },
+      "deltas": {
+        "score": {
+          "absolute": 6,
+          "percent": 6.382978723404255
+        },
+        "fcpMs": {
+          "absolute": -984.0720000000001,
+          "percent": -50.367408222159305
+        },
+        "lcpMs": {
+          "absolute": -1738.5794999999998,
+          "percent": -62.52489777907405
+        },
+        "speedIndexMs": {
+          "absolute": -823.824325124348,
+          "percent": -42.165508303135255
+        },
+        "tbtMs": {
+          "absolute": -8.5,
+          "percent": -100
+        },
+        "cls": {
+          "absolute": 0.01584040407031692,
+          "percent": null
+        }
+      }
+    },
+    {
+      "mode": "mobile",
+      "route": "/contact/",
+      "production": {
+        "score": {
+          "median": 96,
+          "min": 93,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 1657.27225,
+          "min": 1296.876,
+          "max": 2125.7485
+        },
+        "lcpMs": {
+          "median": 2555.348,
+          "min": 1296.876,
+          "max": 2903.258
+        },
+        "speedIndexMs": {
+          "median": 1657.27225,
+          "min": 1296.876,
+          "max": 2679.4505733733085
+        },
+        "tbtMs": {
+          "median": 3,
+          "min": 0,
+          "max": 13
+        },
+        "cls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "staging": {
+        "score": {
+          "median": 100,
+          "min": 100,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 1090.7179999999998,
+          "min": 1079.508,
+          "max": 1102.127
+        },
+        "lcpMs": {
+          "median": 1090.7179999999998,
+          "min": 1079.508,
+          "max": 1102.127
+        },
+        "speedIndexMs": {
+          "median": 1090.7179999999998,
+          "min": 1079.508,
+          "max": 1102.127
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 6
+        },
+        "cls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "deltas": {
+        "score": {
+          "absolute": 4,
+          "percent": 4.166666666666666
+        },
+        "fcpMs": {
+          "absolute": -566.5542500000001,
+          "percent": -34.18594923073141
+        },
+        "lcpMs": {
+          "absolute": -1464.63,
+          "percent": -57.316263773075136
+        },
+        "speedIndexMs": {
+          "absolute": -566.5542500000001,
+          "percent": -34.18594923073141
+        },
+        "tbtMs": {
+          "absolute": -3,
+          "percent": -100
+        },
+        "cls": {
+          "absolute": 0,
+          "percent": null
+        }
+      }
+    },
+    {
+      "mode": "mobile",
+      "route": "/privacy-policy/",
+      "production": {
+        "score": {
+          "median": 97,
+          "min": 90,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 1655.5305,
+          "min": 1054.2240000000002,
+          "max": 2112.865
+        },
+        "lcpMs": {
+          "median": 2511.4955,
+          "min": 1788.2240000000002,
+          "max": 3205.865
+        },
+        "speedIndexMs": {
+          "median": 1656.417,
+          "min": 1054.2240000000002,
+          "max": 3437.001686691569
+        },
+        "tbtMs": {
+          "median": 4.5,
+          "min": 2,
+          "max": 34
+        },
+        "cls": {
+          "median": 0.003278342629939328,
+          "min": 0,
+          "max": 0.003278342629939328
+        }
+      },
+      "staging": {
+        "score": {
+          "median": 100,
+          "min": 95,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 1084.911,
+          "min": 1075.114,
+          "max": 2066.721
+        },
+        "lcpMs": {
+          "median": 1084.911,
+          "min": 1075.114,
+          "max": 2516.721
+        },
+        "speedIndexMs": {
+          "median": 1084.911,
+          "min": 1075.114,
+          "max": 3263.0901499949937
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 12.5
+        },
+        "cls": {
+          "median": 0.0027219256577811135,
+          "min": 0,
+          "max": 0.004332489839229583
+        }
+      },
+      "deltas": {
+        "score": {
+          "absolute": 3,
+          "percent": 3.0927835051546393
+        },
+        "fcpMs": {
+          "absolute": -570.6195,
+          "percent": -34.46747130300529
+        },
+        "lcpMs": {
+          "absolute": -1426.5845,
+          "percent": -56.802192160009845
+        },
+        "speedIndexMs": {
+          "absolute": -571.5059999999999,
+          "percent": -34.502543743513854
+        },
+        "tbtMs": {
+          "absolute": -4.5,
+          "percent": -100
+        },
+        "cls": {
+          "absolute": -0.0005564169721582147,
+          "percent": -16.972508214265336
+        }
+      }
+    },
+    {
+      "mode": "desktop",
+      "route": "/",
+      "production": {
+        "score": {
+          "median": 99,
+          "min": 99,
+          "max": 99
+        },
+        "fcpMs": {
+          "median": 403.90999999999997,
+          "min": 323.0155,
+          "max": 409.6595
+        },
+        "lcpMs": {
+          "median": 883.91,
+          "min": 883.0155,
+          "max": 889.6595
+        },
+        "speedIndexMs": {
+          "median": 451.22156050467987,
+          "min": 403.2145,
+          "max": 626.1536624241279
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "staging": {
+        "score": {
+          "median": 100,
+          "min": 99,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 335.8365,
+          "min": 329.496,
+          "max": 397.51
+        },
+        "lcpMs": {
+          "median": 717.51,
+          "min": 658.105,
+          "max": 836.392
+        },
+        "speedIndexMs": {
+          "median": 525.6520487611574,
+          "min": 491.5908856140667,
+          "max": 674.3028656241795
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "median": 0.0003522541315469193,
+          "min": 0.0003522541315469193,
+          "max": 0.0031588439087875224
+        }
+      },
+      "deltas": {
+        "score": {
+          "absolute": 1,
+          "percent": 1.0101010101010102
+        },
+        "fcpMs": {
+          "absolute": -68.07349999999997,
+          "percent": -16.85363075932757
+        },
+        "lcpMs": {
+          "absolute": -166.39999999999998,
+          "percent": -18.825446029573143
+        },
+        "speedIndexMs": {
+          "absolute": 74.43048825647753,
+          "percent": 16.49533062498807
+        },
+        "tbtMs": {
+          "absolute": 0,
+          "percent": null
+        },
+        "cls": {
+          "absolute": 0.0003522541315469193,
+          "percent": null
+        }
+      }
+    },
+    {
+      "mode": "desktop",
+      "route": "/about/",
+      "production": {
+        "score": {
+          "median": 100,
+          "min": 100,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 259.923,
+          "min": 247.768,
+          "max": 363.36400000000003
+        },
+        "lcpMs": {
+          "median": 596.1659999999999,
+          "min": 387.76800000000003,
+          "max": 779.923
+        },
+        "speedIndexMs": {
+          "median": 283.166,
+          "min": 247.768,
+          "max": 411.77173701884465
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "staging": {
+        "score": {
+          "median": 100,
+          "min": 100,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 335.808,
+          "min": 311.2475,
+          "max": 341.7815
+        },
+        "lcpMs": {
+          "median": 541.7815,
+          "min": 518.9549999999999,
+          "max": 571.2475
+        },
+        "speedIndexMs": {
+          "median": 335.808,
+          "min": 311.2475,
+          "max": 341.7815
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "median": 0.0003522541315469193,
+          "min": 0.0003522541315469193,
+          "max": 0.0003522541315469193
+        }
+      },
+      "deltas": {
+        "score": {
+          "absolute": 0,
+          "percent": 0
+        },
+        "fcpMs": {
+          "absolute": 75.88499999999999,
+          "percent": 29.195184727784763
+        },
+        "lcpMs": {
+          "absolute": -54.38449999999989,
+          "percent": -9.122375311574276
+        },
+        "speedIndexMs": {
+          "absolute": 52.641999999999996,
+          "percent": 18.59050874751912
+        },
+        "tbtMs": {
+          "absolute": 0,
+          "percent": null
+        },
+        "cls": {
+          "absolute": 0.0003522541315469193,
+          "percent": null
+        }
+      }
+    },
+    {
+      "mode": "desktop",
+      "route": "/pricing/",
+      "production": {
+        "score": {
+          "median": 100,
+          "min": 98,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 403.197,
+          "min": 365.4,
+          "max": 410.869
+        },
+        "lcpMs": {
+          "median": 670.9,
+          "min": 664.51,
+          "max": 1173.66
+        },
+        "speedIndexMs": {
+          "median": 516.2244729923691,
+          "min": 500.80014600280185,
+          "max": 648.8438354294162
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "median": 0.002860718655864646,
+          "min": 0.0015663551622351402,
+          "max": 0.002928449565487974
+        }
+      },
+      "staging": {
+        "score": {
+          "median": 100,
+          "min": 98,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 293.51300000000003,
+          "min": 281.527,
+          "max": 366.8565
+        },
+        "lcpMs": {
+          "median": 534.527,
+          "min": 526.8565,
+          "max": 1137.5625
+        },
+        "speedIndexMs": {
+          "median": 455.7158211012794,
+          "min": 415.50866063153273,
+          "max": 610.9669954059628
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "median": 0.0015523817682655445,
+          "min": 0.0014029465550492932,
+          "max": 0.001969287639857192
+        }
+      },
+      "deltas": {
+        "score": {
+          "absolute": 0,
+          "percent": 0
+        },
+        "fcpMs": {
+          "absolute": -109.68399999999997,
+          "percent": -27.203575423428244
+        },
+        "lcpMs": {
+          "absolute": -136.37299999999993,
+          "percent": -20.326874347890882
+        },
+        "speedIndexMs": {
+          "absolute": -60.5086518910897,
+          "percent": -11.721383827531971
+        },
+        "tbtMs": {
+          "absolute": 0,
+          "percent": null
+        },
+        "cls": {
+          "absolute": -0.0013083368875991014,
+          "percent": -45.734552921411264
+        }
+      }
+    },
+    {
+      "mode": "desktop",
+      "route": "/contact/",
+      "production": {
+        "score": {
+          "median": 100,
+          "min": 100,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 361.869,
+          "min": 361.247,
+          "max": 363.847
+        },
+        "lcpMs": {
+          "median": 508.24700000000007,
+          "min": 501.803,
+          "max": 510.222
+        },
+        "speedIndexMs": {
+          "median": 436.34465098712445,
+          "min": 361.869,
+          "max": 496.75570242761455
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "staging": {
+        "score": {
+          "median": 100,
+          "min": 100,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 309.95799999999997,
+          "min": 306.919,
+          "max": 348.459
+        },
+        "lcpMs": {
+          "median": 309.95799999999997,
+          "min": 306.919,
+          "max": 348.459
+        },
+        "speedIndexMs": {
+          "median": 376.4146819989801,
+          "min": 363.785566682295,
+          "max": 398.6439727711559
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "median": 0.0003522541315469193,
+          "min": 0.0003522541315469193,
+          "max": 0.0003522541315469193
+        }
+      },
+      "deltas": {
+        "score": {
+          "absolute": 0,
+          "percent": 0
+        },
+        "fcpMs": {
+          "absolute": -51.91100000000006,
+          "percent": -14.345246484224969
+        },
+        "lcpMs": {
+          "absolute": -198.2890000000001,
+          "percent": -39.0142981660492
+        },
+        "speedIndexMs": {
+          "absolute": -59.92996898814437,
+          "percent": -13.73454879132064
+        },
+        "tbtMs": {
+          "absolute": 0,
+          "percent": null
+        },
+        "cls": {
+          "absolute": 0.0003522541315469193,
+          "percent": null
+        }
+      }
+    },
+    {
+      "mode": "desktop",
+      "route": "/privacy-policy/",
+      "production": {
+        "score": {
+          "median": 100,
+          "min": 100,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 364.741,
+          "min": 363.68,
+          "max": 390
+        },
+        "lcpMs": {
+          "median": 511.23800000000006,
+          "min": 503.68000000000006,
+          "max": 538
+        },
+        "speedIndexMs": {
+          "median": 364.741,
+          "min": 363.68,
+          "max": 390
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "median": 0.0006209400244486334,
+          "min": 0.0006209400244486334,
+          "max": 0.0006209400244486334
+        }
+      },
+      "staging": {
+        "score": {
+          "median": 100,
+          "min": 100,
+          "max": 100
+        },
+        "fcpMs": {
+          "median": 309.872,
+          "min": 305.929,
+          "max": 319.478
+        },
+        "lcpMs": {
+          "median": 309.872,
+          "min": 305.929,
+          "max": 319.478
+        },
+        "speedIndexMs": {
+          "median": 309.872,
+          "min": 305.929,
+          "max": 319.478
+        },
+        "tbtMs": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "cls": {
+          "median": 0.0007327282331101987,
+          "min": 0.0007327282331101987,
+          "max": 0.0007327282331101987
+        }
+      },
+      "deltas": {
+        "score": {
+          "absolute": 0,
+          "percent": 0
+        },
+        "fcpMs": {
+          "absolute": -54.86899999999997,
+          "percent": -15.043277284429218
+        },
+        "lcpMs": {
+          "absolute": -201.36600000000004,
+          "percent": -39.387917173606034
+        },
+        "speedIndexMs": {
+          "absolute": -54.86899999999997,
+          "percent": -15.043277284429218
+        },
+        "tbtMs": {
+          "absolute": 0,
+          "percent": null
+        },
+        "cls": {
+          "absolute": 0.00011178820866156527,
+          "percent": 18.003060563027507
+        }
+      }
+    }
+  ],
+  "stagingCategorySummary": [
+    {
+      "route": "/",
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 69,
+      "agenticBrowsing": 100
+    },
+    {
+      "route": "/about/",
+      "accessibility": 96,
+      "bestPractices": 100,
+      "seo": 69,
+      "agenticBrowsing": 100
+    },
+    {
+      "route": "/pricing/",
+      "accessibility": 99,
+      "bestPractices": 100,
+      "seo": 69,
+      "agenticBrowsing": 100
+    },
+    {
+      "route": "/contact/",
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 69,
+      "agenticBrowsing": 100
+    },
+    {
+      "route": "/privacy-policy/",
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 69,
+      "agenticBrowsing": 100
+    }
+  ]
+}
