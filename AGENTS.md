@@ -201,6 +201,8 @@ When code changes a mapped component, read its guide, compare it with the final 
 
 <folder_structure>
 
+The former `demo/` directory contained the Next.js marketing application. It was removed after the Astro migration; the active marketing application is now `site/`. The remaining root `components/` and `pages/` directories are historical references, and `video/` contains the separate historical Remotion demo video project.
+
 ```text
 /
 ├── site/                              # Only runnable application

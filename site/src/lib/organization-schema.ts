@@ -1,8 +1,11 @@
 import { site } from '@/config/site'
+import { pricingCurrency, pricingPlanOffers } from '@/data/pricing-plans'
+import { homeTestimonials, testimonialMaxRating, testimonialMinRating } from '@/data/testimonials'
 
 const BASE_URL = 'https://bulma.com.au'
 const SITE_URL = `${BASE_URL}/`
 const APP_URL = 'https://app.bulma.com.au'
+const PRICING_URL = `${BASE_URL}/pricing/`
 
 const ORGANIZATION_ID = `${SITE_URL}#organization`
 const WEBSITE_ID = `${SITE_URL}#website`
@@ -66,8 +69,116 @@ export const websiteSchema = {
   },
 }
 
+/** Billing periods published for each plan, keyed by UN/CEFACT unit code. */
+const BILLING_PERIODS = [
+  { label: 'monthly', unitCode: 'MON' },
+  { label: 'yearly', unitCode: 'ANN' },
+] as const
+
+/**
+ * Format an amount as a schema.org price string.
+ *
+ * Prices are emitted as fixed two-decimal strings rather than numbers so that a
+ * whole-dollar amount cannot be re-serialised without its currency precision.
+ */
+function toPriceString(amount: number) {
+  return amount.toFixed(2)
+}
+
+/**
+ * Build one Offer node per plan and billing period.
+ *
+ * Each Offer carries a `UnitPriceSpecification` with a `referenceQuantity` so that the
+ * recurring nature of the subscription is explicit. Without it, a yearly price reads as
+ * a one-off charge at the same amount as a monthly one.
+ */
+function buildPlanOffers() {
+  return pricingPlanOffers.flatMap((plan) =>
+    BILLING_PERIODS.map(({ label, unitCode }) => {
+      const amount = label === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice
+
+      return {
+        '@type': 'Offer',
+        name: `${plan.name} (${label})`,
+        price: toPriceString(amount),
+        priceCurrency: pricingCurrency,
+        url: PRICING_URL,
+        availability: 'https://schema.org/InStock',
+        category: 'subscription',
+        priceSpecification: {
+          '@type': 'UnitPriceSpecification',
+          price: toPriceString(amount),
+          priceCurrency: pricingCurrency,
+          referenceQuantity: {
+            '@type': 'QuantitativeValue',
+            value: 1,
+            unitCode,
+          },
+        },
+      }
+    }),
+  )
+}
+
+const planOffers = buildPlanOffers()
+const planOfferAmounts = pricingPlanOffers.flatMap((plan) => [plan.monthlyPrice, plan.yearlyPrice])
+
+/**
+ * Summarise every published plan price as a single AggregateOffer.
+ *
+ * Enterprise is excluded because it is quoted per customer, so `offerCount` counts only
+ * the plans with a price a visitor can read on `/pricing/`.
+ */
+const aggregateOffer = {
+  '@type': 'AggregateOffer',
+  priceCurrency: pricingCurrency,
+  lowPrice: toPriceString(Math.min(...planOfferAmounts)),
+  highPrice: toPriceString(Math.max(...planOfferAmounts)),
+  offerCount: planOffers.length,
+  url: PRICING_URL,
+  offers: planOffers,
+}
+
+/**
+ * Build one Review node per published testimonial.
+ *
+ * These are first-party reviews hosted on our own site, so they are attached to the
+ * SoftwareApplication entity and never to the Organization entity: Google treats a
+ * business rating its own Organization as a self-serving review and disallows it.
+ */
+const applicationReviews = homeTestimonials.map((testimonial) => ({
+  '@type': 'Review',
+  '@id': `${SITE_URL}#review-${testimonial.id}`,
+  reviewRating: {
+    '@type': 'Rating',
+    ratingValue: testimonial.rating,
+    bestRating: testimonialMaxRating,
+    worstRating: testimonialMinRating,
+  },
+  author: {
+    '@type': 'Person',
+    name: testimonial.name,
+  },
+  reviewBody: testimonial.quote,
+}))
+
+/**
+ * Average the published testimonial ratings.
+ *
+ * The average is computed from the same entries the homepage renders, so the aggregate
+ * can never drift away from the ratings a visitor can count on the page.
+ */
+const averageRating =
+  applicationReviews.length > 0
+    ? homeTestimonials.reduce((total, testimonial) => total + testimonial.rating, 0) / homeTestimonials.length
+    : 0
+
 /**
  * Highlight the Bulma application as a SoftwareApplication entity.
+ *
+ * Google's Software App structured data needs at least one of `offers`,
+ * `aggregateRating`, or `review` before the entity is eligible for a rich result, so
+ * both the plan offers and the published customer reviews belong on this node.
  */
 export const softwareApplicationSchema = {
   '@context': 'https://schema.org',
@@ -81,6 +192,15 @@ export const softwareApplicationSchema = {
   provider: {
     '@id': ORGANIZATION_ID,
   },
+  offers: aggregateOffer,
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: averageRating.toFixed(1),
+    bestRating: testimonialMaxRating,
+    worstRating: testimonialMinRating,
+    reviewCount: applicationReviews.length,
+  },
+  review: applicationReviews,
 }
 
 /**

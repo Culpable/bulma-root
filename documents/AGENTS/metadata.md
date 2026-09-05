@@ -8,7 +8,10 @@ Read this guide before creating or changing a title, description, canonical, rob
 - Pages and content entries own route-specific titles, descriptions, and deliberate overrides.
 - `site/src/lib/metadata.ts` validates inputs and composes document titles.
 - `site/src/components/head/PageMetadata.astro` renders the authoritative head metadata.
-- `site/src/lib/structured-data.ts` builds linked `WebSite`, `WebPage`, identity, and supported page-specific schema nodes.
+- `site/src/lib/organization-schema.ts` builds the shipped `Organization`, `WebSite`, `WebPage`, `SoftwareApplication`, and `FAQPage` nodes that every route imports.
+- `site/src/lib/structured-data.ts` holds the JSON-LD serialiser plus an unused alternative graph builder; only `serialiseJsonLd` is wired into the site.
+- `site/src/data/pricing-plans.ts` owns the numeric plan amounts behind the SoftwareApplication `offers` node.
+- `site/src/data/testimonials.ts` owns the published customer reviews behind the SoftwareApplication `review` and `aggregateRating` nodes, and the homepage renders the same entries.
 - `site/src/components/head/StructuredData.astro` safely serializes the graph inside the same head system.
 - `site/src/layouts/BaseLayout.astro` renders the metadata component exactly once.
 - `site/astro.config.mjs` owns the canonical production origin through Astro's `site` setting.
@@ -43,7 +46,7 @@ Default canonicals from the page path and resolve them against `Astro.site`. Use
 
 Render `<html lang>` from the verified site language. Resolve a route social image before the default. Every production-ready indexable route has one absolute image, non-empty alternative text, aligned Open Graph and Twitter values, and known dimensions and MIME type where available.
 
-Emit truthful linked JSON-LD through `StructuredData.astro`. Include `sameAs`, contact, address, offers, author, price, ratings, and type-specific fields only from verified visible facts. An applicable Organization requires a verified ContactPoint with contact type and email or telephone plus a truthful PostalAddress. Missing required facts fail readiness; never invent them.
+Emit truthful linked JSON-LD through `StructuredData.astro`. Include `sameAs`, contact, address, offers, author, price, ratings, and type-specific fields only from verified visible facts. Attach ratings and reviews to the `SoftwareApplication` node and never to `Organization`: a business rating its own Organization is a self-serving review and is disallowed. Publish a rating only when the same rating is rendered on the page, and derive both from one owner so they cannot drift apart. An applicable Organization requires a verified ContactPoint with contact type and email or telephone plus a truthful PostalAddress. Missing required facts fail readiness; never invent them.
 
 ## Verification
 

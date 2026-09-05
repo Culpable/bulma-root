@@ -22,6 +22,7 @@ import { Plan, PricingMultiTier } from '@/components/sections/pricing-multi-tier
 import { StatAnimated, StatsAnimatedGraph } from '@/components/sections/stats-animated-graph'
 import { TestimonialGlass, TestimonialsGlassmorphism } from '@/components/sections/testimonials-glassmorphism'
 import { site } from '@/config/site'
+import { homeTestimonials, testimonialMaxRating } from '@/data/testimonials'
 import { bulmaCoveredLenderCount, bulmaCoveredLenders, bulmaCoveredLendersAnswer } from '@/lib/supported-lenders'
 import {
   buildFaqPageSchema,
@@ -300,120 +301,25 @@ export default function Page({ section }: { section: HomeSection }) {
           </p>
         }
       >
-        <TestimonialGlass
-          quote={
-            <p>
-              I used to spend hours checking lender portals for policy details. Now I just ask Bulma and get an answer
-              in seconds - with the source right there so I can verify it.
-            </p>
-          }
-          img={
-            <img
-              src="/img/avatars/10-size-160.webp"
-              alt={homeTestimonialAlt("Liam O'Connor")}
-              className="not-dark:bg-white/75 dark:bg-black/75"
-              width={160}
-              height={160}
-            />
-          }
-          name="Liam O'Connor"
-          byline="Credit Adviser, Sydney"
-        />
-        <TestimonialGlass
-          quote={
-            <p>
-              The cross-lender comparison feature is brilliant. I can instantly see which lenders will accept my
-              client’s scenario without opening five different PDFs.
-            </p>
-          }
-          img={
-            <img
-              src="/img/avatars/15-size-160.webp"
-              alt={homeTestimonialAlt('Emily Carter')}
-              className="not-dark:bg-white/75 dark:bg-black/75"
-              width={160}
-              height={160}
-            />
-          }
-          name="Emily Carter"
-          byline="Senior Broker, Melbourne"
-        />
-        <TestimonialGlass
-          quote={
-            <p>
-              For complex scenarios with casual employment or self-employed clients, Bulma saves me from making
-              embarrassing mistakes. It knows the policy nuances I might miss.
-            </p>
-          }
-          img={
-            <img
-              src="/img/avatars/13-size-160.webp"
-              alt={homeTestimonialAlt('Neil Kapoor')}
-              className="not-dark:bg-white/75 dark:bg-black/75"
-              width={160}
-              height={160}
-            />
-          }
-          name="Neil Kapoor"
-          byline="Mortgage Broker, Brisbane"
-        />
-        <TestimonialGlass
-          quote={
-            <p>
-              Bulma understands broker terminology. I can ask about LMI thresholds, genuine savings, or income shading
-              and get a precise answer without having to explain what I mean.
-            </p>
-          }
-          img={
-            <img
-              src="/img/avatars/12-size-160.webp"
-              alt={homeTestimonialAlt('Mark Davidson')}
-              className="not-dark:bg-white/75 dark:bg-black/75"
-              width={160}
-              height={160}
-            />
-          }
-          name="Mark Davidson"
-          byline="Credit Adviser, Perth"
-        />
-        <TestimonialGlass
-          quote={
-            <p>
-              My team uses Bulma as our first stop for policy questions. It’s like having a senior broker on call 24/7
-              who never forgets a policy update.
-            </p>
-          }
-          img={
-            <img
-              src="/img/avatars/11-size-160.webp"
-              alt={homeTestimonialAlt('Jake Miller')}
-              className="not-dark:bg-white/75 dark:bg-black/75"
-              width={160}
-              height={160}
-            />
-          }
-          name="Jake Miller"
-          byline="Principal Broker, Adelaide"
-        />
-        <TestimonialGlass
-          quote={
-            <p>
-              The source attribution is what sold me. I can see exactly which lender policy and category the answer came
-              from, and when it was last updated. That transparency matters.
-            </p>
-          }
-          img={
-            <img
-              src="/img/avatars/14-size-160.webp"
-              alt={homeTestimonialAlt('Matt Lawson')}
-              className="not-dark:bg-white/75 dark:bg-black/75"
-              width={160}
-              height={160}
-            />
-          }
-          name="Matt Lawson"
-          byline="Lending Specialist, Gold Coast"
-        />
+        {homeTestimonials.map((testimonial) => (
+          <TestimonialGlass
+            key={testimonial.id}
+            quote={<p>{testimonial.quote}</p>}
+            rating={testimonial.rating}
+            maxRating={testimonialMaxRating}
+            img={
+              <img
+                src={testimonial.avatar}
+                alt={homeTestimonialAlt(testimonial.name)}
+                className="not-dark:bg-white/75 dark:bg-black/75"
+                width={160}
+                height={160}
+              />
+            }
+            name={testimonial.name}
+            byline={testimonial.byline}
+          />
+        ))}
         </TestimonialsGlassmorphism>
       )}
       {/* FAQs (P-3: content-visibility for deferred rendering) */}

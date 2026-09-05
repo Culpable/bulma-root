@@ -129,7 +129,7 @@ Opening, closing, and rapid reversals stay smooth and synchronised with the plus
 
 ### Cards, badges, and statuses
 
-Pricing cards must stay equal-height: `items-stretch` on the grid with `h-full` on every card and animation wrapper. The homepage pricing module mirrors the pricing page module; `/pricing` is the source of truth and both must change together, including the exact annual callout copy noted below. Testimonial cards use the layered glassmorphism treatment with hover lift; featured pricing cards add the border beam. Statuses everywhere are text-first on neutral surfaces.
+Pricing cards must stay equal-height: `items-stretch` on the grid with `h-full` on every card and animation wrapper. The homepage pricing module mirrors the pricing page module; `/pricing` is the source of truth and both must change together, including the exact annual callout copy noted below. Testimonial cards use the layered glassmorphism treatment with hover lift, and open with a five-star rating row above the quote in mist-ramp stars at 85% opacity rather than a warm review-site gold, because the palette defines no separate accent hue. The row must stay visible: `site/src/lib/organization-schema.ts` publishes the same ratings as SoftwareApplication review markup, which may only carry a rating a visitor can also see. Featured pricing cards add the border beam. Statuses everywhere are text-first on neutral surfaces.
 
 ### Tables and dense data
 
@@ -165,6 +165,7 @@ The contact form owns the only shipped loading, success, and error states: submi
 
 - Approved exceptions: the Glass Press primary intentionally breaks the pill-radius rule (`rounded-xl`) and uses bold weight; ambient decorative layers are exempt from the "no looped animation on content" stance because they sit behind content.
 - Known implementation drift: the Glass Press source comment cites a prototype HTML file that is not in this repository; treat it as historical provenance only. No other material drift is known.
+- Approved deviation from the production pixel baselines: the homepage testimonial cards now open with a five-star rating row that the migrated Next.js site did not have. `site/test/parity.spec.ts` verifies the six rows are present, then strips only those rows before each homepage capture, so the production baselines in `documents/guides/parity/screenshots/production` stay intact and every other homepage pixel keeps the strict gate. Browser evidence covers the rendered rows.
 - Retained but unreferenced: `precision-porcelain-button-link.tsx` (superseded primary) and `gradient-border-wrapper.tsx` (no route renders it) remain in the tree as approved dormant variants; do not treat their presence as sanction to use them for primary CTAs.
 - Reference-only trees: root `components/`, `pages/`, and `video/` are historical unrouted sources; `site/src` is the authority for everything shipped.
 

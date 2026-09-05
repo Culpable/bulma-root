@@ -1,0 +1,17 @@
+HTTP/2 404 
+date: Sat, 05 Sep 2026 07:46:17 GMT
+content-type: text/markdown; charset=utf-8
+content-length: 312
+cf-cache-status: HIT
+cache-control: public, max-age=0, must-revalidate
+vary: Accept
+content-security-policy: default-src 'self'; base-uri 'self'; connect-src 'self' https://api-js.mixpanel.com https://formspree.io; font-src 'self'; form-action 'self' https://formspree.io; frame-ancestors 'none'; img-src 'self' data:; object-src 'none'; script-src 'self' 'sha256-BF0290pkb3jxQsE7z00xR8Imp8X34FLC88L0lkMnrGw=' 'sha256-BbT8lkoZ2/GJWWsAAQiFCErZPjJsRkzyY+KmnMNV3pk=' 'sha256-HAARMDFnfqOexNmdOa3zbIvfJHa3q97ov95cNVMp/Y4=' 'sha256-Q2BPg90ZMplYY+FSdApNErhpWafg2hcRRbndmvxuL/Q=' 'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c=' 'sha256-SakdPkldSS0/NIKM0aMrTWDM50t5OKrbLudB+AkiI64=' 'sha256-Ya0pUYrC7nM5Cn/056TyVuEiz6dFGrzmkWzgON0pF0U=' 'sha256-rkZWcbZuS3L6yRoE/fMOggBr8yAP+MJpetDtb7FLdRc=' 'sha256-zpQ1X2zzG62Dp+RZzZKUh9tkopD72VcGGhSMxjtUuno=' https://cdn.mxpnl.com; style-src 'self' 'unsafe-inline'
+permissions-policy: accelerometer=(), autoplay=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-frame-options: DENY
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=KFhp3T4XYNtyzulgBOWyLXMFOGquK2tW46hnBUvQiC%2BOx8PKUDmurunBPceA%2FuRWLtw8YkXxO2pY5EVTxpmktKb6RFWZJZvePoVQgncDzgL%2FX%2Bq9v8W%2BSGT64ffRM9d%2FEu6jsEqaB7HHNCY%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: a3639e892e986e81-PER
+alt-svc: h3=":443"; ma=86400

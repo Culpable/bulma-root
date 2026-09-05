@@ -1,0 +1,27 @@
+▲ / Is Agentic  bulma.com.au
+
+  ████████████████████████████████████    100 / 100
+                                          Strong technical baseline
+                                          1 failed · 0 partial
+
+SCORE BREAKDOWN
+  Essential         80 / 80    7 / 7 passed
+  Recommended     17.8 / 20    8 / 9 passed
+  Bonus                +2.3    10 positive signals
+
+FAILURES (1)
+
+1. FAIL · RECOMMENDED  Brand name discoverability
+   Evidence  "Bulma" search returned 8 results but domain did not appear - brand may be
+             too generic or not indexed
+   Fix       Make sure a clean search for your brand name returns your own domain in the
+             top results. If it does not, your brand may be too generic, conflict with a
+             more established term, or not yet indexed. Strengthen brand-name search by
+             claiming consistent NAP across listings, earning press mentions that link
+             to the canonical domain, and avoiding redirect chains that mask the apex
+             domain in search results.
+
+REPORT
+  URL      https://is-agentic.com/scan/bulma.com.au
+  Scanned  2026-09-05T07:42:36.172Z
+  Checks   16 eligible

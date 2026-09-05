@@ -1,0 +1,29 @@
+{
+  "origin": "https://bulma.com.au",
+  "checkedAt": "2026-09-05T07:46:26.736Z",
+  "results": [
+    {
+      "route": "/",
+      "markdownMatchesBuild": true
+    },
+    {
+      "route": "/pricing/",
+      "markdownMatchesBuild": true
+    },
+    {
+      "route": "/about/",
+      "markdownMatchesBuild": true
+    },
+    {
+      "route": "/privacy-policy/",
+      "markdownMatchesBuild": true
+    },
+    {
+      "conditionalMarkdown": 200,
+      "conditionalHtml": 304,
+      "markdownRedirect": 307,
+      "headBodyEmpty": true
+    }
+  ],
+  "privacyDisclaimerRemoved": true
+}

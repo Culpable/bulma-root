@@ -1,7 +1,34 @@
 
 import { clsx } from 'clsx/lite'
 import { Children, useEffect, useRef, useState, type ComponentProps, type ReactNode } from 'react'
+import { StarIcon } from '../icons/star-icon'
 import { Section } from '../elements/section'
+
+/**
+ * Render a customer's rating as a row of filled and unfilled stars.
+ *
+ * The rating must stay visible on the card: review structured data may only publish a
+ * rating that a visitor can also see on the same page. Stars use the mist ramp rather
+ * than a warm review-site gold because the design contract defines no separate accent
+ * hue. A screen-reader-only sentence carries the value for assistive technology, so the
+ * stars themselves stay decorative.
+ */
+function StarRating({ rating, maxRating }: { rating: number; maxRating: number }) {
+  return (
+    <div className="flex items-center gap-1 text-mist-950/85 dark:text-white/85">
+      <span className="sr-only">{`Rated ${rating} out of ${maxRating}`}</span>
+      {Array.from({ length: maxRating }, (_, index) => (
+        <StarIcon
+          key={index}
+          className="size-3.5 shrink-0"
+          // Fill earned stars solid and leave the remainder as hairline outlines.
+          fill={index < rating ? 'currentColor' : 'none'}
+        />
+      ))}
+    </div>
+  )
+}
+
 
 /**
  * Enhanced glassmorphism testimonial card with premium visual effects.
@@ -12,6 +39,8 @@ export function TestimonialGlass({
   img,
   name,
   byline,
+  rating,
+  maxRating = 5,
   className,
   ...props
 }: {
@@ -19,6 +48,9 @@ export function TestimonialGlass({
   img: ReactNode
   name: ReactNode
   byline: ReactNode
+  /** Omit to render a card with no rating row. */
+  rating?: number
+  maxRating?: number
 } & ComponentProps<'figure'>) {
   return (
     <figure
@@ -65,18 +97,24 @@ export function TestimonialGlass({
         ”
       </div>
 
-      <blockquote
-        className={clsx(
-          // Add a subtle right padding so long lines never run underneath the decorative quote mark.
-          // Keep this intentionally small so we don't shorten the measure too much.
-          'pr-3',
-          'relative z-10 flex flex-col gap-4',
-          "*:first:before:absolute *:first:before:inline *:first:before:-translate-x-full *:first:before:content-['\\201c']",
-          "*:last:after:inline *:last:after:content-['\\201d']",
-        )}
-      >
-        {quote}
-      </blockquote>
+      {/* Keep the rating and the quote in one flow child so the card's justify-between
+          spacing still resolves to quote-block against caption. */}
+      <div className="relative z-10 flex flex-col gap-4">
+        {rating === undefined ? null : <StarRating rating={rating} maxRating={maxRating} />}
+
+        <blockquote
+          className={clsx(
+            // Add a subtle right padding so long lines never run underneath the decorative quote mark.
+            // Keep this intentionally small so we don't shorten the measure too much.
+            'pr-3',
+            'relative z-10 flex flex-col gap-4',
+            "*:first:before:absolute *:first:before:inline *:first:before:-translate-x-full *:first:before:content-['\\201c']",
+            "*:last:after:inline *:last:after:content-['\\201d']",
+          )}
+        >
+          {quote}
+        </blockquote>
+      </div>
 
       <figcaption className="relative z-10 flex items-center gap-4">
         {/* Avatar with ring glow effect and presence pulse */}
