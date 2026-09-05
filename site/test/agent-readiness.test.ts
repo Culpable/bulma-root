@@ -145,7 +145,7 @@ test('sitemap and source preserve the file-only readiness profile', () => {
 })
 
 test('structured-data serialiser escapes script-breaking characters', () => {
-  const source = fs.readFileSync(path.join(siteDirectory, 'src/lib/structured-data.ts'), 'utf8')
+  const source = fs.readFileSync(path.join(siteDirectory, 'src/lib/json-ld.ts'), 'utf8')
   for (const escape of ['\\\\u003c', '\\\\u003e', '\\\\u0026', '\\\\u2028', '\\\\u2029']) {
     assert.ok(source.includes(escape), `serialiser must emit ${escape}`)
   }

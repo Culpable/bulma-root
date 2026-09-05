@@ -25,6 +25,27 @@ const SECTION_HUE_MAP: Record<string, number> = {
 }
 
 /**
+ * Stable default section list.
+ *
+ * Hoisted to module scope because it feeds the observer effect's dependency array.
+ * Building it inside the hook produced a new array identity on every render, so the
+ * effect tore down the IntersectionObserver, cleared the section map, and briefly
+ * removed --accent-hue-shift each time the caller re-rendered.
+ */
+const DEFAULT_TRACKED_SECTIONS: string[] = Object.keys(SECTION_HUE_MAP)
+
+/**
+ * Attribute written on the document root to name the active section.
+ *
+ * The active section used to be marked by setting data-hue-active on each section
+ * element. Those elements belong to separate Astro islands that hydrate later, so an
+ * early write became a React hydration mismatch on markup this hook does not own.
+ * Writing a single value on the root keeps the DOM that React owns untouched, and the
+ * stylesheet correlates the root value with each section's own data-section-hue.
+ */
+const ACTIVE_HUE_ATTRIBUTE = 'data-active-hue'
+
+/**
  * Configuration for hue shift behavior
  */
 interface UseHueShiftOptions {
@@ -58,7 +79,7 @@ interface UseHueShiftOptions {
 export function useHueShift({
   enabled = true,
   transitionDuration = 500,
-  sections = Object.keys(SECTION_HUE_MAP),
+  sections = DEFAULT_TRACKED_SECTIONS,
 }: UseHueShiftOptions = {}) {
   // Store current active section to avoid unnecessary updates
   const activeSectionRef = useRef<string | null>(null)
@@ -79,14 +100,13 @@ export function useHueShift({
       `${hueShift}deg`
     )
 
-    // Update data-hue-active attribute on sections
-    sectionElementsRef.current.forEach((element, id) => {
-      if (id === sectionId) {
-        element.setAttribute('data-hue-active', 'true')
-      } else {
-        element.removeAttribute('data-hue-active')
-      }
-    })
+    // Name the active section on the root instead of tagging the section elements.
+    // Section markup belongs to other islands; writing to it races their hydration.
+    if (sectionId) {
+      document.documentElement.setAttribute(ACTIVE_HUE_ATTRIBUTE, sectionId)
+    } else {
+      document.documentElement.removeAttribute(ACTIVE_HUE_ATTRIBUTE)
+    }
   }, [enabled])
 
   useEffect(() => {
@@ -152,6 +172,8 @@ export function useHueShift({
       observedSections.clear()
       // Reset hue shift on cleanup
       document.documentElement.style.removeProperty('--accent-hue-shift')
+      document.documentElement.removeAttribute(ACTIVE_HUE_ATTRIBUTE)
+      activeSectionRef.current = null
     }
   }, [enabled, sections, transitionDuration, updateHueShift])
 

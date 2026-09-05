@@ -16,7 +16,7 @@ Record which profile owns each outcome. Do not add API, auth, OAuth, MCP, agent 
 
 - `site/src/config/site.ts` owns language, default social image, identity, official profiles, public contact, address, and readiness facts.
 - The canonical route and sitemap data owner owns every indexable and trust route.
-- `site/src/lib/metadata.ts`, `site/src/lib/structured-data.ts`, `PageMetadata.astro`, and `StructuredData.astro` own human and machine head output.
+- `site/src/lib/metadata.ts`, `site/src/lib/organization-schema.ts`, `site/src/lib/json-ld.ts`, `PageMetadata.astro`, and `StructuredData.astro` own human and machine head output.
 - `site/src/pages/robots.txt.ts` or the selected existing `site/public/robots.txt` file owns crawler policy.
 - The llms config and renderer own `llms.txt`. It links canonical HTML under the file-only profile. Negotiated generated Markdown never becomes an authored content owner.
 - `site/src/lib/agent-readiness/` owns robots resolution and bounded content checks when copied into this project.

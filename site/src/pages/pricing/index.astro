@@ -3,7 +3,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import PricingPage, { pricingFaqs } from '../../components/pages/pricing-sections'
 import { FooterShell, NavbarShell, ShellController } from '../../components/shell/site-shell'
 import { site } from '../../config/site'
-import { buildFaqPageSchema, buildWebPageSchema, organizationSchema, websiteSchema } from '../../lib/organization-schema'
+import {
+  buildFaqPageSchema,
+  buildWebPageSchema,
+  organizationSchema,
+  softwareApplicationSchema,
+  websiteSchema,
+} from '../../lib/organization-schema'
 
 const metadata = {
   title: 'Pricing',
@@ -14,6 +20,9 @@ const structuredData = [
   organizationSchema,
   websiteSchema,
   buildWebPageSchema({ path: '/pricing/', name: `Pricing | ${site.name}`, description: metadata.description }),
+  // Publish the product entity on the page that quotes its prices. The node carries the
+  // same `@id` as the homepage copy, so both pages describe one entity.
+  softwareApplicationSchema,
   buildFaqPageSchema({ path: '/pricing/', name: 'Bulma Pricing FAQs', faqs: pricingFaqs }),
 ]
 ---

@@ -1,5 +1,5 @@
 import type { SiteMetadataConfig } from '../lib/metadata.ts';
-import type { SiteStructuredDataConfig } from '../lib/structured-data.ts';
+import type { SiteStructuredDataConfig } from '../lib/site-identity.ts';
 
 interface BulmaApplicationUrls {
   readonly application: string;
@@ -29,12 +29,22 @@ export const site = {
     height: 630,
     type: 'image/png',
   },
-  officialProfiles: ['https://app.bulma.com.au/'],
+  /**
+   * Empty until Bulma has an authoritative third-party profile to publish. The app
+   * subdomain used to sit here, but a URL on a domain we already own tells a search
+   * engine nothing it cannot already derive, so it is not a `sameAs` reference.
+   */
+  officialProfiles: [],
   primaryIdentity: {
     type: 'Organization',
+    alternateName: ['Bulma: AI Mortgage Broker Assistant', 'Bulma AI Policy Advisor'],
+    description:
+      'Bulma is an AI assistant for Australian mortgage brokers that answers lender policy questions with source attribution, helping with scenario planning, policy matching, and lender selection.',
+    areaServed: 'Australia',
     contactPoint: {
       contactType: 'sales',
       email: 'solutions@bulma.com.au',
+      availableLanguage: ['English'],
     },
     address: {
       streetAddress: 'PO Box 155',
@@ -44,6 +54,7 @@ export const site = {
       addressCountry: 'AU',
     },
     logo: '/img/logos/bulma-logo-dark.svg',
+    image: '/img/screenshots/bulma-policy-advisor-workspace.webp',
   },
   applicationUrls: {
     application: 'https://app.bulma.com.au/',

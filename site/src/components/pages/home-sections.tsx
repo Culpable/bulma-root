@@ -1,7 +1,6 @@
 import { AnnouncementBadge } from '@/components/elements/announcement-badge'
 import { ButtonLink, PlainButtonLink, SoftButtonLink } from '@/components/elements/button'
 import { GlassPressButtonLink } from '@/components/elements/glass-press-button-link'
-import { HueShiftProvider } from '@/components/elements/hue-shift-provider'
 import { Link } from '@/components/elements/link'
 import {
   FeatureScreenshotLeft,
@@ -144,8 +143,7 @@ export default function Page({ section }: { section: HomeSection }) {
     <>
       {/* Hero: Dot Pool Three.js background (see documents/guides/_animations.md, Dot Pool Hero) */}
       {section === 'hero' && (
-        <HueShiftProvider>
-          <HeroDotPool
+        <HeroDotPool
         id="hero"
         eyebrow={
           <AnnouncementBadge
@@ -193,8 +191,7 @@ export default function Page({ section }: { section: HomeSection }) {
           </>
         }
         footer={<SupportedLendersField appearance="light" />}
-          />
-        </HueShiftProvider>
+        />
       )}
       {/* Features (P-3: content-visibility for deferred rendering) */}
       {section === 'features' && (

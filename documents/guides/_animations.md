@@ -30,7 +30,6 @@ site/src/
     │   ├── cursor-spotlight.tsx          # Cursor-following ambient glow
     │   ├── dot-pool-background.tsx       # Three.js Dot Pool hero background (section 55)
     │   ├── gradient-border-wrapper.tsx   # Rotating gradient CTA border
-    │   ├── hue-shift-provider.tsx        # Provider for section hue shifts (Rec 9)
     │   ├── icon-path-motion.tsx          # Curved path icon animations (Rec 7)
     │   ├── logo-marquee.tsx              # Infinite scrolling logo display
     │   ├── luminance-sweep.tsx           # Metallic sheen sweep on headlines
@@ -1917,7 +1916,7 @@ import { StickyEyebrow, StickySectionWrapper } from '@/components/elements/stick
 
 **Files:**
 - `site/src/hooks/use-hue-shift.ts` — Hook for scroll tracking
-- `site/src/components/elements/hue-shift-provider.tsx` — Provider component
+- `site/src/components/shell/site-shell.tsx::ShellController` — Mounts the hook once per route
 - `site/src/styles/global.css` — CSS custom properties and hue-shift classes
 
 **Section Hue Map:**
@@ -1940,16 +1939,17 @@ import { StickyEyebrow, StickySectionWrapper } from '@/components/elements/stick
 - `.hue-shift-accent` — Applies `filter: hue-rotate(var(--accent-hue-shift))`
 - `.hue-shift-bg` — Applies subtle gradient background that responds to hue
 - `[data-section-hue="{name}"]` — Section identifier for tracking
-- `[data-hue-active="true"]` — Applied when section is active
+- `:root[data-active-hue="{name}"]` — Names the active section on the document root
 
-**Integration:** `HomePage` mounts `HueShiftProvider` inside the homepage hero island, so the hook can observe every `data-section-hue` section in the document without crossing an Astro island boundary.
+**Integration:** `ShellController` calls `useHueShift` once per route. The tracker reads and marks sections across the whole document, which is page-wide behaviour, so it belongs to the shell rather than to a content island. Routes with no `data-section-hue` element simply register no observers.
+
+**Never write the active state onto the section elements.** The hook previously set `data-hue-active="true"` on each `<section>`. Those sections belong to separate Astro islands that hydrate later, so an early write raced their hydration and React reported a mismatch on markup the hook does not own. The hook now sets one `data-active-hue` attribute on `<html>`, and `global.css` pairs that value with each section's own `data-section-hue` in seven explicit rules. Keep the observer's element references read-only.
+
 ```tsx
-// In components/pages/home-sections.tsx
-import { HueShiftProvider } from '@/components/elements/hue-shift-provider'
-
-export function HomePage({ section }: HomePageProps) {
-  if (section === 'hero') return <><HueShiftProvider /><HomeHero /></>
-  // Return the requested independently hydrated page section.
+// In components/shell/site-shell.tsx
+export function ShellController() {
+  useHueShift()
+  // Return the shell behaviour that hydrates without its server-rendered markup.
 }
 
 // In page sections - add data attribute and optional class

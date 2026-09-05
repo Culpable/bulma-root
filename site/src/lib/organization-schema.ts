@@ -1,10 +1,11 @@
-import { site } from '@/config/site'
-import { pricingCurrency, pricingPlanOffers } from '@/data/pricing-plans'
-import { homeTestimonials, testimonialMaxRating, testimonialMinRating } from '@/data/testimonials'
+import { site } from '../config/site.ts'
+import type { OrganizationIdentityFacts, PrimaryIdentity } from './site-identity.ts'
+import { pricingCurrency, pricingPlanOffers } from '../data/pricing-plans.ts'
+import { homeTestimonials, testimonialMaxRating, testimonialMinRating } from '../data/testimonials.ts'
 
 const BASE_URL = 'https://bulma.com.au'
 const SITE_URL = `${BASE_URL}/`
-const APP_URL = 'https://app.bulma.com.au'
+const APP_URL = 'https://app.bulma.com.au/'
 const PRICING_URL = `${BASE_URL}/pricing/`
 
 const ORGANIZATION_ID = `${SITE_URL}#organization`
@@ -12,44 +13,82 @@ const WEBSITE_ID = `${SITE_URL}#website`
 const SOFTWARE_APPLICATION_ID = `${SITE_URL}#software-application`
 
 /**
+ * Resolve a site-relative asset path against the production origin.
+ *
+ * Structured data must carry absolute URLs, while `config/site.ts` stores the same
+ * assets as root-relative paths for the markup that renders them.
+ */
+function toAbsoluteUrl(path: string) {
+  return new URL(path, SITE_URL).toString()
+}
+
+/**
+ * Read the Organization facts that `config/site.ts` owns.
+ *
+ * Narrowing here keeps the schema module free of its own copy of the identity. If the
+ * site is ever reconfigured as a Person, this throws at build time instead of silently
+ * publishing an Organization node with no verified facts behind it.
+ */
+function requireOrganizationIdentity(identity: PrimaryIdentity): OrganizationIdentityFacts {
+  if (identity.type === 'Person') {
+    throw new Error('organizationSchema requires an Organization or LocalBusiness primary identity.')
+  }
+  return identity
+}
+
+// Pass the configured identity as a parameter so the guard is checked against the wide
+// union rather than against the narrow `as const` literal, which would make the optional
+// identity fields unreadable here.
+const organizationIdentity = requireOrganizationIdentity(site.primaryIdentity)
+
+/**
  * Define Bulma's Organization schema so search engines understand the brand entity.
+ *
+ * Every value is derived from `config/site.ts`, which owns the public identity facts.
+ * Never restate an address, contact method, or profile URL here: a second copy drifts
+ * without failing any check.
  */
 export const organizationSchema = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
+  '@type': organizationIdentity.type,
   '@id': ORGANIZATION_ID,
-  name: 'Bulma',
-  alternateName: ['Bulma: AI Mortgage Broker Assistant', 'Bulma AI Policy Advisor'],
+  name: site.name,
+  ...(organizationIdentity.alternateName ? { alternateName: [...organizationIdentity.alternateName] } : {}),
   url: SITE_URL,
-  logo: `${SITE_URL}img/logos/bulma-logo-dark.svg`,
-  image: `${SITE_URL}img/screenshots/bulma-policy-advisor-workspace.webp`,
-  description:
-    'Bulma is an AI assistant for Australian mortgage brokers that answers lender policy questions with source attribution, helping with scenario planning, policy matching, and lender selection.',
+  ...(organizationIdentity.logo ? { logo: toAbsoluteUrl(organizationIdentity.logo) } : {}),
+  ...(organizationIdentity.image ? { image: toAbsoluteUrl(organizationIdentity.image) } : {}),
+  ...(organizationIdentity.description ? { description: organizationIdentity.description } : {}),
   contactPoint: [
     {
       '@type': 'ContactPoint',
-      contactType: 'sales',
-      email: 'solutions@bulma.com.au',
-      areaServed: {
-        '@type': 'Country',
-        name: 'Australia',
-      },
-      availableLanguage: ['English'],
+      contactType: organizationIdentity.contactPoint.contactType,
+      ...(organizationIdentity.contactPoint.email ? { email: organizationIdentity.contactPoint.email } : {}),
+      ...(organizationIdentity.contactPoint.telephone
+        ? { telephone: organizationIdentity.contactPoint.telephone }
+        : {}),
+      ...(organizationIdentity.areaServed
+        ? { areaServed: { '@type': 'Country', name: organizationIdentity.areaServed } }
+        : {}),
+      ...(organizationIdentity.contactPoint.availableLanguage
+        ? { availableLanguage: [...organizationIdentity.contactPoint.availableLanguage] }
+        : {}),
     },
   ],
-  areaServed: {
-    '@type': 'Country',
-    name: 'Australia',
-  },
-  sameAs: [APP_URL],
+  ...(organizationIdentity.areaServed
+    ? { areaServed: { '@type': 'Country', name: organizationIdentity.areaServed } }
+    : {}),
+  // Omit `sameAs` entirely while no authoritative third-party profile exists. An empty
+  // array would publish a claim of "no known profiles" rather than staying silent.
+  ...(site.officialProfiles.length > 0 ? { sameAs: [...site.officialProfiles] } : {}),
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'PO Box 155',
-    addressLocality: 'Northlands',
-    postOfficeBoxNumber: '155',
-    postalCode: '6905',
-    addressRegion: 'WA',
-    addressCountry: 'AU',
+    streetAddress: organizationIdentity.address.streetAddress,
+    addressLocality: organizationIdentity.address.addressLocality,
+    ...(organizationIdentity.address.addressRegion
+      ? { addressRegion: organizationIdentity.address.addressRegion }
+      : {}),
+    postalCode: organizationIdentity.address.postalCode,
+    addressCountry: organizationIdentity.address.addressCountry,
   },
 }
 
@@ -185,10 +224,15 @@ export const softwareApplicationSchema = {
   '@type': 'SoftwareApplication',
   '@id': SOFTWARE_APPLICATION_ID,
   name: site.name,
-  url: APP_URL,
+  // Name the marketing page that publishes the plans and reviews below. The app host
+  // serves no structured data, so pointing `url` there asserted a canonical location
+  // that could not corroborate the entity. The app itself is the `installUrl`.
+  url: PRICING_URL,
+  installUrl: APP_URL,
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
   description: site.description,
+  inLanguage: 'en-AU',
   provider: {
     '@id': ORGANIZATION_ID,
   },
@@ -213,7 +257,9 @@ export function buildWebPageSchema({ path, name, description }: { path: string; 
   return {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    '@id': url,
+    // Use a fragment so the node identifier can never collide with the bare document
+    // URL, which is also the WebSite node's `url`.
+    '@id': `${url}#webpage`,
     url,
     name,
     description,
@@ -222,6 +268,19 @@ export function buildWebPageSchema({ path, name, description }: { path: string; 
     about: { '@id': ORGANIZATION_ID },
     inLanguage: 'en-AU',
   }
+}
+
+
+/**
+ * Resolve the WebPage node identifier for a route.
+ *
+ * Exported so a FAQPage on the same route can point at the WebPage that contains it
+ * rather than floating beside it as an unlinked node.
+ */
+export function webPageIdForPath(path: string) {
+  const normalizedPath = path === '/' ? '/' : `/${path.replace(/^\/+|\/+$/g, '')}/`
+  const url = normalizedPath === '/' ? SITE_URL : `${BASE_URL}${normalizedPath}`
+  return `${url}#webpage`
 }
 
 export type FaqEntry = {
@@ -274,8 +333,15 @@ export function buildFaqPageSchema({ path, name, faqs }: { path: string; name: s
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
+    // Identify the node and tie it to the site and to the page that renders it. Without
+    // these links the FAQPage sits beside the WebPage for the same URL as an unrelated
+    // entity, and a crawler cannot tell that one contains the other.
+    '@id': `${url}#faq`,
     name,
     url,
+    isPartOf: { '@id': WEBSITE_ID },
+    mainEntityOfPage: { '@id': webPageIdForPath(normalizedPath) },
+    inLanguage: 'en-AU',
     mainEntity,
   }
 }

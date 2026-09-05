@@ -9,7 +9,8 @@ Read this guide before creating or changing a title, description, canonical, rob
 - `site/src/lib/metadata.ts` validates inputs and composes document titles.
 - `site/src/components/head/PageMetadata.astro` renders the authoritative head metadata.
 - `site/src/lib/organization-schema.ts` builds the shipped `Organization`, `WebSite`, `WebPage`, `SoftwareApplication`, and `FAQPage` nodes that every route imports.
-- `site/src/lib/structured-data.ts` holds the JSON-LD serialiser plus an unused alternative graph builder; only `serialiseJsonLd` is wired into the site.
+- `site/src/lib/json-ld.ts` holds `serialiseJsonLd`, the only serialiser, which escapes the characters that could close the script element early.
+- `site/src/lib/site-identity.ts` types the identity facts that `config/site.ts` owns. Read those facts; never restate them in a schema module.
 - `site/src/data/pricing-plans.ts` owns the numeric plan amounts behind the SoftwareApplication `offers` node.
 - `site/src/data/testimonials.ts` owns the published customer reviews behind the SoftwareApplication `review` and `aggregateRating` nodes, and the homepage renders the same entries.
 - `site/src/components/head/StructuredData.astro` safely serializes the graph inside the same head system.

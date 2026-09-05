@@ -1,5 +1,4 @@
 import { site } from '../config/site.ts';
-import type { PageStructuredEntity } from './structured-data.ts';
 
 /**
  * `composed` - every page except the home page: page title + separator + site name.
@@ -44,7 +43,6 @@ export interface PageMetadataInput {
   robots?: string;
   contentType?: 'website' | 'article';
   socialImage?: SocialImageMetadata;
-  structuredEntity?: PageStructuredEntity;
 }
 
 export interface ResolvedPageMetadata extends PageMetadataInput {

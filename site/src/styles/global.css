@@ -3397,8 +3397,37 @@
   transition: opacity 0.6s ease-out;
 }
 
-/* Show gradient when section is active */
-.hue-shift-bg[data-hue-active='true']::before {
+/* Show gradient when section is active.
+
+   The active section is named once on the document root by use-hue-shift.ts, and each
+   rule below pairs that value with a section's own data-section-hue. Matching on the
+   root avoids writing an attribute onto section markup that a separate Astro island
+   owns, which raced that island's hydration. */
+:root[data-active-hue='hero'] .hue-shift-bg[data-section-hue='hero']::before {
+  opacity: 1;
+}
+
+:root[data-active-hue='features'] .hue-shift-bg[data-section-hue='features']::before {
+  opacity: 1;
+}
+
+:root[data-active-hue='stats'] .hue-shift-bg[data-section-hue='stats']::before {
+  opacity: 1;
+}
+
+:root[data-active-hue='testimonials'] .hue-shift-bg[data-section-hue='testimonials']::before {
+  opacity: 1;
+}
+
+:root[data-active-hue='pricing'] .hue-shift-bg[data-section-hue='pricing']::before {
+  opacity: 1;
+}
+
+:root[data-active-hue='faqs'] .hue-shift-bg[data-section-hue='faqs']::before {
+  opacity: 1;
+}
+
+:root[data-active-hue='cta'] .hue-shift-bg[data-section-hue='cta']::before {
   opacity: 1;
 }
 

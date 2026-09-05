@@ -8,6 +8,7 @@ import {
 import { NavbarLink, NavbarLogo, NavbarMobileLink, NavbarMobileLogo } from '@/components/sections/navbar-links'
 import { NavbarWithLinksActionsAndCenteredLogo } from '@/components/sections/navbar-with-links-actions-and-centered-logo'
 import { NavbarController } from '@/components/sections/navbar-controller'
+import { useHueShift } from '@/hooks/use-hue-shift'
 import { useEffect } from 'react'
 
 const logoAlt = 'Bulma: AI Assistant for Australian Mortgage Brokers logo - AI policy assistant for Australian mortgage brokers'
@@ -80,6 +81,12 @@ export function FooterShell() {
 
 /** Hydrate the global shell behaviour without hydrating its server-rendered markup. */
 export function ShellController() {
+  // Track the active section here rather than inside the hero island. The tracker reads
+  // and marks sections across the whole document, which is page-wide behaviour; running
+  // it from one content island meant that island reached into markup other islands own.
+  // Routes without any data-section-hue element simply register no observers.
+  useHueShift()
+
   useEffect(() => {
     const wordmark = document.querySelector<HTMLElement>('.footer-wordmark')
     if (!wordmark) return
