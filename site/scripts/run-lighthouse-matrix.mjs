@@ -1,7 +1,15 @@
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+
+import {
+  LIGHTHOUSE_VERSION,
+  createReportIdentity,
+  readCompletedReport,
+  recordCompletedReport,
+  releaseFingerprint,
+} from './lighthouse-report-cache.mjs';
 
 const hosts = [
   { id: 'production', origin: 'https://bulma.com.au' },
@@ -19,7 +27,28 @@ const modes = [
   { id: 'desktop', runs: 5, arguments: ['--preset=desktop'] },
 ];
 
-const outputDirectory = resolve(process.argv[2] ?? 'test-results/lighthouse-step8');
+const cliArguments = process.argv.slice(2);
+const outputArgument = cliArguments[0]?.startsWith('--') ? null : cliArguments[0];
+
+/** Read a required value from the matrix command line. */
+function readOption(name) {
+  const optionIndex = cliArguments.indexOf(name);
+  const value = optionIndex === -1 ? null : cliArguments[optionIndex + 1];
+  return value && !value.startsWith('--') ? value : null;
+}
+
+const releases = {
+  production: readOption('--production-release'),
+  staging: readOption('--staging-release'),
+};
+if (!releases.production || !releases.staging) {
+  throw new Error(
+    'Provide --production-release <commit-or-version> and --staging-release <commit-or-version> so reports cannot cross release boundaries.',
+  );
+}
+
+const forceFresh = cliArguments.includes('--force');
+const outputDirectory = resolve(outputArgument ?? 'test-results/lighthouse-step8');
 mkdirSync(outputDirectory, { recursive: true });
 
 /** Return the middle value from a sorted numeric sample. */
@@ -31,19 +60,10 @@ function median(values) {
     : sorted[middle];
 }
 
-/** Read a completed Lighthouse report so an interrupted matrix can resume safely. */
-function readCompletedReport(reportPath) {
-  try {
-    const report = JSON.parse(readFileSync(reportPath, 'utf8'));
-    return report.lighthouseVersion === '13.4.1' ? report : null;
-  } catch {
-    return null;
-  }
-}
-
 /** Run Lighthouse in a unique Chrome profile and keep the raw JSON result. */
-function runLighthouse({ url, reportPath, extraArguments, categories }) {
-  const existingReport = readCompletedReport(reportPath);
+function runLighthouse({ url, reportPath, extraArguments, categories, releaseId }) {
+  const identity = createReportIdentity({ url, categories, extraArguments, releaseId });
+  const existingReport = readCompletedReport(reportPath, identity, forceFresh);
   if (existingReport) return existingReport;
 
   for (let attempt = 1; attempt <= 3; attempt += 1) {
@@ -52,7 +72,7 @@ function runLighthouse({ url, reportPath, extraArguments, categories }) {
       'npx',
       [
         '--yes',
-        'lighthouse@13.4.1',
+        `lighthouse@${LIGHTHOUSE_VERSION}`,
         url,
         `--only-categories=${categories.join(',')}`,
         '--output=json',
@@ -70,7 +90,7 @@ function runLighthouse({ url, reportPath, extraArguments, categories }) {
     if (trashResult.status !== 0) {
       throw new Error(`Could not move Lighthouse profile to Trash: ${trashResult.stderr}`);
     }
-    if (result.status === 0) return readCompletedReport(reportPath);
+    if (result.status === 0) return recordCompletedReport(reportPath, identity);
 
     const failureOutput = result.stderr || result.stdout;
     writeFileSync(`${reportPath}.attempt-${attempt}.stderr.txt`, failureOutput, 'utf8');
@@ -106,15 +126,17 @@ for (const mode of modes) {
       // Alternate host order on every pair to distribute machine and network drift.
       const orderedHosts = run % 2 === 1 ? hosts : [...hosts].reverse();
       for (const host of orderedHosts) {
+        const releaseId = releases[host.id];
         const reportPath = join(
           outputDirectory,
-          `${mode.id}-${route.id}-${host.id}-${String(run).padStart(2, '0')}.json`,
+          `${mode.id}-${route.id}-${host.id}-${releaseFingerprint(releaseId)}-${String(run).padStart(2, '0')}.json`,
         );
         const report = runLighthouse({
           url: new URL(route.path, host.origin).href,
           reportPath,
           extraArguments: mode.arguments,
           categories: ['performance'],
+          releaseId,
         });
         measurements.push({
           mode: mode.id,
@@ -169,12 +191,17 @@ for (const mode of modes) {
 
 const stagingCategorySummary = [];
 for (const route of routes) {
-  const reportPath = join(outputDirectory, `staging-categories-${route.id}.json`);
+  const releaseId = releases.staging;
+  const reportPath = join(
+    outputDirectory,
+    `staging-categories-${route.id}-${releaseFingerprint(releaseId)}.json`,
+  );
   const report = runLighthouse({
     url: new URL(route.path, hosts[1].origin).href,
     reportPath,
     extraArguments: [],
     categories: ['accessibility', 'best-practices', 'seo', 'agentic-browsing'],
+    releaseId,
   });
   stagingCategorySummary.push({
     route: route.path,
@@ -187,8 +214,10 @@ for (const route of routes) {
 }
 
 const summary = {
-  lighthouseVersion: '13.4.1',
+  lighthouseVersion: LIGHTHOUSE_VERSION,
   generatedAt: new Date().toISOString(),
+  releases,
+  forceFresh,
   performanceReportCount: measurements.length,
   stagingCategoryReportCount: stagingCategorySummary.length,
   performanceSummary,

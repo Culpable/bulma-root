@@ -117,16 +117,23 @@ export function AnimatedCounter({
   const formattedValue = decimals > 0
     ? displayValue.toFixed(decimals)
     : Math.round(displayValue).toString()
+  // Expose the final value independently from the changing visual text so assistive
+  // technology and build-time agent extraction never publish the animation's initial 0.
+  const accessibleValue = `${prefix}${value.toFixed(decimals)}${suffix}`
 
   return (
     <span
       ref={elementRef}
       className={clsx('tabular-nums', className)}
       {...props}
+      role="text"
+      aria-label={accessibleValue}
     >
-      {prefix}
-      {formattedValue}
-      {suffix}
+      <span aria-hidden="true">
+        {prefix}
+        {formattedValue}
+        {suffix}
+      </span>
     </span>
   )
 }

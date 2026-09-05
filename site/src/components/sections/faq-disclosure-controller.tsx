@@ -77,11 +77,13 @@ export function FaqDisclosureController({
   )
 
   const panel = (
+    // Preserve authored answers in the static agent document while the browser disclosure starts closed.
     <div
       id={`${id}-answer`}
       role="region"
       aria-labelledby={`${id}-question`}
       hidden={!expanded}
+      data-agent-include
       data-transition={phase !== 'idle' ? '' : undefined}
       data-enter={phase === 'enter' ? '' : undefined}
       data-leave={phase === 'leave' ? '' : undefined}

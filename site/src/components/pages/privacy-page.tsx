@@ -8,8 +8,7 @@ export default function Page() {
           &quot;, or &quot;<strong>our</strong>&quot;) respects your privacy and is committed to protecting your
           personal information. This Privacy Policy describes, in general terms, how we collect, use, store, and protect
           information when you interact with our websites, products, or services (collectively, the &quot;
-          <strong>Services</strong>&quot;). This policy is provided for informational purposes and is intended to be a
-          general example only.
+          <strong>Services</strong>&quot;).
         </p>
         <h2>Information We Collect and How We Use It</h2>
         <p>

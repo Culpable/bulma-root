@@ -1,5 +1,6 @@
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve, sep } from 'node:path';
+import { parseFragment } from 'parse5';
 
 import {
   INTERNAL_MARKDOWN_PREFIX,
@@ -19,70 +20,163 @@ async function walkHtml(directory) {
 }
 
 function decodeEntities(value) {
-  return value.replace(/&nbsp;/gi, ' ').replace(/&amp;/gi, '&').replace(/&lt;/gi, '<')
-    .replace(/&gt;/gi, '>').replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'");
+  // Decode every named, decimal, and hexadecimal reference with the same HTML parser
+  // used for body content so metadata cannot publish raw browser serialisation tokens.
+  return textContent(parseFragment(value));
+}
+
+function attribute(node, name) {
+  return node.attrs?.find((entry) => entry.name === name)?.value;
+}
+
+function hasAttribute(node, name) {
+  return node.attrs?.some((entry) => entry.name === name) ?? false;
+}
+
+function childElements(node, tagName) {
+  return (node.childNodes ?? []).filter((child) => child.tagName === tagName);
+}
+
+function descendants(node, tagName) {
+  const matches = [];
+  for (const child of node.childNodes ?? []) {
+    if (child.tagName === tagName) matches.push(child);
+    matches.push(...descendants(child, tagName));
+  }
+  return matches;
+}
+
+/** Apply explicit agent boundaries before filtering browser-only hidden content. */
+function isExcludedNode(node) {
+  if (['script', 'style', 'template', 'noscript', 'nav', 'header', 'footer', 'aside'].includes(node.tagName)) {
+    return true;
+  }
+  if (hasAttribute(node, 'data-agent-ignore')) return true;
+  if (hasAttribute(node, 'data-agent-include')) return false;
+
+  const style = attribute(node, 'style') ?? '';
+  return hasAttribute(node, 'hidden')
+    || attribute(node, 'aria-hidden') === 'true'
+    || /(?:display\s*:\s*none|visibility\s*:\s*hidden)/i.test(style);
+}
+
+function textContent(node) {
+  if (node.nodeName === '#text') return node.value;
+  return (node.childNodes ?? []).map(textContent).join('');
+}
+
+function renderInlineNode(node) {
+  if (node.nodeName === '#text') return node.value;
+  if (isExcludedNode(node)) return '';
+
+  const ariaLabel = attribute(node, 'aria-label');
+  // Use the accessible label as the stable value for animated text whose visual glyphs are hidden.
+  if (ariaLabel && attribute(node, 'role') === 'text') return `${ariaLabel} `;
+  // Convert semantic SVG labels into cell text while discarding decorative vector paths.
+  if (ariaLabel && node.tagName === 'svg') return ariaLabel;
+  if (node.tagName === 'svg') return '';
+  if (node.tagName === 'img') {
+    const alt = attribute(node, 'alt') ?? '';
+    const src = attribute(node, 'src') ?? '';
+    return src ? `![${alt}](${src})` : alt;
+  }
+  if (node.tagName === 'br') return ' ';
+
+  const content = (node.childNodes ?? []).map(renderInlineNode).join('');
+  if (node.tagName === 'a') {
+    const href = attribute(node, 'href');
+    return href ? `[${normaliseInline(content)}](${href})` : content;
+  }
+  if (node.tagName === 'code') return `\`${textContent(node)}\``;
+  return content;
+}
+
+function normaliseInline(value) {
+  return value.replace(/\s+/g, ' ').trim();
 }
 
 function text(value) {
   return decodeEntities(value.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
 }
 
-function inlineMarkdown(value) {
-  return decodeEntities(value
-    .replace(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, (_match, href, body) => `[${text(body)}](${href})`)
-    .replace(/<img\b[^>]*alt=["']([^"']*)["'][^>]*src=["']([^"']+)["'][^>]*>/gi, (_match, alt, src) => `![${alt}](${src})`)
-    .replace(/<code\b[^>]*>([\s\S]*?)<\/code>/gi, (_match, code) => `\`${decodeEntities(code)}\``)
-    .replace(/<br\s*\/?>/gi, ' ')
-    .replace(/<[^>]+>/g, ' '))
-    .replace(/\s+/g, ' ')
-    .trim();
+function inlineNodes(nodes) {
+  return normaliseInline(nodes.map(renderInlineNode).join(''));
 }
 
-function tableHtmlToMarkdown(tableHtml) {
-  const rows = [...tableHtml.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)]
-    .map((row) => [...row[1].matchAll(/<(th|td)\b[^>]*>([\s\S]*?)<\/\1>/gi)]
-      .map((cell) => inlineMarkdown(cell[2]).replace(/(^|[^\\])\|/g, '$1\\|')))
+function tableNodeToMarkdown(tableNode) {
+  const rows = descendants(tableNode, 'tr')
+    .map((row) => (row.childNodes ?? [])
+      .filter((cell) => cell.tagName === 'th' || cell.tagName === 'td')
+      .map((cell) => inlineNodes(cell.childNodes ?? []).replace(/(^|[^\\])\|/g, '$1\\|')))
     .filter((row) => row.length > 0);
   if (rows.length === 0) return null;
 
   const columnCount = Math.max(...rows.map((row) => row.length));
   const renderRow = (row) => `| ${Array.from({ length: columnCount }, (_, index) => row[index] ?? '').join(' | ')} |`;
-  const caption = tableHtml.match(/<caption\b[^>]*>([\s\S]*?)<\/caption>/i);
+  const caption = descendants(tableNode, 'caption')[0];
   const markdown = [
     renderRow(rows[0]),
     renderRow(Array.from({ length: columnCount }, () => '---')),
     ...rows.slice(1).map(renderRow),
   ].join('\n');
-  return caption ? `${inlineMarkdown(caption[1])}\n\n${markdown}` : markdown;
+  return caption ? `${inlineNodes(caption.childNodes ?? [])}\n\n${markdown}` : markdown;
 }
 
-function listHtmlToMarkdown(tag, attributes, body) {
-  let nextNumber = Number(attributes.match(/\bstart\s*=\s*["']?(-?\d+)/i)?.[1] ?? 1);
-  const items = [...body.matchAll(/<li\b([^>]*)>([\s\S]*?)<\/li>/gi)].map((item) => {
-    if (tag.toLowerCase() === 'ul') return `- ${inlineMarkdown(item[2])}`;
-    const explicitValue = item[1].match(/\bvalue\s*=\s*["']?(-?\d+)/i)?.[1];
+function listNodeToMarkdown(node) {
+  let nextNumber = Number(attribute(node, 'start') ?? 1);
+  const items = childElements(node, 'li').map((item) => {
+    if (node.tagName === 'ul') return `- ${inlineNodes(item.childNodes ?? [])}`;
+    const explicitValue = attribute(item, 'value');
     if (explicitValue !== undefined) nextNumber = Number(explicitValue);
-    const rendered = `${nextNumber}. ${inlineMarkdown(item[2])}`;
+    const rendered = `${nextNumber}. ${inlineNodes(item.childNodes ?? [])}`;
     nextNumber += 1;
     return rendered;
   });
-  return items.length > 0 ? `\n${items.join('\n')}\n` : body;
+  return items.length > 0 ? `\n${items.join('\n')}\n` : '';
+}
+
+function renderBlockNode(node, codeBlocks, tableBlocks) {
+  if (node.nodeName === '#text') return node.value;
+  if (isExcludedNode(node)) return '';
+
+  if (node.tagName === 'pre') {
+    const code = descendants(node, 'code')[0];
+    if (!code) return (node.childNodes ?? []).map((child) => renderBlockNode(child, codeBlocks, tableBlocks)).join('');
+    const token = `@@CODE_BLOCK_${codeBlocks.length}@@`;
+    const decoded = textContent(code).replace(/^\n|\n$/g, '');
+    const marker = codeFenceFor(decoded);
+    codeBlocks.push(`${marker}\n${decoded}\n${marker}`);
+    return `\n\n${token}\n\n`;
+  }
+
+  if (node.tagName === 'table') {
+    const markdown = tableNodeToMarkdown(node);
+    if (markdown === null) return '';
+    const token = `@@TABLE_BLOCK_${tableBlocks.length}@@`;
+    tableBlocks.push(markdown);
+    return `\n\n${token}\n\n`;
+  }
+
+  if (/^h[1-6]$/.test(node.tagName)) {
+    return `\n\n${'#'.repeat(Number(node.tagName[1]))} ${inlineNodes(node.childNodes ?? [])}\n\n`;
+  }
+  if (node.tagName === 'ol' || node.tagName === 'ul') return listNodeToMarkdown(node);
+  if (node.tagName === 'li') return `\n- ${inlineNodes(node.childNodes ?? [])}`;
+  if (['p', 'blockquote', 'figcaption', 'dt', 'dd'].includes(node.tagName)) {
+    const prefix = node.tagName === 'blockquote' ? '> ' : '';
+    return `\n\n${prefix}${inlineNodes(node.childNodes ?? [])}\n\n`;
+  }
+  if (node.tagName === 'br') return '\n';
+  if (node.tagName === 'a' || node.tagName === 'img' || node.tagName === 'code' || node.tagName === 'svg' || attribute(node, 'role') === 'text') {
+    return renderInlineNode(node);
+  }
+  return (node.childNodes ?? []).map((child) => renderBlockNode(child, codeBlocks, tableBlocks)).join('');
 }
 
 function singleMatch(html, pattern, label) {
   const matches = [...html.matchAll(pattern)].map((match) => match[1]);
   if (matches.length !== 1 || !matches[0]?.trim()) throw new Error(`Expected exactly one ${label}.`);
   return matches[0].trim();
-}
-
-function removeElement(html, pattern) {
-  let current = html;
-  let previous;
-  do {
-    previous = current;
-    current = current.replace(pattern, '\n');
-  } while (current !== previous);
-  return current;
 }
 
 function codeFenceFor(code) {
@@ -114,40 +208,12 @@ export function assertBalancedMarkdownFences(source) {
 }
 
 export function mainHtmlToMarkdown(mainHtml) {
-  let value = mainHtml;
-  for (const pattern of [
-    /<(script|style|template|noscript|nav|header|footer|aside)\b[^>]*>[\s\S]*?<\/\1>/gi,
-    /<([a-z][\w:-]*)\b(?=[^>]*\bdata-agent-ignore(?=\s|=|>))[^>]*>[\s\S]*?<\/\1>/gi,
-    /<([a-z][\w:-]*)\b[^>]*(?:\shidden(?:\s|=|>)|aria-hidden=["']true["']|style=["'][^"']*(?:display\s*:\s*none|visibility\s*:\s*hidden)[^"']*["'])[^>]*>[\s\S]*?<\/\1>/gi,
-  ]) value = removeElement(value, pattern);
-
+  // Parse nested markup before filtering so accessible labels and complete disclosure content survive conversion.
   const codeBlocks = [];
-  value = value.replace(/<pre\b[^>]*>\s*<code\b[^>]*>([\s\S]*?)<\/code>\s*<\/pre>/gi, (_match, code) => {
-    const token = `@@CODE_BLOCK_${codeBlocks.length}@@`;
-    const decoded = decodeEntities(code).replace(/^\n|\n$/g, '');
-    const marker = codeFenceFor(decoded);
-    codeBlocks.push(`${marker}\n${decoded}\n${marker}`);
-    return `\n\n${token}\n\n`;
-  });
   const tableBlocks = [];
-  value = value.replace(/<table\b[^>]*>([\s\S]*?)<\/table>/gi, (match, table) => {
-    const markdown = tableHtmlToMarkdown(table);
-    if (markdown === null) return match;
-    const token = `@@TABLE_BLOCK_${tableBlocks.length}@@`;
-    tableBlocks.push(markdown);
-    return `\n\n${token}\n\n`;
-  });
-  value = value
-    .replace(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi, (_match, level, body) => `\n\n${'#'.repeat(Number(level))} ${text(body)}\n\n`)
-    .replace(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, (_match, href, body) => `[${text(body)}](${href})`)
-    .replace(/<img\b[^>]*alt=["']([^"']*)["'][^>]*src=["']([^"']+)["'][^>]*>/gi, (_match, alt, src) => `![${alt}](${src})`)
-    .replace(/<code\b[^>]*>([\s\S]*?)<\/code>/gi, (_match, code) => `\`${decodeEntities(code)}\``)
-    .replace(/<(ol|ul)\b([^>]*)>([\s\S]*?)<\/\1>/gi, (_match, tag, attributes, body) => listHtmlToMarkdown(tag, attributes, body))
-    .replace(/<li\b[^>]*>([\s\S]*?)<\/li>/gi, (_match, body) => `\n- ${text(body)}`)
-    .replace(/<(p|blockquote|figcaption|dt|dd)\b[^>]*>([\s\S]*?)<\/\1>/gi, (_match, tag, body) => `\n\n${tag.toLowerCase() === 'blockquote' ? '> ' : ''}${text(body)}\n\n`)
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<[^>]+>/g, ' ');
-  value = decodeEntities(value).replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  const fragment = parseFragment(mainHtml);
+  let value = (fragment.childNodes ?? []).map((node) => renderBlockNode(node, codeBlocks, tableBlocks)).join('');
+  value = value.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
   tableBlocks.forEach((table, index) => { value = value.replace(`@@TABLE_BLOCK_${index}@@`, table); });
   codeBlocks.forEach((block, index) => { value = value.replace(`@@CODE_BLOCK_${index}@@`, block); });
   return value;
@@ -164,7 +230,8 @@ function routeFromFile(file, outputDirectory) {
 function metadataForHtml(html, expectedOrigin) {
   const title = text(singleMatch(html, /<title\b[^>]*>([\s\S]*?)<\/title>/gi, 'document title'));
   const descriptionTag = singleMatch(html, /(<meta\b[^>]*name=["']description["'][^>]*>)/gi, 'description meta');
-  const description = descriptionTag.match(/content=["']([^"']+)["']/i)?.[1]?.trim();
+  const encodedDescription = descriptionTag.match(/content=["']([^"']+)["']/i)?.[1];
+  const description = encodedDescription ? text(encodedDescription) : '';
   if (!description) throw new Error('Description meta must have content.');
   const canonicalTag = singleMatch(html, /(<link\b[^>]*rel=["'][^"']*canonical[^"']*["'][^>]*>)/gi, 'canonical');
   const canonical = canonicalTag.match(/href=["']([^"']+)["']/i)?.[1];

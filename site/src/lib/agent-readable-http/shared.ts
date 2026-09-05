@@ -12,6 +12,15 @@ import {
 
 const FIXED_MACHINE_PATHS = new Set(['/llms.txt', '/robots.txt', '/sitemap.xml']);
 const ASSET_EXTENSION = /\.(?:avif|css|gif|ico|jpe?g|js|json|map|mjs|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$/i;
+const HTML_REPRESENTATION_CONDITIONS = [
+  'if-match',
+  'if-modified-since',
+  'if-none-match',
+  'if-range',
+  'if-unmodified-since',
+  'range',
+] as const;
+const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
 
 export interface NegotiatedAssetFetcher {
   (request: Request): Promise<Response>;
@@ -19,6 +28,17 @@ export interface NegotiatedAssetFetcher {
 
 export function isDocumentPath(pathname: string): boolean {
   return !FIXED_MACHINE_PATHS.has(pathname) && !ASSET_EXTENSION.test(pathname);
+}
+
+
+function publicAssetRequestForMarkdown(request: Request): Request {
+  const headers = new Headers(request.headers);
+
+  // Remove conditions that describe the cached HTML representation before
+  // looking up route status. The selected Markdown has separate content and
+  // cannot inherit an HTML 304, 412, or byte range response.
+  for (const name of HTML_REPRESENTATION_CONDITIONS) headers.delete(name);
+  return new Request(request, { headers });
 }
 
 export async function handleNegotiatedDocument(input: {
@@ -34,10 +54,14 @@ export async function handleNegotiatedDocument(input: {
     return input.fetchPublicAsset(input.request);
   }
 
-  const html = await input.fetchPublicAsset(input.request);
   const selection = selectForRequest(input.request);
   if (selection === null) return notAcceptableResponse(input.request);
-  if (selection === 'html') return htmlDocumentResponse(input.request, html);
+  if (selection === 'html') {
+    return htmlDocumentResponse(input.request, await input.fetchPublicAsset(input.request));
+  }
+
+  const html = await input.fetchPublicAsset(publicAssetRequestForMarkdown(input.request));
+  if (REDIRECT_STATUSES.has(html.status)) return htmlDocumentResponse(input.request, html);
 
   const internalPath = html.status === 404
     ? `${INTERNAL_MARKDOWN_PREFIX}404.md`

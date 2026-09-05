@@ -181,7 +181,9 @@ export function PlanComparisonTable<const Plan extends string>({
           ))}
         </table>
 
+        {/* Exclude this responsive projection because the full table already carries every plan value. */}
         <div
+          data-agent-ignore
           className={clsx(
             'transition-[translate,opacity] duration-700 ease-out sm:hidden',
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',

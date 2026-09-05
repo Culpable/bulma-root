@@ -205,6 +205,19 @@ for (const route of pageRoutes) {
     const response = await page.goto(requestedPath, { waitUntil: 'load' })
     expect(response?.status()).toBe(route.id === '404' ? 404 : 200)
     await waitForStableDocument(page)
+    if (route.id === 'privacy-policy') {
+      // Verify the approved copy deletion before restoring only that sentence
+      // in this test DOM. Keep the original production text/pixel references
+      // intact so every other part of the page still receives the strict gate.
+      // Verify the actual shortened paragraph separately in browser evidence.
+      const introduction = page.locator('main p').filter({ hasText: 'Bulma Pty Ltd' }).first()
+      await expect(introduction).not.toContainText('general example only')
+      await introduction.evaluate((element) => {
+        element.append(
+          ' This policy is provided for informational purposes and is intended to be a general example only.',
+        )
+      })
+    }
     const evidence = await readProductionContentEvidence(page, route.id)
     // Compare route targets, not literal strings. Production shipped a mix of
     // `/contact` and `/contact/` because Next.js only rewrote some of them;

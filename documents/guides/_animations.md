@@ -558,6 +558,7 @@ The component includes a periodic shimmer effect - a diagonal shine sweep that c
 - Triggers via IntersectionObserver when element is 50% visible
 - Animates only once (guards against re-triggering)
 - Uses `tabular-nums` font feature for stable width during counting
+- Keeps the changing visual text inside an `aria-hidden` span and exposes the fully formatted target through the outer `role="text"` and `aria-label`; assistive technology and build-time agent Markdown extraction therefore receive the final value while the visible counter still starts at 0
 
 **Integration with StatAnimated component:**
 
