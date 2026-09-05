@@ -18,14 +18,23 @@ Do not use this rule for documentation-only edits, dependency-only maintenance, 
 
 ## Local Server Policy
 
-- The runnable app is `demo/`; the root is not a runnable Next.js app.
-- Default dev URL: `http://localhost:3001`.
-- Start command: `cd demo && npm run dev -- -p 3001`.
-- Before browser verification, check whether `http://localhost:3001` responds.
-- If port `3001` is already occupied by the correct Bulma demo server, reuse it.
-- If port `3001` is occupied by another service, start the demo on the next available port with `cd demo && npm run dev -- -p <port>` and state the URL used.
+- The runnable app is `site/`; the repository root is not a runnable app.
+- Default development URL: `http://localhost:4331`.
+- Start command: `pnpm --dir site dev`.
+- Before browser verification, check whether `http://localhost:4331` responds and serves the Bulma Astro site.
+- If port `4331` already runs the correct site, reuse it.
+- If port `4331` is occupied by another service, start Astro on another available port with `pnpm --dir site dev -- --port <port>` and state the URL used. Do not stop a process you did not start.
 - Wait for the page to respond before opening `dev-browser` or `agent-browser`.
-- When waiting for navigation, compare canonical pathnames after normalising one optional trailing slash. Static export may settle `/pricing` at `/pricing/`; treat those paths as equivalent while still asserting any query string or hash required by the scenario.
+- When waiting for navigation, compare canonical pathnames after normalising one optional trailing slash. The static host may settle `/pricing` at `/pricing/`; treat those paths as equivalent while still asserting any query string or hash required by the scenario.
+- Stop a server started for the task after verification. Leave a pre-existing server running.
+
+## Playwright Preview Policy
+
+- Build first with `pnpm --dir site build`.
+- The local Playwright suite uses `node scripts/preview-server.mjs` from `site/`, as configured in `site/playwright.config.ts`.
+- Do not use `astro preview` for Playwright. The custom server exposes the static `site/dist` contract and real `404.html` behaviour.
+- Playwright sets `reuseExistingServer: false`. If port `4331` is already occupied, do not stop a foreign process; fail and report the conflict or run the suite with an explicitly configured separate port.
+- Use `pnpm --dir site worker:dev` for Worker response and header checks. Pass the reported Worker URL to `pnpm --dir site test:http -- <worker-url>` for the complete negotiated HTTP contract.
 
 ## Validation Gate
 
@@ -33,6 +42,7 @@ Frontend behaviour changes are not complete until browser checks pass, unless th
 
 Required checks for UI-affecting work:
 
+- Run the relevant Playwright cases against the built static preview.
 - Open every changed route or page state in the browser.
 - Verify the changed interaction or animation directly.
 - Test desktop viewport `1440x900`.

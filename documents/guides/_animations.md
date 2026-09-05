@@ -29,7 +29,6 @@ site/src/
     │   ├── aurora-background.tsx         # Morphing gradient aurora background
     │   ├── cursor-spotlight.tsx          # Cursor-following ambient glow
     │   ├── dot-pool-background.tsx       # Three.js Dot Pool hero background (section 55)
-    │   ├── floating-orbs.tsx             # Ambient drifting background orbs
     │   ├── gradient-border-wrapper.tsx   # Rotating gradient CTA border
     │   ├── hue-shift-provider.tsx        # Provider for section hue shifts (Rec 9)
     │   ├── icon-path-motion.tsx          # Curved path icon animations (Rec 7)
@@ -41,6 +40,13 @@ site/src/
     │   ├── scroll-highlight.tsx          # Viewport center text highlighting (Rec 10)
     │   ├── sticky-eyebrow.tsx            # Sticky section labels (Rec 8)
     │   └── supported-lenders-field.tsx   # Pointer-driven lender coverage ledger
+    ├── pages/
+    │   ├── home-sections.tsx            # Independently hydrated homepage sections
+    │   ├── pricing-sections.tsx         # Pricing route section islands
+    │   ├── about-sections.tsx           # About route section islands
+    │   └── contact-page-grid.tsx        # Contact form and card island
+    ├── shell/
+    │   └── site-shell.tsx               # Static shell markup and one controller island
     └── sections/
         # Home page sections
         ├── hero-dot-pool.tsx                    # Homepage hero: sticky Dot Pool layer + staggered copy (section 55)
@@ -305,15 +311,12 @@ FAQ item wrappers force `translate-y-0 opacity-100` when they contain a FAQ with
 | `@keyframes scroll-slide-right` | Fade from right 32px |
 | `@keyframes scroll-scale-up` | Fade with 0.95 scale |
 | `@keyframes gradient-border-rotate` | Rotating angle for conic gradient |
-| `@keyframes orb-float` | Multi-point drifting movement for orbs |
-| `@keyframes orb-pulse` | Opacity pulsing for orbs |
 | `.parallax-tilt` | Base 3D transform styles |
 | `.parallax-tilt-glow` | Cursor-following radial gradient overlay |
 | `.magnetic-wrapper` | Base magnetic effect styles |
 | `.gradient-border-wrapper` | Rotating gradient border container |
 | `.gradient-border-rotating` | Conic gradient with animated angle |
 | `.gradient-border-glow` | Blurred glow effect layer |
-| `.floating-orb` | Animated orb with float + pulse |
 
 ---
 
@@ -471,63 +474,6 @@ The component includes a periodic shimmer effect - a diagonal shine sweep that c
 
 ---
 
-## 14. Floating Orbs
-
-`floating-orbs.tsx::FloatingOrbs` renders ambient, pulsing orbs in the hero background that gently drift and pulse, creating an atmospheric "living" effect that metaphorically represents "questions floating to answers."
-
-**File:** `site/src/components/elements/floating-orbs.tsx`
-
-| Prop | Type | Default | Purpose |
-|------|------|---------|---------|
-| `count` | `number` | `7` | Number of orbs to render |
-| `disabled` | `boolean` | `false` | Disable the orbs |
-| `className` | `string` | — | Additional container styles |
-
-**Configuration constants (`ORB_CONFIG`):**
-
-| Setting | Value | Effect |
-|---------|-------|--------|
-| `count` | 7 | Default number of orbs |
-| `sizeRange` | [80, 180] | Min/max orb diameter (px) |
-| `opacityRange` | [0.08, 0.15] | Min/max orb opacity |
-| `durationRange` | [15, 25] | Animation cycle duration range (s) |
-| `blur` | 35 | Gaussian blur radius (px) |
-
-**Animation behavior:**
-- Each orb has randomized size, position, opacity, and animation timing
-- Uses seeded random generator for SSR consistency
-- Combines two animations:
-  - `orb-float`: Gentle drifting movement with slight scale variation
-  - `orb-pulse`: Opacity pulsing (1× to 1.5× base opacity)
-- Orbs fade in on mount with 1s transition
-
-**CSS Keyframes:**
-```css
-@keyframes orb-float {
-  0%, 100% { transform: translate(-50%, -50%) translate(0, 0) scale(1); }
-  25% { transform: translate(-50%, -50%) translate(var(--orb-x-offset), calc(var(--orb-y-offset) * -0.5)) scale(1.05); }
-  50% { transform: translate(-50%, -50%) translate(calc(var(--orb-x-offset) * -0.5), var(--orb-y-offset)) scale(0.95); }
-  75% { transform: translate(-50%, -50%) translate(calc(var(--orb-x-offset) * 0.5), calc(var(--orb-y-offset) * -0.5)) scale(1.02); }
-}
-```
-
-**Theme adaptation:**
-| Theme | Orb Colors |
-|-------|-----------|
-| Light mode | mist-600 → mist-500 (radial gradient) |
-| Dark mode | mist-400 → mist-300 (radial gradient) |
-
-**Integration:** Currently applied inside `HeroLeftAlignedWithDemo`.
-
-```tsx
-<CursorSpotlight>
-  <FloatingOrbs className="z-0" />
-  <section className="relative z-10">...</section>
-</CursorSpotlight>
-```
-
----
-
 ## 15. Animated Counter
 
 `animated-counter.tsx::AnimatedCounter` animates numbers counting up from 0 to a target value when the element scrolls into view, creating engagement and emphasizing statistical impact.
@@ -629,7 +575,7 @@ The `StatAnimated` component in `stats-animated-graph.tsx` accepts optional `cou
 
 ## 17. Navbar Glassmorphism on Scroll
 
-The navbar components implement a glassmorphism effect that activates when the user scrolls down. The active layout uses server-rendered markup from `navbar-with-links-actions-and-centered-logo.tsx::NavbarWithLinksActionsAndCenteredLogo`; `navbar-controller.tsx::NavbarController` attaches one passive scroll listener, throttles class changes through one animation frame, and does not create React scroll state. The secondary navbar variants retain their local `useScrolled(threshold = 20)` hooks.
+The navbar implements a glassmorphism effect that activates when the user scrolls down. Server-rendered markup comes from `navbar-with-links-actions-and-centered-logo.tsx::NavbarWithLinksActionsAndCenteredLogo`; `navbar-controller.tsx::NavbarController` attaches one passive scroll listener, throttles class changes through one animation frame, and does not create React scroll state.
 
 **Visual states:**
 
@@ -1189,7 +1135,6 @@ import { XIcon } from '@/components/icons/social/x-icon'
 - **BlurTransitionText width reservation**: Width is reserved by CSS (all phrases stacked as invisible sizers in one grid cell), so the SSR paint already has the final box and font swaps resize it with the heading. Do not reintroduce client-side measurement: applying a measured width after hydration re-wraps the heading and jitters the phrase on load.
 - **Gradient border browser support**: `@property` (CSS Houdini) required for smooth gradient angle animation; older browsers may show static gradient. Theme adaptation is owned by CSS light/dark variants, so CTA border instances do not add dark-mode observers.
 - **CTA shimmer timing**: Shimmer uses JS class toggle with `offsetWidth` reflow to restart animation. If multiple CTAs are visible, they shimmer in sync (by design). Disable with `shimmer={false}` prop if unwanted.
-- **Floating orbs visibility**: Opacity range [0.08–0.15] and size range [80–180px] calibrated for visible but subtle effect. Reduce blur if GPU performance is impacted.
 - **Animated counter precision**: For large numbers or many decimal places, floating-point rounding may cause minor visual jitter near end of animation
 - **Logo marquee with few items**: If fewer than ~4-5 logos are provided, the marquee may have visible gaps during the seamless loop. Add more logos or reduce speed to compensate.
 - **Navbar glassmorphism on Safari**: `backdrop-blur` may have performance implications on older iOS Safari versions. Effect degrades gracefully to solid background.
@@ -1421,7 +1366,6 @@ Animated gradient glow line along navbar bottom edge when scrolled, adding life 
 
 **Files:**
 - `site/src/styles/global.css` — Glow keyframes and classes
-- `site/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx` — Glow integration
 - `site/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx` — Glow integration for the active site layout
 
 **Animation behavior:**
@@ -2113,7 +2057,7 @@ Critical scroll performance patterns applied across animation hooks to prevent j
 
 ### Problem Context
 
-Multiple scroll-driven hooks (`useStickySection`, `useHueShift`, `useHeroParallax`, `useScrolled`, `useScrollVelocity`) running simultaneously can cause performance bottlenecks:
+Multiple scroll-driven hooks (`useStickySection`, `useHueShift`, `useHeroParallax`, `useScrollVelocity`) plus `NavbarController` can run simultaneously and cause performance bottlenecks:
 - `getBoundingClientRect()` calls trigger forced layout (expensive)
 - Multiple `setState()` calls per frame cause React re-renders
 - IntersectionObserver callbacks firing excessively
@@ -2129,7 +2073,7 @@ Scroll events fire at 60+ times per second. Without throttling, expensive calcul
 |------|--------|-------|
 | `useStickySection` | No throttling (4 instances = 480+ `getBoundingClientRect` calls/sec) | RAF throttled (max 60 calls/sec total) |
 | `useHeroParallax` | RAF throttled | RAF throttled (unchanged) |
-| `useScrolled` (navbar) | No throttling (30-60 `setState` calls/sec per navbar) | RAF throttled + state de-duplicated |
+| `NavbarController` | Unthrottled class writes on every scroll event | RAF-throttled class writes only when threshold state changes |
 
 **Implementation pattern:**
 ```tsx
@@ -2154,7 +2098,7 @@ Avoid calling `setState()` with the same value, which triggers unnecessary re-re
 |------|--------|-------|
 | `useStickySection` | `setState()` every frame | Only on value change |
 | `useHeroParallax` | `setIsScrolling(true)` every frame | Only on `false→true` transition |
-| `useScrolled` (navbar) | `setScrolled()` every frame | Only when threshold crossed |
+| `NavbarController` | Repeated class writes | Only when the 20px threshold state changes |
 
 **Implementation pattern:**
 ```tsx
@@ -2219,7 +2163,7 @@ const startDecayLoop = () => {
     if (velocityRef.current > MIN_VELOCITY) {
       velocityRef.current *= DECAY_FACTOR
       updateCSSProperties(velocityRef.current)
-      // Schedule next decay step
+      // Schedule the following decay step
       decayTimeoutRef.current = setTimeout(decay, DECAY_INTERVAL)
     } else {
       // Stop when velocity reaches zero
@@ -2253,7 +2197,6 @@ After optimisations:
 | `site/src/hooks/use-hue-shift.ts` | Threshold reduction (11→3) |
 | `site/src/hooks/use-hero-parallax.ts` | State→ref conversion + isScrolling de-duplication |
 | `site/src/hooks/use-scroll-velocity.ts` | Timeout-based decay (replaces continuous setInterval) |
-| `site/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx` | RAF throttling + state de-duplication in `useScrolled` |
 | `site/src/components/sections/navbar-controller.tsx` | RAF-throttled class updates without React scroll state |
 
 ---
@@ -2305,7 +2248,7 @@ After optimisations:
 
 **Verification requirements:**
 
-- Run `npm run build` in `demo/` and confirm `demo/out/index.html` contains the lender names.
+- Run `pnpm --dir site build` and confirm `site/dist/index.html` contains every lender name.
 - Run `pnpm --dir site check` and the focused browser parity cases for `site/src/components/pages/home-sections.tsx`, `site/src/components/elements/supported-lenders-field.tsx`, and `site/src/lib/supported-lenders.ts`.
 - Visually verify desktop, wide desktop, and mobile layouts with `dev-browser`.
 - Check announcement badge scrolling, pointer tracking, pointer leave reset, click persistence, keyboard focus, touch-style selection, and horizontal overflow.
@@ -2325,8 +2268,6 @@ Footer, mobile navigation, contact form, and global fit-and-finish effects exten
 - `site/src/components/sections/navbar-with-links-actions-and-centered-logo.tsx::NavbarWithLinksActionsAndCenteredLogo`
 - `site/src/components/sections/navbar-controller.tsx::NavbarController`
 - `site/src/components/sections/navbar-links.tsx::NavbarMobileLink`
-- `site/src/components/sections/navbar-with-logo-actions-and-centered-links.tsx::NavbarWithLogoActionsAndCenteredLinks`
-- `site/src/components/sections/navbar-with-logo-actions-and-left-aligned-links.tsx::NavbarWithLogoActionsAndLeftAlignedLinks`
 - `site/src/components/pages/contact-form.tsx::ContactForm`
 - `site/src/components/elements/text.tsx::Text`
 - `site/src/styles/global.css`

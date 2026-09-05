@@ -11,7 +11,7 @@ Production now uses the static Astro `site/` application on Cloudflare Worker `b
 - Initial local tests reached cached GitHub DNS and were stopped. Public resolvers and the OS resolver then converged on Cloudflare; the full fresh run passed without a source change.
 - Production proof so far: 18 HTTP cases; exact HTML/Markdown build bytes; conditional HTML 304 and Markdown 200; 30 route/crawler combinations with no noindex and self-canonicals; all discovery bytes; IPv4/IPv6 body identity; real HTTP/3; Brotli HTML/CSS/JS; immutable hashed assets; 61 unit tests and 78 browser tests (six viewport-specific skips); 12 additional browser states without errors/overflow; 10 intercepted analytics loads.
 - The 404 document intentionally remains noindexed. Public indexable routes and discovery files have no `X-Robots-Tag` or meta noindex. Robots allows crawling and sitemap names only the five canonical apex URLs.
-- Remaining at this checkpoint: mobile Lighthouse sanity matrix, manual browser fallback, staging removal, legacy retirement, final configuration deployment and documentation gate. GitHub Pages is still enabled for rollback.
+- Cutover gates passed, staging and legacy resources are retired, and commit `c82a562` deployed successfully as version `0ac3143d-4973-4401-a75b-2845e60bd30b`. The final retirement source release and local regression gate are being verified.
 
 Current evidence: `documents/guides/parity/step9-cutover-20260905/`. Use the completed cutover record at the end of this guide for later release identity and retirement verification.
 
@@ -6314,3 +6314,14 @@ The live source passed 61 unit tests, build-output/trust/byte budgets and 78 Pla
 Both screenshots show the selected Yearly tab, Solo $490/year, Save $98 compared with monthly, and exact annual callout. Desktop cards align; mobile copy fits with no overlap or horizontal overflow. Real HTTP/3 and Brotli passed over IPv4 and IPv6 with identical decoded bodies. Googlebot, Bingbot and tested AI agents receive direct canonical 200 HTML with no noindex, matching the built bytes. Search Console verification TXT remains unchanged; no Search Console property credentials are available in this task, so search-engine inclusion itself is not asserted.
 
 Saved HTTP-header and terminal-log text normalises CRLF and trailing whitespace for Git; HTML/asset bytes and JSON values are unchanged.
+
+## Retirement and current operating contract
+
+- `site/` is the sole runnable application. Node 22.23.1 and pnpm 11.22.0 remain pinned. Development uses port 4331; the built-output suite owns its static preview server. Run Wrangler separately on 8787 before `pnpm --dir site test:http`.
+- Workers Builds owns releases from `main` to `bulma-root`; other branches upload inactive versions to `bulma-root-preview`. The production trigger watches `site/*`; a documentation-only final record can be built through the existing trigger's manual-build API with its exact commit hash.
+- `bulma.com.au` is canonical and indexable; www redirects once with path/query preserved. Staging no longer has a domain or DNS record. The preview Worker remains noindexed. Do not restore staging merely to run the retained historical comparison script.
+- The GitHub Pages endpoint returns 404. Cloudflare Pages project `bulma-root`, its old Pages Write token, GitHub deploy secret and account variable are removed. Existing reference and video trees remain unshipped; the obsolete migration plan is archived. All unrelated DNS, including app/mail/Google verification, is unchanged.
+- The pre-cutover DNS snapshots are historical rollback evidence. After legacy retirement, use a verified prior Worker version for immediate code rollback. Restoring the old host would also require re-enabling GitHub Pages and recovering the retired workflow/app from Git or Trash before restoring its recorded DNS.
+- Documentation synchronisation passed for hosting, animations and mapped instruction owners. Current `AGENTS.md`, `DESIGN.md`, `README.md`, browser rules and editor launch configuration use the Astro paths and commands. Every animation-guide source path resolves; no obsolete runtime/hosting instruction remains in these current documents. Historical records and preserved reference trees intentionally retain old host/framework terms.
+
+Control-plane retirement evidence: `parity/step9-cutover-20260905/legacy-retired.json`. The current public verifier defaults now target apex. Referral-script parity remains guarded by its original byte hash after the port source was retired.

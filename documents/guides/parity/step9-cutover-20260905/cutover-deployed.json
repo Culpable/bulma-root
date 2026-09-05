@@ -1,0 +1,606 @@
+{
+  "build": {
+    "build_uuid": "7da22abe-1df0-43bb-85dd-26c778099d6d",
+    "status": "stopped",
+    "build_outcome": "success",
+    "initializing_on": "2026-09-05T07:23:25.941Z",
+    "running_on": "2026-09-05T07:23:27.485Z",
+    "stopped_on": "2026-09-05T07:24:27.389Z",
+    "created_on": "2026-09-05T07:23:25.016Z",
+    "modified_on": "2026-09-05T07:24:27.389Z",
+    "trigger": {
+      "trigger_uuid": "75e49326-fa92-4140-8132-546585b00422",
+      "external_script_id": "79bf696e3bf44fd8a3c63cce810c89da",
+      "build_token_name": "bulma-root-cloudflare-build-api-token",
+      "trigger_name": "Deploy production",
+      "build_command": "pnpm build",
+      "deploy_command": "pnpm deploy",
+      "root_directory": "site",
+      "branch_includes": [
+        "main"
+      ],
+      "branch_excludes": [],
+      "path_includes": [
+        "site/*"
+      ],
+      "path_excludes": [],
+      "build_caching_enabled": true,
+      "created_on": "2026-09-04T06:04:58.319Z",
+      "modified_on": "2026-09-04T06:04:58.319Z",
+      "deleted_on": null,
+      "repo_connection": {
+        "repo_connection_uuid": "3aa4c43c-784c-49b7-8794-75841cf3ee4c",
+        "repo_id": "1126720966",
+        "repo_name": "bulma-root",
+        "provider_type": "github",
+        "provider_account_id": "31677655",
+        "provider_account_name": "Culpable",
+        "grant_id": null,
+        "created_on": "2026-09-04T05:30:39.313Z",
+        "modified_on": "2026-09-04T05:30:39.313Z",
+        "deleted_on": null
+      }
+    },
+    "build_trigger_metadata": {
+      "build_trigger_source": "push_event",
+      "branch": "main",
+      "commit_hash": "c82a562b8bbd65ac00a33000aea66516e4eda2d0",
+      "commit_message": "feat(hosting): configure the verified production Worker and record cutover checks\n\n1. site/wrangler.jsonc (Updated): Changed the production domain to bulma.com.au\n2. site/public/_headers (Updated): Removed the retired staging rule and kept preview noindex\n3. documents/guides/_hosting.md (Updated): Added production checks and exact staging rollback state\n4. documents/guides/parity/s",
+      "author": "Culpable",
+      "build_command": "pnpm build",
+      "deploy_command": "pnpm deploy",
+      "root_directory": "site",
+      "build_token_uuid": "a2cae8d5-f524-4130-92f2-84994275d3c9",
+      "build_token_name": "bulma-root-cloudflare-build-api-token",
+      "environment_variables": {
+        "NODE_VERSION": {
+          "is_secret": false,
+          "created_on": "2026-09-04T06:04:59.550Z",
+          "value": "22.23.1"
+        },
+        "PNPM_VERSION": {
+          "is_secret": false,
+          "created_on": "2026-09-04T06:04:59.550Z",
+          "value": "11.22.0"
+        }
+      },
+      "repo_name": "bulma-root",
+      "provider_account_name": "Culpable",
+      "provider_type": "github"
+    },
+    "pull_request": null,
+    "deploy_hook": null
+  },
+  "deployment": {
+    "deployments": [
+      {
+        "id": "d953a296-a75a-4fa8-9eee-b7df3d96dbd2",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "0ac3143d-4973-4401-a75b-2845e60bd30b",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-05T07:24:23.554161Z"
+      },
+      {
+        "id": "96ca4361-171f-4207-828f-929462c4e714",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "4f8e42b6-954c-42f1-ba60-1b900675caeb",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-05T05:21:01.998139Z"
+      },
+      {
+        "id": "1744d9fe-9806-4b7a-850c-85a9ca083a9d",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "c24a3454-11ed-4ffb-9a57-e7ffe73c419f",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-05T05:05:57.149273Z"
+      },
+      {
+        "id": "41511e7b-d769-4219-bafc-6a20e70ed50c",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "77d21bbe-202c-440a-97c0-2c4b7e61f024",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T11:47:39.47439Z"
+      },
+      {
+        "id": "2ec8fd98-081d-44a5-bdae-3f8eed43000f",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "5770e5db-f36a-4340-b8cf-a9f4947134ce",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T07:20:21.351743Z"
+      },
+      {
+        "id": "18bbaf43-9a05-4d5b-bf56-9f7f874e2686",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "bb10cf9d-52df-4761-bc9d-3a2c392266ab",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T07:07:35.204024Z"
+      },
+      {
+        "id": "62942be5-a530-4815-a9a5-593bfa47dce2",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "05fccc79-5a9c-4c39-8d26-698bd0fac11d",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T06:22:20.456173Z"
+      },
+      {
+        "id": "88e182a9-44d0-4cd4-890a-d4c7d2b27cf4",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "819c213c-45b4-416d-bcfd-0884b6fb3294",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T06:13:15.955557Z"
+      },
+      {
+        "id": "7b7e4f5c-07cf-4fd7-98de-34ff8570f73e",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "bfe62d41-5651-4896-92de-408295c44e62",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T05:59:32.205765Z"
+      },
+      {
+        "id": "98c65260-1940-4e32-aa0f-20abc6ba35ac",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/message": "Automatic deployment on upload.",
+          "workers/triggered_by": "upload"
+        },
+        "versions": [
+          {
+            "version_id": "f8b95cb7-df90-4e64-b1e7-d46ea825816e",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T05:56:49.82327Z"
+      }
+    ]
+  },
+  "domains": [
+    {
+      "id": "1e50d39091ecc025024430208266c45e0bc93be2",
+      "zone_id": "ce76f15eb5f7065b52ed9d8046020b4a",
+      "zone_name": "taxgenie.com.au",
+      "hostname": "taxgenie.com.au",
+      "service": "taxgenie-root",
+      "environment": "production",
+      "cert_id": "716ecedf-d3ce-4970-8a28-5384264d4124",
+      "previews_enabled": false,
+      "enabled": true
+    },
+    {
+      "id": "1f244a2bc91612e583f30cbda311cfbe5dc9b5e8",
+      "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+      "zone_name": "bulma.com.au",
+      "hostname": "bulma.com.au",
+      "service": "bulma-root",
+      "environment": "production",
+      "cert_id": "a63f3ea9-3d72-4972-bb2f-5941a9b072e4",
+      "previews_enabled": false,
+      "enabled": true
+    }
+  ],
+  "github_pages": {
+    "url": "https://api.github.com/repos/Culpable/bulma-root/pages",
+    "status": "built",
+    "cname": "bulma.com.au",
+    "custom_404": false,
+    "html_url": "https://bulma.com.au/",
+    "build_type": "workflow",
+    "source": {
+      "branch": "main",
+      "path": "/"
+    },
+    "public": true,
+    "protected_domain_state": null,
+    "pending_domain_unverified_at": null,
+    "https_certificate": {
+      "state": "approved",
+      "description": "The certificate has been approved.",
+      "domains": [
+        "bulma.com.au",
+        "www.bulma.com.au"
+      ],
+      "expires_at": "2026-11-29"
+    },
+    "https_enforced": true
+  },
+  "checks": {
+    "total_count": 3,
+    "check_runs": [
+      {
+        "id": 101269686023,
+        "name": "Workers Builds: bulma-root",
+        "node_id": "CR_kwDOQyhlxs8AAAAXlCTHBw",
+        "head_sha": "c82a562b8bbd65ac00a33000aea66516e4eda2d0",
+        "external_id": "7da22abe-1df0-43bb-85dd-26c778099d6d",
+        "url": "https://api.github.com/repos/Culpable/bulma-root/check-runs/101269686023",
+        "html_url": "https://github.com/Culpable/bulma-root/runs/101269686023",
+        "details_url": "https://dash.cloudflare.com/213ab3604485056376263d22fa242742/workers/services/view/bulma-root/production/builds/7da22abe-1df0-43bb-85dd-26c778099d6d",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-09-05T07:24:28Z",
+        "completed_at": "2026-09-05T07:24:28Z",
+        "output": {
+          "title": "Workers Builds: bulma-root",
+          "summary": "\nBuild ID: [7da22abe-1df0-43bb-85dd-26c778099d6d](https://dash.cloudflare.com/213ab3604485056376263d22fa242742/workers/services/view/bulma-root/production/builds/7da22abe-1df0-43bb-85dd-26c778099d6d)\nScript: [bulma-root](https://dash.cloudflare.com/213ab3604485056376263d22fa242742/workers/services/view/bulma-root/production)\nVersion ID: 0ac3143d-4973-4401-a75b-2845e60bd30b\n",
+          "text": null,
+          "annotations_count": 0,
+          "annotations_url": "https://api.github.com/repos/Culpable/bulma-root/check-runs/101269686023/annotations"
+        },
+        "check_suite": {
+          "id": 92011177994
+        },
+        "app": {
+          "id": 85455,
+          "client_id": "Iv1.0879b6ff6c8f7a1a",
+          "slug": "cloudflare-workers-and-pages",
+          "node_id": "MDM6QXBwODU0NTU=",
+          "owner": {
+            "login": "cloudflare",
+            "id": 314135,
+            "node_id": "MDEyOk9yZ2FuaXphdGlvbjMxNDEzNQ==",
+            "avatar_url": "https://avatars.githubusercontent.com/u/314135?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/cloudflare",
+            "html_url": "https://github.com/cloudflare",
+            "followers_url": "https://api.github.com/users/cloudflare/followers",
+            "following_url": "https://api.github.com/users/cloudflare/following{/other_user}",
+            "gists_url": "https://api.github.com/users/cloudflare/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/cloudflare/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/cloudflare/subscriptions",
+            "organizations_url": "https://api.github.com/users/cloudflare/orgs",
+            "repos_url": "https://api.github.com/users/cloudflare/repos",
+            "events_url": "https://api.github.com/users/cloudflare/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/cloudflare/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "name": "Cloudflare Workers and Pages",
+          "description": "The **Cloudflare GitHub App** automatically deploys your code to Cloudflare when you merge a pull request to your GitHub repository. It can also create a new repository on your GitHub account when you get started with a Cloudflare template. \r\n\r\n\r\nThis integration also:\r\n- Displays the status of your deployments as check runs\r\n- Posts links to preview URLs as comments on each pull request (Cloudflare Pages only)\r\n\r\n\r\n<img src=\"https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/b3c1fc84-7d73-4fc4-8835-69e85980df00/public\" width=67% >\r\n\r\n\r\n<img src=\"https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/e9a5ffb3-4ec3-4dd6-8bc8-ed0eec5ddb00/public\" width=67% >\r\n\r\n\r\nFor more information, refer to the [Cloudflare Workers docs](https://developers.cloudflare.com/workers/ci-cd/builds/) and [Cloudflare Pages docs](https://developers.cloudflare.com/pages/configuration/git-integration/).",
+          "external_url": "https://developers.cloudflare.com/workers/ci-cd/builds/",
+          "html_url": "https://github.com/apps/cloudflare-workers-and-pages",
+          "created_at": "2020-10-19T20:23:00Z",
+          "updated_at": "2024-12-19T22:06:10Z",
+          "permissions": {
+            "administration": "write",
+            "checks": "write",
+            "contents": "write",
+            "deployments": "write",
+            "metadata": "read",
+            "pull_requests": "write"
+          },
+          "events": [
+            "pull_request",
+            "push"
+          ]
+        },
+        "pull_requests": []
+      },
+      {
+        "id": 101269636095,
+        "name": "deploy",
+        "node_id": "CR_kwDOQyhlxs8AAAAXlCQD_w",
+        "head_sha": "c82a562b8bbd65ac00a33000aea66516e4eda2d0",
+        "external_id": "a62da3d5-1ec6-579b-b0e2-fb72ff3d7f2c",
+        "url": "https://api.github.com/repos/Culpable/bulma-root/check-runs/101269636095",
+        "html_url": "https://github.com/Culpable/bulma-root/actions/runs/33952415791/job/101269636095",
+        "details_url": "https://github.com/Culpable/bulma-root/actions/runs/33952415791/job/101269636095",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-09-05T07:24:07Z",
+        "completed_at": "2026-09-05T07:24:16Z",
+        "output": {
+          "title": null,
+          "summary": null,
+          "text": null,
+          "annotations_count": 1,
+          "annotations_url": "https://api.github.com/repos/Culpable/bulma-root/check-runs/101269636095/annotations"
+        },
+        "check_suite": {
+          "id": 92011179412
+        },
+        "app": {
+          "id": 15368,
+          "client_id": "Iv1.05c79e9ad1f6bdfa",
+          "slug": "github-actions",
+          "node_id": "MDM6QXBwMTUzNjg=",
+          "owner": {
+            "login": "github",
+            "id": 9919,
+            "node_id": "MDEyOk9yZ2FuaXphdGlvbjk5MTk=",
+            "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/github",
+            "html_url": "https://github.com/github",
+            "followers_url": "https://api.github.com/users/github/followers",
+            "following_url": "https://api.github.com/users/github/following{/other_user}",
+            "gists_url": "https://api.github.com/users/github/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/github/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/github/subscriptions",
+            "organizations_url": "https://api.github.com/users/github/orgs",
+            "repos_url": "https://api.github.com/users/github/repos",
+            "events_url": "https://api.github.com/users/github/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/github/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "name": "GitHub Actions",
+          "description": "Automate your workflow from idea to production",
+          "external_url": "https://help.github.com/en/actions",
+          "html_url": "https://github.com/apps/github-actions",
+          "created_at": "2018-07-30T09:30:17Z",
+          "updated_at": "2026-06-18T16:17:48Z",
+          "permissions": {
+            "actions": "write",
+            "administration": "read",
+            "artifact_metadata": "write",
+            "attestations": "write",
+            "checks": "write",
+            "code_quality": "write",
+            "contents": "write",
+            "copilot_requests": "write",
+            "deployments": "write",
+            "discussions": "write",
+            "drives": "write",
+            "issues": "write",
+            "merge_queues": "write",
+            "metadata": "read",
+            "models": "read",
+            "packages": "write",
+            "pages": "write",
+            "pull_requests": "write",
+            "repository_hooks": "write",
+            "repository_projects": "write",
+            "security_events": "write",
+            "statuses": "write",
+            "vulnerability_alerts": "read"
+          },
+          "events": [
+            "branch_protection_rule",
+            "check_run",
+            "check_suite",
+            "create",
+            "delete",
+            "deployment",
+            "deployment_status",
+            "discussion",
+            "discussion_comment",
+            "fork",
+            "gollum",
+            "issues",
+            "issue_comment",
+            "label",
+            "merge_group",
+            "milestone",
+            "page_build",
+            "public",
+            "pull_request",
+            "pull_request_review",
+            "pull_request_review_comment",
+            "push",
+            "registry_package",
+            "release",
+            "repository",
+            "repository_dispatch",
+            "status",
+            "watch",
+            "workflow_dispatch",
+            "workflow_run"
+          ]
+        },
+        "pull_requests": [],
+        "deployment": {
+          "url": "https://api.github.com/repos/Culpable/bulma-root/deployments/6278417267",
+          "id": 6278417267,
+          "node_id": "DE_kwDOQyhlxs8AAAABdjkLcw",
+          "task": "deploy",
+          "original_environment": "github-pages",
+          "environment": "github-pages",
+          "description": null,
+          "created_at": "2026-09-05T07:24:04Z",
+          "updated_at": "2026-09-05T07:24:17Z",
+          "statuses_url": "https://api.github.com/repos/Culpable/bulma-root/deployments/6278417267/statuses",
+          "repository_url": "https://api.github.com/repos/Culpable/bulma-root"
+        }
+      },
+      {
+        "id": 101269555816,
+        "name": "build",
+        "node_id": "CR_kwDOQyhlxs8AAAAXlCLKaA",
+        "head_sha": "c82a562b8bbd65ac00a33000aea66516e4eda2d0",
+        "external_id": "eb083bf5-5aab-5a18-943f-0bd67a3a27eb",
+        "url": "https://api.github.com/repos/Culpable/bulma-root/check-runs/101269555816",
+        "html_url": "https://github.com/Culpable/bulma-root/actions/runs/33952415791/job/101269555816",
+        "details_url": "https://github.com/Culpable/bulma-root/actions/runs/33952415791/job/101269555816",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-09-05T07:23:28Z",
+        "completed_at": "2026-09-05T07:24:04Z",
+        "output": {
+          "title": null,
+          "summary": null,
+          "text": null,
+          "annotations_count": 1,
+          "annotations_url": "https://api.github.com/repos/Culpable/bulma-root/check-runs/101269555816/annotations"
+        },
+        "check_suite": {
+          "id": 92011179412
+        },
+        "app": {
+          "id": 15368,
+          "client_id": "Iv1.05c79e9ad1f6bdfa",
+          "slug": "github-actions",
+          "node_id": "MDM6QXBwMTUzNjg=",
+          "owner": {
+            "login": "github",
+            "id": 9919,
+            "node_id": "MDEyOk9yZ2FuaXphdGlvbjk5MTk=",
+            "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/github",
+            "html_url": "https://github.com/github",
+            "followers_url": "https://api.github.com/users/github/followers",
+            "following_url": "https://api.github.com/users/github/following{/other_user}",
+            "gists_url": "https://api.github.com/users/github/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/github/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/github/subscriptions",
+            "organizations_url": "https://api.github.com/users/github/orgs",
+            "repos_url": "https://api.github.com/users/github/repos",
+            "events_url": "https://api.github.com/users/github/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/github/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "name": "GitHub Actions",
+          "description": "Automate your workflow from idea to production",
+          "external_url": "https://help.github.com/en/actions",
+          "html_url": "https://github.com/apps/github-actions",
+          "created_at": "2018-07-30T09:30:17Z",
+          "updated_at": "2026-06-18T16:17:48Z",
+          "permissions": {
+            "actions": "write",
+            "administration": "read",
+            "artifact_metadata": "write",
+            "attestations": "write",
+            "checks": "write",
+            "code_quality": "write",
+            "contents": "write",
+            "copilot_requests": "write",
+            "deployments": "write",
+            "discussions": "write",
+            "drives": "write",
+            "issues": "write",
+            "merge_queues": "write",
+            "metadata": "read",
+            "models": "read",
+            "packages": "write",
+            "pages": "write",
+            "pull_requests": "write",
+            "repository_hooks": "write",
+            "repository_projects": "write",
+            "security_events": "write",
+            "statuses": "write",
+            "vulnerability_alerts": "read"
+          },
+          "events": [
+            "branch_protection_rule",
+            "check_run",
+            "check_suite",
+            "create",
+            "delete",
+            "deployment",
+            "deployment_status",
+            "discussion",
+            "discussion_comment",
+            "fork",
+            "gollum",
+            "issues",
+            "issue_comment",
+            "label",
+            "merge_group",
+            "milestone",
+            "page_build",
+            "public",
+            "pull_request",
+            "pull_request_review",
+            "pull_request_review_comment",
+            "push",
+            "registry_package",
+            "release",
+            "repository",
+            "repository_dispatch",
+            "status",
+            "watch",
+            "workflow_dispatch",
+            "workflow_run"
+          ]
+        },
+        "pull_requests": []
+      }
+    ]
+  }
+}

@@ -147,12 +147,9 @@ test('internal link targets keep the production trailing slash', () => {
 })
 
 test('public scripts stay byte-identical to their production source', () => {
-  // `demo/` is the port source until the decommission step removes it.
-  const demoScript = path.join(repositoryDirectory, 'demo/public/scripts/referral-tracking.js')
-  if (!fs.existsSync(demoScript)) return
-
+  // Preserve the verified source fingerprint after the retired application is removed.
   const ported = fs.readFileSync(path.join(siteDirectory, 'public/scripts/referral-tracking.js'))
-  assert.equal(sha256(ported), sha256(fs.readFileSync(demoScript)))
+  assert.equal(sha256(ported), 'c182d0dd3ad4c1555ac559bffc86c9e45c491f2b45ae0c0cc71da615618db55a')
 })
 
 test('every document declares the production viewport', () => {

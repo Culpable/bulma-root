@@ -10,7 +10,7 @@ description: Marketing website for Bulma, the AI assistant for Australian mortga
 
 ### Purpose and authority
 
-This document is the visual implementation contract for the Bulma marketing site (the `demo/` Next.js static export deployed to bulma.com.au). Read it before changing any user-facing surface in `demo/src`. It documents implemented behaviour; it does not own token values. When this document and the implementation disagree, the implementation plus `AGENTS.md` win, and the mismatch must be recorded under Approved Exceptions and Drift. `AGENTS.md` owns commands, server lifecycle, testing rules, and binding content contracts (contact form fields, pricing parity, hash navigation, motion policy); this document restates them only where they constrain visual work.
+This document is the visual implementation contract for the Bulma marketing site in `site/`, deployed to `bulma.com.au` through Cloudflare Workers. Read it before changing any user-facing surface in `site/src`. It documents implemented behaviour; it does not own token values. When this document and the implementation disagree, the implementation plus `AGENTS.md` win, and the mismatch must be recorded under Approved Exceptions and Drift. `AGENTS.md` owns commands, server lifecycle, testing rules, and binding content contracts; this document restates them only where they constrain visual work.
 
 ### Product character
 
@@ -23,32 +23,33 @@ This document is the visual implementation contract for the Bulma marketing site
 
 | Concern | Source | Ownership |
 | --- | --- | --- |
-| Global tokens, themes, keyframes | `demo/src/app/globals.css` | Tailwind v4 theme block with the mist palette and font variables; all animation keyframes and utility classes; scrollbar, selection, and caret colours |
-| Primary action component | `demo/src/components/elements/glass-press-button-link.tsx::GlassPressButtonLink` | Glass Press primary CTA surface, press physics, light and dark treatments, focus ring |
-| Secondary button family | `demo/src/components/elements/button.tsx` | Solid, soft, and plain button and link variants, shared sizes, press scale, focus ring |
-| Shared primitives | `demo/src/components/elements` | Headings, text, eyebrow, links, container, section, screenshot, wallpaper, and animation elements |
-| Page sections | `demo/src/components/sections` | Composed hero (`hero-dot-pool.tsx::HeroDotPool` on the homepage), feature, stats, pricing, FAQ, testimonial, navbar, and footer sections |
-| Application shell | `demo/src/app/layout.tsx::RootLayout` | Font loading, metadata, navbar and footer composition, analytics scripts |
-| Product routes | `demo/src/app` | Home, pricing, about, contact, privacy-policy, and 404 pages |
-| Brand wallpaper gradients | `demo/src/components/elements/wallpaper.tsx::Wallpaper` | Screenshot backdrop gradients per colour and theme, noise overlay |
+| Global tokens, themes, keyframes | `site/src/styles/global.css` | Tailwind v4 theme block with the mist palette and font variables; animation keyframes and utility classes; scrollbar, selection, and caret colours |
+| Primary action component | `site/src/components/elements/glass-press-button-link.tsx::GlassPressButtonLink` | Glass Press primary CTA surface, press physics, light and dark treatments, focus ring |
+| Secondary button family | `site/src/components/elements/button.tsx` | Solid, soft, and plain button and link variants, shared sizes, press scale, focus ring |
+| Shared primitives | `site/src/components/elements` | Headings, text, eyebrow, links, container, section, screenshot, wallpaper, and animation elements |
+| Page sections | `site/src/components/sections` | Composed hero (`hero-dot-pool.tsx::HeroDotPool` on the homepage), feature, stats, pricing, FAQ, testimonial, navbar, and footer sections |
+| Route island compositions | `site/src/components/pages` | React island boundaries and route-level section composition |
+| Application shell | `site/src/layouts/BaseLayout.astro` and `site/src/components/shell/site-shell.tsx` | Document shell, metadata, fonts, static navbar/footer markup, analytics scripts, and shell controller boundary |
+| Product routes | `site/src/pages` | Astro entrypoints for home, pricing, about, contact, privacy-policy, and 404 |
+| Brand wallpaper gradients | `site/src/components/elements/wallpaper.tsx::Wallpaper` | Screenshot backdrop gradients per colour and theme, noise overlay |
 | Motion system guide | `documents/guides/_animations.md` | Canonical documentation of every animation primitive, timing, and known failure points |
-| Scroll entrance hook | `demo/src/hooks/use-scroll-animation.ts::useScrollAnimation` | IntersectionObserver visibility trigger shared by section entrances |
-| Assets | `demo/public/img` | Logos, screenshots, avatars, photos, and Open Graph images |
+| Scroll entrance hook | `site/src/hooks/use-scroll-animation.ts::useScrollAnimation` | IntersectionObserver visibility trigger shared by section entrances |
+| Assets | `site/public/img` | Logos, screenshots, avatars, photos, and Open Graph images |
 | Binding project rules | `AGENTS.md` | Validation commands, dev server policy, browser verification gates, motion policy, content contracts |
 
 ### Foundations
 
-- Framework and rendering: Next.js 16 App Router with React 19, static export only (no server runtime), deployed to GitHub Pages. Only `demo/` runs.
-- Styling and token authority: Tailwind CSS v4; the theme block in `demo/src/app/globals.css` is the canonical token source (implementation-authoritative). This document names roles only and never duplicates values.
-- Components and icons: hand-rolled primitives in `demo/src/components/elements`, composed sections in `demo/src/components/sections`, and roughly 110 local SVG icon components in `demo/src/components/icons`. No external UI or animation library; `three` is the one rendering dependency and is used only by the homepage hero's Dot Pool background.
-- Fonts and charts: Mona Sans (variable width axis) for display, Inter for body, both self-hosted through `next/font/google` with swap display. The stats graph is bespoke SVG; there is no charting library.
+- Framework and rendering: Astro 7 prerenders every route. React 19 hydrates only interaction and animation islands; Cloudflare Workers Static Assets serves the built files and selects prebuilt HTML or Markdown representations.
+- Styling and token authority: Tailwind CSS v4 runs through the Vite plugin. The theme block in `site/src/styles/global.css` is the canonical token source. This document names roles only and never duplicates values.
+- Components and icons: hand-rolled primitives in `site/src/components/elements`, composed sections in `site/src/components/sections`, and local SVG React components in `site/src/components/icons`. No external UI or animation library; `three` is used only by the homepage Dot Pool.
+- Fonts and charts: Astro Fonts API self-hosts Mona Sans with its variable width axis and Inter with swap display. The stats graph is bespoke SVG; there is no charting library.
 
 ## Colors
 
 | Role | Token or source | Use |
 | --- | --- | --- |
-| Palette | `--color-mist-50` through `--color-mist-950` in `demo/src/app/globals.css` | Single cool blue-grey ramp (oklch) used for every UI colour decision |
-| Canvas | mist-950 | Page background, set on the root in `globals.css`; navbar matches when unscrolled |
+| Palette | `--color-mist-50` through `--color-mist-950` in `site/src/styles/global.css` | Single cool blue-grey ramp (oklch) used for every UI colour decision |
+| Canvas | mist-950 | Page background, set on the root in `site/src/styles/global.css`; navbar matches when unscrolled |
 | Primary text | white | Headings, button labels, emphasised copy |
 | Secondary text | mist-400 | Body copy (`text.tsx::Text`), eyebrows, captions |
 | Accent | The mist ramp itself | There is no separate accent hue; emphasis comes from contrast, glass, and depth |
@@ -56,7 +57,7 @@ This document is the visual implementation contract for the Bulma marketing site
 | Screenshot backdrops | `wallpaper.tsx::Wallpaper` gradients (blue, green, purple, brown; separate light and dark stops) | Product screenshot framing; blue is the brand default and matches the brand gradient in `AGENTS.md` |
 | Success, warning, error | No dedicated tokens | Contact form status uses neutral mist surfaces with text plus `role="alert"` or `role="status"`; never colour alone |
 
-- Theme status: **the site is dark-only for every visitor**. `demo/src/app/globals.css` redefines the Tailwind variant with `@custom-variant dark (&:where(.dark, .dark *))`, and `demo/src/app/layout.tsx` puts a permanent `dark` class on `<html>` plus `viewport.colorScheme = 'dark'`. `prefers-color-scheme` no longer selects the theme anywhere: not in CSS, not in `<picture>` sources, and not in the Dot Pool WebGL palette. There is no manual theme toggle and no light rendering path to verify.
+- Theme status: **the site is dark-only for every visitor**. `site/src/styles/global.css` redefines the Tailwind variant with `@custom-variant dark (&:where(.dark, .dark *))`, and `site/src/layouts/BaseLayout.astro` puts a permanent `dark` class on `<html>` plus `color-scheme: dark`. `prefers-color-scheme` never selects the theme in CSS, markup, or the Dot Pool palette. There is no manual theme toggle.
 - Light-mode values still present in components (`bg-white`, `text-mist-950`, and similar unprefixed defaults that a `dark:` utility overrides) are inert. Keep them so the pair stays readable and a light theme could be reinstated, but never rely on them rendering.
 - Accessibility target: text reaches WCAG AA contrast. Use mist-400 as the minimum secondary-text token on the dark canvas, including footer fineprint and pricing-period text; it renders at 7.37:1 on the footer's mist-950 surface. Measure the rendered pair before introducing new text-on-tint combinations.
 - Status communication: text and iconography always accompany colour (verified in the contact form and pricing feature lists).
@@ -82,19 +83,19 @@ This document is the visual implementation contract for the Bulma marketing site
 
 - Surface hierarchy: flat canvas, then hairline-ringed cards with translucent tints, then frosted glass (blurred, saturated, translucent) for the navbar when scrolled, testimonial cards, and the Glass Press primary. Shadows are reserved for interactive lift and card depth, never for static decoration.
 - Overlays and stacking: the site has no modal, dialog, or popover layer. The navbar sits at `z-10`; ambient background layers (orbs, spotlight, dot matrix) sit at or below `z-0` behind content.
-- Expressive depth: approved ambient layers are the homepage Dot Pool (a sticky full-viewport WebGL field of mist-coloured discs behind the hero copy, colours from the mist tokens via `demo/src/lib/mist-palette.ts`), cursor spotlight, floating orbs, aurora background, dot matrix, border beam on featured pricing cards, and the screenshot reflection. The Glass Press primary expresses depth mechanically: the key rests 2px above a hard offset ledge shadow, rises to 3px on hover, and drops onto the ledge when pressed.
+- Expressive depth: approved ambient layers are the homepage Dot Pool (a sticky full-viewport WebGL field of mist-coloured discs behind the hero copy, colours from `site/src/lib/mist-palette.ts`), cursor spotlight, floating orbs, aurora background, dot matrix, border beam on featured pricing cards, and the screenshot reflection. The Glass Press primary expresses depth mechanically: the key rests 2px above a hard offset ledge shadow, rises to 3px on hover, and drops onto the ledge when pressed.
 
 ## Shapes
 
 - Radius and geometry: the standard button family is fully rounded (pill). The Glass Press primary is deliberately `rounded-xl`, not pill, to read as a physical key. Cards and status panels use xl to 2xl radii; screenshots use md rising to lg at `lg`.
-- Icons: local SVG components sized by Tailwind (`size-4` to `size-6` in controls), inheriting `currentColor`. Icon components default to `aria-hidden="true"` and `focusable="false"`, with spread props last so an informative call site can deliberately override the default and supply `role="img"` plus an accessible name. Standalone icon links carry their own accessible name (footer social links). Hover micro-animations (wiggle, pulse, bounce, float, spin, sparkle) come from the icon animation classes in `globals.css`.
+- Icons: local SVG components sized by Tailwind (`size-4` to `size-6` in controls), inheriting `currentColor`. Icon components default to `aria-hidden="true"` and `focusable="false"`, with spread props last so an informative call site can deliberately override the default and supply `role="img"` plus an accessible name. Standalone icon links carry their own accessible name (footer social links). Hover micro-animations (wiggle, pulse, bounce, float, spin, sparkle) come from `site/src/styles/global.css`.
 - Imagery: product screenshots are real captures of the Bulma app rendered inside `screenshot.tsx::Screenshot` on a `Wallpaper` gradient with optional parallax tilt and reflection; photographic media gets an inset hairline outline. All meaningful images have descriptive alt text (the logo alt names the product and audience).
 
 ## Components
 
 ### Interaction and accessibility
 
-- Semantics: native elements only; links are `next/link` anchors, buttons are `button` elements. There are no custom ARIA widgets outside the FAQ disclosures, which use the disclosure lifecycle attributes documented in the motion guide.
+- Semantics: native anchors and buttons own navigation and controls. There are no custom ARIA widgets outside the FAQ disclosures, which use the lifecycle attributes documented in the motion guide.
 - Cursor and stable states: all interactive controls set `cursor-pointer` and keep hover, active, and focus feedback within 150 to 300ms colour, shadow, and transform transitions that list only the properties they change.
 - Focus and keyboard: every button variant applies a visible 2px focus ring with 2px offset via `focus-visible`; the Glass Press primary carries its own theme-matched ring. Focus order follows DOM order; no keyboard traps exist (verified for nav, FAQ disclosures, pricing toggle, and contact form; whole-site keyboard conformance is not claimed).
 - Names and announcements: form inputs pair `label htmlFor` with ids; contact form errors use `role="alert"`, progress and success use `role="status"` plus `aria-busy` and a state-matched `aria-label` on the submit button.
@@ -114,15 +115,15 @@ All button-family variants press to `scale(0.96)` unless their `static` prop opt
 
 ### Forms and selection
 
-The contact form (`demo/src/app/contact/contact-form.tsx`) is the only full form. Its field contract is binding in `AGENTS.md`: hidden `form_source` plus required `name`, `email`, `message`; never add, remove, rename, or repurpose fields without explicit approval. Inputs are labelled, validated natively plus on submit, and report state through the role-attributed status panels described above. The footer newsletter form reuses the same visual language. The Monthly/Yearly pricing toggle is a two-option control with a spring-animated pill indicator on the pricing page and shared state tokens across both pricing modules.
+The contact form (`site/src/components/pages/contact-form.tsx::ContactForm`) is the only full form. Its field contract is binding in `AGENTS.md`: hidden `form_source` plus required `name`, `email`, `message`; never add, remove, rename, or repurpose fields without explicit approval. Inputs are labelled, validated natively plus on submit, and report state through the role-attributed status panels described above. The footer newsletter form reuses the same visual language. The Monthly/Yearly pricing toggle is a two-option control with a spring-animated pill indicator on the pricing page and shared state tokens across both pricing modules.
 
 ### Navigation and search
 
-No search exists. Navbar links are Pricing and Contact; the mobile menu adds the stacked actions. Internal navigation uses `transition-link.tsx::TransitionLink` View Transitions (300ms root crossfade with vertical settle) where supported. The homepage FAQ deep link contract is binding: `#lenders` targets the lender-coverage FAQ and must keep auto-opening it on both direct loads and same-page clicks; `#supported-lenders` targets the hero lender field only.
+No search exists. Navbar links are Pricing and Contact; the mobile menu adds the stacked actions. Internal links are normal anchors. `@view-transition { navigation: auto; }` in `site/src/styles/global.css` enables a native 300ms cross-document root crossfade with vertical settle where supported. The homepage FAQ deep link contract is binding: `#lenders` targets the lender-coverage FAQ and must keep auto-opening it on both direct loads and same-page clicks; `#supported-lenders` targets the hero lender field only.
 
 ### FAQ disclosures
 
-The homepage and pricing disclosures (`demo/src/components/sections/faqs-two-column-accordion.tsx::Faq` and `demo/src/components/sections/faqs-accordion.tsx::Faq`) share one visual and interaction contract. Answers expand from zero height and collapse fully without a residual gap or final snap. Answer spacing belongs inside a layout-neutral clipping viewport so the closed state remains truly closed.
+The homepage and pricing disclosures (`site/src/components/sections/faqs-two-column-accordion.tsx::Faq` and `site/src/components/sections/faqs-accordion.tsx::Faq`) share one visual and interaction contract. Answers expand from zero height and collapse fully without a residual gap or final snap. Answer spacing belongs inside a layout-neutral clipping viewport so the closed state remains truly closed.
 
 Opening, closing, and rapid reversals stay smooth and synchronised with the plus/minus icon. The homepage light starts at the readable answer centre, expands outwards only while opening, and follows the disclosure's real expanded state so pointer, keyboard, rapid-toggle, and hash-triggered opening cannot drift onto separate timelines. `documents/guides/_animations.md` owns the implementation structure, durations, easing curves, and known failure points.
 
@@ -149,7 +150,7 @@ The contact form owns the only shipped loading, success, and error states: submi
 - Do verify every UI change at 1440x900 and 390x900 before reporting completion. The site is dark-only, so verify with the browser emulating `prefers-color-scheme: light` as well: that proves the dark lock-in holds for visitors whose system is set to light.
 - Don't change contact form fields, the `#lenders` deep-link behaviour, or pricing-module copy parity without explicit approval; the annual callout must read exactly "Get 2 months free on a yearly plan." in both modules.
 - Do keep equal-height card grids intact: `items-stretch` on the grid, `h-full` on cards and every animation wrapper between them.
-- Don't hardcode colour values in components or docs; use mist utility classes backed by the theme block in `globals.css`.
+- Don't hardcode colour values in components or docs; use mist utility classes backed by the theme block in `site/src/styles/global.css`.
 - Do read `documents/guides/_animations.md` before touching any animation and update it when behaviour changes.
 
 ## Product Workflows and Content
@@ -165,7 +166,7 @@ The contact form owns the only shipped loading, success, and error states: submi
 - Approved exceptions: the Glass Press primary intentionally breaks the pill-radius rule (`rounded-xl`) and uses bold weight; ambient decorative layers are exempt from the "no looped animation on content" stance because they sit behind content.
 - Known implementation drift: the Glass Press source comment cites a prototype HTML file that is not in this repository; treat it as historical provenance only. No other material drift is known.
 - Retained but unreferenced: `precision-porcelain-button-link.tsx` (superseded primary) and `gradient-border-wrapper.tsx` (no route renders it) remain in the tree as approved dormant variants; do not treat their presence as sanction to use them for primary CTAs.
-- Reference-only trees: root `components/` and `pages/` are unrouted template sources; `demo/src` is the authority for everything shipped.
+- Reference-only trees: root `components/`, `pages/`, and `video/` are historical unrouted sources; `site/src` is the authority for everything shipped.
 
 ## Design Verification
 
@@ -177,4 +178,4 @@ The contact form owns the only shipped loading, success, and error states: submi
 | 1440x900 and 390x900 (dark, the only scheme) | Home and pricing FAQ open, close, keyboard toggle, and rapid reversal | Content starts and ends at zero height without a residual gap or snap; icon and content remain synchronised; homepage expands from the answer centre only while opening |
 | Either viewport | `/#lenders` direct load and same-page click; contact form invalid, pending, success | FAQ auto-opens in both hash paths; form states announce via alert and status roles without layout jump |
 
-Also verify keyboard order and focus visibility on nav, pricing toggle, FAQ disclosures, and the contact form; scroll-triggered sections after settling; and that any changed surface still renders dark when the browser reports `prefers-color-scheme: light`. Commands, server lifecycle, and the browser-verification gate live in `AGENTS.md`.
+Run `pnpm --dir site check`, `pnpm --dir site build`, and `pnpm --dir site test`; run the Worker HTTP contract when delivery behaviour changes. Also verify keyboard order and focus visibility on nav, pricing toggle, FAQ disclosures, and the contact form; scroll-triggered sections after settling; and that any changed surface still renders dark when the browser reports `prefers-color-scheme: light`. Commands and server lifecycle live in `AGENTS.md`.

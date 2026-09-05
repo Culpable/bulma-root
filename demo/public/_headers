@@ -1,3 +1,0 @@
-# Cache content-hashed Next.js assets permanently on Cloudflare Pages.
-/_next/static/*
-  Cache-Control: public, max-age=31556952, immutable

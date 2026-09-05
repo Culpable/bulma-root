@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const origin = new URL(process.argv[2] ?? 'https://staging.bulma.com.au').origin;
+const origin = new URL(process.argv[2] ?? 'https://bulma.com.au').origin;
 const outputPath = process.argv[3];
 const results = [];
 

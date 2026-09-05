@@ -1,0 +1,25 @@
+{
+  "check": "passed, zero Astro diagnostics",
+  "build": "passed, six pages",
+  "unit": {
+    "passed": 61,
+    "failed": 0
+  },
+  "browser": {
+    "passed": 78,
+    "skipped": 6,
+    "viewports": [
+      "1440x900",
+      "390x900"
+    ],
+    "systemColourScheme": "light",
+    "maxVisualDifferencePercent": 0.8362
+  },
+  "httpContract": {
+    "local": 18,
+    "production": 18
+  },
+  "documentationSync": "passed; current commands and paths verified",
+  "legacyRetirement": "verified; see legacy-retired.json",
+  "deployment": "pending final retirement commit"
+}

@@ -1,7 +1,7 @@
 import { writeFileSync } from 'node:fs';
 import { chromium } from '@playwright/test';
 
-const origin = process.argv[2] ?? 'https://staging.bulma.com.au';
+const origin = process.argv[2] ?? 'https://bulma.com.au';
 const outputPath = process.argv[3] ?? 'test-results/hosted-analytics.json';
 const routes = ['/', '/about/', '/pricing/', '/contact/', '/privacy-policy/'];
 

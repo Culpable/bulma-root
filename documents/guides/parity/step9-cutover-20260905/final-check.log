@@ -1,0 +1,38 @@
+$ wrangler types
+
+ ⛅️ wrangler 4.129.0
+────────────────────
+Generating project types...
+
+interface __BaseEnv_Env {
+	ASSETS: Fetcher;
+}
+declare namespace Cloudflare {
+	interface GlobalProps {
+		mainModule: typeof import("./src/worker");
+	}
+	interface PreviewEnv {
+		ASSETS: Fetcher;
+	}
+	interface Env extends __BaseEnv_Env {}
+}
+interface Env extends __BaseEnv_Env {}
+
+Generating runtime types...
+
+Runtime types generated.
+
+
+✨ Types written to worker-configuration.d.ts
+
+📖 Read about runtime types
+https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+
+$ astro check
+15:26:32 [types] Generated 32ms
+15:26:32 [check] Getting diagnostics for Astro files in /Users/sacino/bulma-root/site...
+Result (293 files):
+- 0 errors
+- 0 warnings
+- 0 hints

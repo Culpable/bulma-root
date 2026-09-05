@@ -1,0 +1,266 @@
+{
+  "github_pages": "404",
+  "pages_projects": [],
+  "pages_token_absent": true,
+  "github_secrets": {
+    "total_count": 0,
+    "secrets": []
+  },
+  "github_variables": {
+    "variables": [],
+    "total_count": 0
+  },
+  "domains": [
+    {
+      "id": "1e50d39091ecc025024430208266c45e0bc93be2",
+      "zone_id": "ce76f15eb5f7065b52ed9d8046020b4a",
+      "zone_name": "taxgenie.com.au",
+      "hostname": "taxgenie.com.au",
+      "service": "taxgenie-root",
+      "environment": "production",
+      "cert_id": "716ecedf-d3ce-4970-8a28-5384264d4124",
+      "previews_enabled": false,
+      "enabled": true
+    },
+    {
+      "id": "1f244a2bc91612e583f30cbda311cfbe5dc9b5e8",
+      "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+      "zone_name": "bulma.com.au",
+      "hostname": "bulma.com.au",
+      "service": "bulma-root",
+      "environment": "production",
+      "cert_id": "a63f3ea9-3d72-4972-bb2f-5941a9b072e4",
+      "previews_enabled": false,
+      "enabled": true
+    }
+  ],
+  "dns": [
+    {
+      "id": "c8e82fc2b97b87587bca888d574a8869",
+      "name": "www.bulma.com.au",
+      "type": "A",
+      "content": "192.0.2.0",
+      "proxiable": true,
+      "proxied": true,
+      "ttl": 1,
+      "settings": {},
+      "meta": {},
+      "comment": "Proxied placeholder for canonical www redirect",
+      "tags": [],
+      "created_on": "2025-12-28T04:47:35.273331Z",
+      "modified_on": "2026-09-05T05:48:59.784467Z",
+      "comment_modified_on": "2026-09-05T05:48:59.784467Z"
+    },
+    {
+      "id": "75cf4f7e6ce408098cf70affe7a3b054",
+      "name": "app.bulma.com.au",
+      "type": "CNAME",
+      "content": "d6e8538622622cb8.vercel-dns-017.com",
+      "proxiable": true,
+      "proxied": false,
+      "ttl": 1,
+      "settings": {
+        "flatten_cname": false
+      },
+      "meta": {},
+      "comment": "Vercel; added 01/01/26",
+      "tags": [],
+      "created_on": "2026-01-01T02:27:59.34763Z",
+      "modified_on": "2026-01-01T02:27:59.34763Z",
+      "comment_modified_on": "2026-01-01T02:27:59.34763Z"
+    },
+    {
+      "id": "797da0a47de88cafe72d4a3783b5693c",
+      "name": "autodiscover.bulma.com.au",
+      "type": "CNAME",
+      "content": "autodiscover.outlook.com",
+      "proxiable": true,
+      "proxied": false,
+      "ttl": 3600,
+      "settings": {
+        "flatten_cname": false
+      },
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-02-06T05:21:22.871964Z",
+      "modified_on": "2026-02-06T05:21:22.871964Z"
+    },
+    {
+      "id": "c7a1e091840c41852b2831a1221c92bf",
+      "name": "selector1._domainkey.bulma.com.au",
+      "type": "CNAME",
+      "content": "selector1-bulma-com-au._domainkey.getbulma.p-v1.dkim.mail.microsoft",
+      "proxiable": true,
+      "proxied": false,
+      "ttl": 3600,
+      "settings": {
+        "flatten_cname": false
+      },
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-02-06T05:21:22.670789Z",
+      "modified_on": "2026-02-06T05:21:22.670789Z"
+    },
+    {
+      "id": "b35398f3563319d481198eed6e444902",
+      "name": "selector2._domainkey.bulma.com.au",
+      "type": "CNAME",
+      "content": "selector2-bulma-com-au._domainkey.getbulma.p-v1.dkim.mail.microsoft",
+      "proxiable": true,
+      "proxied": false,
+      "ttl": 3600,
+      "settings": {
+        "flatten_cname": false
+      },
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-02-06T05:21:22.66898Z",
+      "modified_on": "2026-02-06T05:21:22.66898Z"
+    },
+    {
+      "id": "00832e9d4a08edb5072892b6cba436a1",
+      "name": "bulma.com.au",
+      "type": "MX",
+      "content": "bulma-com-au.mail.protection.outlook.com",
+      "priority": 0,
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 3600,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-02-06T05:21:22.984424Z",
+      "modified_on": "2026-02-06T05:21:22.984424Z"
+    },
+    {
+      "id": "7e0cf81ae4b9613723923122169b87a7",
+      "name": "send.auth.bulma.com.au",
+      "type": "MX",
+      "content": "feedback-smtp.ap-northeast-1.amazonses.com",
+      "priority": 10,
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2025-12-28T04:49:31.907161Z",
+      "modified_on": "2025-12-28T04:49:31.907161Z"
+    },
+    {
+      "id": "b6ff3371f8fefbd584bf8c6a30afe7d7",
+      "name": "bulma.com.au",
+      "type": "TXT",
+      "content": "\"v=spf1 include:spf.protection.outlook.com ~all\"",
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 3600,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-02-06T05:21:22.670437Z",
+      "modified_on": "2026-02-06T05:21:22.670437Z"
+    },
+    {
+      "id": "c27e9cb54e6e6a0a93132dbf71c34da3",
+      "name": "bulma.com.au",
+      "type": "TXT",
+      "content": "\"MS=ms59823863\"",
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 3600,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-02-06T05:14:17.76886Z",
+      "modified_on": "2026-02-06T05:14:17.76886Z"
+    },
+    {
+      "id": "0b3b817b0b6f152c44ba7a5018dd5e7c",
+      "name": "bulma.com.au",
+      "type": "TXT",
+      "content": "\"google-site-verification=0tckke5_vKtAzc4213cMKkKfJCBOwhYwTdA3Pe9hE0o\"",
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "meta": {},
+      "comment": "GSC; added 04/03/26",
+      "tags": [],
+      "created_on": "2026-01-04T04:47:10.261785Z",
+      "modified_on": "2026-01-04T04:47:22.468493Z",
+      "comment_modified_on": "2026-01-04T04:47:22.468493Z"
+    },
+    {
+      "id": "5295629a0f6f885fbde3718271e35016",
+      "name": "_dmarc.bulma.com.au",
+      "type": "TXT",
+      "content": "\"v=DMARC1; p=none;\"",
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2025-12-28T04:50:17.709439Z",
+      "modified_on": "2025-12-28T04:50:17.709439Z"
+    },
+    {
+      "id": "13b9d4e8d09dfa4d13358277bd4542da",
+      "name": "resend._domainkey.auth.bulma.com.au",
+      "type": "TXT",
+      "content": "\"p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDnqxw9oYB2JeMt+z8Kg/3F6Qen0zDtJeEemPvcB4zUn3VCQ1cnIeXyQWSmR4Hlq8M0K6s5A2jzQYlcHdjEmmXKNUf7ItkX96BnO5ph7RiScaW5xT4afOClzQ+5fxgqby3KTmxjhOYWTTN//sw+ik9DMWl2bjFllpDj4LMJV+592wIDAQAB\"",
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2025-12-28T04:49:07.695147Z",
+      "modified_on": "2025-12-28T04:49:07.695147Z"
+    },
+    {
+      "id": "e510f8d48578acedb6db82d7b4803fac",
+      "name": "send.auth.bulma.com.au",
+      "type": "TXT",
+      "content": "\"v=spf1 include:amazonses.com ~all\"",
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2025-12-28T04:49:45.383102Z",
+      "modified_on": "2025-12-28T04:49:45.383102Z"
+    },
+    {
+      "id": "172cd5bbf9d8fd3e7beed1501940f2c2",
+      "name": "bulma.com.au",
+      "type": "AAAA",
+      "content": "100::",
+      "proxiable": true,
+      "proxied": true,
+      "ttl": 1,
+      "settings": {},
+      "meta": {
+        "origin_worker_id": "1f244a2bc91612e583f30cbda311cfbe5dc9b5e8",
+        "read_only": true
+      },
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-09-05T05:48:59.403233Z",
+      "modified_on": "2026-09-05T05:48:59.403233Z"
+    }
+  ],
+  "unrelated_dns_records_unchanged": 12
+}

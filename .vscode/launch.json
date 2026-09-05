@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Astro: debug server",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm dev",
+      "cwd": "${workspaceFolder}/site",
+      "serverReadyAction": {
+        "pattern": "Local\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "Astro: debug client",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:4331",
+      "webRoot": "${workspaceFolder}/site"
+    },
+    {
+      "name": "Astro: debug full stack",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm dev",
+      "cwd": "${workspaceFolder}/site",
+      "serverReadyAction": {
+        "pattern": "Local\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
+    }
+  ]
+}
