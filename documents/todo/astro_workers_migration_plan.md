@@ -559,7 +559,7 @@ The result is better than production, which still emits one unslashed `/contact`
 - Analytics interception on staging: one `Page View` per route load, referral event present, unsampled session requests no recorder, sampled session reaches the recorder load, no request completes to Mixpanel or Formspree.
 - The approval request names both URLs, the parity numbers, the Lighthouse medians, and the rollback packet; the recorded answer is explicit before Step 9 starts.
 
-### Step 9: Cut over `bulma.com.au` and `www.bulma.com.au`
+### Step 9: Cut over `bulma.com.au` and `www.bulma.com.au` 🔄 **IN PROGRESS**
 **Objective:** Move production to the verified Worker version with an exact, tested rollback.
 
 #### 9.1 High-Level Approach
@@ -785,3 +785,11 @@ Release verification requires both triggered deployments to succeed, all five st
 - The first corrected build reproduced another inherited defect: `site/src/lib/metadata.ts` applied the BCP 47 validator to Open Graph locale. The fix separates Open Graph format validation while retaining the existing HTML-language validator; `site/test/metadata-locale-validation.test.ts` covers both separator contracts.
 - Pre-push production isolation: no changes in `demo/` or `.github/workflows/deploy.yml`; demo lint/build/33 tests passed. All five rebuilt demo pages equal live production HTML after excluding the generated Next.js build ID. Raw exports differ in generated build IDs and manifest paths; no claim of literal build-byte identity is made.
 - Validation passed: `corepack pnpm --dir /Users/sacino/bulma-root/site build` followed by `corepack pnpm --dir /Users/sacino/bulma-root/site test` from `site/`: zero Astro diagnostics, 61 unit tests, output/trust/byte-budget checks, and 78 browser tests with six viewport-specific skips. Direct HTML parsing confirmed exactly one `en_AU` locale in all six built documents, with `lang="en"` unchanged. Desktop 1440x900 and mobile 390x900 visual parity remained below 1% (maximum 0.8362%).
+
+## Cutover authorisation and execution (2026-09-05)
+
+The user explicitly approved the remainder end to end, including production cutover, indexing eligibility, decommissioning, commits, pushes and post-deployment checks. This supersedes the historical unapproved status above.
+
+- [ ] Step 9: commit fresh rollback snapshot, attach apex, redirect www, verify HTTP/indexability/transport/browser/Lighthouse, remove staging and verify Builds.
+- [ ] Step 10: decommission legacy hosting and files, archive old plan, verify final deployment.
+- [ ] Step 11: synchronise binding docs, verify paths and full site gate, record final evidence.

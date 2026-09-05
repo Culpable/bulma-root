@@ -1,0 +1,34 @@
+{
+  "added": [
+    {
+      "id": "1f244a2bc91612e583f30cbda311cfbe5dc9b5e8",
+      "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+      "zone_name": "bulma.com.au",
+      "hostname": "bulma.com.au",
+      "service": "bulma-root",
+      "environment": "",
+      "cert_id": "",
+      "previews_enabled": false,
+      "enabled": true
+    }
+  ],
+  "updated": [
+    {
+      "id": "ac7956c2e528fe295b9bcc8f3398664815ff855c",
+      "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+      "zone_name": "bulma.com.au",
+      "hostname": "staging.bulma.com.au",
+      "service": "bulma-root",
+      "environment": "",
+      "cert_id": "",
+      "previews_enabled": false,
+      "enabled": true,
+      "modified": false
+    }
+  ],
+  "removed": [],
+  "conflicting": [],
+  "affected_zones": [
+    "0534ecfcfde9d322566af12ec11c1bef"
+  ]
+}

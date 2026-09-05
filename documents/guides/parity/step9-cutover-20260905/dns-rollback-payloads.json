@@ -1,0 +1,54 @@
+[
+  {
+    "id": "f4126d8a14cbaef48bdb01475469868a",
+    "body": {
+      "name": "bulma.com.au",
+      "type": "A",
+      "content": "185.199.111.153",
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "comment": null,
+      "tags": []
+    }
+  },
+  {
+    "id": "5c2d843829044e88737e52479e6059f4",
+    "body": {
+      "name": "bulma.com.au",
+      "type": "A",
+      "content": "185.199.110.153",
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "comment": null,
+      "tags": []
+    }
+  },
+  {
+    "id": "31b4ad370c84b9fd0c443af8af34f096",
+    "body": {
+      "name": "bulma.com.au",
+      "type": "A",
+      "content": "185.199.108.153",
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "comment": null,
+      "tags": []
+    }
+  },
+  {
+    "id": "c8e82fc2b97b87587bca888d574a8869",
+    "body": {
+      "name": "www.bulma.com.au",
+      "type": "A",
+      "content": "185.199.109.153",
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "comment": null,
+      "tags": []
+    }
+  }
+]
