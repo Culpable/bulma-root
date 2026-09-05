@@ -1,0 +1,36 @@
+[
+  {
+    "name": "ipv4-http2",
+    "connection": "200 2 172.67.179.71",
+    "sha256": "e107e4dd6f29312927b6823e7159ae7e8c599c3d1f5e7e143248ec2e20d7f68a",
+    "brotli": true
+  },
+  {
+    "name": "ipv4-http3-only",
+    "connection": "200 3 172.67.179.71",
+    "sha256": "e107e4dd6f29312927b6823e7159ae7e8c599c3d1f5e7e143248ec2e20d7f68a",
+    "brotli": true
+  },
+  {
+    "name": "ipv6-http2",
+    "connection": "200 2 2606:4700:3036::ac43:b347",
+    "sha256": "e107e4dd6f29312927b6823e7159ae7e8c599c3d1f5e7e143248ec2e20d7f68a",
+    "brotli": true
+  },
+  {
+    "name": "ipv6-http3-only",
+    "connection": "200 3 2606:4700:3036::ac43:b347",
+    "sha256": "e107e4dd6f29312927b6823e7159ae7e8c599c3d1f5e7e143248ec2e20d7f68a",
+    "brotli": true
+  },
+  {
+    "asset": "/_astro/site-shell.C_mpz8vl.css",
+    "brotli": true,
+    "immutable": true
+  },
+  {
+    "asset": "/_astro/page.CMFgH77u.js",
+    "brotli": true,
+    "immutable": true
+  }
+]

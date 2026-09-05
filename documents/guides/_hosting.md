@@ -1,5 +1,25 @@
 # Hosting and Cloudflare Workers
 
+## Production cutover status (2026-09-05)
+
+Production now uses the static Astro `site/` application on Cloudflare Worker `bulma-root`. The user approved all remaining migration steps, including DNS cutover, decommissioning and release verification. Public routes retain their production URLs and allow indexing; preview hosts remain noindexed. Search-engine inclusion is separate from verified crawl eligibility.
+
+- Approved source: `4f4242eaf5515492970a0b3cf712b8d68cf83e99`; Worker version `4f8e42b6-954c-42f1-ba60-1b900675caeb`.
+- Apex custom domain: `1f244a2bc91612e583f30cbda311cfbe5dc9b5e8`. The Cloudflare-created apex DNS record is proxied `AAAA 100::`; public DNS returns Cloudflare IPv4 and IPv6 edges.
+- `www`: proxied `A 192.0.2.0`, record `c8e82fc2b97b87587bca888d574a8869`. Ruleset `5865eff5158b4d26ac0f6170f2c865b7`, rule `704dbf89b1a44cd281d832cfdc74b78a` returns one `308` to the HTTPS apex with path and query preserved.
+- The full rollback inventory was committed as `71aa79b` before writes. The three apex A records needed the plan's explicit conflict fallback after Cloudflare returned `409/100117` despite `override_existing_dns_record: true`. All 13 non-target records remained byte-identical, including staging, app, mail and Google verification TXT.
+- Initial local tests reached cached GitHub DNS and were stopped. Public resolvers and the OS resolver then converged on Cloudflare; the full fresh run passed without a source change.
+- Production proof so far: 18 HTTP cases; exact HTML/Markdown build bytes; conditional HTML 304 and Markdown 200; 30 route/crawler combinations with no noindex and self-canonicals; all discovery bytes; IPv4/IPv6 body identity; real HTTP/3; Brotli HTML/CSS/JS; immutable hashed assets; 61 unit tests and 78 browser tests (six viewport-specific skips); 12 additional browser states without errors/overflow; 10 intercepted analytics loads.
+- The 404 document intentionally remains noindexed. Public indexable routes and discovery files have no `X-Robots-Tag` or meta noindex. Robots allows crawling and sitemap names only the five canonical apex URLs.
+- Remaining at this checkpoint: mobile Lighthouse sanity matrix, manual browser fallback, staging removal, legacy retirement, final configuration deployment and documentation gate. GitHub Pages is still enabled for rollback.
+
+Current evidence: `documents/guides/parity/step9-cutover-20260905/`. Use the completed cutover record at the end of this guide for later release identity and retirement verification.
+
+## Historical migration evidence
+
+The following records preserve earlier decisions and before-states. Statements that production remains on GitHub Pages or that cutover lacks approval are historical and superseded by the production cutover status above.
+
+
 This guide records the hosting control plane, deployment revision, credential boundaries, DNS rollback data, and validation evidence for the migration from GitHub Pages to Cloudflare Workers Static Assets. It contains identifiers and configuration only. It must never contain a credential value.
 
 ## Workers Migration
@@ -5652,3 +5672,645 @@ Only apex and www may change; preserve all other records. Attach apex through th
   ]
 }
 ```
+
+### Applied cutover identifiers
+
+Cloudflare rejected the override with 409/100117 despite the dry-run changeset reporting no conflict. Used the approved Section 3.2 fallback: deleted only the three recorded apex A records and attached the Worker immediately. All 13 non-target records, including staging and every TXT/mail/app record, remain byte-identical.
+
+```json
+{
+  "apex": {
+    "id": "1f244a2bc91612e583f30cbda311cfbe5dc9b5e8",
+    "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+    "zone_name": "bulma.com.au",
+    "hostname": "bulma.com.au",
+    "service": "bulma-root",
+    "environment": "production",
+    "cert_id": "a63f3ea9-3d72-4972-bb2f-5941a9b072e4",
+    "previews_enabled": false,
+    "enabled": true
+  },
+  "redirect_ruleset": "5865eff5158b4d26ac0f6170f2c865b7",
+  "redirect_rule": "704dbf89b1a44cd281d832cfdc74b78a",
+  "www_record": "c8e82fc2b97b87587bca888d574a8869"
+}
+```
+
+### Staging removal before-state (2026-09-05)
+
+Record the complete current DNS, domain and certificate states before the final staging cleanup. Only the staging domain, its DNS record and its dedicated certificate pack may be removed after production gates pass. Preserve the active universal apex certificate.
+
+```json
+{
+  "dns": [
+    {
+      "id": "c8e82fc2b97b87587bca888d574a8869",
+      "name": "www.bulma.com.au",
+      "type": "A",
+      "content": "192.0.2.0",
+      "proxiable": true,
+      "proxied": true,
+      "ttl": 1,
+      "settings": {},
+      "meta": {},
+      "comment": "Proxied placeholder for canonical www redirect",
+      "tags": [],
+      "created_on": "2025-12-28T04:47:35.273331Z",
+      "modified_on": "2026-09-05T05:48:59.784467Z",
+      "comment_modified_on": "2026-09-05T05:48:59.784467Z"
+    },
+    {
+      "id": "75cf4f7e6ce408098cf70affe7a3b054",
+      "name": "app.bulma.com.au",
+      "type": "CNAME",
+      "content": "d6e8538622622cb8.vercel-dns-017.com",
+      "proxiable": true,
+      "proxied": false,
+      "ttl": 1,
+      "settings": {
+        "flatten_cname": false
+      },
+      "meta": {},
+      "comment": "Vercel; added 01/01/26",
+      "tags": [],
+      "created_on": "2026-01-01T02:27:59.34763Z",
+      "modified_on": "2026-01-01T02:27:59.34763Z",
+      "comment_modified_on": "2026-01-01T02:27:59.34763Z"
+    },
+    {
+      "id": "797da0a47de88cafe72d4a3783b5693c",
+      "name": "autodiscover.bulma.com.au",
+      "type": "CNAME",
+      "content": "autodiscover.outlook.com",
+      "proxiable": true,
+      "proxied": false,
+      "ttl": 3600,
+      "settings": {
+        "flatten_cname": false
+      },
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-02-06T05:21:22.871964Z",
+      "modified_on": "2026-02-06T05:21:22.871964Z"
+    },
+    {
+      "id": "c7a1e091840c41852b2831a1221c92bf",
+      "name": "selector1._domainkey.bulma.com.au",
+      "type": "CNAME",
+      "content": "selector1-bulma-com-au._domainkey.getbulma.p-v1.dkim.mail.microsoft",
+      "proxiable": true,
+      "proxied": false,
+      "ttl": 3600,
+      "settings": {
+        "flatten_cname": false
+      },
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-02-06T05:21:22.670789Z",
+      "modified_on": "2026-02-06T05:21:22.670789Z"
+    },
+    {
+      "id": "b35398f3563319d481198eed6e444902",
+      "name": "selector2._domainkey.bulma.com.au",
+      "type": "CNAME",
+      "content": "selector2-bulma-com-au._domainkey.getbulma.p-v1.dkim.mail.microsoft",
+      "proxiable": true,
+      "proxied": false,
+      "ttl": 3600,
+      "settings": {
+        "flatten_cname": false
+      },
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-02-06T05:21:22.66898Z",
+      "modified_on": "2026-02-06T05:21:22.66898Z"
+    },
+    {
+      "id": "00832e9d4a08edb5072892b6cba436a1",
+      "name": "bulma.com.au",
+      "type": "MX",
+      "content": "bulma-com-au.mail.protection.outlook.com",
+      "priority": 0,
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 3600,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-02-06T05:21:22.984424Z",
+      "modified_on": "2026-02-06T05:21:22.984424Z"
+    },
+    {
+      "id": "7e0cf81ae4b9613723923122169b87a7",
+      "name": "send.auth.bulma.com.au",
+      "type": "MX",
+      "content": "feedback-smtp.ap-northeast-1.amazonses.com",
+      "priority": 10,
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2025-12-28T04:49:31.907161Z",
+      "modified_on": "2025-12-28T04:49:31.907161Z"
+    },
+    {
+      "id": "b6ff3371f8fefbd584bf8c6a30afe7d7",
+      "name": "bulma.com.au",
+      "type": "TXT",
+      "content": "\"v=spf1 include:spf.protection.outlook.com ~all\"",
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 3600,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-02-06T05:21:22.670437Z",
+      "modified_on": "2026-02-06T05:21:22.670437Z"
+    },
+    {
+      "id": "c27e9cb54e6e6a0a93132dbf71c34da3",
+      "name": "bulma.com.au",
+      "type": "TXT",
+      "content": "\"MS=ms59823863\"",
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 3600,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-02-06T05:14:17.76886Z",
+      "modified_on": "2026-02-06T05:14:17.76886Z"
+    },
+    {
+      "id": "0b3b817b0b6f152c44ba7a5018dd5e7c",
+      "name": "bulma.com.au",
+      "type": "TXT",
+      "content": "\"google-site-verification=0tckke5_vKtAzc4213cMKkKfJCBOwhYwTdA3Pe9hE0o\"",
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "meta": {},
+      "comment": "GSC; added 04/03/26",
+      "tags": [],
+      "created_on": "2026-01-04T04:47:10.261785Z",
+      "modified_on": "2026-01-04T04:47:22.468493Z",
+      "comment_modified_on": "2026-01-04T04:47:22.468493Z"
+    },
+    {
+      "id": "5295629a0f6f885fbde3718271e35016",
+      "name": "_dmarc.bulma.com.au",
+      "type": "TXT",
+      "content": "\"v=DMARC1; p=none;\"",
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2025-12-28T04:50:17.709439Z",
+      "modified_on": "2025-12-28T04:50:17.709439Z"
+    },
+    {
+      "id": "13b9d4e8d09dfa4d13358277bd4542da",
+      "name": "resend._domainkey.auth.bulma.com.au",
+      "type": "TXT",
+      "content": "\"p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDnqxw9oYB2JeMt+z8Kg/3F6Qen0zDtJeEemPvcB4zUn3VCQ1cnIeXyQWSmR4Hlq8M0K6s5A2jzQYlcHdjEmmXKNUf7ItkX96BnO5ph7RiScaW5xT4afOClzQ+5fxgqby3KTmxjhOYWTTN//sw+ik9DMWl2bjFllpDj4LMJV+592wIDAQAB\"",
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2025-12-28T04:49:07.695147Z",
+      "modified_on": "2025-12-28T04:49:07.695147Z"
+    },
+    {
+      "id": "e510f8d48578acedb6db82d7b4803fac",
+      "name": "send.auth.bulma.com.au",
+      "type": "TXT",
+      "content": "\"v=spf1 include:amazonses.com ~all\"",
+      "proxiable": false,
+      "proxied": false,
+      "ttl": 1,
+      "settings": {},
+      "meta": {},
+      "comment": null,
+      "tags": [],
+      "created_on": "2025-12-28T04:49:45.383102Z",
+      "modified_on": "2025-12-28T04:49:45.383102Z"
+    },
+    {
+      "id": "172cd5bbf9d8fd3e7beed1501940f2c2",
+      "name": "bulma.com.au",
+      "type": "AAAA",
+      "content": "100::",
+      "proxiable": true,
+      "proxied": true,
+      "ttl": 1,
+      "settings": {},
+      "meta": {
+        "origin_worker_id": "1f244a2bc91612e583f30cbda311cfbe5dc9b5e8",
+        "read_only": true
+      },
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-09-05T05:48:59.403233Z",
+      "modified_on": "2026-09-05T05:48:59.403233Z"
+    },
+    {
+      "id": "b84080eb0e2fdf451c777a0829f391fa",
+      "name": "staging.bulma.com.au",
+      "type": "AAAA",
+      "content": "100::",
+      "proxiable": true,
+      "proxied": true,
+      "ttl": 1,
+      "settings": {},
+      "meta": {
+        "origin_worker_id": "ac7956c2e528fe295b9bcc8f3398664815ff855c",
+        "read_only": true
+      },
+      "comment": null,
+      "tags": [],
+      "created_on": "2026-09-04T06:22:23.499335Z",
+      "modified_on": "2026-09-04T06:22:23.499335Z"
+    }
+  ],
+  "domains": [
+    {
+      "id": "1e50d39091ecc025024430208266c45e0bc93be2",
+      "zone_id": "ce76f15eb5f7065b52ed9d8046020b4a",
+      "zone_name": "taxgenie.com.au",
+      "hostname": "taxgenie.com.au",
+      "service": "taxgenie-root",
+      "environment": "production",
+      "cert_id": "716ecedf-d3ce-4970-8a28-5384264d4124",
+      "previews_enabled": false,
+      "enabled": true
+    },
+    {
+      "id": "ac7956c2e528fe295b9bcc8f3398664815ff855c",
+      "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+      "zone_name": "bulma.com.au",
+      "hostname": "staging.bulma.com.au",
+      "service": "bulma-root",
+      "environment": "production",
+      "cert_id": "b10d5b68-e58f-4395-944f-4a2449cdd770",
+      "previews_enabled": false,
+      "enabled": true
+    },
+    {
+      "id": "1f244a2bc91612e583f30cbda311cfbe5dc9b5e8",
+      "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+      "zone_name": "bulma.com.au",
+      "hostname": "bulma.com.au",
+      "service": "bulma-root",
+      "environment": "production",
+      "cert_id": "a63f3ea9-3d72-4972-bb2f-5941a9b072e4",
+      "previews_enabled": false,
+      "enabled": true
+    }
+  ],
+  "certificates": [
+    {
+      "id": "a63f3ea9-3d72-4972-bb2f-5941a9b072e4",
+      "type": "advanced",
+      "hosts": [
+        "bulma.com.au",
+        "*.bulma.com.au"
+      ],
+      "primary_certificate": "d39c0380-2510-4ad6-b2a9-bf4d1fd392f6",
+      "status": "active",
+      "certificates": [
+        {
+          "id": "d39c0380-2510-4ad6-b2a9-bf4d1fd392f6",
+          "hosts": [
+            "bulma.com.au",
+            "*.bulma.com.au"
+          ],
+          "issuer": "GoogleTrustServices",
+          "signature": "SHA256WithRSA",
+          "status": "active",
+          "bundle_method": "ubiquitous",
+          "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+          "uploaded_on": "2026-09-05T07:16:06.108658Z",
+          "modified_on": "2026-09-05T05:51:36.792728Z",
+          "expires_on": "2026-12-04T05:49:01.000000Z",
+          "priority": null
+        },
+        {
+          "id": "f5d9c0cd-cf09-422d-8094-ebf015baab09",
+          "hosts": [
+            "bulma.com.au",
+            "*.bulma.com.au"
+          ],
+          "issuer": "GoogleTrustServices",
+          "signature": "ECDSAWithSHA256",
+          "status": "active",
+          "bundle_method": "ubiquitous",
+          "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+          "uploaded_on": "2026-09-05T07:16:06.108685Z",
+          "modified_on": "2026-09-05T05:51:36.792728Z",
+          "expires_on": "2026-12-04T05:51:26.000000Z",
+          "priority": null
+        }
+      ],
+      "created_on": "2026-09-05T05:48:59.419412Z",
+      "validity_days": 90,
+      "validation_method": "txt",
+      "certificate_authority": "google"
+    },
+    {
+      "id": "b10d5b68-e58f-4395-944f-4a2449cdd770",
+      "type": "advanced",
+      "hosts": [
+        "bulma.com.au",
+        "staging.bulma.com.au",
+        "*.staging.bulma.com.au"
+      ],
+      "primary_certificate": "8bee60ca-354e-4f3f-983c-93bf9d842c24",
+      "status": "active",
+      "certificates": [
+        {
+          "id": "8bee60ca-354e-4f3f-983c-93bf9d842c24",
+          "hosts": [
+            "bulma.com.au",
+            "staging.bulma.com.au",
+            "*.staging.bulma.com.au"
+          ],
+          "issuer": "GoogleTrustServices",
+          "signature": "SHA256WithRSA",
+          "status": "active",
+          "bundle_method": "ubiquitous",
+          "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+          "uploaded_on": "2026-09-05T07:16:06.115760Z",
+          "modified_on": "2026-09-04T06:25:06.633053Z",
+          "expires_on": "2026-12-03T06:22:26.000000Z",
+          "priority": null
+        },
+        {
+          "id": "440d8dda-c12b-43b6-8fcd-283f015315af",
+          "hosts": [
+            "bulma.com.au",
+            "staging.bulma.com.au",
+            "*.staging.bulma.com.au"
+          ],
+          "issuer": "GoogleTrustServices",
+          "signature": "ECDSAWithSHA256",
+          "status": "active",
+          "bundle_method": "ubiquitous",
+          "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+          "uploaded_on": "2026-09-05T07:16:06.115787Z",
+          "modified_on": "2026-09-04T06:25:06.633053Z",
+          "expires_on": "2026-12-03T06:24:53.000000Z",
+          "priority": null
+        }
+      ],
+      "created_on": "2026-09-04T06:22:23.514976Z",
+      "validity_days": 90,
+      "validation_method": "txt",
+      "certificate_authority": "google"
+    },
+    {
+      "id": "de6f1b7e-4e68-41f6-9bc5-5cafda5bddec",
+      "type": "universal",
+      "hosts": [
+        "*.bulma.com.au",
+        "bulma.com.au"
+      ],
+      "primary_certificate": "a8c943db-0866-4263-8658-c68fcadd1a0a",
+      "status": "active",
+      "certificates": [
+        {
+          "id": "a8c943db-0866-4263-8658-c68fcadd1a0a",
+          "hosts": [
+            "*.bulma.com.au",
+            "bulma.com.au"
+          ],
+          "issuer": "GoogleTrustServices",
+          "signature": "ECDSAWithSHA256",
+          "status": "active",
+          "bundle_method": "ubiquitous",
+          "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+          "uploaded_on": "2026-09-05T07:16:06.150285Z",
+          "modified_on": "2026-08-21T10:33:13.960077Z",
+          "expires_on": "2026-11-19T10:31:37.000000Z",
+          "priority": null
+        }
+      ],
+      "created_on": "2025-12-28T04:55:01.863928Z",
+      "validity_days": 90,
+      "validation_method": "txt",
+      "certificate_authority": "google"
+    }
+  ],
+  "deployment": {
+    "deployments": [
+      {
+        "id": "96ca4361-171f-4207-828f-929462c4e714",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "4f8e42b6-954c-42f1-ba60-1b900675caeb",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-05T05:21:01.998139Z"
+      },
+      {
+        "id": "1744d9fe-9806-4b7a-850c-85a9ca083a9d",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "c24a3454-11ed-4ffb-9a57-e7ffe73c419f",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-05T05:05:57.149273Z"
+      },
+      {
+        "id": "41511e7b-d769-4219-bafc-6a20e70ed50c",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "77d21bbe-202c-440a-97c0-2c4b7e61f024",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T11:47:39.47439Z"
+      },
+      {
+        "id": "2ec8fd98-081d-44a5-bdae-3f8eed43000f",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "5770e5db-f36a-4340-b8cf-a9f4947134ce",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T07:20:21.351743Z"
+      },
+      {
+        "id": "18bbaf43-9a05-4d5b-bf56-9f7f874e2686",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "bb10cf9d-52df-4761-bc9d-3a2c392266ab",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T07:07:35.204024Z"
+      },
+      {
+        "id": "62942be5-a530-4815-a9a5-593bfa47dce2",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "05fccc79-5a9c-4c39-8d26-698bd0fac11d",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T06:22:20.456173Z"
+      },
+      {
+        "id": "88e182a9-44d0-4cd4-890a-d4c7d2b27cf4",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "819c213c-45b4-416d-bcfd-0884b6fb3294",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T06:13:15.955557Z"
+      },
+      {
+        "id": "7b7e4f5c-07cf-4fd7-98de-34ff8570f73e",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "bfe62d41-5651-4896-92de-408295c44e62",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T05:59:32.205765Z"
+      },
+      {
+        "id": "98c65260-1940-4e32-aa0f-20abc6ba35ac",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/message": "Automatic deployment on upload.",
+          "workers/triggered_by": "upload"
+        },
+        "versions": [
+          {
+            "version_id": "f8b95cb7-df90-4e64-b1e7-d46ea825816e",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T05:56:49.82327Z"
+      }
+    ]
+  },
+  "github_pages": {
+    "url": "https://api.github.com/repos/Culpable/bulma-root/pages",
+    "status": "built",
+    "cname": "bulma.com.au",
+    "custom_404": false,
+    "html_url": "https://bulma.com.au/",
+    "build_type": "workflow",
+    "source": {
+      "branch": "main",
+      "path": "/"
+    },
+    "public": true,
+    "protected_domain_state": null,
+    "pending_domain_unverified_at": null,
+    "https_certificate": {
+      "state": "approved",
+      "description": "The certificate has been approved.",
+      "domains": [
+        "bulma.com.au",
+        "www.bulma.com.au"
+      ],
+      "expires_at": "2026-11-29"
+    },
+    "https_enforced": true
+  }
+}
+```
+
+### Fresh production performance sanity checks
+
+Lighthouse 13.4.1 ran three fresh mobile profiles per canonical route against source `4f4242e` / Worker `4f8e42b6-954c-42f1-ba60-1b900675caeb`. Mixpanel, recorder and Formspree requests were blocked to avoid test telemetry. All 15 reports completed and all SEO scores were 100. These are local mobile sanity measurements, not a new cross-host causal comparison. Raw reports are preserved in `parity/step9-cutover-20260905/lighthouse-reports.tar.gz`; committed summary: `parity/step9-cutover-20260905/lighthouse-summary.json`.
+
+| Route | Performance median | SEO | FCP ms | LCP ms | TBT ms | CLS |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| / | 96 | 100 | 1250 | 2655 | 2.5 | 0.00000 |
+| /about/ | 99 | 100 | 1081 | 1908 | 0.0 | 0.00000 |
+| /pricing/ | 99 | 100 | 966 | 2197 | 0.0 | 0.01584 |
+| /contact/ | 100 | 100 | 1089 | 1089 | 0.0 | 0.00000 |
+| /privacy-policy/ | 100 | 100 | 1077 | 1079 | 0.0 | 0.00344 |
+
+The Lighthouse pricing CLS of 0.01584 is distinct from the explicit browser parity CLS gate, which passed. The user previously accepted the migration speed result; this sanity matrix introduces no new performance acceptance threshold. No animation or UI behaviour changed in cutover.
+
+### Completed production browser and indexing gates
+
+The live source passed 61 unit tests, build-output/trust/byte budgets and 78 Playwright cases with six intentional viewport-specific skips. Independent follow-up covers direct hash, normal same-page link and repeated same-hash links at both widths, and mobile mocked contact 500/200; payloads contain exactly the four contracted fields. All browsers are closed. Dev-browser had a protocol/fixture bridge failure; agent-browser provided final desktop/mobile pricing screenshots and the separate Playwright check resolved an immediate FAQ-read timing artefact.
+
+Both screenshots show the selected Yearly tab, Solo $490/year, Save $98 compared with monthly, and exact annual callout. Desktop cards align; mobile copy fits with no overlap or horizontal overflow. Real HTTP/3 and Brotli passed over IPv4 and IPv6 with identical decoded bodies. Googlebot, Bingbot and tested AI agents receive direct canonical 200 HTML with no noindex, matching the built bytes. Search Console verification TXT remains unchanged; no Search Console property credentials are available in this task, so search-engine inclusion itself is not asserted.
+
+Saved HTTP-header and terminal-log text normalises CRLF and trailing whitespace for Git; HTML/asset bytes and JSON values are unchanged.

@@ -1,0 +1,19 @@
+PASS  home HTML  200  118ms  https://bulma.com.au/
+PASS  home Markdown after HTML  200  34ms  https://bulma.com.au/
+PASS  about Markdown  200  34ms  https://bulma.com.au/about/
+PASS  pricing Markdown  200  35ms  https://bulma.com.au/pricing/
+PASS  contact Markdown  200  35ms  https://bulma.com.au/contact/
+PASS  privacy policy Markdown  200  42ms  https://bulma.com.au/privacy-policy/
+PASS  home Markdown first cache order  200  34ms  https://bulma.com.au/
+PASS  home HTML after Markdown  200  26ms  https://bulma.com.au/
+PASS  pricing slash redirect  307  14ms  https://bulma.com.au/pricing
+PASS  unknown HTML  404  60ms  https://bulma.com.au/__missing/
+PASS  unknown Markdown  404  33ms  https://bulma.com.au/__missing/
+PASS  document media type rejected  406  13ms  https://bulma.com.au/
+PASS  Markdown HEAD  200  29ms  https://bulma.com.au/about/
+PASS  internal Markdown blocked  404  12ms  https://bulma.com.au/_agent-markdown/index.md
+PASS  robots  200  38ms  https://bulma.com.au/robots.txt
+PASS  sitemap  200  23ms  https://bulma.com.au/sitemap.xml
+PASS  llms UTF-8  200  18ms  https://bulma.com.au/llms.txt
+PASS  fingerprinted Astro asset  200  16ms  https://bulma.com.au/_astro/BaseLayout.astro_astro_type_script_index_0_lang.DJHurL_Z.js
+PASS  18 HTTP contract case(s)

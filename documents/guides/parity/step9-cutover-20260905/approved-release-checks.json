@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Workers Builds: bulma-root",
+    "conclusion": "success",
+    "url": "https://dash.cloudflare.com/213ab3604485056376263d22fa242742/workers/services/view/bulma-root/production/builds/ed174441-9756-494c-808e-56b914326a35"
+  },
+  {
+    "name": "deploy",
+    "conclusion": "success",
+    "url": "https://github.com/Culpable/bulma-root/actions/runs/33946918387/job/101254672744"
+  },
+  {
+    "name": "build",
+    "conclusion": "success",
+    "url": "https://github.com/Culpable/bulma-root/actions/runs/33946918387/job/101254585250"
+  }
+]

@@ -1,0 +1,652 @@
+$ node --experimental-strip-types --test test/*.test.ts
+TAP version 13
+# Subtest: built Markdown preserves customer-facing prices, lender counts and answers
+ok 1 - built Markdown preserves customer-facing prices, lender counts and answers
+  ---
+  duration_ms: 4.97625
+  type: 'test'
+  ...
+# Subtest: built privacy policy removes only the approved example disclaimer
+ok 2 - built privacy policy removes only the approved example disclaimer
+  ---
+  duration_ms: 0.214291
+  type: 'test'
+  ...
+# Subtest: agent Markdown preserves accessible pricing, comparison values, and collapsed answers
+ok 3 - agent Markdown preserves accessible pricing, comparison values, and collapsed answers
+  ---
+  duration_ms: 5.896458
+  type: 'test'
+  ...
+# Subtest: agent Markdown decodes named, decimal, and hexadecimal entities in metadata and body text
+ok 4 - agent Markdown decodes named, decimal, and hexadecimal entities in metadata and body text
+  ---
+  duration_ms: 9.576792
+  type: 'test'
+  ...
+# Subtest: indexable output exposes canonical identity and discovery metadata
+ok 5 - indexable output exposes canonical identity and discovery metadata
+  ---
+  duration_ms: 2.858167
+  type: 'test'
+  ...
+# Subtest: homepage static graph keeps every supported identity type
+ok 6 - homepage static graph keeps every supported identity type
+  ---
+  duration_ms: 0.445833
+  type: 'test'
+  ...
+# Subtest: 404 output exposes one noindex directive without blocking recovery links
+ok 7 - 404 output exposes one noindex directive without blocking recovery links
+  ---
+  duration_ms: 1.794209
+  type: 'test'
+  ...
+# Subtest: llms.txt is valid UTF-8 with ordered unique canonical links
+ok 8 - llms.txt is valid UTF-8 with ordered unique canonical links
+  ---
+  duration_ms: 0.834709
+  type: 'test'
+  ...
+# Subtest: llms.txt operating block describes Bulma rather than this website
+ok 9 - llms.txt operating block describes Bulma rather than this website
+  ---
+  duration_ms: 1.348
+  type: 'test'
+  ...
+# Subtest: sitemap and source preserve the file-only readiness profile
+ok 10 - sitemap and source preserve the file-only readiness profile
+  ---
+  duration_ms: 13.585584
+  type: 'test'
+  ...
+# Subtest: structured-data serialiser escapes script-breaking characters
+ok 11 - structured-data serialiser escapes script-breaking characters
+  ---
+  duration_ms: 0.105375
+  type: 'test'
+  ...
+# Subtest: Mixpanel runtime retains replay, heatmap, identity, event, and readiness contracts
+ok 12 - Mixpanel runtime retains replay, heatmap, identity, event, and readiness contracts
+  ---
+  duration_ms: 0.733666
+  type: 'test'
+  ...
+# Subtest: referral tracker queues until readiness and preserves first-touch operations
+ok 13 - referral tracker queues until readiness and preserves first-touch operations
+  ---
+  duration_ms: 1.195125
+  type: 'test'
+  ...
+# Subtest: animated counter exposes its final value separately from its animated text
+ok 14 - animated counter exposes its final value separately from its animated text
+  ---
+  duration_ms: 2.275875
+  type: 'test'
+  ...
+# Subtest: normalises Astro island UIDs without changing other markup
+ok 15 - normalises Astro island UIDs without changing other markup
+  ---
+  duration_ms: 0.809333
+  type: 'test'
+  ...
+# Subtest: returns byte-identical output when a document has no Astro islands
+ok 16 - returns byte-identical output when a document has no Astro islands
+  ---
+  duration_ms: 0.352292
+  type: 'test'
+  ...
+# Subtest: rejects an Astro island without a UID
+ok 17 - rejects an Astro island without a UID
+  ---
+  duration_ms: 0.190208
+  type: 'test'
+  ...
+# Subtest: interactive source avoids broad transitions and motion-policy branches
+ok 18 - interactive source avoids broad transitions and motion-policy branches
+  ---
+  duration_ms: 13.118084
+  type: 'test'
+  ...
+# Subtest: shared buttons enforce target sizes, exact press feedback, and static opt-out
+ok 19 - shared buttons enforce target sizes, exact press feedback, and static opt-out
+  ---
+  duration_ms: 1.600042
+  type: 'test'
+  ...
+# Subtest: secondary navbar controls enforce the shared responsive target sizes
+ok 20 - secondary navbar controls enforce the shared responsive target sizes
+  ---
+  duration_ms: 0.192584
+  type: 'test'
+  ...
+# Subtest: FAQ disclosures and icons use reversible enter and leave contracts
+ok 21 - FAQ disclosures and icons use reversible enter and leave contracts
+  ---
+  duration_ms: 1.031417
+  type: 'test'
+  ...
+# Subtest: mobile navigation exits through transition state before native dialog close
+ok 22 - mobile navigation exits through transition state before native dialog close
+  ---
+  duration_ms: 0.684333
+  type: 'test'
+  ...
+# Subtest: tilt and ripple effects avoid idle compositor promotion and forced layout
+ok 23 - tilt and ripple effects avoid idle compositor promotion and forced layout
+  ---
+  duration_ms: 0.143292
+  type: 'test'
+  ...
+# Subtest: surface geometry, media edges, and pricing focus retain comparison clarity
+ok 24 - surface geometry, media edges, and pricing focus retain comparison clarity
+  ---
+  duration_ms: 0.6105
+  type: 'test'
+  ...
+# Subtest: animation architecture guide describes the current transition policy
+ok 25 - animation architecture guide describes the current transition policy
+  ---
+  duration_ms: 2.672417
+  type: 'test'
+  ...
+# Subtest: Tailwind longhand motion utilities transition the properties they change
+ok 26 - Tailwind longhand motion utilities transition the properties they change
+  ---
+  duration_ms: 10.969833
+  type: 'test'
+  ...
+# Subtest: standalone Link CTAs enforce mobile and desktop target heights
+ok 27 - standalone Link CTAs enforce mobile and desktop target heights
+  ---
+  duration_ms: 2.418042
+  type: 'test'
+  ...
+# Subtest: HTML responses add the UTF-8 charset without dropping source validators
+ok 28 - HTML responses add the UTF-8 charset without dropping source validators
+  ---
+  duration_ms: 17.703917
+  type: 'test'
+  ...
+# Subtest: homepage two-column feature cards preserve equal heights through animation wrappers
+ok 29 - homepage two-column feature cards preserve equal heights through animation wrappers
+  ---
+  duration_ms: 0.705708
+  type: 'test'
+  ...
+# Subtest: reuses a cached report only when every run input matches
+ok 30 - reuses a cached report only when every run input matches
+  ---
+  duration_ms: 2.4435
+  type: 'test'
+  ...
+# Subtest: rejects old reports without a release manifest and honours force-fresh runs
+ok 31 - rejects old reports without a release manifest and honours force-fresh runs
+  ---
+  duration_ms: 0.657333
+  type: 'test'
+  ...
+# Subtest: rejects a report whose own URL or categories contradict its manifest
+ok 32 - rejects a report whose own URL or categories contradict its manifest
+  ---
+  duration_ms: 0.644375
+  type: 'test'
+  ...
+# Subtest: records a validated report manifest and rejects invalid fresh output
+ok 33 - records a validated report manifest and rejects invalid fresh output
+  ---
+  duration_ms: 0.934083
+  type: 'test'
+  ...
+# Subtest: creates stable distinct filesystem keys for release identifiers
+ok 34 - creates stable distinct filesystem keys for release identifiers
+  ---
+  duration_ms: 1.90675
+  type: 'test'
+  ...
+# Subtest: accepts language_TERRITORY syntax for the Open Graph locale
+ok 35 - accepts language_TERRITORY syntax for the Open Graph locale
+  ---
+  duration_ms: 0.555583
+  type: 'test'
+  ...
+# Subtest: rejects BCP 47 syntax for the Open Graph locale
+ok 36 - rejects BCP 47 syntax for the Open Graph locale
+  ---
+  duration_ms: 0.236709
+  type: 'test'
+  ...
+# Subtest: accepts BCP 47 syntax for the HTML language
+ok 37 - accepts BCP 47 syntax for the HTML language
+  ---
+  duration_ms: 0.107583
+  type: 'test'
+  ...
+# Subtest: rejects Open Graph syntax for the HTML language
+ok 38 - rejects Open Graph syntax for the HTML language
+  ---
+  duration_ms: 0.063916
+  type: 'test'
+  ...
+# Subtest: navbar controller gives React exclusive ownership of mobile dialog commands
+ok 39 - navbar controller gives React exclusive ownership of mobile dialog commands
+  ---
+  duration_ms: 1.016458
+  type: 'test'
+  ...
+# Subtest: Markdown negotiation does not apply an HTML validator to the selected representation
+ok 40 - Markdown negotiation does not apply an HTML validator to the selected representation
+  ---
+  duration_ms: 18.886667
+  type: 'test'
+  ...
+# Subtest: HTML negotiation preserves conditional request handling for the HTML representation
+ok 41 - HTML negotiation preserves conditional request handling for the HTML representation
+  ---
+  duration_ms: 0.406791
+  type: 'test'
+  ...
+# Subtest: Markdown negotiation preserves an empty public redirect without fetching Markdown
+ok 42 - Markdown negotiation preserves an empty public redirect without fetching Markdown
+  ---
+  duration_ms: 0.3525
+  type: 'test'
+  ...
+# Subtest: above-fold about and contact LCP content never starts transparent
+ok 43 - above-fold about and contact LCP content never starts transparent
+  ---
+  duration_ms: 1.095792
+  type: 'test'
+  ...
+# Subtest: Astro routes keep hydration bounded to the production interaction map
+ok 44 - Astro routes keep hydration bounded to the production interaction map
+  ---
+  duration_ms: 1.004667
+  type: 'test'
+  ...
+# Subtest: Cloudflare Workers caches only content-hashed Astro assets as immutable
+ok 45 - Cloudflare Workers caches only content-hashed Astro assets as immutable
+  ---
+  duration_ms: 0.163791
+  type: 'test'
+  ...
+# Subtest: performance budgets cover every route and preserve deterministic baselines
+ok 46 - performance budgets cover every route and preserve deterministic baselines
+  ---
+  duration_ms: 0.474333
+  type: 'test'
+  ...
+# Subtest: owned runtime reductions keep analytics timing and active routes free of Tailwind Plus
+ok 47 - owned runtime reductions keep analytics timing and active routes free of Tailwind Plus
+  ---
+  duration_ms: 0.420625
+  type: 'test'
+  ...
+# Subtest: performance budget reporter rejects a synthetic route-byte regression
+ok 48 - performance budget reporter rejects a synthetic route-byte regression
+  ---
+  duration_ms: 38.254291
+  type: 'test'
+  ...
+# Subtest: About responsive images keep exact dimensions, priorities, and byte ceilings
+ok 49 - About responsive images keep exact dimensions, priorities, and byte ceilings
+  ---
+  duration_ms: 0.44275
+  type: 'test'
+  ...
+# Subtest: homepage and pricing page toggles share every interactive visual token
+ok 50 - homepage and pricing page toggles share every interactive visual token
+  ---
+  duration_ms: 6.105709
+  type: 'test'
+  ...
+# Subtest: pricing toggle gives the latest animation exclusive timer ownership
+ok 51 - pricing toggle gives the latest animation exclusive timer ownership
+  ---
+  duration_ms: 0.491125
+  type: 'test'
+  ...
+# Subtest: robots.txt is byte-identical to the production baseline
+ok 52 - robots.txt is byte-identical to the production baseline
+  ---
+  duration_ms: 1.092584
+  type: 'test'
+  ...
+# Subtest: llms.txt is byte-identical to the production baseline
+ok 53 - llms.txt is byte-identical to the production baseline
+  ---
+  duration_ms: 0.220083
+  type: 'test'
+  ...
+# Subtest: sitemap.xml publishes the production URL set with the home page first
+ok 54 - sitemap.xml publishes the production URL set with the home page first
+  ---
+  duration_ms: 0.990625
+  type: 'test'
+  ...
+# Subtest: internal link targets keep the production trailing slash
+ok 55 - internal link targets keep the production trailing slash
+  ---
+  duration_ms: 1.224708
+  type: 'test'
+  ...
+# Subtest: public scripts stay byte-identical to their production source
+ok 56 - public scripts stay byte-identical to their production source
+  ---
+  duration_ms: 0.156625
+  type: 'test'
+  ...
+# Subtest: every document declares the production viewport
+ok 57 - every document declares the production viewport
+  ---
+  duration_ms: 0.831792
+  type: 'test'
+  ...
+# Subtest: every document declares the production Open Graph identity
+ok 58 - every document declares the production Open Graph identity
+  ---
+  duration_ms: 1.634792
+  type: 'test'
+  ...
+# Subtest: runtime metadata pins the verified Node 22 LTS version
+ok 59 - runtime metadata pins the verified Node 22 LTS version
+  ---
+  duration_ms: 1.35225
+  type: 'test'
+  ...
+# Subtest: runtime metadata pins the verified Astro, React, Three.js, and Mixpanel versions
+ok 60 - runtime metadata pins the verified Astro, React, Three.js, and Mixpanel versions
+  ---
+  duration_ms: 0.126916
+  type: 'test'
+  ...
+# Subtest: browser rule covers canonical URLs and viewport-dependent evidence
+not ok 61 - browser rule covers canonical URLs and viewport-dependent evidence
+  ---
+  duration_ms: 0.81
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/runtime-and-browser-rules.test.ts:53:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /\/pricing` at `\/pricing\//. Input:
+
+    '---\n' +
+      'description: Use for dev-browser or agent-browser verification of Bulma marketing-site UI, animation, interaction, and responsive changes.\n' +
+      'globs: \n' +
+      'alwaysApply: false\n' +
+      '---\n' +
+      '# Dev Browser Verification Rule\n' +
+      '\n' +
+      '## Scope\n' +
+      '\n' +
+      'Use this rule whenever a task needs browser verification for the Bulma marketing site, including:\n' +
+      '\n' +
+      '- Rendering, layout, styling, responsive, or content visibility changes.\n' +
+      '- Animation, scroll-trigger, hover, focus, active, loading, error, empty, or conditional UI behaviour.\n' +
+      '- Navigation, link, form, CTA, pricing-card, screenshot, hero, footer, or page-level interaction changes.\n' +
+      '- Visual parity checks when reusing components across pages or colour schemes.\n' +
+      '\n' +
+      'Do not use this rule for documentation-only edits, dependency-only maintenance, or non-UI code paths unless the task creates a user-visible browser effect.\n' +
+      '\n' +
+      '## Local Server Policy\n' +
+      '\n' +
+      '- The runnable app is `site/`; the repository root is not a runnable app.\n' +
+      '- Default development URL: `http://localhost:4331`.\n' +
+      '- Start command: `pnpm --dir site dev`.\n' +
+      '- Before browser verification, check whether `http://localhost:4331` responds and serves the Bulma Astro site.\n' +
+      '- If port `4331` already runs the correct site, reuse it.\n' +
+      '- If port `4331` is occupied by another service, start Astro on another available port with `pnpm --dir site dev -- --port <port>` and state the URL used. Do not stop a process you did not start.\n' +
+      '- Wait for the page to respond before opening `dev-browser` or `agent-browser`.\n' +
+      '- When waiting for navigation, compare canonical pathnames after normalising one optional trailing slash. Treat `/pricing` and `/pricing/` as equivalent while still asserting any required query string or hash.\n' +
+      '- Stop a server started for the task after verification. Leave a pre-existing server running.\n' +
+      '\n' +
+      '## Playwright Preview Policy\n' +
+      '\n' +
+      '- Build first with `pnpm --dir site build`.\n' +
+      '- The local Playwright suite uses `node scripts/preview-server.mjs` from `site/`, as configured in `site/playwright.config.ts`.\n' +
+      '- Do not use `astro preview` for Playwright. The custom server exposes the static `site/dist` contract and real `404.html` behaviour.\n' +
+      '- Playwright sets `reuseExistingServer: false`. If port `4331` is already occupied, do not stop a foreign process; fail and report the conflict or run the suite with an explicitly configured separate port.\n' +
+      '- Use `pnpm --dir site worker:dev` for Worker response and header checks. Pass the reported Worker URL to `pnpm --dir site test:http -- <worker-url>` for the complete negotiated HTTP contract.\n' +
+      '\n' +
+      '## Validation Gate\n' +
+      '\n' +
+      'Frontend behaviour changes are not complete until browser checks pass, unless the user explicitly says they will test the UI themselves.\n' +
+      '\n' +
+      'Required checks for UI-affecting work:\n' +
+      '\n' +
+      '- Run the relevant Playwright cases against the built static preview.\n' +
+      '- Open every changed route or page state in the browser.\n' +
+      '- Verify the changed interaction or animation directly.\n' +
+      '- Test desktop viewport `1440x900`.\n' +
+      '- Test mobile viewport `390x900`.\n' +
+      '- Check for horizontal overflow.\n' +
+      '- Check browser console errors and page errors.\n' +
+      '- Check that changed text does not overlap, clip, wrap poorly, or obscure adjacent content.\n' +
+      '- Save screenshots with absolute filesystem paths when visual evidence is useful or when investigating a visual issue.\n' +
+      '- For IntersectionObserver, `content-visibility`, scroll-reveal, or sticky targets, scroll each target into the live viewport and wait for layout and animation state to settle before evaluating it.\n' +
+      '- Capture targeted viewport or element evidence after scrolling; a full-page screenshot alone does not prove viewport-triggered or sticky state.\n' +
+      '- Before taking a later full-page screenshot, return to the intended starting scroll position and wait for layout to settle so fixed and sticky elements are composited in the correct state.\n' +
+      '\n' +
+      'If a required browser check is skipped, the final response must state:\n' +
+      '\n' +
+      '- The skipped check.\n' +
+      '- The reason it was skipped.\n' +
+      '- The residual risk.\n' +
+      '\n' +
+      '## Screenshot Description Protocol\n' +
+      '\n' +
+      'After every screenshot capture, provide a focused analysis. Do not write generic confirmations such as "looks good", "appears correct", or "seems fine" without evidence.\n' +
+      '\n' +
+      'Focus only on:\n' +
+      '\n' +
+      '1. Elements directly related to the current request.\n' +
+      '2. Elements that changed or should have changed.\n' +
+      '3. Visible issues or discrepancies.\n' +
+      '4. Interactive elements the user needs to work with.\n' +
+      '\n' +
+      'Use this structure when screenshots are part of the work:\n' +
+      '\n' +
+      '```text\n' +
+      '## Screenshot Analysis - [Task Context]\n' +
+      '\n' +
+      '### 1. Target Element Assessment\n' +
+      '- Element A: [Precise description including position, size, colour, and state]\n' +
+      '- Element B: [Current state vs expected state]\n' +
+      '- Element C: [Visible discrepancy, if any]\n' +
+      '\n' +
+      '### 2. Text Content Verification\n' +
+      '- Primary text: [exact relevant text]\n' +
+      '- Labels/buttons being tested: [exact relevant labels]\n' +
+      '- Error or success messages: [exact relevant messages]\n' +
+      '\n' +
+      '### 3. Visual Measurements\n' +
+      '- Target component dimensions: [width]px x [height]px, where relevant\n' +
+      '- Spacing or alignment: [specific task-relevant finding]\n' +
+      '- Responsive behaviour: [desktop/mobile comparison]\n' +
+      '\n' +
+      '### 4. Task Completion Check\n' +
+      '- Requirement A: PASS/FAIL - [evidence]\n' +
+      '- Requirement B: PASS/FAIL - [evidence]\n' +
+      '- Requirement C: PASS/FAIL - [evidence]\n' +
+      '\n' +
+      '### 5. Issues Found\n' +
+      '- Issue 1: [specific issue and location]\n' +
+      '- Issue 2: [specific issue and location]\n' +
+      '\n' +
+      '### 6. Next Steps\n' +
+      '- [specific fix needed, or "No further changes needed"]\n' +
+      '```\n' +
+      '\n' +
+      'Use ASCII diagrams only when they clarify a layout issue, spacing issue, overlap, responsive shift, or component positioning problem.\n' +
+      '\n' +
+      '## Animation Checks\n' +
+      '\n' +
+      'For animation changes:\n' +
+      '\n' +
+      '- Verify the animation starts, progresses, and completes as intended.\n' +
+      '- Verify scroll-triggered animations at both desktop and mobile sizes.\n' +
+      '- Verify hover and focus states where animation responds to pointer or keyboard interaction.\n' +
+      '- Check that animations do not depend on `prefers-reduced-motion` branches, accessibility media queries, timing short-circuits, or `requestAnimationFrame` wrappers that bypass expected motion.\n' +
+      '- Confirm console output has no animation-related runtime errors.\n' +
+      '\n' +
+      '## Final Response Requirement\n' +
+      '\n' +
+      'For UI-affecting tasks, include a concise validation summary:\n' +
+      '\n' +
+      '- Automated checks run and result.\n' +
+      '- Browser routes and interactions checked.\n' +
+      '- Desktop/mobile viewport coverage.\n' +
+      '- Any skipped checks and residual risk.\n'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    ---
+    description: Use for dev-browser or agent-browser verification of Bulma marketing-site UI, animation, interaction, and responsive changes.
+    globs:
+    alwaysApply: false
+    ---
+    # Dev Browser Verification Rule
+
+    ## Scope
+
+    Use this rule whenever a task needs browser verification for the Bulma marketing site, including:
+
+    - Rendering, layout, styling, responsive, or content visibility changes.
+    - Animation, scroll-trigger, hover, focus, active, loading, error, empty, or conditional UI behaviour.
+    - Navigation, link, form, CTA, pricing-card, screenshot, hero, footer, or page-level interaction changes.
+    - Visual parity checks when reusing components across pages or colour schemes.
+
+    Do not use this rule for documentation-only edits, dependency-only maintenance, or non-UI code paths unless the task creates a user-visible browser effect.
+
+    ## Local Server Policy
+
+    - The runnable app is `site/`; the repository root is not a runnable app.
+    - Default development URL: `http://localhost:4331`.
+    - Start command: `pnpm --dir site dev`.
+    - Before browser verification, check whether `http://localhost:4331` responds and serves the Bulma Astro site.
+    - If port `4331` already runs the correct site, reuse it.
+    - If port `4331` is occupied by another service, start Astro on another available port with `pnpm --dir site dev -- --port <port>` and state the URL used. Do not stop a process you did not start.
+    - Wait for the page to respond before opening `dev-browser` or `agent-browser`.
+    - When waiting for navigation, compare canonical pathnames after normalising one optional trailing slash. Treat `/pricing` and `/pricing/` as equivalent while still asserting any required query string or hash.
+    - Stop a server started for the task after verification. Leave a pre-existing server running.
+
+    ## Playwright Preview Policy
+
+    - Build first with `pnpm --dir site build`.
+    - The local Playwright suite uses `node scripts/preview-server.mjs` from `site/`, as configured in `site/playwright.config.ts`.
+    - Do not use `astro preview` for Playwright. The custom server exposes the static `site/dist` contract and real `404.html` behaviour.
+    - Playwright sets `reuseExistingServer: false`. If port `4331` is already occupied, do not stop a foreign process; fail and report the conflict or run the suite with an explicitly configured separate port.
+    - Use `pnpm --dir site worker:dev` for Worker response and header checks. Pass the reported Worker URL to `pnpm --dir site test:http -- <worker-url>` for the complete negotiated HTTP contract.
+
+    ## Validation Gate
+
+    Frontend behaviour changes are not complete until browser checks pass, unless the user explicitly says they will test the UI themselves.
+
+    Required checks for UI-affecting work:
+
+    - Run the relevant Playwright cases against the built static preview.
+    - Open every changed route or page state in the browser.
+    - Verify the changed interaction or animation directly.
+    - Test desktop viewport `1440x900`.
+    - Test mobile viewport `390x900`.
+    - Check for horizontal overflow.
+    - Check browser console errors and page errors.
+    - Check that changed text does not overlap, clip, wrap poorly, or obscure adjacent content.
+    - Save screenshots with absolute filesystem paths when visual evidence is useful or when investigating a visual issue.
+    - For IntersectionObserver, `content-visibility`, scroll-reveal, or sticky targets, scroll each target into the live viewport and wait for layout and animation state to settle before evaluating it.
+    - Capture targeted viewport or element evidence after scrolling; a full-page screenshot alone does not prove viewport-triggered or sticky state.
+    - Before taking a later full-page screenshot, return to the intended starting scroll position and wait for layout to settle so fixed and sticky elements are composited in the correct state.
+
+    If a required browser check is skipped, the final response must state:
+
+    - The skipped check.
+    - The reason it was skipped.
+    - The residual risk.
+
+    ## Screenshot Description Protocol
+
+    After every screenshot capture, provide a focused analysis. Do not write generic confirmations such as "looks good", "appears correct", or "seems fine" without evidence.
+
+    Focus only on:
+
+    1. Elements directly related to the current request.
+    2. Elements that changed or should have changed.
+    3. Visible issues or discrepancies.
+    4. Interactive elements the user needs to work with.
+
+    Use this structure when screenshots are part of the work:
+
+    ```text
+    ## Screenshot Analysis - [Task Context]
+
+    ### 1. Target Element Assessment
+    - Element A: [Precise description including position, size, colour, and state]
+    - Element B: [Current state vs expected state]
+    - Element C: [Visible discrepancy, if any]
+
+    ### 2. Text Content Verification
+    - Primary text: [exact relevant text]
+    - Labels/buttons being tested: [exact relevant labels]
+    - Error or success messages: [exact relevant messages]
+
+    ### 3. Visual Measurements
+    - Target component dimensions: [width]px x [height]px, where relevant
+    - Spacing or alignment: [specific task-relevant finding]
+    - Responsive behaviour: [desktop/mobile comparison]
+
+    ### 4. Task Completion Check
+    - Requirement A: PASS/FAIL - [evidence]
+    - Requirement B: PASS/FAIL - [evidence]
+    - Requirement C: PASS/FAIL - [evidence]
+
+    ### 5. Issues Found
+    - Issue 1: [specific issue and location]
+    - Issue 2: [specific issue and location]
+
+    ### 6. Next Steps
+    - [specific fix needed, or "No further changes needed"]
+    ```
+
+    Use ASCII diagrams only when they clarify a layout issue, spacing issue, overlap, responsive shift, or component positioning problem.
+
+    ## Animation Checks
+
+    For animation changes:
+
+    - Verify the animation starts, progresses, and completes as intended.
+    - Verify scroll-triggered animations at both desktop and mobile sizes.
+    - Verify hover and focus states where animation responds to pointer or keyboard interaction.
+    - Check that animations do not depend on `prefers-reduced-motion` branches, accessibility media queries, timing short-circuits, or `requestAnimationFrame` wrappers that bypass expected motion.
+    - Confirm console output has no animation-related runtime errors.
+
+    ## Final Response Requirement
+
+    For UI-affecting tasks, include a concise validation summary:
+
+    - Automated checks run and result.
+    - Browser routes and interactions checked.
+    - Desktop/mobile viewport coverage.
+    - Any skipped checks and residual risk.
+
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/runtime-and-browser-rules.test.ts:57:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..61
+# tests 61
+# suites 0
+# pass 60
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 969.437041
+[ELIFECYCLE] Command failed with exit code 1.

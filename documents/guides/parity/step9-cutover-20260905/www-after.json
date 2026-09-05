@@ -1,0 +1,16 @@
+{
+  "id": "c8e82fc2b97b87587bca888d574a8869",
+  "name": "www.bulma.com.au",
+  "type": "A",
+  "content": "192.0.2.0",
+  "proxiable": true,
+  "proxied": true,
+  "ttl": 1,
+  "settings": {},
+  "meta": {},
+  "comment": "Proxied placeholder for canonical www redirect",
+  "tags": [],
+  "created_on": "2025-12-28T04:47:35.273331Z",
+  "modified_on": "2026-09-05T05:48:59.784467Z",
+  "comment_modified_on": "2026-09-05T05:48:59.784467Z"
+}

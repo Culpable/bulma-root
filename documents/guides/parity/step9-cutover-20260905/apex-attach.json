@@ -1,0 +1,11 @@
+{
+  "id": "1f244a2bc91612e583f30cbda311cfbe5dc9b5e8",
+  "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+  "zone_name": "bulma.com.au",
+  "hostname": "bulma.com.au",
+  "service": "bulma-root",
+  "environment": "production",
+  "cert_id": "a63f3ea9-3d72-4972-bb2f-5941a9b072e4",
+  "previews_enabled": false,
+  "enabled": true
+}

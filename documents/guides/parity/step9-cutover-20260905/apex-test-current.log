@@ -1,0 +1,1469 @@
+$ pnpm test:unit && pnpm test:build-output && playwright test
+$ node --experimental-strip-types --test test/*.test.ts
+TAP version 13
+# Subtest: built Markdown preserves customer-facing prices, lender counts and answers
+ok 1 - built Markdown preserves customer-facing prices, lender counts and answers
+  ---
+  duration_ms: 4.498084
+  type: 'test'
+  ...
+# Subtest: built privacy policy removes only the approved example disclaimer
+ok 2 - built privacy policy removes only the approved example disclaimer
+  ---
+  duration_ms: 0.515875
+  type: 'test'
+  ...
+# Subtest: agent Markdown preserves accessible pricing, comparison values, and collapsed answers
+ok 3 - agent Markdown preserves accessible pricing, comparison values, and collapsed answers
+  ---
+  duration_ms: 5.121917
+  type: 'test'
+  ...
+# Subtest: agent Markdown decodes named, decimal, and hexadecimal entities in metadata and body text
+ok 4 - agent Markdown decodes named, decimal, and hexadecimal entities in metadata and body text
+  ---
+  duration_ms: 6.985125
+  type: 'test'
+  ...
+# Subtest: indexable output exposes canonical identity and discovery metadata
+ok 5 - indexable output exposes canonical identity and discovery metadata
+  ---
+  duration_ms: 4.6025
+  type: 'test'
+  ...
+# Subtest: homepage static graph keeps every supported identity type
+ok 6 - homepage static graph keeps every supported identity type
+  ---
+  duration_ms: 0.456417
+  type: 'test'
+  ...
+# Subtest: 404 output exposes one noindex directive without blocking recovery links
+ok 7 - 404 output exposes one noindex directive without blocking recovery links
+  ---
+  duration_ms: 1.087
+  type: 'test'
+  ...
+# Subtest: llms.txt is valid UTF-8 with ordered unique canonical links
+ok 8 - llms.txt is valid UTF-8 with ordered unique canonical links
+  ---
+  duration_ms: 0.706791
+  type: 'test'
+  ...
+# Subtest: llms.txt operating block describes Bulma rather than this website
+ok 9 - llms.txt operating block describes Bulma rather than this website
+  ---
+  duration_ms: 0.996917
+  type: 'test'
+  ...
+# Subtest: sitemap and source preserve the file-only readiness profile
+ok 10 - sitemap and source preserve the file-only readiness profile
+  ---
+  duration_ms: 26.60075
+  type: 'test'
+  ...
+# Subtest: structured-data serialiser escapes script-breaking characters
+ok 11 - structured-data serialiser escapes script-breaking characters
+  ---
+  duration_ms: 0.3305
+  type: 'test'
+  ...
+# Subtest: Mixpanel runtime retains replay, heatmap, identity, event, and readiness contracts
+ok 12 - Mixpanel runtime retains replay, heatmap, identity, event, and readiness contracts
+  ---
+  duration_ms: 1.2535
+  type: 'test'
+  ...
+# Subtest: referral tracker queues until readiness and preserves first-touch operations
+ok 13 - referral tracker queues until readiness and preserves first-touch operations
+  ---
+  duration_ms: 2.155709
+  type: 'test'
+  ...
+# Subtest: animated counter exposes its final value separately from its animated text
+ok 14 - animated counter exposes its final value separately from its animated text
+  ---
+  duration_ms: 1.880333
+  type: 'test'
+  ...
+# Subtest: normalises Astro island UIDs without changing other markup
+ok 15 - normalises Astro island UIDs without changing other markup
+  ---
+  duration_ms: 0.586875
+  type: 'test'
+  ...
+# Subtest: returns byte-identical output when a document has no Astro islands
+ok 16 - returns byte-identical output when a document has no Astro islands
+  ---
+  duration_ms: 0.457583
+  type: 'test'
+  ...
+# Subtest: rejects an Astro island without a UID
+ok 17 - rejects an Astro island without a UID
+  ---
+  duration_ms: 0.217708
+  type: 'test'
+  ...
+# Subtest: interactive source avoids broad transitions and motion-policy branches
+ok 18 - interactive source avoids broad transitions and motion-policy branches
+  ---
+  duration_ms: 35.287208
+  type: 'test'
+  ...
+# Subtest: shared buttons enforce target sizes, exact press feedback, and static opt-out
+ok 19 - shared buttons enforce target sizes, exact press feedback, and static opt-out
+  ---
+  duration_ms: 0.621042
+  type: 'test'
+  ...
+# Subtest: secondary navbar controls enforce the shared responsive target sizes
+ok 20 - secondary navbar controls enforce the shared responsive target sizes
+  ---
+  duration_ms: 0.152916
+  type: 'test'
+  ...
+# Subtest: FAQ disclosures and icons use reversible enter and leave contracts
+ok 21 - FAQ disclosures and icons use reversible enter and leave contracts
+  ---
+  duration_ms: 0.976125
+  type: 'test'
+  ...
+# Subtest: mobile navigation exits through transition state before native dialog close
+ok 22 - mobile navigation exits through transition state before native dialog close
+  ---
+  duration_ms: 0.697667
+  type: 'test'
+  ...
+# Subtest: tilt and ripple effects avoid idle compositor promotion and forced layout
+ok 23 - tilt and ripple effects avoid idle compositor promotion and forced layout
+  ---
+  duration_ms: 0.135042
+  type: 'test'
+  ...
+# Subtest: surface geometry, media edges, and pricing focus retain comparison clarity
+ok 24 - surface geometry, media edges, and pricing focus retain comparison clarity
+  ---
+  duration_ms: 0.636083
+  type: 'test'
+  ...
+# Subtest: animation architecture guide describes the current transition policy
+ok 25 - animation architecture guide describes the current transition policy
+  ---
+  duration_ms: 2.061833
+  type: 'test'
+  ...
+# Subtest: Tailwind longhand motion utilities transition the properties they change
+ok 26 - Tailwind longhand motion utilities transition the properties they change
+  ---
+  duration_ms: 6.695375
+  type: 'test'
+  ...
+# Subtest: standalone Link CTAs enforce mobile and desktop target heights
+ok 27 - standalone Link CTAs enforce mobile and desktop target heights
+  ---
+  duration_ms: 2.054167
+  type: 'test'
+  ...
+# Subtest: HTML responses add the UTF-8 charset without dropping source validators
+ok 28 - HTML responses add the UTF-8 charset without dropping source validators
+  ---
+  duration_ms: 19.713417
+  type: 'test'
+  ...
+# Subtest: homepage two-column feature cards preserve equal heights through animation wrappers
+ok 29 - homepage two-column feature cards preserve equal heights through animation wrappers
+  ---
+  duration_ms: 0.831709
+  type: 'test'
+  ...
+# Subtest: reuses a cached report only when every run input matches
+ok 30 - reuses a cached report only when every run input matches
+  ---
+  duration_ms: 8.229042
+  type: 'test'
+  ...
+# Subtest: rejects old reports without a release manifest and honours force-fresh runs
+ok 31 - rejects old reports without a release manifest and honours force-fresh runs
+  ---
+  duration_ms: 0.9095
+  type: 'test'
+  ...
+# Subtest: rejects a report whose own URL or categories contradict its manifest
+ok 32 - rejects a report whose own URL or categories contradict its manifest
+  ---
+  duration_ms: 2.663916
+  type: 'test'
+  ...
+# Subtest: records a validated report manifest and rejects invalid fresh output
+ok 33 - records a validated report manifest and rejects invalid fresh output
+  ---
+  duration_ms: 6.632583
+  type: 'test'
+  ...
+# Subtest: creates stable distinct filesystem keys for release identifiers
+ok 34 - creates stable distinct filesystem keys for release identifiers
+  ---
+  duration_ms: 1.80875
+  type: 'test'
+  ...
+# Subtest: accepts language_TERRITORY syntax for the Open Graph locale
+ok 35 - accepts language_TERRITORY syntax for the Open Graph locale
+  ---
+  duration_ms: 0.6005
+  type: 'test'
+  ...
+# Subtest: rejects BCP 47 syntax for the Open Graph locale
+ok 36 - rejects BCP 47 syntax for the Open Graph locale
+  ---
+  duration_ms: 0.219625
+  type: 'test'
+  ...
+# Subtest: accepts BCP 47 syntax for the HTML language
+ok 37 - accepts BCP 47 syntax for the HTML language
+  ---
+  duration_ms: 0.107041
+  type: 'test'
+  ...
+# Subtest: rejects Open Graph syntax for the HTML language
+ok 38 - rejects Open Graph syntax for the HTML language
+  ---
+  duration_ms: 0.060042
+  type: 'test'
+  ...
+# Subtest: navbar controller gives React exclusive ownership of mobile dialog commands
+ok 39 - navbar controller gives React exclusive ownership of mobile dialog commands
+  ---
+  duration_ms: 0.835
+  type: 'test'
+  ...
+# Subtest: Markdown negotiation does not apply an HTML validator to the selected representation
+ok 40 - Markdown negotiation does not apply an HTML validator to the selected representation
+  ---
+  duration_ms: 20.7075
+  type: 'test'
+  ...
+# Subtest: HTML negotiation preserves conditional request handling for the HTML representation
+ok 41 - HTML negotiation preserves conditional request handling for the HTML representation
+  ---
+  duration_ms: 0.366959
+  type: 'test'
+  ...
+# Subtest: Markdown negotiation preserves an empty public redirect without fetching Markdown
+ok 42 - Markdown negotiation preserves an empty public redirect without fetching Markdown
+  ---
+  duration_ms: 0.33975
+  type: 'test'
+  ...
+# Subtest: above-fold about and contact LCP content never starts transparent
+ok 43 - above-fold about and contact LCP content never starts transparent
+  ---
+  duration_ms: 0.87075
+  type: 'test'
+  ...
+# Subtest: Astro routes keep hydration bounded to the production interaction map
+ok 44 - Astro routes keep hydration bounded to the production interaction map
+  ---
+  duration_ms: 0.395209
+  type: 'test'
+  ...
+# Subtest: Cloudflare Workers caches only content-hashed Astro assets as immutable
+ok 45 - Cloudflare Workers caches only content-hashed Astro assets as immutable
+  ---
+  duration_ms: 0.264708
+  type: 'test'
+  ...
+# Subtest: performance budgets cover every route and preserve deterministic baselines
+ok 46 - performance budgets cover every route and preserve deterministic baselines
+  ---
+  duration_ms: 0.639917
+  type: 'test'
+  ...
+# Subtest: owned runtime reductions keep analytics timing and active routes free of Tailwind Plus
+ok 47 - owned runtime reductions keep analytics timing and active routes free of Tailwind Plus
+  ---
+  duration_ms: 0.588792
+  type: 'test'
+  ...
+# Subtest: performance budget reporter rejects a synthetic route-byte regression
+ok 48 - performance budget reporter rejects a synthetic route-byte regression
+  ---
+  duration_ms: 36.032083
+  type: 'test'
+  ...
+# Subtest: About responsive images keep exact dimensions, priorities, and byte ceilings
+ok 49 - About responsive images keep exact dimensions, priorities, and byte ceilings
+  ---
+  duration_ms: 0.361333
+  type: 'test'
+  ...
+# Subtest: homepage and pricing page toggles share every interactive visual token
+ok 50 - homepage and pricing page toggles share every interactive visual token
+  ---
+  duration_ms: 1.89775
+  type: 'test'
+  ...
+# Subtest: pricing toggle gives the latest animation exclusive timer ownership
+ok 51 - pricing toggle gives the latest animation exclusive timer ownership
+  ---
+  duration_ms: 1.6285
+  type: 'test'
+  ...
+# Subtest: robots.txt is byte-identical to the production baseline
+ok 52 - robots.txt is byte-identical to the production baseline
+  ---
+  duration_ms: 1.009667
+  type: 'test'
+  ...
+# Subtest: llms.txt is byte-identical to the production baseline
+ok 53 - llms.txt is byte-identical to the production baseline
+  ---
+  duration_ms: 0.77075
+  type: 'test'
+  ...
+# Subtest: sitemap.xml publishes the production URL set with the home page first
+ok 54 - sitemap.xml publishes the production URL set with the home page first
+  ---
+  duration_ms: 0.588417
+  type: 'test'
+  ...
+# Subtest: internal link targets keep the production trailing slash
+ok 55 - internal link targets keep the production trailing slash
+  ---
+  duration_ms: 0.946541
+  type: 'test'
+  ...
+# Subtest: public scripts stay byte-identical to their production source
+ok 56 - public scripts stay byte-identical to their production source
+  ---
+  duration_ms: 0.349792
+  type: 'test'
+  ...
+# Subtest: every document declares the production viewport
+ok 57 - every document declares the production viewport
+  ---
+  duration_ms: 0.713209
+  type: 'test'
+  ...
+# Subtest: every document declares the production Open Graph identity
+ok 58 - every document declares the production Open Graph identity
+  ---
+  duration_ms: 1.623625
+  type: 'test'
+  ...
+# Subtest: runtime metadata pins the verified Node 22 LTS version
+ok 59 - runtime metadata pins the verified Node 22 LTS version
+  ---
+  duration_ms: 0.657667
+  type: 'test'
+  ...
+# Subtest: runtime metadata pins the verified Astro, React, Three.js, and Mixpanel versions
+ok 60 - runtime metadata pins the verified Astro, React, Three.js, and Mixpanel versions
+  ---
+  duration_ms: 0.145375
+  type: 'test'
+  ...
+# Subtest: browser rule covers canonical URLs and viewport-dependent evidence
+ok 61 - browser rule covers canonical URLs and viewport-dependent evidence
+  ---
+  duration_ms: 0.39575
+  type: 'test'
+  ...
+1..61
+# tests 61
+# suites 0
+# pass 61
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 987.975041
+$ node scripts/validate-build.mjs && node scripts/report-performance-budgets.mjs && node scripts/verify-trust-pages.mjs
+Validated 10 required build outputs and source contracts.
+{
+  "baselineUnusedJavaScriptRangeKiB": [
+    103,
+    170
+  ],
+  "routes": {
+    "/": {
+      "initialScriptFiles": 16,
+      "initialJavaScriptGzipBytes": 93310
+    },
+    "/about/": {
+      "initialScriptFiles": 14,
+      "initialJavaScriptGzipBytes": 75882
+    },
+    "/pricing/": {
+      "initialScriptFiles": 14,
+      "initialJavaScriptGzipBytes": 81837
+    },
+    "/contact/": {
+      "initialScriptFiles": 13,
+      "initialJavaScriptGzipBytes": 72836
+    },
+    "/privacy-policy/": {
+      "initialScriptFiles": 9,
+      "initialJavaScriptGzipBytes": 68456
+    }
+  },
+  "chunkContributions": {
+    "mixpanel": [
+      {
+        "file": "mixpanel-client.B-eSchbz.js",
+        "gzipBytes": 30988
+      }
+    ],
+    "three": [
+      {
+        "file": "dot-pool-background.DOjyRZm5.js",
+        "gzipBytes": 120121
+      }
+    ],
+    "tailwindPlus": []
+  },
+  "lighthouse": {},
+  "failures": []
+}
+{
+  "About": {
+    "output": "about/index.html",
+    "pageSpecificCharacters": 1359
+  },
+  "Contact": {
+    "output": "contact/index.html",
+    "pageSpecificCharacters": 755
+  },
+  "Privacy": {
+    "output": "privacy-policy/index.html",
+    "pageSpecificCharacters": 2741
+  }
+}
+TAP version 13
+# Subtest: built Markdown preserves customer-facing prices, lender counts and answers
+ok 1 - built Markdown preserves customer-facing prices, lender counts and answers
+  ---
+  duration_ms: 0.897708
+  type: 'test'
+  ...
+# Subtest: built privacy policy removes only the approved example disclaimer
+ok 2 - built privacy policy removes only the approved example disclaimer
+  ---
+  duration_ms: 0.20825
+  type: 'test'
+  ...
+# Subtest: agent Markdown preserves accessible pricing, comparison values, and collapsed answers
+ok 3 - agent Markdown preserves accessible pricing, comparison values, and collapsed answers
+  ---
+  duration_ms: 3.67975
+  type: 'test'
+  ...
+# Subtest: agent Markdown decodes named, decimal, and hexadecimal entities in metadata and body text
+ok 4 - agent Markdown decodes named, decimal, and hexadecimal entities in metadata and body text
+  ---
+  duration_ms: 18.174833
+  type: 'test'
+  ...
+# Subtest: indexable output exposes canonical identity and discovery metadata
+ok 5 - indexable output exposes canonical identity and discovery metadata
+  ---
+  duration_ms: 1.309583
+  type: 'test'
+  ...
+# Subtest: homepage static graph keeps every supported identity type
+ok 6 - homepage static graph keeps every supported identity type
+  ---
+  duration_ms: 0.41225
+  type: 'test'
+  ...
+# Subtest: 404 output exposes one noindex directive without blocking recovery links
+ok 7 - 404 output exposes one noindex directive without blocking recovery links
+  ---
+  duration_ms: 0.444875
+  type: 'test'
+  ...
+# Subtest: llms.txt is valid UTF-8 with ordered unique canonical links
+ok 8 - llms.txt is valid UTF-8 with ordered unique canonical links
+  ---
+  duration_ms: 0.479458
+  type: 'test'
+  ...
+# Subtest: llms.txt operating block describes Bulma rather than this website
+ok 9 - llms.txt operating block describes Bulma rather than this website
+  ---
+  duration_ms: 0.567084
+  type: 'test'
+  ...
+# Subtest: sitemap and source preserve the file-only readiness profile
+ok 10 - sitemap and source preserve the file-only readiness profile
+  ---
+  duration_ms: 9.689542
+  type: 'test'
+  ...
+# Subtest: structured-data serialiser escapes script-breaking characters
+ok 11 - structured-data serialiser escapes script-breaking characters
+  ---
+  duration_ms: 0.092
+  type: 'test'
+  ...
+# Subtest: Mixpanel runtime retains replay, heatmap, identity, event, and readiness contracts
+ok 12 - Mixpanel runtime retains replay, heatmap, identity, event, and readiness contracts
+  ---
+  duration_ms: 0.147666
+  type: 'test'
+  ...
+# Subtest: referral tracker queues until readiness and preserves first-touch operations
+ok 13 - referral tracker queues until readiness and preserves first-touch operations
+  ---
+  duration_ms: 0.918333
+  type: 'test'
+  ...
+# Subtest: animated counter exposes its final value separately from its animated text
+ok 14 - animated counter exposes its final value separately from its animated text
+  ---
+  duration_ms: 0.131458
+  type: 'test'
+  ...
+# Subtest: normalises Astro island UIDs without changing other markup
+ok 15 - normalises Astro island UIDs without changing other markup
+  ---
+  duration_ms: 0.117584
+  type: 'test'
+  ...
+# Subtest: returns byte-identical output when a document has no Astro islands
+ok 16 - returns byte-identical output when a document has no Astro islands
+  ---
+  duration_ms: 0.039541
+  type: 'test'
+  ...
+# Subtest: rejects an Astro island without a UID
+ok 17 - rejects an Astro island without a UID
+  ---
+  duration_ms: 0.164167
+  type: 'test'
+  ...
+# Subtest: interactive source avoids broad transitions and motion-policy branches
+ok 18 - interactive source avoids broad transitions and motion-policy branches
+  ---
+  duration_ms: 4.880709
+  type: 'test'
+  ...
+# Subtest: shared buttons enforce target sizes, exact press feedback, and static opt-out
+ok 19 - shared buttons enforce target sizes, exact press feedback, and static opt-out
+  ---
+  duration_ms: 0.339542
+  type: 'test'
+  ...
+# Subtest: secondary navbar controls enforce the shared responsive target sizes
+ok 20 - secondary navbar controls enforce the shared responsive target sizes
+  ---
+  duration_ms: 0.097959
+  type: 'test'
+  ...
+# Subtest: FAQ disclosures and icons use reversible enter and leave contracts
+ok 21 - FAQ disclosures and icons use reversible enter and leave contracts
+  ---
+  duration_ms: 0.935375
+  type: 'test'
+  ...
+# Subtest: mobile navigation exits through transition state before native dialog close
+ok 22 - mobile navigation exits through transition state before native dialog close
+  ---
+  duration_ms: 0.556791
+  type: 'test'
+  ...
+# Subtest: tilt and ripple effects avoid idle compositor promotion and forced layout
+ok 23 - tilt and ripple effects avoid idle compositor promotion and forced layout
+  ---
+  duration_ms: 0.106458
+  type: 'test'
+  ...
+# Subtest: surface geometry, media edges, and pricing focus retain comparison clarity
+ok 24 - surface geometry, media edges, and pricing focus retain comparison clarity
+  ---
+  duration_ms: 0.501541
+  type: 'test'
+  ...
+# Subtest: animation architecture guide describes the current transition policy
+ok 25 - animation architecture guide describes the current transition policy
+  ---
+  duration_ms: 0.468208
+  type: 'test'
+  ...
+# Subtest: Tailwind longhand motion utilities transition the properties they change
+ok 26 - Tailwind longhand motion utilities transition the properties they change
+  ---
+  duration_ms: 4.627875
+  type: 'test'
+  ...
+# Subtest: standalone Link CTAs enforce mobile and desktop target heights
+ok 27 - standalone Link CTAs enforce mobile and desktop target heights
+  ---
+  duration_ms: 0.318625
+  type: 'test'
+  ...
+# Subtest: HTML responses add the UTF-8 charset without dropping source validators
+ok 28 - HTML responses add the UTF-8 charset without dropping source validators
+  ---
+  duration_ms: 2.080875
+  type: 'test'
+  ...
+# Subtest: homepage two-column feature cards preserve equal heights through animation wrappers
+ok 29 - homepage two-column feature cards preserve equal heights through animation wrappers
+  ---
+  duration_ms: 0.229333
+  type: 'test'
+  ...
+# Subtest: reuses a cached report only when every run input matches
+ok 30 - reuses a cached report only when every run input matches
+  ---
+  duration_ms: 0.630542
+  type: 'test'
+  ...
+# Subtest: rejects old reports without a release manifest and honours force-fresh runs
+ok 31 - rejects old reports without a release manifest and honours force-fresh runs
+  ---
+  duration_ms: 0.55775
+  type: 'test'
+  ...
+# Subtest: rejects a report whose own URL or categories contradict its manifest
+ok 32 - rejects a report whose own URL or categories contradict its manifest
+  ---
+  duration_ms: 0.503417
+  type: 'test'
+  ...
+# Subtest: records a validated report manifest and rejects invalid fresh output
+ok 33 - records a validated report manifest and rejects invalid fresh output
+  ---
+  duration_ms: 0.490125
+  type: 'test'
+  ...
+# Subtest: creates stable distinct filesystem keys for release identifiers
+ok 34 - creates stable distinct filesystem keys for release identifiers
+  ---
+  duration_ms: 0.244625
+  type: 'test'
+  ...
+# Subtest: accepts language_TERRITORY syntax for the Open Graph locale
+not ok 35 - accepts language_TERRITORY syntax for the Open Graph locale
+  ---
+  duration_ms: 0.333583
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/metadata-locale-validation.test.ts:24:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+    run (node:internal/test_runner/harness:307:12)
+    test (node:internal/test_runner/harness:316:12)
+    file:///Users/sacino/bulma-root/site/test/metadata-locale-validation.test.ts:33:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    requireOrImport (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:1136:12)
+    Object.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:2897:5)
+    InProcessLoaderHost.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2053:20)
+    loadFileSuites (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2500:25)
+    Object.setup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6168:7)
+    taskLoop (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5836:11)
+    _TaskRunner.runDeferCleanup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5852:5)
+    _TaskRunner.run (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5816:33)
+    runTasks (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5981:18)
+    Object.runAllTestsWithConfig (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6669:18)
+    runTests (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/cli/testActions.js:95:18)
+    _Command.<anonymous> (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/program.js:55:7)
+  ...
+# Subtest: rejects BCP 47 syntax for the Open Graph locale
+not ok 36 - rejects BCP 47 syntax for the Open Graph locale
+  ---
+  duration_ms: 0.104125
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/metadata-locale-validation.test.ts:27:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: accepts BCP 47 syntax for the HTML language
+not ok 37 - accepts BCP 47 syntax for the HTML language
+  ---
+  duration_ms: 0.073834
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/metadata-locale-validation.test.ts:30:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: rejects Open Graph syntax for the HTML language
+not ok 38 - rejects Open Graph syntax for the HTML language
+  ---
+  duration_ms: 0.066125
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/metadata-locale-validation.test.ts:33:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: navbar controller gives React exclusive ownership of mobile dialog commands
+not ok 39 - navbar controller gives React exclusive ownership of mobile dialog commands
+  ---
+  duration_ms: 0.181292
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/navbar-dialog-ownership.test.ts:8:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+    run (node:internal/test_runner/harness:307:12)
+    test (node:internal/test_runner/harness:316:12)
+    file:///Users/sacino/bulma-root/site/test/navbar-dialog-ownership.test.ts:14:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    requireOrImport (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:1136:12)
+    Object.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:2897:5)
+    InProcessLoaderHost.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2053:20)
+    loadFileSuites (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2500:25)
+    Object.setup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6168:7)
+    taskLoop (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5836:11)
+    _TaskRunner.runDeferCleanup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5852:5)
+    _TaskRunner.run (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5816:33)
+    runTasks (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5981:18)
+    Object.runAllTestsWithConfig (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6669:18)
+    runTests (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/cli/testActions.js:95:18)
+    _Command.<anonymous> (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/program.js:55:7)
+  ...
+# Subtest: Markdown negotiation does not apply an HTML validator to the selected representation
+not ok 40 - Markdown negotiation does not apply an HTML validator to the selected representation
+  ---
+  duration_ms: 0.223458
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/negotiated-document.test.ts:4:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+    run (node:internal/test_runner/harness:307:12)
+    test (node:internal/test_runner/harness:316:12)
+    file:///Users/sacino/bulma-root/site/test/negotiated-document.test.ts:7:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    requireOrImport (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:1136:12)
+    Object.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:2897:5)
+    InProcessLoaderHost.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2053:20)
+    loadFileSuites (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2500:25)
+    Object.setup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6168:7)
+    taskLoop (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5836:11)
+    _TaskRunner.runDeferCleanup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5852:5)
+    _TaskRunner.run (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5816:33)
+    runTasks (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5981:18)
+    Object.runAllTestsWithConfig (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6669:18)
+    runTests (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/cli/testActions.js:95:18)
+    _Command.<anonymous> (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/program.js:55:7)
+  ...
+# Subtest: HTML negotiation preserves conditional request handling for the HTML representation
+not ok 41 - HTML negotiation preserves conditional request handling for the HTML representation
+  ---
+  duration_ms: 0.083
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/negotiated-document.test.ts:38:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: Markdown negotiation preserves an empty public redirect without fetching Markdown
+not ok 42 - Markdown negotiation preserves an empty public redirect without fetching Markdown
+  ---
+  duration_ms: 0.057375
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/negotiated-document.test.ts:64:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: above-fold about and contact LCP content never starts transparent
+not ok 43 - above-fold about and contact LCP content never starts transparent
+  ---
+  duration_ms: 0.186708
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/performance-regressions.test.ts:12:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+    run (node:internal/test_runner/harness:307:12)
+    test (node:internal/test_runner/harness:316:12)
+    file:///Users/sacino/bulma-root/site/test/performance-regressions.test.ts:15:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    requireOrImport (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:1136:12)
+    Object.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:2897:5)
+    InProcessLoaderHost.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2053:20)
+    loadFileSuites (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2500:25)
+    Object.setup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6168:7)
+    taskLoop (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5836:11)
+    _TaskRunner.runDeferCleanup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5852:5)
+    _TaskRunner.run (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5816:33)
+    runTasks (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5981:18)
+    Object.runAllTestsWithConfig (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6669:18)
+    runTests (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/cli/testActions.js:95:18)
+    _Command.<anonymous> (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/program.js:55:7)
+  ...
+# Subtest: Astro routes keep hydration bounded to the production interaction map
+not ok 44 - Astro routes keep hydration bounded to the production interaction map
+  ---
+  duration_ms: 0.0735
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/performance-regressions.test.ts:24:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: Cloudflare Workers caches only content-hashed Astro assets as immutable
+not ok 45 - Cloudflare Workers caches only content-hashed Astro assets as immutable
+  ---
+  duration_ms: 0.054791
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/performance-regressions.test.ts:41:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: performance budgets cover every route and preserve deterministic baselines
+not ok 46 - performance budgets cover every route and preserve deterministic baselines
+  ---
+  duration_ms: 0.05025
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/performance-regressions.test.ts:48:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: owned runtime reductions keep analytics timing and active routes free of Tailwind Plus
+not ok 47 - owned runtime reductions keep analytics timing and active routes free of Tailwind Plus
+  ---
+  duration_ms: 0.049375
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/performance-regressions.test.ts:60:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: performance budget reporter rejects a synthetic route-byte regression
+not ok 48 - performance budget reporter rejects a synthetic route-byte regression
+  ---
+  duration_ms: 0.045166
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/performance-regressions.test.ts:81:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: About responsive images keep exact dimensions, priorities, and byte ceilings
+not ok 49 - About responsive images keep exact dimensions, priorities, and byte ceilings
+  ---
+  duration_ms: 0.046458
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/performance-regressions.test.ts:135:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: homepage and pricing page toggles share every interactive visual token
+not ok 50 - homepage and pricing page toggles share every interactive visual token
+  ---
+  duration_ms: 0.096916
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/pricing-toggle-parity.test.ts:9:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+    run (node:internal/test_runner/harness:307:12)
+    test (node:internal/test_runner/harness:316:12)
+    file:///Users/sacino/bulma-root/site/test/pricing-toggle-parity.test.ts:13:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    requireOrImport (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:1136:12)
+    Object.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:2897:5)
+    InProcessLoaderHost.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2053:20)
+    loadFileSuites (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2500:25)
+    Object.setup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6168:7)
+    taskLoop (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5836:11)
+    _TaskRunner.runDeferCleanup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5852:5)
+    _TaskRunner.run (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5816:33)
+    runTasks (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5981:18)
+    Object.runAllTestsWithConfig (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6669:18)
+    runTests (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/cli/testActions.js:95:18)
+    _Command.<anonymous> (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/program.js:55:7)
+  ...
+# Subtest: pricing toggle gives the latest animation exclusive timer ownership
+not ok 51 - pricing toggle gives the latest animation exclusive timer ownership
+  ---
+  duration_ms: 0.089709
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/pricing-toggle-timer-ownership.test.ts:8:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+    run (node:internal/test_runner/harness:307:12)
+    test (node:internal/test_runner/harness:316:12)
+    file:///Users/sacino/bulma-root/site/test/pricing-toggle-timer-ownership.test.ts:14:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    requireOrImport (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:1136:12)
+    Object.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:2897:5)
+    InProcessLoaderHost.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2053:20)
+    loadFileSuites (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2500:25)
+    Object.setup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6168:7)
+    taskLoop (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5836:11)
+    _TaskRunner.runDeferCleanup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5852:5)
+    _TaskRunner.run (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5816:33)
+    runTasks (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5981:18)
+    Object.runAllTestsWithConfig (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6669:18)
+    runTests (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/cli/testActions.js:95:18)
+    _Command.<anonymous> (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/program.js:55:7)
+  ...
+# Subtest: robots.txt is byte-identical to the production baseline
+not ok 52 - robots.txt is byte-identical to the production baseline
+  ---
+  duration_ms: 0.133292
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/production-parity.test.ts:59:3'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+    run (node:internal/test_runner/harness:307:12)
+    test (node:internal/test_runner/harness:316:12)
+    file:///Users/sacino/bulma-root/site/test/production-parity.test.ts:97:3
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    requireOrImport (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:1136:12)
+    Object.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:2897:5)
+    InProcessLoaderHost.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2053:20)
+    loadFileSuites (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2500:25)
+    Object.setup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6168:7)
+    taskLoop (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5836:11)
+    _TaskRunner.runDeferCleanup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5852:5)
+    _TaskRunner.run (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5816:33)
+    runTasks (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5981:18)
+    Object.runAllTestsWithConfig (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6669:18)
+    runTests (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/cli/testActions.js:95:18)
+    _Command.<anonymous> (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/program.js:55:7)
+  ...
+# Subtest: llms.txt is byte-identical to the production baseline
+not ok 53 - llms.txt is byte-identical to the production baseline
+  ---
+  duration_ms: 0.061917
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/production-parity.test.ts:59:3'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: sitemap.xml publishes the production URL set with the home page first
+not ok 54 - sitemap.xml publishes the production URL set with the home page first
+  ---
+  duration_ms: 0.049167
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/production-parity.test.ts:68:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: internal link targets keep the production trailing slash
+not ok 55 - internal link targets keep the production trailing slash
+  ---
+  duration_ms: 0.047042
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/production-parity.test.ts:79:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: public scripts stay byte-identical to their production source
+not ok 56 - public scripts stay byte-identical to their production source
+  ---
+  duration_ms: 0.045958
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/production-parity.test.ts:90:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: every document declares the production viewport
+not ok 57 - every document declares the production viewport
+  ---
+  duration_ms: 0.0445
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/production-parity.test.ts:97:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: every document declares the production Open Graph identity
+not ok 58 - every document declares the production Open Graph identity
+  ---
+  duration_ms: 0.043583
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/production-parity.test.ts:103:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: runtime metadata pins the verified Node 22 LTS version
+not ok 59 - runtime metadata pins the verified Node 22 LTS version
+  ---
+  duration_ms: 0.12825
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/runtime-and-browser-rules.test.ts:29:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+    run (node:internal/test_runner/harness:307:12)
+    test (node:internal/test_runner/harness:316:12)
+    file:///Users/sacino/bulma-root/site/test/runtime-and-browser-rules.test.ts:34:1
+    ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    requireOrImport (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:1136:12)
+    Object.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/common/index.js:2897:5)
+    InProcessLoaderHost.loadTestFile (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2053:20)
+    loadFileSuites (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:2500:25)
+    Object.setup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6168:7)
+    taskLoop (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5836:11)
+    _TaskRunner.runDeferCleanup (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5852:5)
+    _TaskRunner.run (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5816:33)
+    runTasks (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:5981:18)
+    Object.runAllTestsWithConfig (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/runner/index.js:6669:18)
+    runTests (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/cli/testActions.js:95:18)
+    _Command.<anonymous> (/Users/sacino/bulma-root/site/node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/lib/program.js:55:7)
+  ...
+# Subtest: runtime metadata pins the verified Astro, React, Three.js, and Mixpanel versions
+not ok 60 - runtime metadata pins the verified Astro, React, Three.js, and Mixpanel versions
+  ---
+  duration_ms: 0.070541
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/runtime-and-browser-rules.test.ts:35:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: browser rule covers canonical URLs and viewport-dependent evidence
+not ok 61 - browser rule covers canonical URLs and viewport-dependent evidence
+  ---
+  duration_ms: 0.0525
+  type: 'test'
+  location: '/Users/sacino/bulma-root/site/test/runtime-and-browser-rules.test.ts:43:1'
+  failureType: 'hookFailed'
+  error: "ENOENT: no such file or directory, open '/var/folders/9b/g71l2g096pgbqvh_9222rsq00000gn/T/bulma-lighthouse-cache-test-DK9OYP/report.json'"
+  code: 'ENOENT'
+  stack: |-
+    writeFileSync (node:fs:2430:20)
+    TestContext.<anonymous> (file:///Users/sacino/bulma-root/site/test/lighthouse-report-cache.test.ts:27:3)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    Test.runHook (node:internal/test_runner/test:965:20)
+    Test.run (node:internal/test_runner/test:1022:27)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+
+Running 84 tests using 1 worker
+
+(node:43077) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › test/agent-accessibility.spec.ts:129:5 › / exposes an agent-operable initial state (4.1s)
+  ✓   2 [desktop] › test/agent-accessibility.spec.ts:129:5 › / exposes an agent-operable lenders FAQ open state (2.9s)
+  ✓   3 [desktop] › test/agent-accessibility.spec.ts:129:5 › / exposes an agent-operable mobile menu open when available state (2.2s)
+  ✓   4 [desktop] › test/agent-accessibility.spec.ts:129:5 › /404.html exposes an agent-operable initial state (741ms)
+  ✓   5 [desktop] › test/agent-accessibility.spec.ts:129:5 › /about/ exposes an agent-operable initial state (707ms)
+  ✓   6 [desktop] › test/agent-accessibility.spec.ts:129:5 › /contact/ exposes an agent-operable initial state (661ms)
+  ✓   7 [desktop] › test/agent-accessibility.spec.ts:129:5 › /pricing/ exposes an agent-operable initial state (1.3s)
+  ✓   8 [desktop] › test/agent-accessibility.spec.ts:129:5 › /pricing/ exposes an agent-operable yearly pricing selected state (2.1s)
+  ✓   9 [desktop] › test/agent-accessibility.spec.ts:129:5 › /privacy-policy/ exposes an agent-operable initial state (603ms)
+  ✓  10 [desktop] › test/agent-readiness.spec.ts:34:3 › / is substantive and readable without JavaScript (521ms)
+  ✓  11 [desktop] › test/agent-readiness.spec.ts:57:5 › / has browser parity for ChatGPT-User (104ms)
+  ✓  12 [desktop] › test/agent-readiness.spec.ts:57:5 › / has browser parity for Claude-User (61ms)
+  ✓  13 [desktop] › test/agent-readiness.spec.ts:57:5 › / has browser parity for Perplexity-User (53ms)
+  ✓  14 [desktop] › test/agent-readiness.spec.ts:34:3 › /about/ is substantive and readable without JavaScript (5.1s)
+  ✓  15 [desktop] › test/agent-readiness.spec.ts:57:5 › /about/ has browser parity for ChatGPT-User (55ms)
+  ✓  16 [desktop] › test/agent-readiness.spec.ts:57:5 › /about/ has browser parity for Claude-User (49ms)
+  ✓  17 [desktop] › test/agent-readiness.spec.ts:57:5 › /about/ has browser parity for Perplexity-User (56ms)
+  ✓  18 [desktop] › test/agent-readiness.spec.ts:34:3 › /contact/ is substantive and readable without JavaScript (197ms)
+  ✓  19 [desktop] › test/agent-readiness.spec.ts:57:5 › /contact/ has browser parity for ChatGPT-User (44ms)
+  ✓  20 [desktop] › test/agent-readiness.spec.ts:57:5 › /contact/ has browser parity for Claude-User (40ms)
+  ✓  21 [desktop] › test/agent-readiness.spec.ts:57:5 › /contact/ has browser parity for Perplexity-User (41ms)
+  ✓  22 [desktop] › test/agent-readiness.spec.ts:34:3 › /pricing/ is substantive and readable without JavaScript (233ms)
+  ✓  23 [desktop] › test/agent-readiness.spec.ts:57:5 › /pricing/ has browser parity for ChatGPT-User (54ms)
+  ✓  24 [desktop] › test/agent-readiness.spec.ts:57:5 › /pricing/ has browser parity for Claude-User (47ms)
+  ✓  25 [desktop] › test/agent-readiness.spec.ts:57:5 › /pricing/ has browser parity for Perplexity-User (47ms)
+  ✓  26 [desktop] › test/agent-readiness.spec.ts:34:3 › /privacy-policy/ is substantive and readable without JavaScript (5.1s)
+  ✓  27 [desktop] › test/agent-readiness.spec.ts:57:5 › /privacy-policy/ has browser parity for ChatGPT-User (56ms)
+  ✓  28 [desktop] › test/agent-readiness.spec.ts:57:5 › /privacy-policy/ has browser parity for Claude-User (62ms)
+  ✓  29 [desktop] › test/agent-readiness.spec.ts:57:5 › /privacy-policy/ has browser parity for Perplexity-User (39ms)
+  ✓  30 [desktop] › test/agent-readiness.spec.ts:103:1 › an unknown route returns a recoverable real error (20ms)
+PARITY home-desktop 0.0039%
+  ✓  31 [desktop] › test/parity.spec.ts:202:3 › home preserves production content and visual parity (11.3s)
+PARITY about-desktop 0.0000%
+  ✓  32 [desktop] › test/parity.spec.ts:202:3 › about preserves production content and visual parity (7.2s)
+PARITY pricing-desktop 0.0970%
+  ✓  33 [desktop] › test/parity.spec.ts:202:3 › pricing preserves production content and visual parity (5.4s)
+PARITY contact-desktop 0.0004%
+  ✓  34 [desktop] › test/parity.spec.ts:202:3 › contact preserves production content and visual parity (2.5s)
+PARITY privacy-policy-desktop 0.0013%
+  ✓  35 [desktop] › test/parity.spec.ts:202:3 › privacy-policy preserves production content and visual parity (2.0s)
+PARITY 404-desktop 0.0001%
+  ✓  36 [desktop] › test/parity.spec.ts:202:3 › 404 preserves production content and visual parity (1.6s)
+  -  37 [desktop] › test/parity.spec.ts:246:3 › declared production states › mobile menu open
+PARITY home-faq-open 0.0000%
+  ✓  38 [desktop] › test/parity.spec.ts:256:3 › declared production states › homepage lenders FAQ open by direct hash (10.5s)
+PARITY pricing-yearly 0.0922%
+  ✓  39 [desktop] › test/parity.spec.ts:265:3 › declared production states › yearly pricing (6.2s)
+PARITY contact-error 0.8362%
+  ✓  40 [desktop] › test/parity.spec.ts:278:5 › declared production states › contact error (2.4s)
+PARITY contact-success 0.7439%
+  ✓  41 [desktop] › test/parity.spec.ts:278:5 › declared production states › contact success (1.2s)
+  -  42 [desktop] › test/parity.spec.ts:296:3 › declared production states › plan tabs support keyboard movement
+(node:46857) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  43 [mobile] › test/agent-accessibility.spec.ts:129:5 › / exposes an agent-operable initial state (4.7s)
+  ✓  44 [mobile] › test/agent-accessibility.spec.ts:129:5 › / exposes an agent-operable lenders FAQ open state (3.1s)
+  ✓  45 [mobile] › test/agent-accessibility.spec.ts:129:5 › / exposes an agent-operable mobile menu open when available state (1.3s)
+  ✓  46 [mobile] › test/agent-accessibility.spec.ts:129:5 › /404.html exposes an agent-operable initial state (592ms)
+  ✓  47 [mobile] › test/agent-accessibility.spec.ts:129:5 › /about/ exposes an agent-operable initial state (589ms)
+  ✓  48 [mobile] › test/agent-accessibility.spec.ts:129:5 › /contact/ exposes an agent-operable initial state (527ms)
+  ✓  49 [mobile] › test/agent-accessibility.spec.ts:129:5 › /pricing/ exposes an agent-operable initial state (1.2s)
+  ✓  50 [mobile] › test/agent-accessibility.spec.ts:129:5 › /pricing/ exposes an agent-operable yearly pricing selected state (1.7s)
+  ✓  51 [mobile] › test/agent-accessibility.spec.ts:129:5 › /privacy-policy/ exposes an agent-operable initial state (484ms)
+  ✓  52 [mobile] › test/agent-readiness.spec.ts:34:3 › / is substantive and readable without JavaScript (5.2s)
+  ✓  53 [mobile] › test/agent-readiness.spec.ts:57:5 › / has browser parity for ChatGPT-User (89ms)
+  ✓  54 [mobile] › test/agent-readiness.spec.ts:57:5 › / has browser parity for Claude-User (61ms)
+  ✓  55 [mobile] › test/agent-readiness.spec.ts:57:5 › / has browser parity for Perplexity-User (61ms)
+  ✓  56 [mobile] › test/agent-readiness.spec.ts:34:3 › /about/ is substantive and readable without JavaScript (5.1s)
+  ✓  57 [mobile] › test/agent-readiness.spec.ts:57:5 › /about/ has browser parity for ChatGPT-User (59ms)
+  ✓  58 [mobile] › test/agent-readiness.spec.ts:57:5 › /about/ has browser parity for Claude-User (47ms)
+  ✓  59 [mobile] › test/agent-readiness.spec.ts:57:5 › /about/ has browser parity for Perplexity-User (49ms)
+  ✓  60 [mobile] › test/agent-readiness.spec.ts:34:3 › /contact/ is substantive and readable without JavaScript (189ms)
+  ✓  61 [mobile] › test/agent-readiness.spec.ts:57:5 › /contact/ has browser parity for ChatGPT-User (50ms)
+  ✓  62 [mobile] › test/agent-readiness.spec.ts:57:5 › /contact/ has browser parity for Claude-User (58ms)
+  ✓  63 [mobile] › test/agent-readiness.spec.ts:57:5 › /contact/ has browser parity for Perplexity-User (99ms)
+  ✓  64 [mobile] › test/agent-readiness.spec.ts:34:3 › /pricing/ is substantive and readable without JavaScript (5.1s)
+  ✓  65 [mobile] › test/agent-readiness.spec.ts:57:5 › /pricing/ has browser parity for ChatGPT-User (76ms)
+  ✓  66 [mobile] › test/agent-readiness.spec.ts:57:5 › /pricing/ has browser parity for Claude-User (49ms)
+  ✓  67 [mobile] › test/agent-readiness.spec.ts:57:5 › /pricing/ has browser parity for Perplexity-User (54ms)
+  ✓  68 [mobile] › test/agent-readiness.spec.ts:34:3 › /privacy-policy/ is substantive and readable without JavaScript (5.1s)
+  ✓  69 [mobile] › test/agent-readiness.spec.ts:57:5 › /privacy-policy/ has browser parity for ChatGPT-User (53ms)
+  ✓  70 [mobile] › test/agent-readiness.spec.ts:57:5 › /privacy-policy/ has browser parity for Claude-User (45ms)
+  ✓  71 [mobile] › test/agent-readiness.spec.ts:57:5 › /privacy-policy/ has browser parity for Perplexity-User (46ms)
+  ✓  72 [mobile] › test/agent-readiness.spec.ts:103:1 › an unknown route returns a recoverable real error (21ms)
+PARITY home-mobile 0.0000%
+  ✓  73 [mobile] › test/parity.spec.ts:202:3 › home preserves production content and visual parity (11.2s)
+PARITY about-mobile 0.2909%
+  ✓  74 [mobile] › test/parity.spec.ts:202:3 › about preserves production content and visual parity (6.1s)
+PARITY pricing-mobile 0.0000%
+  ✓  75 [mobile] › test/parity.spec.ts:202:3 › pricing preserves production content and visual parity (4.7s)
+PARITY contact-mobile 0.0010%
+  ✓  76 [mobile] › test/parity.spec.ts:202:3 › contact preserves production content and visual parity (2.5s)
+PARITY privacy-policy-mobile 0.0016%
+  ✓  77 [mobile] › test/parity.spec.ts:202:3 › privacy-policy preserves production content and visual parity (2.0s)
+PARITY 404-mobile 0.0006%
+  ✓  78 [mobile] › test/parity.spec.ts:202:3 › 404 preserves production content and visual parity (1.3s)
+PARITY home-mobile-menu-open 0.0000%
+  ✓  79 [mobile] › test/parity.spec.ts:246:3 › declared production states › mobile menu open (9.2s)
+  -  80 [mobile] › test/parity.spec.ts:256:3 › declared production states › homepage lenders FAQ open by direct hash
+  -  81 [mobile] › test/parity.spec.ts:265:3 › declared production states › yearly pricing
+  -  82 [mobile] › test/parity.spec.ts:278:5 › declared production states › contact error
+  -  83 [mobile] › test/parity.spec.ts:278:5 › declared production states › contact success
+  ✓  84 [mobile] › test/parity.spec.ts:296:3 › declared production states › plan tabs support keyboard movement (4.2s)
+
+  6 skipped
+  78 passed (2.6m)

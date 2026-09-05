@@ -1,0 +1,22 @@
+{
+  "tool": "agent-browser fallback after dev-browser transport failure",
+  "viewports": [
+    "1440x900",
+    "390x900"
+  ],
+  "colourScheme": "light",
+  "verified": [
+    "dark rendering",
+    "yearly pricing selected; Solo $490/year; save $98",
+    "exact annual callout",
+    "direct lenders FAQ on desktop and mobile",
+    "no horizontal overflow"
+  ],
+  "screenshots": [
+    "pricing-desktop.png",
+    "pricing-mobile.png"
+  ],
+  "visualAnalysis": "Desktop: three aligned pricing cards, readable headings and annual prices. Mobile: heading wraps within viewport, yearly tab and annual callout fit, Solo price and savings are visible; no clipping or overlap.",
+  "browserClosed": true,
+  "followup": "faq-contact-extra.json independently confirms all FAQ paths at both viewports with settled waits, plus mocked mobile contact 500/200. Immediate agent-browser read was a timing artefact."
+}

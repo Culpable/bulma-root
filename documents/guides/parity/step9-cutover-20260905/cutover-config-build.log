@@ -1,0 +1,66 @@
+$ wrangler types
+
+ ⛅️ wrangler 4.129.0
+────────────────────
+Generating project types...
+
+interface __BaseEnv_Env {
+	ASSETS: Fetcher;
+}
+declare namespace Cloudflare {
+	interface GlobalProps {
+		mainModule: typeof import("./src/worker");
+	}
+	interface PreviewEnv {
+		ASSETS: Fetcher;
+	}
+	interface Env extends __BaseEnv_Env {}
+}
+interface Env extends __BaseEnv_Env {}
+
+Generating runtime types...
+
+Runtime types generated.
+
+
+✨ Types written to worker-configuration.d.ts
+
+📖 Read about runtime types
+https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+
+$ astro check && astro build && node scripts/normalise-astro-island-uids.mjs dist && node scripts/generate-agent-markdown.mjs dist https://bulma.com.au && node scripts/generate-headers.mjs
+15:19:03 [types] Generated 42ms
+15:19:03 [check] Getting diagnostics for Astro files in /Users/sacino/bulma-root/site...
+Result (293 files):
+- 0 errors
+- 0 warnings
+- 0 hints
+
+15:19:11 [types] Generated 24ms
+15:19:11 [build] output: "static"
+15:19:11 [build] mode: "static"
+15:19:11 [build] directory: /Users/sacino/bulma-root/site/dist/
+15:19:11 [build] Collecting build info...
+15:19:11 [build] ✓ Completed in 56ms.
+15:19:11 [build] Building static entrypoints...
+15:19:11 [assets] Copying fonts (2 files)...
+15:19:11 [vite] ✓ built in 392ms
+15:19:11 [vite] ✓ built in 183ms
+15:19:11 [build] Rearranging server assets...
+
+ generating static routes
+15:19:12   ├─ /404.html (+20ms)
+15:19:12   ├─ /about/index.html (+12ms)
+15:19:12   ├─ /contact/index.html (+9ms)
+15:19:12   ├─ /llms.txt (+3ms)
+15:19:12   ├─ /pricing/index.html (+13ms)
+15:19:12   ├─ /privacy-policy/index.html (+6ms)
+15:19:12   ├─ /sitemap.xml (+2ms)
+15:19:12   ├─ /index.html (+11ms)
+15:19:12 ✓ Completed in 95ms.
+
+15:19:12 [build] ✓ Completed in 696ms.
+15:19:12 [build] 6 page(s) built in 766ms
+15:19:12 [build] Complete!
+Normalised 23 Astro island UIDs across 6 HTML files.

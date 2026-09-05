@@ -1,0 +1,207 @@
+{
+  "release": "4f4242eaf5515492970a0b3cf712b8d68cf83e99",
+  "workerVersion": "4f8e42b6-954c-42f1-ba60-1b900675caeb",
+  "thirdPartiesBlocked": true,
+  "results": [
+    {
+      "route": "/",
+      "samples": [
+        {
+          "run": 1,
+          "performance": 96,
+          "seo": 100,
+          "fcp": 1239.63,
+          "lcp": 2664.63,
+          "tbt": 10.5,
+          "cls": 0
+        },
+        {
+          "run": 2,
+          "performance": 100,
+          "seo": 100,
+          "fcp": 1250.328,
+          "lcp": 1475.328,
+          "tbt": 2.5,
+          "cls": 0
+        },
+        {
+          "run": 3,
+          "performance": 96,
+          "seo": 100,
+          "fcp": 1530.183,
+          "lcp": 2655.183,
+          "tbt": 0,
+          "cls": 0
+        }
+      ],
+      "medians": {
+        "performance": 96,
+        "seo": 100,
+        "fcp": 1250.328,
+        "lcp": 2655.183,
+        "tbt": 2.5,
+        "cls": 0
+      }
+    },
+    {
+      "route": "/about/",
+      "samples": [
+        {
+          "run": 1,
+          "performance": 99,
+          "seo": 100,
+          "fcp": 1079.5055,
+          "lcp": 1904.5055,
+          "tbt": 0,
+          "cls": 0
+        },
+        {
+          "run": 2,
+          "performance": 99,
+          "seo": 100,
+          "fcp": 1080.7655,
+          "lcp": 2205.7655,
+          "tbt": 0,
+          "cls": 0
+        },
+        {
+          "run": 3,
+          "performance": 99,
+          "seo": 100,
+          "fcp": 1083.2835,
+          "lcp": 1908.2835,
+          "tbt": 0,
+          "cls": 0
+        }
+      ],
+      "medians": {
+        "performance": 99,
+        "seo": 100,
+        "fcp": 1080.7655,
+        "lcp": 1908.2835,
+        "tbt": 0,
+        "cls": 0
+      }
+    },
+    {
+      "route": "/pricing/",
+      "samples": [
+        {
+          "run": 1,
+          "performance": 99,
+          "seo": 100,
+          "fcp": 1009.1025,
+          "lcp": 2196.6025,
+          "tbt": 0,
+          "cls": 0.01584040407031692
+        },
+        {
+          "run": 2,
+          "performance": 97,
+          "seo": 100,
+          "fcp": 949.9525,
+          "lcp": 2508.9525,
+          "tbt": 0,
+          "cls": 0.01584040407031692
+        },
+        {
+          "run": 3,
+          "performance": 100,
+          "seo": 100,
+          "fcp": 966.1610000000001,
+          "lcp": 977.6610000000001,
+          "tbt": 0,
+          "cls": 0.01584040407031692
+        }
+      ],
+      "medians": {
+        "performance": 99,
+        "seo": 100,
+        "fcp": 966.1610000000001,
+        "lcp": 2196.6025,
+        "tbt": 0,
+        "cls": 0.01584040407031692
+      }
+    },
+    {
+      "route": "/contact/",
+      "samples": [
+        {
+          "run": 1,
+          "performance": 100,
+          "seo": 100,
+          "fcp": 1089.353,
+          "lcp": 1089.353,
+          "tbt": 0,
+          "cls": 0
+        },
+        {
+          "run": 2,
+          "performance": 100,
+          "seo": 100,
+          "fcp": 1292.7910000000002,
+          "lcp": 1442.7910000000002,
+          "tbt": 0,
+          "cls": 0
+        },
+        {
+          "run": 3,
+          "performance": 100,
+          "seo": 100,
+          "fcp": 1073.3609999999999,
+          "lcp": 1073.3609999999999,
+          "tbt": 0,
+          "cls": 0
+        }
+      ],
+      "medians": {
+        "performance": 100,
+        "seo": 100,
+        "fcp": 1089.353,
+        "lcp": 1089.353,
+        "tbt": 0,
+        "cls": 0
+      }
+    },
+    {
+      "route": "/privacy-policy/",
+      "samples": [
+        {
+          "run": 1,
+          "performance": 100,
+          "seo": 100,
+          "fcp": 1079.1309999999999,
+          "lcp": 1079.1309999999999,
+          "tbt": 0,
+          "cls": 0.0022494136045472274
+        },
+        {
+          "run": 2,
+          "performance": 99,
+          "seo": 100,
+          "fcp": 1077.4569999999999,
+          "lcp": 2202.457,
+          "tbt": 5.5,
+          "cls": 0.003436543071624268
+        },
+        {
+          "run": 3,
+          "performance": 100,
+          "seo": 100,
+          "fcp": 1073.0990000000002,
+          "lcp": 1073.0990000000002,
+          "tbt": 0,
+          "cls": 0.003436543071624268
+        }
+      ],
+      "medians": {
+        "performance": 100,
+        "seo": 100,
+        "fcp": 1077.4569999999999,
+        "lcp": 1079.1309999999999,
+        "tbt": 0,
+        "cls": 0.003436543071624268
+      }
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "pages": [
+    {
+      "id": "d427c772-9189-45c4-ab72-e83683e233ea",
+      "name": "bulma-root",
+      "subdomain": "bulma-root.pages.dev",
+      "domains": [
+        "bulma-root.pages.dev"
+      ],
+      "build_config": {
+        "web_analytics_tag": null,
+        "web_analytics_token": null
+      },
+      "deployment_configs": {
+        "preview": {
+          "env_vars": null,
+          "fail_open": true,
+          "always_use_latest_compatibility_date": false,
+          "compatibility_date": "2026-08-30",
+          "compatibility_flags": [],
+          "build_image_major_version": 3,
+          "usage_model": "standard"
+        },
+        "production": {
+          "env_vars": null,
+          "fail_open": true,
+          "always_use_latest_compatibility_date": false,
+          "compatibility_date": "2026-08-30",
+          "compatibility_flags": [],
+          "build_image_major_version": 3,
+          "usage_model": "standard"
+        }
+      },
+      "latest_deployment": {
+        "id": "3712aa0a-8883-4c46-bf42-3dc1e46be404",
+        "short_id": "3712aa0a",
+        "project_id": "d427c772-9189-45c4-ab72-e83683e233ea",
+        "project_name": "bulma-root",
+        "environment": "preview",
+        "url": "https://3712aa0a.bulma-root.pages.dev",
+        "created_on": "2026-08-31T03:45:05.765894Z",
+        "modified_on": "2026-08-31T03:45:07.605196Z",
+        "latest_stage": {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": "2026-08-31T03:45:07.605196Z",
+          "status": "success"
+        },
+        "deployment_trigger": {
+          "type": "ad_hoc",
+          "metadata": {
+            "branch": "cloudflare-comparison",
+            "commit_hash": "4a005a64b8b44b91d168602049cbef38867f79be",
+            "commit_message": "Step 5G current exact-artifact comparison",
+            "commit_dirty": false
+          }
+        },
+        "stages": [
+          {
+            "name": "queued",
+            "started_on": "2026-08-31T03:45:05.765894Z",
+            "ended_on": null,
+            "status": "active"
+          },
+          {
+            "name": "initialize",
+            "started_on": null,
+            "ended_on": null,
+            "status": "idle"
+          },
+          {
+            "name": "clone_repo",
+            "started_on": null,
+            "ended_on": null,
+            "status": "idle"
+          },
+          {
+            "name": "build",
+            "started_on": null,
+            "ended_on": null,
+            "status": "idle"
+          },
+          {
+            "name": "deploy",
+            "started_on": null,
+            "ended_on": "2026-08-31T03:45:07.605196Z",
+            "status": "success"
+          }
+        ],
+        "build_config": {
+          "build_command": null,
+          "destination_dir": null,
+          "build_caching": null,
+          "root_dir": null,
+          "web_analytics_tag": null,
+          "web_analytics_token": null
+        },
+        "env_vars": {},
+        "compatibility_date": "2026-08-30",
+        "compatibility_flags": [],
+        "build_image_major_version": 3,
+        "usage_model": null,
+        "aliases": [
+          "https://cloudflare-comparison.bulma-root.pages.dev"
+        ],
+        "is_skipped": false,
+        "production_branch": "main",
+        "uses_functions": false
+      },
+      "canonical_deployment": null,
+      "created_on": "2026-08-30T06:36:03.028334Z",
+      "production_branch": "main",
+      "production_script_name": "pages-worker--18607596-production",
+      "preview_script_name": "pages-worker--18607596-preview",
+      "uses_functions": false,
+      "framework": "",
+      "framework_version": ""
+    }
+  ],
+  "tokens": [
+    {
+      "id": "9dd6d8eb748379192f4d2d9b7fb4fc3b",
+      "name": "bulma-root-cloudflare-pages-deploy",
+      "status": "active",
+      "issued_on": "2026-08-30T06:35:15Z",
+      "modified_on": "2026-08-30T06:35:15Z",
+      "last_used_on": "2026-08-30T06:35:18Z",
+      "policies": [
+        {
+          "id": "790d3057ae0b404e9d2ed3a109ab79b3",
+          "effect": "allow",
+          "resources": {
+            "com.cloudflare.api.account.213ab3604485056376263d22fa242742": "*"
+          },
+          "permission_groups": [
+            {
+              "id": "8d28297797f24fb8a0c332fe0866ec89",
+              "name": "Pages Write"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "github_secrets": {
+    "total_count": 1,
+    "secrets": [
+      {
+        "name": "CLOUDFLARE_PAGES_API_TOKEN",
+        "created_at": "2026-08-30T06:35:17Z",
+        "updated_at": "2026-08-30T06:35:17Z"
+      }
+    ]
+  },
+  "github_variables": {
+    "variables": [
+      {
+        "name": "CLOUDFLARE_ACCOUNT_ID",
+        "value": "213ab3604485056376263d22fa242742",
+        "created_at": "2026-08-30T06:35:18Z",
+        "updated_at": "2026-08-30T06:35:18Z"
+      }
+    ],
+    "total_count": 1
+  }
+}

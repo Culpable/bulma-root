@@ -1,0 +1,20 @@
+$ node scripts/run-http-contract.mjs
+PASS  home HTML  200  88ms  http://127.0.0.1:8787/
+PASS  home Markdown after HTML  200  6ms  http://127.0.0.1:8787/
+PASS  about Markdown  200  5ms  http://127.0.0.1:8787/about/
+PASS  pricing Markdown  200  5ms  http://127.0.0.1:8787/pricing/
+PASS  contact Markdown  200  5ms  http://127.0.0.1:8787/contact/
+PASS  privacy policy Markdown  200  5ms  http://127.0.0.1:8787/privacy-policy/
+PASS  home Markdown first cache order  200  5ms  http://127.0.0.1:8787/
+PASS  home HTML after Markdown  200  8ms  http://127.0.0.1:8787/
+PASS  pricing slash redirect  307  5ms  http://127.0.0.1:8787/pricing
+PASS  unknown HTML  404  6ms  http://127.0.0.1:8787/__missing/
+PASS  unknown Markdown  404  5ms  http://127.0.0.1:8787/__missing/
+PASS  document media type rejected  406  4ms  http://127.0.0.1:8787/
+PASS  Markdown HEAD  200  4ms  http://127.0.0.1:8787/about/
+PASS  internal Markdown blocked  404  2ms  http://127.0.0.1:8787/_agent-markdown/index.md
+PASS  robots  200  2ms  http://127.0.0.1:8787/robots.txt
+PASS  sitemap  200  4ms  http://127.0.0.1:8787/sitemap.xml
+PASS  llms UTF-8  200  4ms  http://127.0.0.1:8787/llms.txt
+PASS  fingerprinted Astro asset  200  3ms  http://127.0.0.1:8787/_astro/BaseLayout.astro_astro_type_script_index_0_lang.DJHurL_Z.js
+PASS  18 HTTP contract case(s)

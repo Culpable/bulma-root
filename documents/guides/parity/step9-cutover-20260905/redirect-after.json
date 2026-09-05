@@ -1,0 +1,30 @@
+{
+  "description": "",
+  "id": "5865eff5158b4d26ac0f6170f2c865b7",
+  "kind": "zone",
+  "last_updated": "2026-09-05T05:49:00.993447Z",
+  "name": "Bulma canonical redirects",
+  "phase": "http_request_dynamic_redirect",
+  "rules": [
+    {
+      "action": "redirect",
+      "action_parameters": {
+        "from_value": {
+          "preserve_query_string": true,
+          "status_code": 308,
+          "target_url": {
+            "expression": "concat(\"https://bulma.com.au\", http.request.uri.path)"
+          }
+        }
+      },
+      "description": "Redirect www to the Bulma apex",
+      "enabled": true,
+      "expression": "(http.host eq \"www.bulma.com.au\")",
+      "id": "704dbf89b1a44cd281d832cfdc74b78a",
+      "last_updated": "2026-09-05T05:49:00.993447Z",
+      "ref": "704dbf89b1a44cd281d832cfdc74b78a",
+      "version": "1"
+    }
+  ],
+  "version": "1"
+}

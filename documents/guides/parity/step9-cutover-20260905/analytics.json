@@ -1,0 +1,317 @@
+{
+  "origin": "https://bulma.com.au",
+  "sampled": [
+    {
+      "path": "/",
+      "intercepted": {
+        "mixpanel": 0,
+        "recorder": 1,
+        "formspree": 0
+      },
+      "pageView": [
+        "track",
+        "Page View",
+        {
+          "url": "/",
+          "page": "/"
+        }
+      ],
+      "referral": [
+        "track",
+        "Referral Source Identified",
+        {
+          "Referral Source": "Google Ads",
+          "Campaign ID": "123",
+          "Ad Group ID": "456",
+          "Keyword Match": "broker",
+          "Ad Creative": "789",
+          "Device Type": "Mobile",
+          "Ad Position": "1",
+          "Referral Page": "workers-migration"
+        }
+      ],
+      "recorderResumed": 1
+    },
+    {
+      "path": "/about/",
+      "intercepted": {
+        "mixpanel": 0,
+        "recorder": 1,
+        "formspree": 0
+      },
+      "pageView": [
+        "track",
+        "Page View",
+        {
+          "url": "/about/",
+          "page": "/about/"
+        }
+      ],
+      "referral": [
+        "track",
+        "Referral Source Identified",
+        {
+          "Referral Source": "Google Ads",
+          "Campaign ID": "123",
+          "Ad Group ID": "456",
+          "Keyword Match": "broker",
+          "Ad Creative": "789",
+          "Device Type": "Mobile",
+          "Ad Position": "1",
+          "Referral Page": "workers-migration"
+        }
+      ],
+      "recorderResumed": 1
+    },
+    {
+      "path": "/pricing/",
+      "intercepted": {
+        "mixpanel": 0,
+        "recorder": 1,
+        "formspree": 0
+      },
+      "pageView": [
+        "track",
+        "Page View",
+        {
+          "url": "/pricing/",
+          "page": "/pricing/"
+        }
+      ],
+      "referral": [
+        "track",
+        "Referral Source Identified",
+        {
+          "Referral Source": "Google Ads",
+          "Campaign ID": "123",
+          "Ad Group ID": "456",
+          "Keyword Match": "broker",
+          "Ad Creative": "789",
+          "Device Type": "Mobile",
+          "Ad Position": "1",
+          "Referral Page": "workers-migration"
+        }
+      ],
+      "recorderResumed": 1
+    },
+    {
+      "path": "/contact/",
+      "intercepted": {
+        "mixpanel": 0,
+        "recorder": 1,
+        "formspree": 0
+      },
+      "pageView": [
+        "track",
+        "Page View",
+        {
+          "url": "/contact/",
+          "page": "/contact/"
+        }
+      ],
+      "referral": [
+        "track",
+        "Referral Source Identified",
+        {
+          "Referral Source": "Google Ads",
+          "Campaign ID": "123",
+          "Ad Group ID": "456",
+          "Keyword Match": "broker",
+          "Ad Creative": "789",
+          "Device Type": "Mobile",
+          "Ad Position": "1",
+          "Referral Page": "workers-migration"
+        }
+      ],
+      "recorderResumed": 1
+    },
+    {
+      "path": "/privacy-policy/",
+      "intercepted": {
+        "mixpanel": 0,
+        "recorder": 1,
+        "formspree": 0
+      },
+      "pageView": [
+        "track",
+        "Page View",
+        {
+          "url": "/privacy-policy/",
+          "page": "/privacy-policy/"
+        }
+      ],
+      "referral": [
+        "track",
+        "Referral Source Identified",
+        {
+          "Referral Source": "Google Ads",
+          "Campaign ID": "123",
+          "Ad Group ID": "456",
+          "Keyword Match": "broker",
+          "Ad Creative": "789",
+          "Device Type": "Mobile",
+          "Ad Position": "1",
+          "Referral Page": "workers-migration"
+        }
+      ],
+      "recorderResumed": 1
+    }
+  ],
+  "unsampled": [
+    {
+      "path": "/",
+      "intercepted": {
+        "mixpanel": 0,
+        "recorder": 0,
+        "formspree": 0
+      },
+      "pageView": [
+        "track",
+        "Page View",
+        {
+          "url": "/",
+          "page": "/"
+        }
+      ],
+      "referral": [
+        "track",
+        "Referral Source Identified",
+        {
+          "Referral Source": "Google Ads",
+          "Campaign ID": "123",
+          "Ad Group ID": "456",
+          "Keyword Match": "broker",
+          "Ad Creative": "789",
+          "Device Type": "Mobile",
+          "Ad Position": "1",
+          "Referral Page": "workers-migration"
+        }
+      ],
+      "recorderResumed": 0
+    },
+    {
+      "path": "/about/",
+      "intercepted": {
+        "mixpanel": 0,
+        "recorder": 0,
+        "formspree": 0
+      },
+      "pageView": [
+        "track",
+        "Page View",
+        {
+          "url": "/about/",
+          "page": "/about/"
+        }
+      ],
+      "referral": [
+        "track",
+        "Referral Source Identified",
+        {
+          "Referral Source": "Google Ads",
+          "Campaign ID": "123",
+          "Ad Group ID": "456",
+          "Keyword Match": "broker",
+          "Ad Creative": "789",
+          "Device Type": "Mobile",
+          "Ad Position": "1",
+          "Referral Page": "workers-migration"
+        }
+      ],
+      "recorderResumed": 0
+    },
+    {
+      "path": "/pricing/",
+      "intercepted": {
+        "mixpanel": 0,
+        "recorder": 0,
+        "formspree": 0
+      },
+      "pageView": [
+        "track",
+        "Page View",
+        {
+          "url": "/pricing/",
+          "page": "/pricing/"
+        }
+      ],
+      "referral": [
+        "track",
+        "Referral Source Identified",
+        {
+          "Referral Source": "Google Ads",
+          "Campaign ID": "123",
+          "Ad Group ID": "456",
+          "Keyword Match": "broker",
+          "Ad Creative": "789",
+          "Device Type": "Mobile",
+          "Ad Position": "1",
+          "Referral Page": "workers-migration"
+        }
+      ],
+      "recorderResumed": 0
+    },
+    {
+      "path": "/contact/",
+      "intercepted": {
+        "mixpanel": 0,
+        "recorder": 0,
+        "formspree": 0
+      },
+      "pageView": [
+        "track",
+        "Page View",
+        {
+          "url": "/contact/",
+          "page": "/contact/"
+        }
+      ],
+      "referral": [
+        "track",
+        "Referral Source Identified",
+        {
+          "Referral Source": "Google Ads",
+          "Campaign ID": "123",
+          "Ad Group ID": "456",
+          "Keyword Match": "broker",
+          "Ad Creative": "789",
+          "Device Type": "Mobile",
+          "Ad Position": "1",
+          "Referral Page": "workers-migration"
+        }
+      ],
+      "recorderResumed": 0
+    },
+    {
+      "path": "/privacy-policy/",
+      "intercepted": {
+        "mixpanel": 0,
+        "recorder": 0,
+        "formspree": 0
+      },
+      "pageView": [
+        "track",
+        "Page View",
+        {
+          "url": "/privacy-policy/",
+          "page": "/privacy-policy/"
+        }
+      ],
+      "referral": [
+        "track",
+        "Referral Source Identified",
+        {
+          "Referral Source": "Google Ads",
+          "Campaign ID": "123",
+          "Ad Group ID": "456",
+          "Keyword Match": "broker",
+          "Ad Creative": "789",
+          "Device Type": "Mobile",
+          "Ad Position": "1",
+          "Referral Page": "workers-migration"
+        }
+      ],
+      "recorderResumed": 0
+    }
+  ]
+}

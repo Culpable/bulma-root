@@ -1,0 +1,95 @@
+{
+  "target": "https://bulma.com.au",
+  "timestamp": "2026-09-05T07:19:46.025Z",
+  "externalRequests": "All non-bulma.com.au requests fulfilled locally; no contact request reached Formspree.",
+  "faq": [
+    {
+      "width": 1440,
+      "height": 900,
+      "lightScheme": true,
+      "normalSamePage": true,
+      "directHash": true,
+      "closedThenSameHash": true,
+      "immediateAfterClick": "true",
+      "settledAfterClick": "true",
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "height": 900,
+      "lightScheme": true,
+      "normalSamePage": true,
+      "directHash": true,
+      "closedThenSameHash": true,
+      "immediateAfterClick": "true",
+      "settledAfterClick": "true",
+      "pageErrors": []
+    }
+  ],
+  "contact": [
+    {
+      "width": 390,
+      "height": 900,
+      "lightScheme": true,
+      "mockedStatus": 500,
+      "feedback": "Message not sent\n\nSorry, your message failed to send. Please email us directly at solutions@bulma.com.au.\n\nYour typed details are still saved above, so you can retry or send them by email.\n\nEmail solutions@bulma.com.au",
+      "request": {
+        "status": 500,
+        "fieldNames": [
+          "form_source",
+          "name",
+          "email",
+          "message"
+        ],
+        "method": "POST"
+      },
+      "fieldsAfter": {
+        "name": "Cutover Verification",
+        "email": "cutover@example.com",
+        "message": "Intercepted local verification. No message sent."
+      },
+      "pageErrors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Contact form submission error: Error: Form submission failed\n    at c (https://bulma.com.au/_astro/contact-page.m88LuFcI.js:2:3272)"
+      ],
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "height": 900,
+      "lightScheme": true,
+      "mockedStatus": 200,
+      "feedback": "Message sent successfully. We'll get back to you soon.",
+      "request": {
+        "status": 200,
+        "fieldNames": [
+          "form_source",
+          "name",
+          "email",
+          "message"
+        ],
+        "method": "POST"
+      },
+      "fieldsAfter": {
+        "name": "",
+        "email": "",
+        "message": ""
+      },
+      "pageErrors": [
+        "t.__mp_recorder is not a constructor"
+      ],
+      "consoleErrors": [],
+      "overflow": false
+    }
+  ],
+  "contactSuccessIsolationRecheck": {
+    "externalPolicy": "Abort third-party requests instead of returning empty successful scripts; fulfil Formspree locally with mocked 200.",
+    "feedback": "Message sent successfully. We'll get back to you soon.",
+    "pageErrors": [],
+    "blockedRequests": [
+      "https://cdn.mxpnl.com/libs/mixpanel-recorder.min.js"
+    ]
+  },
+  "isolationNote": "Initial success trial returned empty 200 responses for third-party scripts, triggering a Mixpanel recorder constructor error. Recheck aborts third-party requests to avoid executing provider load callbacks with missing code."
+}

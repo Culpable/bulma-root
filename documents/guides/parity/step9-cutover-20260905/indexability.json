@@ -1,0 +1,328 @@
+{
+  "checkedAt": "2026-09-05T07:19:49.326Z",
+  "results": [
+    {
+      "ua": "Mozilla/5.0",
+      "route": "/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "e107e4dd6f29312927b6823e7159ae7e8c599c3d1f5e7e143248ec2e20d7f68a"
+    },
+    {
+      "ua": "Mozilla/5.0",
+      "route": "/about/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "066555a3c3e5b49b64c2051fa9924dfdd09e5d5a1317a96baac682923c947ec2"
+    },
+    {
+      "ua": "Mozilla/5.0",
+      "route": "/pricing/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "5fe27a7a27d799c660728a998e9965f7b3504875d254665367488a0786f08405"
+    },
+    {
+      "ua": "Mozilla/5.0",
+      "route": "/contact/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "17800d3a8ee73283e1dc0731b251e18db77aa39f70aa11fd48f3a58f4f909eed"
+    },
+    {
+      "ua": "Mozilla/5.0",
+      "route": "/privacy-policy/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "fd60c95052e32de15f0e5f6044d6e042b653402ea367103d133d39765ea9144a"
+    },
+    {
+      "ua": "Googlebot",
+      "route": "/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "e107e4dd6f29312927b6823e7159ae7e8c599c3d1f5e7e143248ec2e20d7f68a"
+    },
+    {
+      "ua": "Googlebot",
+      "route": "/about/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "066555a3c3e5b49b64c2051fa9924dfdd09e5d5a1317a96baac682923c947ec2"
+    },
+    {
+      "ua": "Googlebot",
+      "route": "/pricing/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "5fe27a7a27d799c660728a998e9965f7b3504875d254665367488a0786f08405"
+    },
+    {
+      "ua": "Googlebot",
+      "route": "/contact/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "17800d3a8ee73283e1dc0731b251e18db77aa39f70aa11fd48f3a58f4f909eed"
+    },
+    {
+      "ua": "Googlebot",
+      "route": "/privacy-policy/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "fd60c95052e32de15f0e5f6044d6e042b653402ea367103d133d39765ea9144a"
+    },
+    {
+      "ua": "bingbot",
+      "route": "/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "e107e4dd6f29312927b6823e7159ae7e8c599c3d1f5e7e143248ec2e20d7f68a"
+    },
+    {
+      "ua": "bingbot",
+      "route": "/about/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "066555a3c3e5b49b64c2051fa9924dfdd09e5d5a1317a96baac682923c947ec2"
+    },
+    {
+      "ua": "bingbot",
+      "route": "/pricing/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "5fe27a7a27d799c660728a998e9965f7b3504875d254665367488a0786f08405"
+    },
+    {
+      "ua": "bingbot",
+      "route": "/contact/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "17800d3a8ee73283e1dc0731b251e18db77aa39f70aa11fd48f3a58f4f909eed"
+    },
+    {
+      "ua": "bingbot",
+      "route": "/privacy-policy/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "fd60c95052e32de15f0e5f6044d6e042b653402ea367103d133d39765ea9144a"
+    },
+    {
+      "ua": "GPTBot",
+      "route": "/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "e107e4dd6f29312927b6823e7159ae7e8c599c3d1f5e7e143248ec2e20d7f68a"
+    },
+    {
+      "ua": "GPTBot",
+      "route": "/about/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "066555a3c3e5b49b64c2051fa9924dfdd09e5d5a1317a96baac682923c947ec2"
+    },
+    {
+      "ua": "GPTBot",
+      "route": "/pricing/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "5fe27a7a27d799c660728a998e9965f7b3504875d254665367488a0786f08405"
+    },
+    {
+      "ua": "GPTBot",
+      "route": "/contact/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "17800d3a8ee73283e1dc0731b251e18db77aa39f70aa11fd48f3a58f4f909eed"
+    },
+    {
+      "ua": "GPTBot",
+      "route": "/privacy-policy/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "fd60c95052e32de15f0e5f6044d6e042b653402ea367103d133d39765ea9144a"
+    },
+    {
+      "ua": "ClaudeBot",
+      "route": "/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "e107e4dd6f29312927b6823e7159ae7e8c599c3d1f5e7e143248ec2e20d7f68a"
+    },
+    {
+      "ua": "ClaudeBot",
+      "route": "/about/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "066555a3c3e5b49b64c2051fa9924dfdd09e5d5a1317a96baac682923c947ec2"
+    },
+    {
+      "ua": "ClaudeBot",
+      "route": "/pricing/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "5fe27a7a27d799c660728a998e9965f7b3504875d254665367488a0786f08405"
+    },
+    {
+      "ua": "ClaudeBot",
+      "route": "/contact/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "17800d3a8ee73283e1dc0731b251e18db77aa39f70aa11fd48f3a58f4f909eed"
+    },
+    {
+      "ua": "ClaudeBot",
+      "route": "/privacy-policy/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "fd60c95052e32de15f0e5f6044d6e042b653402ea367103d133d39765ea9144a"
+    },
+    {
+      "ua": "ChatGPT-User",
+      "route": "/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "e107e4dd6f29312927b6823e7159ae7e8c599c3d1f5e7e143248ec2e20d7f68a"
+    },
+    {
+      "ua": "ChatGPT-User",
+      "route": "/about/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "066555a3c3e5b49b64c2051fa9924dfdd09e5d5a1317a96baac682923c947ec2"
+    },
+    {
+      "ua": "ChatGPT-User",
+      "route": "/pricing/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "5fe27a7a27d799c660728a998e9965f7b3504875d254665367488a0786f08405"
+    },
+    {
+      "ua": "ChatGPT-User",
+      "route": "/contact/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "17800d3a8ee73283e1dc0731b251e18db77aa39f70aa11fd48f3a58f4f909eed"
+    },
+    {
+      "ua": "ChatGPT-User",
+      "route": "/privacy-policy/",
+      "status": 200,
+      "noindex": false,
+      "selfCanonical": true,
+      "matchesBuild": true,
+      "robots": [],
+      "sha256": "fd60c95052e32de15f0e5f6044d6e042b653402ea367103d133d39765ea9144a"
+    },
+    {
+      "route": "/robots.txt",
+      "status": 200,
+      "matchesBuild": true,
+      "noindex": false
+    },
+    {
+      "route": "/sitemap.xml",
+      "status": 200,
+      "matchesBuild": true,
+      "noindex": false
+    },
+    {
+      "route": "/llms.txt",
+      "status": 200,
+      "matchesBuild": true,
+      "noindex": false
+    }
+  ],
+  "wwwRedirect": {
+    "status": 308,
+    "location": "https://bulma.com.au/pricing/?source=host-check"
+  },
+  "limitation": "Crawl eligibility verified; search-engine index inclusion is not observable without Search Console access."
+}

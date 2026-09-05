@@ -1,0 +1,85 @@
+[
+  {
+    "id": "b10d5b68-e58f-4395-944f-4a2449cdd770",
+    "type": "advanced",
+    "hosts": [
+      "bulma.com.au",
+      "staging.bulma.com.au",
+      "*.staging.bulma.com.au"
+    ],
+    "primary_certificate": "8bee60ca-354e-4f3f-983c-93bf9d842c24",
+    "status": "active",
+    "certificates": [
+      {
+        "id": "8bee60ca-354e-4f3f-983c-93bf9d842c24",
+        "hosts": [
+          "bulma.com.au",
+          "staging.bulma.com.au",
+          "*.staging.bulma.com.au"
+        ],
+        "issuer": "GoogleTrustServices",
+        "signature": "SHA256WithRSA",
+        "status": "active",
+        "bundle_method": "ubiquitous",
+        "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+        "uploaded_on": "2026-09-05T05:49:59.647590Z",
+        "modified_on": "2026-09-04T06:25:06.633053Z",
+        "expires_on": "2026-12-03T06:22:26.000000Z",
+        "priority": null
+      },
+      {
+        "id": "440d8dda-c12b-43b6-8fcd-283f015315af",
+        "hosts": [
+          "bulma.com.au",
+          "staging.bulma.com.au",
+          "*.staging.bulma.com.au"
+        ],
+        "issuer": "GoogleTrustServices",
+        "signature": "ECDSAWithSHA256",
+        "status": "active",
+        "bundle_method": "ubiquitous",
+        "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+        "uploaded_on": "2026-09-05T05:49:59.647617Z",
+        "modified_on": "2026-09-04T06:25:06.633053Z",
+        "expires_on": "2026-12-03T06:24:53.000000Z",
+        "priority": null
+      }
+    ],
+    "created_on": "2026-09-04T06:22:23.514976Z",
+    "validity_days": 90,
+    "validation_method": "txt",
+    "certificate_authority": "google"
+  },
+  {
+    "id": "de6f1b7e-4e68-41f6-9bc5-5cafda5bddec",
+    "type": "universal",
+    "hosts": [
+      "*.bulma.com.au",
+      "bulma.com.au"
+    ],
+    "primary_certificate": "a8c943db-0866-4263-8658-c68fcadd1a0a",
+    "status": "active",
+    "certificates": [
+      {
+        "id": "a8c943db-0866-4263-8658-c68fcadd1a0a",
+        "hosts": [
+          "*.bulma.com.au",
+          "bulma.com.au"
+        ],
+        "issuer": "GoogleTrustServices",
+        "signature": "ECDSAWithSHA256",
+        "status": "active",
+        "bundle_method": "ubiquitous",
+        "zone_id": "0534ecfcfde9d322566af12ec11c1bef",
+        "uploaded_on": "2026-09-05T05:49:59.679071Z",
+        "modified_on": "2026-08-21T10:33:13.960077Z",
+        "expires_on": "2026-11-19T10:31:37.000000Z",
+        "priority": null
+      }
+    ],
+    "created_on": "2025-12-28T04:55:01.863928Z",
+    "validity_days": 90,
+    "validation_method": "txt",
+    "certificate_authority": "google"
+  }
+]
