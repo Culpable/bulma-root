@@ -10,9 +10,12 @@ import test from 'node:test'
  *
  * The migration plan requires `/robots.txt` and `/llms.txt` to be byte-identical
  * to the documents the previous host published, and requires the emitted head to
- * keep every production Open Graph and viewport value. The hosted proof compares
- * staging against `dist`, so only these assertions compare `dist` against
- * production itself.
+ * keep every production Open Graph and viewport value except `og:locale`. The
+ * previous Next.js site emits the inherited `en-AU` value, but Open Graph locale
+ * syntax requires `language_TERRITORY`. The user approved `en_AU` as an explicit
+ * migration drift while the separate BCP 47 HTML `lang` value stays unchanged.
+ * The hosted proof compares staging against `dist`, so only these assertions
+ * compare `dist` against production itself.
  *
  * `/sitemap.xml` is deliberately excluded from the byte comparison. The shared
  * sitemap renderer sorts URLs and terminates the document with a newline, which
@@ -173,8 +176,8 @@ test('every document declares the production Open Graph identity', () => {
     )
     assert.deepEqual(
       readMetaContent(html, 'property', 'og:locale'),
-      ['en-AU'],
-      `${document} must declare the production og:locale exactly once.`,
+      ['en_AU'],
+      `${document} must declare the approved Open Graph locale exactly once.`,
     )
     assert.deepEqual(
       readMetaContent(html, 'property', 'og:image:alt'),

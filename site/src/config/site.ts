@@ -18,8 +18,8 @@ export const site = {
   description:
     'Built for Australian mortgage brokers, Bulma is an AI assistant that helps with scenario planning, credit assessment, policy matching, and lender selection. Ask any policy question in plain English and get instant, grounded answers with source attribution.',
   language: 'en',
-  /** Match the production Open Graph locale exactly; `language` stays the `<html lang>` tag. */
-  openGraphLocale: 'en-AU',
+  /** Use Open Graph's language_TERRITORY format; keep the separate HTML language unchanged. */
+  openGraphLocale: 'en_AU',
   readiness: 'production',
   defaultSocialImage: {
     src: '/img/og/bulma-og-image.png',

@@ -17,8 +17,8 @@ export interface SiteTitleConfig {
 export interface SiteMetadataConfig extends SiteTitleConfig {
   readonly language: string;
   /**
-   * Open Graph locale in `language_TERRITORY` or BCP 47 form. Kept separate from
-   * `language` because the document language tag and the social locale differ.
+   * Open Graph locale in `language_TERRITORY` form. Kept separate from `language`
+   * because the document language tag and the social locale use different syntax.
    */
   readonly openGraphLocale?: string;
   readonly readiness: 'draft' | 'production';
@@ -106,6 +106,18 @@ export function requireBcp47Language(value: string): string {
   return language;
 }
 
+
+function requireOpenGraphLocale(value: string): string {
+  const locale = requireNonEmpty(value, 'Open Graph locale');
+  // Require the Open Graph `language_TERRITORY` form rather than the BCP 47
+  // language tag emitted by the separate HTML `lang` attribute.
+  if (!/^[a-z]{2}_[A-Z]{2}$/.test(locale)) {
+    throw new Error('Open Graph locale must use language_TERRITORY syntax.');
+  }
+  return locale;
+}
+
+
 export function composeDocumentTitle(
   title: string,
   titleMode: TitleMode = 'composed',
@@ -167,9 +179,7 @@ export function assertProductionMetadataReady(
   config: SiteMetadataConfig,
 ): void {
   requireBcp47Language(config.language);
-  // Validate the social locale with the same syntax gate so a malformed value
-  // cannot reach the emitted `og:locale` tag.
-  if (config.openGraphLocale !== undefined) requireBcp47Language(config.openGraphLocale);
+  if (config.openGraphLocale !== undefined) requireOpenGraphLocale(config.openGraphLocale);
   if (config.readiness !== 'production') return;
 
   // Scan the resolved route input and the complete runtime config. The config

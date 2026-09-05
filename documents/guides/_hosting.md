@@ -319,6 +319,18 @@ The hosted proof compared staging bodies against `site/dist` and compared render
 
 The user reviewed this on 2026-09-04 and withdrew the byte-identical rule for the sitemap: sitemap URL order carries no crawler meaning, and adding site-specific ordering code to reproduce the previous host's hand-written order is unnecessary complexity. REQ-11 in the migration plan is amended accordingly. `site/test/production-parity.test.ts` asserts the URL set, the leading home page, uniqueness, and the absence of `lastmod` instead of a byte hash.
 
+#### Accepted Open Graph locale difference (2026-09-05)
+
+The user explicitly approved changing Astro `og:locale` from `en-AU` to `en_AU`, correcting the hyphenated value inherited from `demo/src/lib/metadata.ts`. Open Graph requires the `language_TERRITORY` underscore form, so exact parity would retain a production defect. REQ-9 now records this exception, and `site/test/production-parity.test.ts` requires exactly one `en_AU` locale on each of the six built documents. The captured production baseline is not rewritten to hide the difference.
+
+The separate BCP 47 HTML language is unchanged; the existing Astro layout emits `lang="en"`. Neither `demo/` nor `.github/workflows/deploy.yml` changes. A main push rebuilds the existing GitHub Pages app and deploys the corrected staging Worker. Production remains on GitHub Pages with its existing locale; no DNS change, production Worker binding or Step 9 execution is authorised.
+
+The initial corrected build exposed a second inherited defect: `assertProductionMetadataReady` validated Open Graph locale using the HTML BCP 47 validator. It now uses a separate Open Graph format check; HTML-language validation is preserved. Focused tests cover accepted `en_AU` Open Graph, rejected `en-AU` Open Graph, and the inverse HTML-language separator rules.
+
+Before push, the rebuilt five demo pages matched the live production HTML after excluding Next.js's generated build ID. The full raw export is not byte-identical between builds because Next.js generates a new build ID and associated manifest paths. No `demo/` or workflow input changed; this is build metadata, not a content change. Production was verified as `server: GitHub.com` with `og:locale en-AU` on all five public routes.
+
+The corrected build and full test suite passed: 61 unit tests, build-output checks and 78 browser tests with six viewport-specific skips. Direct parsing confirmed exactly one `en_AU` locale on all six built documents; HTML language is unchanged.
+
 #### Recorded Open Graph drift, approved
 
 Production's Next.js layout never overrides `openGraph` per route, so `/about/`, `/pricing/`, `/contact/`, and `/privacy-policy/` all repeat the homepage `og:title`, `og:description`, and `og:url` even though their `<title>` and `<meta name="description">` are correct. The Astro site emits per-route Open Graph values and a self-referencing `og:url`. This is kept as a deliberate correction of a production defect. The Astro head additionally emits `og:image:type` and `twitter:image:alt`, which production omits.
