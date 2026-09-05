@@ -1,0 +1,238 @@
+{
+  "build": {
+    "build_uuid": "c104a488-491c-45f1-9166-f4d4842f8228",
+    "status": "stopped",
+    "build_outcome": "success",
+    "initializing_on": "2026-09-05T07:31:28.749Z",
+    "running_on": "2026-09-05T07:31:40.303Z",
+    "stopped_on": "2026-09-05T07:33:07.042Z",
+    "created_on": "2026-09-05T07:31:17.501Z",
+    "modified_on": "2026-09-05T07:33:07.042Z",
+    "trigger": {
+      "trigger_uuid": "75e49326-fa92-4140-8132-546585b00422",
+      "external_script_id": "79bf696e3bf44fd8a3c63cce810c89da",
+      "build_token_name": "bulma-root-cloudflare-build-api-token",
+      "trigger_name": "Deploy production",
+      "build_command": "pnpm build",
+      "deploy_command": "pnpm deploy",
+      "root_directory": "site",
+      "branch_includes": [
+        "main"
+      ],
+      "branch_excludes": [],
+      "path_includes": [
+        "site/*"
+      ],
+      "path_excludes": [],
+      "build_caching_enabled": true,
+      "created_on": "2026-09-04T06:04:58.319Z",
+      "modified_on": "2026-09-04T06:04:58.319Z",
+      "deleted_on": null,
+      "repo_connection": {
+        "repo_connection_uuid": "3aa4c43c-784c-49b7-8794-75841cf3ee4c",
+        "repo_id": "1126720966",
+        "repo_name": "bulma-root",
+        "provider_type": "github",
+        "provider_account_id": "31677655",
+        "provider_account_name": "Culpable",
+        "grant_id": null,
+        "created_on": "2026-09-04T05:30:39.313Z",
+        "modified_on": "2026-09-04T05:30:39.313Z",
+        "deleted_on": null
+      }
+    },
+    "build_trigger_metadata": {
+      "build_trigger_source": "push_event",
+      "branch": "main",
+      "commit_hash": "9f8025e84fe75ea51011672926c1e7ceec5f7fbd",
+      "commit_message": "chore(hosting): retire legacy hosting and document the Astro production site\n\n1. demo/, .github/workflows/deploy.yml, CNAME and github-pages-setup.md (Removed): Retired the legacy application and release path\n2. documents/learnings/todo_archive/cloudflare_pages_migration_plan.md (Updated): Archived the superseded plan\n3. AGENTS.md, DESIGN.md and README.md (Updated): Added the Astro",
+      "author": "Culpable",
+      "build_command": "pnpm build",
+      "deploy_command": "pnpm deploy",
+      "root_directory": "site",
+      "build_token_uuid": "a2cae8d5-f524-4130-92f2-84994275d3c9",
+      "build_token_name": "bulma-root-cloudflare-build-api-token",
+      "environment_variables": {
+        "NODE_VERSION": {
+          "is_secret": false,
+          "created_on": "2026-09-04T06:04:59.550Z",
+          "value": "22.23.1"
+        },
+        "PNPM_VERSION": {
+          "is_secret": false,
+          "created_on": "2026-09-04T06:04:59.550Z",
+          "value": "11.22.0"
+        }
+      },
+      "repo_name": "bulma-root",
+      "provider_account_name": "Culpable",
+      "provider_type": "github"
+    },
+    "pull_request": null,
+    "deploy_hook": null
+  },
+  "deployment": {
+    "deployments": [
+      {
+        "id": "320b643a-84d2-4170-a2e6-0639622643b1",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "eb7905a1-a4a9-4ed0-be2c-838436fa2659",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-05T07:33:03.532496Z"
+      },
+      {
+        "id": "d953a296-a75a-4fa8-9eee-b7df3d96dbd2",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "0ac3143d-4973-4401-a75b-2845e60bd30b",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-05T07:24:23.554161Z"
+      },
+      {
+        "id": "96ca4361-171f-4207-828f-929462c4e714",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "4f8e42b6-954c-42f1-ba60-1b900675caeb",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-05T05:21:01.998139Z"
+      },
+      {
+        "id": "1744d9fe-9806-4b7a-850c-85a9ca083a9d",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "c24a3454-11ed-4ffb-9a57-e7ffe73c419f",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-05T05:05:57.149273Z"
+      },
+      {
+        "id": "41511e7b-d769-4219-bafc-6a20e70ed50c",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "77d21bbe-202c-440a-97c0-2c4b7e61f024",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T11:47:39.47439Z"
+      },
+      {
+        "id": "2ec8fd98-081d-44a5-bdae-3f8eed43000f",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "5770e5db-f36a-4340-b8cf-a9f4947134ce",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T07:20:21.351743Z"
+      },
+      {
+        "id": "18bbaf43-9a05-4d5b-bf56-9f7f874e2686",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "bb10cf9d-52df-4761-bc9d-3a2c392266ab",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T07:07:35.204024Z"
+      },
+      {
+        "id": "62942be5-a530-4815-a9a5-593bfa47dce2",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "05fccc79-5a9c-4c39-8d26-698bd0fac11d",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T06:22:20.456173Z"
+      },
+      {
+        "id": "88e182a9-44d0-4cd4-890a-d4c7d2b27cf4",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "819c213c-45b4-416d-bcfd-0884b6fb3294",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T06:13:15.955557Z"
+      },
+      {
+        "id": "7b7e4f5c-07cf-4fd7-98de-34ff8570f73e",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "author_email": "jake.sacino@gmail.com",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "bfe62d41-5651-4896-92de-408295c44e62",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-09-04T05:59:32.205765Z"
+      }
+    ]
+  }
+}

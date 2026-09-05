@@ -1,4 +1,4 @@
-# Astro on Cloudflare Workers Migration Plan 🧪 **PENDING TESTING**
+# ~~Astro on Cloudflare Workers Migration Plan~~ ✅ **COMPLETED**
 
 <critical_warning>
 > **CRITICAL WARNING:** Production cutover changes DNS for `bulma.com.au` and `www.bulma.com.au` only. Immediately before that write, record the complete live state of every record in zone `0534ecfcfde9d322566af12ec11c1bef`, every Workers custom domain, every zone ruleset, and the GitHub Pages site state in `documents/guides/_hosting.md`, then commit it. Only the three apex `A` records and the one `www` `A` record may change. The `app.bulma.com.au` CNAME to Vercel, every MX, TXT, DKIM, DMARC, autodiscover, and `send.auth` record must remain byte-identical. GitHub Pages stays live and undisabled until the Worker passes every production check so the four recorded `A` records can restore the previous host within minutes.
@@ -580,7 +580,7 @@ The result is better than production, which still emits one unslashed `/contact`
 - After staging removal, `GET .../workers/domains` no longer lists `staging.bulma.com.au`, `https://staging.bulma.com.au/` no longer resolves to the Worker, and `dist/_headers` on the deployed version has no staging rule.
 - GitHub Pages is still enabled at the end of this step and the rollback payloads remain valid.
 
-### Step 10: Decommission GitHub Pages, `demo/`, and the Cloudflare Pages resources 🧪 **PENDING TESTING**
+### ~~Step 10: Decommission GitHub Pages, `demo/`, and the Cloudflare Pages resources~~ ✅ **COMPLETED**
 **Objective:** Leave one runnable app, one host, and one release path.
 
 #### 10.1 High-Level Approach
@@ -791,7 +791,7 @@ Release verification requires both triggered deployments to succeed, all five st
 The user explicitly approved the remainder end to end, including production cutover, indexing eligibility, decommissioning, commits, pushes and post-deployment checks. This supersedes the historical unapproved status above.
 
 - [x] Step 9: commit fresh rollback snapshot, attach apex, redirect www, verify HTTP/indexability/transport/browser/Lighthouse, remove staging and verify Builds.
-- [ ] Step 10: decommission legacy hosting and files, archive old plan, verify final deployment.
+- [x] Step 10: decommission legacy hosting and files, archive old plan, verify final deployment.
 - [x] Step 11: synchronise binding docs, verify paths and full site gate, record final evidence.
 
 ### Cutover completion record
@@ -802,7 +802,7 @@ The user explicitly approved the remainder end to end, including production cuto
 - Staging domain, DNS and dedicated certificate removed. Committed config has apex route only and no staging header rule. Commit `c82a562` passed both GitHub Actions jobs and Workers Build `7da22abe-1df0-43bb-85dd-26c778099d6d`, deploying version `0ac3143d-4973-4401-a75b-2845e60bd30b`. Production HTTP contract re-passed. GitHub Pages remained enabled through this gate.
 - Search indexing eligibility is proven: no noindex on public routes/discovery, correct canonicals and robots; Google verification TXT unchanged. Search Console index inclusion is not asserted without property credentials.
 
-## Implemented Solution: production cutover and retirement (2026-09-05)
+## Implemented Solution
 
 - `site/wrangler.jsonc`: changed the production custom domain from staging to apex. `site/public/_headers`: removed only the staging noindex rule; preview noindex, CSP, security headers and asset caching remain.
 - `site/scripts/verify-hosted-browser.mjs`, `verify-hosted-analytics.mjs`, `verify-negotiated-content.mjs`: changed the default verification origin to the live apex after staging retirement. Historical two-host Lighthouse tooling remains for the migration record and requires the original explicit release identities.
@@ -814,4 +814,12 @@ The user explicitly approved the remainder end to end, including production cuto
 - Checks passed so far: final `pnpm check` and `pnpm build` with zero diagnostics; local Wrangler HTTP contract 18/18 after the apex configuration change; documentation stale-reference and path checks. One exact-wording documentation test failed during the rewrite and passed after restoring the valid static-host example. The full final local suite and final Builds release are pending at this checkpoint.
 - Existing accepted deferrals remain unchanged: Python-client Browser Integrity Check, Worker rejection-header hardening, and inherited UI/referral issues. The final browser fallback resolved a tool bridge failure; independent settled FAQ clicks pass. No production form submission or analytics test event was sent.
 
-Final local gate passed after retirement: check/build zero diagnostics, 61 unit tests, 78 browser cases, six viewport-specific skips; maximum visual difference 0.8362%. Documentation/path checks passed. Step 10 awaits the final committed retirement build and apex read-back.
+Final local gate passed after retirement: check/build zero diagnostics, 61 unit tests, 78 browser cases, six viewport-specific skips; maximum visual difference 0.8362%. Documentation/path checks passed. Step 10 passed the committed retirement build and apex read-back recorded below.
+
+### Final completion evidence
+
+- Retirement source `9f8025e84fe75ea51011672926c1e7ceec5f7fbd` deployed through Workers Build `c104a488-491c-45f1-9166-f4d4842f8228`, successful; active Worker version `eb7905a1-a4a9-4ed0-be2c-838436fa2659` at 100%. The deployed source matched `origin/main` at verification. No legacy workflow remained to run.
+- Post-retirement live verification passed again: 18 HTTP contract cases; generated Markdown and conditional requests; all five routes under six browser/crawler user agents with no noindex and exact build bytes; three discovery files; one www 308 preserving path/query; 12 browser route/viewport combinations with zero console, page, CSP, first-party-request or overflow errors.
+- Final local gate passed: `pnpm --dir site check`, `build`, `test`; 61 unit tests, 78 browser tests, six viewport-specific skips, maximum visual difference 0.8362%. Local Wrangler contract passed 18/18. Independent extra checks proved FAQ direct/same-page/repeated-hash paths at both widths and mobile contact 500/200 with intercepted four-field payloads.
+- All retirement resources and the 12 protected DNS records were read back successfully. Current documents passed synchronisation and source-path checks. Task-owned browsers and local servers are closed. The completion-only documentation revision uses the existing manual Builds trigger when the `site/*` filter skips it, so final live source is rechecked against the final `origin/main` without changing application behaviour.
+- Evidence: `documents/guides/parity/step9-cutover-20260905/final-gate.json`, `retirement-deployed.json`, `legacy-retired.json`, `final-browser.json`, `final-http-contract.log`, `indexability.json`, `faq-contact-extra.json`, `lighthouse-summary.json`, and archived raw Lighthouse reports. No required migration check remains skipped; the six suite skips select viewport-specific cases and their applicable/extra checks passed. Search-engine inclusion remains externally controlled and is not claimed; production is verified indexable.

@@ -21,5 +21,12 @@
   },
   "documentationSync": "passed; current commands and paths verified",
   "legacyRetirement": "verified; see legacy-retired.json",
-  "deployment": "pending final retirement commit"
+  "deployment": {
+    "source": "9f8025e84fe75ea51011672926c1e7ceec5f7fbd",
+    "build": "c104a488-491c-45f1-9166-f4d4842f8228",
+    "workerVersion": "eb7905a1-a4a9-4ed0-be2c-838436fa2659",
+    "outcome": "success",
+    "matchesOriginMainAtVerification": true
+  },
+  "postRetirementHostedChecks": "18 HTTP cases, 30 crawler-route cases, 3 discovery files, negotiated/conditional responses and 12 route/viewport browser checks passed"
 }

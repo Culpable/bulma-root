@@ -11,7 +11,7 @@ Production now uses the static Astro `site/` application on Cloudflare Worker `b
 - Initial local tests reached cached GitHub DNS and were stopped. Public resolvers and the OS resolver then converged on Cloudflare; the full fresh run passed without a source change.
 - Production proof so far: 18 HTTP cases; exact HTML/Markdown build bytes; conditional HTML 304 and Markdown 200; 30 route/crawler combinations with no noindex and self-canonicals; all discovery bytes; IPv4/IPv6 body identity; real HTTP/3; Brotli HTML/CSS/JS; immutable hashed assets; 61 unit tests and 78 browser tests (six viewport-specific skips); 12 additional browser states without errors/overflow; 10 intercepted analytics loads.
 - The 404 document intentionally remains noindexed. Public indexable routes and discovery files have no `X-Robots-Tag` or meta noindex. Robots allows crawling and sitemap names only the five canonical apex URLs.
-- Cutover gates passed, staging and legacy resources are retired, and commit `c82a562` deployed successfully as version `0ac3143d-4973-4401-a75b-2845e60bd30b`. The final retirement source release and local regression gate are being verified.
+- All cutover and retirement gates passed. Retirement source `9f8025e` deployed successfully as version `eb7905a1-a4a9-4ed0-be2c-838436fa2659`; post-retirement HTTP, indexing and browser checks passed again. A final documentation-only revision may use the same Builds trigger to keep the deployed revision aligned with `main`.
 
 Current evidence: `documents/guides/parity/step9-cutover-20260905/`. Use the completed cutover record at the end of this guide for later release identity and retirement verification.
 
@@ -6325,3 +6325,11 @@ Saved HTTP-header and terminal-log text normalises CRLF and trailing whitespace 
 - Documentation synchronisation passed for hosting, animations and mapped instruction owners. Current `AGENTS.md`, `DESIGN.md`, `README.md`, browser rules and editor launch configuration use the Astro paths and commands. Every animation-guide source path resolves; no obsolete runtime/hosting instruction remains in these current documents. Historical records and preserved reference trees intentionally retain old host/framework terms.
 
 Control-plane retirement evidence: `parity/step9-cutover-20260905/legacy-retired.json`. The current public verifier defaults now target apex. Referral-script parity remains guarded by its original byte hash after the port source was retired.
+
+### Completed retirement release
+
+Retirement source `9f8025e84fe75ea51011672926c1e7ceec5f7fbd` passed Workers Build `c104a488-491c-45f1-9166-f4d4842f8228`; version `eb7905a1-a4a9-4ed0-be2c-838436fa2659` served 100% and matched `origin/main` at verification. All 18 HTTP cases, 30 route/crawler responses, three discovery bodies, semantic/conditional Markdown checks and 12 browser route/viewport checks passed again. Final local checks/build/61 unit tests/78 browser cases passed; six viewport-specific skips are covered by their applicable or additional interaction checks. `final-gate.json` and `retirement-deployed.json` retain the release evidence.
+
+Completion-only documentation commits do not change the application build. Because the production trigger filters to `site/*`, dispatch the existing manual trigger with the exact final commit and verify its outcome and active version before the final handoff. The final control-plane read-back is also retained locally at `site/test-results/final-release.json` and the delivered commit is reported in the task handoff. This avoids changing production code just to trigger a build.
+
+All task-owned browser sessions and local listeners were closed. Existing accepted audit deferrals are unchanged. Production is crawlable and has no noindex; the 404 and preview policies remain intentional. Search-engine index inclusion needs search-provider observation and is not inferred from an HTTP or Lighthouse pass.
