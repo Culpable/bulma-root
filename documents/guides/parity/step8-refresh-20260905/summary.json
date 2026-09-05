@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-09-05T04:36:20.412564+00:00",
+  "siteCommit": "79838f3",
+  "workerVersion": "77d21bbe-202c-440a-97c0-2c4b7e61f024",
+  "build": "passed, 285 files and no diagnostics",
+  "unitTests": 44,
+  "hostedBrowserTests": {
+    "passed": 78,
+    "skipped": 6,
+    "maxVisualDifferencePercent": 0.8362
+  },
+  "httpManifestCases": 18,
+  "bodyComparisons": 9,
+  "browserCombinations": 12,
+  "analyticsLoads": 10,
+  "demo": {
+    "lint": "passed",
+    "build": "passed",
+    "tests": 33
+  },
+  "auditFindings": 12,
+  "cutoverReady": false,
+  "lighthouse": "historical only, not rerun",
+  "productionChanged": false
+}

@@ -6,7 +6,7 @@ This guide records the hosting control plane, deployment revision, credential bo
 
 This section is the Step 1 source of truth for the Astro-on-Workers migration. It was captured read-only on `2026-09-04T04:12:51Z` (`2026-09-04 12:12:51 AWST`). No Cloudflare resource, GitHub setting, branch, DNS record, or `demo/` source file changed during the capture.
 
-Current state: Steps 1 through 8 are complete. The user submitted no cutover decision, so no approval is recorded. `staging.bulma.com.au` serves the Git-connected production Worker with noindex protection. Production remains unchanged on GitHub Pages, and Step 9 must not start without later explicit approval.
+Current state (2026-09-05): Steps 1-8 are complete after the authorised agent-content, conditional-request, Lighthouse tooling and privacy-copy fixes passed local and hosted verification. See the remediation record below for the current disposition; the earlier audit packet is historical. The user submitted no cutover decision, so no approval is recorded. `staging.bulma.com.au` serves the Git-connected production Worker with noindex protection. Production remains unchanged on GitHub Pages, and Step 9 must not start without later explicit approval.
 
 ### Baseline identity and repository state
 
@@ -246,30 +246,38 @@ Separate staging category reports produced Accessibility / Best Practices / SEO 
 
 Initial JavaScript gzip remains below every Next.js baseline: `/` `93,025`, `/about/` `75,634`, `/pricing/` `81,597`, `/contact/` `72,629`, and `/privacy-policy/` `68,255` bytes. The Three.js chunk remains separate from initial route scripts and loads only after the homepage load event.
 
-#### Step 8 cutover packet
+#### Step 8 pre-remediation packet (2026-09-05; superseded below)
 
-| Field | Verified value |
+**Historical decision before user triage and remediation: not ready for cutover approval.** The browser parity and existing test gates pass, but the expanded audit found incorrect negotiated Markdown content, a conditional-request Worker crash, a client-access block, and missing rejection-response headers. Resolve the audit findings listed below before presenting a cutover approval request. No DNS, Worker deployment, Cloudflare setting, or GitHub Pages setting changed during this refresh.
+
+| Field | Current verified value |
 | --- | --- |
 | Production URL | `https://bulma.com.au/`, still GitHub Pages |
-| Staging URL | `https://staging.bulma.com.au/`, Cloudflare Worker with noindex |
-| Site commit | `f844cab4e16a9cc12900e914aab76f73df093307` |
-| Workers build | `c89d5d13-8a96-4568-a874-a269808d254b`, successful |
-| Worker and version | `bulma-root`; `5770e5db-f36a-4340-b8cf-a9f4947134ce` at 100% |
-| Staging custom domain | `ac7956c2e528fe295b9bcc8f3398664815ff855c` |
+| Staging URL | `https://staging.bulma.com.au/`, Cloudflare Worker |
+| Site commit | `79838f3`; repository HEAD `ed93cc206b9b21dec1ff1e058fa45c0129330f92` adds the prior verification record |
+| Worker and version | `bulma-root`; `77d21bbe-202c-440a-97c0-2c4b7e61f024` at 100% |
+| Active deployment | `41511e7b-d769-4219-bafc-6a20e70ed50c`, created `2026-09-04T11:47:39.47439Z` |
+| Staging custom domain | `ac7956c2e528fe295b9bcc8f3398664815ff855c`, enabled |
 | Staging DNS record | `b84080eb0e2fdf451c777a0829f391fa` |
 | Staging certificate pack | `b10d5b68-e58f-4395-944f-4a2449cdd770`, active |
-| HTTP proof | 18/18 contract cases; 9/9 decoded body comparisons |
-| Browser proof | 78 passed, 6 intentional skips; 12/12 error-state combinations passed |
-| Visual parity | Every state at or below `0.8362%`; threshold `1.0%` |
-| Lighthouse proof | 150/150 performance reports and 5/5 category reports complete |
-| DNS before-state | The complete 16-record committed pre-staging snapshot above |
-| Intended Step 9 DNS change | Replace only the three apex GitHub A records and the one `www` A record after explicit approval; preserve every other record byte for byte |
-| DNS rollback | Delete only migration-created production records, then recreate the four recorded GitHub A payloads exactly; verify `server: GitHub.com` |
-| Code rollback | Deploy the previously active Worker version `bb10cf9d-52df-4761-bc9d-3a2c392266ab`; production traffic currently needs no code rollback because it still uses GitHub Pages |
+| HTTP proof | Existing manifest 18/18; 9/9 decoded bodies equal freshly rebuilt `site/dist` |
+| Browser proof | 78 passed, 6 intentional viewport skips; separate 12/12 route/viewport error checks and 10/10 analytics loads passed |
+| Visual parity | Maximum `0.8362%`; threshold `1.0%`; desktop `1440x900`, mobile `390x900`, light system scheme emulated |
+| Header proof | Standard documents/discovery/assets retain CSP, security headers, noindex, `Vary: Accept` where negotiated, and expected caching; Worker-created 406/internal 404 omit the baseline and noindex |
+| Lighthouse proof | Historical 150 performance and 5 category reports from the earlier staging build, predating `79838f3`. Not rerun for `79838f3`; table above is historical, not a current-version performance claim |
+| DNS before-state | Fresh read-only snapshot: 17 records. All 16 pre-staging records match all 14 recorded snapshot fields; only staging was added |
+| Intended Step 9 DNS change | After defects are resolved and explicit approval is recorded, replace only the three apex GitHub A records and one `www` A record; preserve all other records |
+| DNS rollback | Delete only migration-created production records/custom domains and undo the migration redirect; recreate the four recorded GitHub A payloads exactly; verify `server: GitHub.com`. Re-query and commit a fresh full rollback snapshot immediately before any future DNS write |
+| Code rollback | Previous deployed Worker version `5770e5db-f36a-4340-b8cf-a9f4947134ce`, confirmed in deployment history; production still uses GitHub Pages and currently needs no rollback |
+| Evidence | `documents/guides/parity/step8-refresh-20260905/` |
 
-Final revalidation against version `5770e5db-f36a-4340-b8cf-a9f4947134ce` passed 18/18 HTTP cases, 9/9 byte comparisons, 12/12 browser route and viewport combinations, 10/10 analytics route loads, and the full 78-pass hosted Playwright matrix. It returned HTTP/2 and HTTP/3, the intended CSP and security headers, noindex, `Vary: Accept`, revalidating HTML, and immutable hashed assets. The custom-domain certificate remained active. Cloudflare DNS still contained the same 16 pre-staging records plus only the migration-created staging AAAA record; every pre-existing ID, value, TTL, proxy flag, comment, and `modified_on` value matched the committed snapshot.
+The corrected tree passes `corepack pnpm --dir /Users/sacino/bulma-root/site build` (including `astro check`: 285 files, zero errors, warnings, or hints), 44 Node tests, and build-output/trust/performance-budget validation. Run Corepack from `site/` to resolve its pinned pnpm 11.22.0; invoking pnpm from the workspace root selected 11.24.0 and failed its version check. No package metadata was changed to bypass it.
 
-Step 9 remains prohibited until the user records an explicit cutover decision after reviewing both URLs and this packet.
+The hosted suite passed 78 cases with 6 skips. Its separate browser check passed all six routes at both viewports with zero console, page, CSP, and failed-first-party-request errors and zero overflow. Intercepted analytics passed five sampled and five unsampled loads. A separate mobile contact check verified mocked error and success states and zero overflow without sending an enquiry. Dev-browser checks under the request-routing fixture timed out twice; the current page was fully loaded, and direct browser fetch mocks then passed both states. This is a tool-fixture limitation, not evidence of an app navigation defect. The task-owned browser was closed.
+
+Current initial JavaScript gzip bytes are `/` 93,251; `/about/` 75,837; `/pricing/` 81,809; `/contact/` 72,836; `/privacy-policy/` 68,456. All remain under the recorded Next.js baselines. `demo/` lint, build, and all 33 tests also passed. The refresh did not repeat the prior HTTP/2/3, IPv4/IPv6, compression, or cold/warm transport matrix; that remains historical evidence. No fresh Lighthouse performance claim is made.
+
+Step 9 remains prohibited until the user records explicit cutover approval. The remediation record below supersedes this packet's original blocker classification.
 
 ### Steps 1-8 re-verification and corrections (2026-09-04)
 
@@ -330,7 +338,65 @@ Commit `79838f3` was pushed to `main`. Workers Builds deployed production Worker
 
 #### Outstanding
 
-The Step 8 cutover packet above still names version `5770e5db-f36a-4340-b8cf-a9f4947134ce` and site commit `f844cab`. Re-issue it against version `77d21bbe-202c-440a-97c0-2c4b7e61f024` and commit `79838f3`, and re-run the Lighthouse matrix if the user wants current numbers, before requesting cutover approval.
+The pre-remediation packet was refreshed against version `77d21bbe-202c-440a-97c0-2c4b7e61f024` and commit `79838f3`. The user subsequently accepted the existing speed result and chose the four remediation areas recorded below. No repeat Lighthouse benchmark is required for cutover readiness.
+
+### Expanded migration audit (2026-09-05)
+
+Report: `documents/todo/bugs/codex/combined_bug_sweep_20260905_k7m2q9va.xml` (12 findings; XML validator passed). Three independent workers inspected delivery/build code, interactions, and route/content/test code; the parent verified current hosting and reproduced the important HTTP failures. Scope is the Astro `site/` implementation and release tooling. Dependency internals, binary media, dormant components in a browser, the separate product app, and legal compliance were not audited; icons received invariant scans rather than a visual review of every asset.
+
+| Finding | Consequence | Disposition |
+| --- | --- | --- |
+| Markdown conversion loses accessible and collapsed content | Solo/Team both read `9 /month`; FAQ answers disappear; plan inclusion cells are blank | Fixed and verified on staging |
+| Markdown counter reads animation start value | Home/About report 0 lenders rather than 36 | Fixed and verified on staging |
+| HTML ETag reused for Markdown | Matching `If-None-Match` with `Accept: text/markdown` produces HTTP 500 / Worker error 1101 | Fixed and verified on staging |
+| Browser Integrity Check | `Python-urllib/3.9` returns staging 403; same client gets production 200 | User accepted deferral; no setting change |
+| Early Worker responses lack headers | 406/internal 404 omit security baseline and staging noindex | User accepted deferral; unchanged |
+| Incomplete entity decoding | Numeric apostrophe entities appear literally in Markdown | Fixed in body and metadata; regression-tested |
+| Lighthouse report reuse | Existing reports can be reused across releases and receive a fresh summary timestamp | Fixed and regression-tested; no repeat benchmark |
+| Referral hostname substring matching | Unrelated domains such as `notgoogle.com` persist as Google attribution | Inherited follow-up |
+| Lender pointer positions are stale after scrolling | Highlight stays on a lender no longer beneath the pointer | Inherited follow-up |
+| Menu entrance frames survive rapid close | Mobile close animation reverses before the dialog disappears | Inherited follow-up |
+| Missing FAQ CSS hue mapping | FAQ background uses 0deg fallback instead of configured 1deg | Inherited minor follow-up |
+| Privacy policy says it is a general example | Published copy still contains an example disclaimer | Removed only the example disclaimer, as authorised |
+
+The original HTTP manifest compared Markdown bytes to the generated file, so it could not detect wrong business content inside both. Remediation added separate generated-content semantic assertions before the hosted byte gate. Named-agent tests inspect HTML and only three agent user-agent strings. These are material limits to the earlier green gate.
+
+Cloudflare `browser_check` was read back as `on`; `security_level` was `medium`. Python urllib returned `error code: 1010`; changing only the user-agent in a Node request reproduced the 403 while requests/curl and the three named agent strings returned 200. [Cloudflare's error 1010 documentation](https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-1xxx-errors/error-1010/) identifies client-signature blocking and Browser Integrity Check as the owner-controlled setting. No setting was changed during the audit.
+
+### Authorised remediation and current disposition (2026-09-05)
+
+The user requested four fixes end to end. Bugs 1, 2, 3, 6, 7 and 12 in the original audit belong to those four areas. The audit XML and earlier measurements remain unchanged as historical evidence.
+
+- **Agent content:** the build generator now traverses a parsed HTML tree. Stable accessible values supply prices and the 36-lender count; authored closed FAQ panels are explicitly included; the complete comparison table supplies all plans and labelled inclusion values; the mobile projection is excluded. Named, decimal and hexadecimal entities decode in both body text and metadata. Built-output tests assert real prices, lender counts, answers and table values before hosted byte comparisons can pass.
+- **Conditional requests:** Markdown selection strips HTML cache/range preconditions before the public route lookup. HTML requests retain their conditions. Redirects return before the internal Markdown fetch. The real Worker proof covers cross-representation ETags (Markdown 200, HTML 304), empty redirect and HEAD bodies, and exact deployed Markdown bytes.
+- **Lighthouse tooling:** reports require matching release, URL, categories, profile and Lighthouse version through sidecar manifests. Legacy files cannot be reused; `--force` bypasses the cache. Future runs must supply `--production-release <deployed-commit>` and `--staging-release <worker-version>` to `run-lighthouse-matrix.mjs`. The accepted speed result stands; no new benchmark was run or claimed.
+- **Privacy copy:** removed only the introductory sentence calling the policy a general example from the Astro page. The `demo/` production source and every other policy clause remain unchanged. The parity test first asserts the deletion, then restores only that sentence in its test DOM to preserve the immutable production text/pixel references. Separate desktop/mobile screenshots verify the real shortened paragraph without restoration.
+
+The Python urllib Browser Integrity Check block, missing headers on Worker-created rejection responses, and inherited UI/referral findings remain explicitly deferred by the user. They are not migration blockers for this decision. Normal staging noindex remains intentional and is removed for the production host as part of cutover. No access/security setting or production DNS record is changed by this remediation.
+
+Local validation passed: Astro check/build, 57 unit tests, build-output/trust/byte-budget checks, 78 browser cases with six viewport-specific skips, 18 real Worker HTTP cases plus semantic/conditional probes, and legacy demo lint/build/33 tests. Maximum visual difference was 0.8362%, below the 1% gate. Dev-browser confirmed the counter reaches 36 on Home/About at both widths and the actual shortened privacy introduction wraps without clipping or overflow at 1440x900 and 390x900, with light system colour scheme emulated. Screenshots are in `parity/step8-remediation-20260905/`; the task-owned browser and Worker server were closed.
+
+#### Current Step 8 deployment packet
+
+| Field | Verified value |
+| --- | --- |
+| Source commit | `c8f744a3a979d9950bbb057f821fce7a50e64efe` |
+| Workers Build | `9ee930f4-589d-47e5-8526-3935f21aa2e4`, successful, finished `2026-09-05T05:06:06.452Z` |
+| Worker version | `c24a3454-11ed-4ffb-9a57-e7ffe73c419f`, serving 100% |
+| Deployment | `1744d9fe-9806-4b7a-850c-85a9ca083a9d`, created `2026-09-05T05:05:57.149273Z` |
+| Staging | `https://staging.bulma.com.au/`; noindex retained |
+| Production | `https://bulma.com.au/`; GitHub Pages; workflow `33946241479` succeeded with unchanged demo source |
+| Content proof | All nine HTML/discovery bodies match the local build; all tested Markdown representations match semantic-tested output |
+| HTTP proof | 18 manifest cases passed; cross-representation ETag returns Markdown 200 and HTML 304; redirect 307 and HEAD bodies empty |
+| DNS proof | Full current 17-record read-back is byte-equivalent as JSON data to the pre-remediation read-back |
+| Standard headers | Verified CSP and staging noindex on all nine sampled HTML/discovery responses; rejection-header exceptions remain deferred |
+| Lighthouse | Existing result accepted by user; no repeat matrix. Reuse tooling fixed and regression-tested |
+| Code rollback | Restore the previously active `bulma-root` version `77d21bbe-202c-440a-97c0-2c4b7e61f024` |
+| DNS rollback | Production DNS did not change. Before any later cutover, re-query and commit the complete rollback snapshot; restore the four recorded GitHub A records if needed |
+| Evidence | `documents/guides/parity/step8-remediation-20260905/` |
+
+Hosted verification passed: 57 unit tests, output/trust/byte-budget checks, 78 browser tests with six viewport-specific skips, 12 separate route/viewport error checks and 10 intercepted analytics loads. Maximum visual difference remained 0.8362%. No browser console, page, CSP or failed first-party request errors occurred; no horizontal overflow occurred. All four authorised areas are complete. Cutover approval remains unrecorded; Step 9 must not begin.
+
 
 ## Historical Cloudflare Pages Migration State
 

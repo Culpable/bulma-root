@@ -473,6 +473,8 @@ The result is better than production, which still emits one unslashed `/contact`
 - Full-page screenshots of every route at both viewports differ from the production references by at most 1.0% of pixels with the Dot Pool canvas region masked; the diff images are stored under `documents/guides/parity/screenshots/diff/` and named in `_hosting.md`.
 
 ### ~~Step 5: Add the Worker, negotiated Markdown, headers, and Wrangler configuration~~ ✅ **COMPLETED**
+
+**Remediation 2026-09-05:** Agent Markdown and conditional-request fixes are implemented with regression coverage. Early-response headers are explicitly deferred by the user; see the authorised remediation record below. The local Worker HTTP contract and semantic/conditional probes passed. Hosted proof is tracked in Step 8.
 **Objective:** Deliver the Workers runtime contract locally before any hosted resource exists.
 
 #### 5.1 High-Level Approach
@@ -491,6 +493,8 @@ The result is better than production, which still emits one unslashed `/contact`
 - No production credential is used; `.dev.vars` is absent because the Worker needs no secret.
 
 ### ~~Step 6: Port the tests, add Playwright plus axe, and pass the local gate~~ ✅ **COMPLETED**
+
+**Remediation 2026-09-05:** Added real generated-content assertions, cross-representation conditional tests, and release-aware Lighthouse cache tests. Rejection-header changes are outside the agreed scope. The local gate passed: 57 unit tests, build-output checks and 78 browser tests with six viewport-specific skips.
 **Objective:** Make the parity, readiness, accessibility, and runtime contracts repeatable before anything is hosted.
 
 #### 6.1 High-Level Approach
@@ -534,7 +538,7 @@ The result is better than production, which still emits one unslashed `/contact`
 
 **Decision state (2026-09-04):** The approval request presented both URLs, the parity result, Lighthouse medians, header proof, and rollback packet after every hosted gate passed. No decision was submitted. This is not cutover approval: staging remains live, production remains on GitHub Pages, and Step 9 must not start without a later explicit approval.
 
-**Gate weakness found on re-verification (2026-09-04):** The hosted proof compared decoded staging bodies against `site/dist` and compared rendered screenshots and visible text against production, but never compared `site/dist` discovery bytes or head metadata against production. Visible text, link targets, and JSON-LD were genuinely identical on every route, which is why the six defects listed under Steps 2 and 3, plus the sitemap difference the user later accepted, survived every gate. `site/test/production-parity.test.ts` closes the gap by asserting `dist` against `documents/guides/parity/production-baseline.json` directly. Steps 1-8 must be re-proved on staging after the corrected build deploys, and the Step 8 cutover packet in `documents/guides/_hosting.md` must be re-issued before any approval is requested.
+**Gate weakness found on re-verification (2026-09-04):** The hosted proof compared decoded staging bodies against `site/dist` and compared rendered screenshots and visible text against production, but never compared `site/dist` discovery bytes or head metadata against production. Visible text, link targets, and JSON-LD were genuinely identical on every route, which is why the six defects listed under Steps 2 and 3, plus the sitemap difference the user later accepted, survived every gate. `site/test/production-parity.test.ts` closes the gap by asserting `dist` against `documents/guides/parity/production-baseline.json` directly. The corrected build was deployed and re-proved on 2026-09-04, then independently refreshed on 2026-09-05. The pre-remediation packet named commit `79838f3` and Worker version `77d21bbe-202c-440a-97c0-2c4b7e61f024`; the current packet records the corrected release below. The 2026-09-05 audit reopened this step: negotiated Markdown contains incorrect prices and lender counts and omits meaningful content; a conditional Markdown request crashes the Worker; Python urllib requests receive Cloudflare 403/1010 on staging; and Worker-generated rejection responses omit the required header baseline. The user later narrowed remediation to agent content, conditional requests, Lighthouse reuse and privacy copy. The Python client block and rejection headers are accepted deferrals. All four authorised areas are now fixed and verified on staging at commit `c8f744a`, Worker version `c24a3454-11ed-4ffb-9a57-e7ffe73c419f`. Steps 1-8 are complete; Step 9 still requires explicit user approval.
 
 #### 8.1 High-Level Approach
 - Commit the `site/` work and documentation changes on `main` under `<git_rules>` and push. The `<autonomy>` block authorises this push; do not stop to request it. Wait for the Workers Builds production build to succeed and confirm the deployed version.
@@ -709,3 +713,56 @@ The result is better than production, which still emits one unslashed `/contact`
     - Action: After Step 10, query GitHub Pages, Pages projects, tokens, secrets, and the repository tree; run the full `site/` gate.
     - Expected: All removals confirmed; apex unaffected; final Builds deployment equals `origin/main`.
     - Verify: `gh api`, Cloudflare API, `ls`, `rg`, and the Builds API.
+
+## Historical refresh and audit record (2026-09-05; superseded by remediation)
+
+- Refreshed `documents/guides/_hosting.md` with current Worker version `77d21bbe-202c-440a-97c0-2c4b7e61f024`, site commit `79838f3`, active certificate, full DNS read-back, body parity, browser/analytics results, and the previous deployed version for code rollback. No external settings changed; no cutover approval is recorded.
+- Reopened Steps 5, 6 and 8. Steps 1-4 and 7 retain their completed implementation records; Steps 9-11 remain unstarted. The passing existing checks do not establish semantic correctness of negotiated Markdown or cover the newly reproduced Worker failures.
+- Audit report: `documents/todo/bugs/codex/combined_bug_sweep_20260905_k7m2q9va.xml`, 12 findings. Fix the incorrect Markdown, conditional-request crash, Python client block and missing rejection headers before cutover approval. Also resolve the stale Lighthouse-report reuse gap before claiming fresh performance evidence. Smaller inherited UI, referral and privacy-copy issues are explicitly identified in the report.
+- Evidence: `documents/guides/parity/step8-refresh-20260905/` contains the read-only control-plane snapshot and live body, client-user-agent, Markdown semantic, conditional-response, browser and analytics probes.
+- Validation: Astro build/check passed (285 files, no diagnostics); 44 Node tests and output/trust/byte-budget checks passed; hosted Playwright 78 passed with 6 viewport-specific skips; visual difference at most 0.8362%; 18 existing HTTP cases passed; 12 browser route/viewport checks and 10 intercepted analytics loads passed; separate mobile contact failure/success states passed. Both 1440x900 and 390x900 used a light system scheme to prove dark rendering. `demo/` lint/build/33 tests passed.
+- Limits: retained the historical 150-report Lighthouse matrix with its earlier release identity; did not repeat the transport matrix or the full local browser suite in this refresh. The hosted suite is the fresh browser authority. No source code was fixed. The mobile dev-browser routing fixture timed out twice; direct fetch mocks on the verified page passed, and the task-owned browser was closed.
+- Next: address the report with independent reproductions and focused regression tests, deploy the corrected staging build, refresh affected evidence and the approval packet, then request explicit cutover approval. Steps 9-11 remain outside this task.
+
+## Authorised remediation (2026-09-05)
+
+The user authorised four areas end to end: correct negotiated Markdown business content (including lender counts and entity decoding), prevent conditional Markdown failures, make Lighthouse report reuse release-aware, and remove the privacy policy example disclaimer. This authorises the privacy-copy difference from the production baseline; no other policy content changes are intended.
+
+- [x] Reproduce and fix Markdown semantic content, counter values and entity decoding (audit bugs 1, 3, 6).
+- [x] Reproduce and fix cross-representation conditional requests (bug 2).
+- [x] Reproduce and fix Lighthouse reuse identity checks (bug 7); retain the accepted speed result without rerunning the matrix.
+- [x] Remove the privacy disclaimer and verify its rendered result (bug 12).
+- [x] Run integrated build, tests, HTTP and browser verification; deploy the authorised corrected staging release and verify it.
+- [x] Update this plan and the Step 8 packet with current evidence and deferred findings.
+
+The user accepted that Python-client Browser Integrity Check behaviour, error-response header hardening, and inherited referral/UI issues do not block cutover. Those findings remain deferred; do not change Cloudflare access/security settings or unrelated UI as part of this task. Staging noindex remains intentional. Steps 9-11 still require the later cutover decision and are outside this remediation.
+
+## Implemented Solution (authorised remediation, 2026-09-05)
+
+- `site/scripts/generate-agent-markdown.mjs`: replaced nested-HTML regex removal with parse5 traversal; preserved stable accessible values, included authored FAQ answers, decoded HTML entities in body and metadata, and excluded the responsive comparison projection.
+- `site/package.json`, `site/pnpm-lock.yaml`: pinned parse5 8.0.0 as a build dependency.
+- `site/src/components/elements/animated-counter.tsx`: exposed the final formatted target separately from animated visual text, preserving timing and layout.
+- `site/src/components/sections/faq-disclosure-controller.tsx`: marked authored answer panels for agent extraction without changing browser disclosure state.
+- `site/src/components/sections/plan-comparison-table.tsx`: marked the mobile-only table projection to prevent incomplete duplicate agent content.
+- `site/src/lib/agent-readable-http/shared.ts`: removed HTML conditional/range headers from Markdown route lookups, preserved HTML validators, and returned redirects before Markdown retrieval.
+- `site/scripts/run-lighthouse-matrix.mjs`, `site/scripts/lighthouse-report-cache.mjs`: required explicit release identity, recorded manifests, rejected mismatched/legacy reports and added force-fresh runs. Prior accepted speed evidence remains valid for the user's decision; this task makes no new benchmark claim.
+- `site/src/components/pages/privacy-page.tsx`: removed only the introductory general-example sentence from Astro. Every other policy clause remains unchanged.
+- `site/test/agent-markdown-generation.test.ts`, `site/test/agent-content.test.ts`: covered parsed fixtures, entity metadata, and actual generated routes with correct prices, 36 lenders, answers and inclusion values.
+- `site/test/animated-counter.test.ts`: covered the stable value contract; direct browser checks verified the live counter reaches 36 on Home/About at both widths.
+- `site/test/negotiated-document.test.ts`: covered the original ETag crash, preserved HTML 304 behaviour and empty redirects.
+- `site/test/lighthouse-report-cache.test.ts`: covered exact reuse, release/URL/category/profile mismatches, force-fresh and manifest recording.
+- `site/scripts/verify-negotiated-content.mjs`: added a repeatable real-Worker check for deployed Markdown bytes, cross-representation ETags, redirects, HEAD and privacy copy.
+- `site/test/parity.spec.ts`: asserted the approved disclaimer deletion before restoring only that sentence in the test DOM for immutable production baseline comparisons. Actual shortened privacy layout is verified separately.
+- `documents/guides/_animations.md`: documented semantic counter output. `documents/guides/_hosting.md` and this plan: recorded current implementation, verification, deployment and accepted deferrals. `documents/guides/parity/step8-remediation-20260905/`: retained actual privacy screenshots and hosted proof.
+- Local validation passed: `corepack pnpm --dir /Users/sacino/bulma-root/site build` (Astro check: zero diagnostics); `corepack pnpm --dir /Users/sacino/bulma-root/site test` (57 unit tests, output/trust/byte budgets, 78 browser tests, six viewport-specific skips).
+- Real local Worker validation passed: `node /Users/sacino/bulma-root/site/scripts/run-http-contract.mjs http://localhost:8787` (18 cases) and `node /Users/sacino/bulma-root/site/scripts/verify-negotiated-content.mjs http://localhost:8787` (semantic bytes and conditional response behaviour).
+- Legacy production validation passed: `npm --prefix /Users/sacino/bulma-root/demo run lint`, `npm --prefix /Users/sacino/bulma-root/demo run build`, and `npm --prefix /Users/sacino/bulma-root/demo test` (33 tests).
+- Browser coverage: desktop 1440x900 and mobile 390x900, light system colour scheme; Home, About, Pricing, Contact, Privacy Policy and 404; FAQ, yearly pricing, mobile navigation, plan keyboard tabs and mocked form states. Maximum local visual difference 0.8362%, under 1%. Actual privacy copy wraps without clipping and counter values remain correct. Task-owned dev-browser and Worker server were closed.
+- Source commit: `c8f744a3a979d9950bbb057f821fce7a50e64efe`, pushed to main under standing Steps 1-8 authorisation. Workers Build `9ee930f4-589d-47e5-8526-3935f21aa2e4` and GitHub Pages workflow `33946241479` both succeeded. Worker version `c24a3454-11ed-4ffb-9a57-e7ffe73c419f` serves 100% of staging. Production cutover and Steps 9-11 remain unauthorised.
+
+- Hosted validation passed: `PLAYWRIGHT_BASE_URL=https://staging.bulma.com.au corepack pnpm --dir /Users/sacino/bulma-root/site test` (57 unit tests, build-output checks, 78 browser tests, six viewport-specific skips, maximum visual difference 0.8362%).
+- Hosted HTTP passed: `node /Users/sacino/bulma-root/site/scripts/run-http-contract.mjs https://staging.bulma.com.au` (18 cases) and `node /Users/sacino/bulma-root/site/scripts/verify-negotiated-content.mjs https://staging.bulma.com.au` (semantic bytes, conditional requests, redirects, HEAD and privacy copy).
+- `verify-hosted-browser.mjs` passed 12 route/viewport cases with no console, page, CSP, first-party request or overflow errors. `verify-hosted-analytics.mjs` passed 10 intercepted route loads across sampled and unsampled recorder states; no form submission was sent.
+- All nine served HTML/discovery bodies match the tested build. All 17 DNS records remain identical to the pre-remediation snapshot. The normal staging noindex and CSP headers remain present.
+- Evidence files: `documents/guides/parity/step8-remediation-20260905/{deployment,body-parity,negotiated-content,browser,analytics,summary}.json` and `privacy-desktop.png`, `privacy-mobile.png`. The earlier `step8-refresh-20260905/` and audit XML remain historical records of the now-fixed and explicitly deferred findings.
+- No repeat Lighthouse benchmark or transport matrix was required for this remediation; the user accepted the prior speed evidence. Production cutover is the next separate approval gate. The complete refreshed packet, accepted performance medians and code/DNS rollback references are in `documents/guides/_hosting.md`.

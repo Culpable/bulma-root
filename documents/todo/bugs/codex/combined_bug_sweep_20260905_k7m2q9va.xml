@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bug_report>
+<bug_1>
+<summary><title>[P1][Agent Markdown] Pricing, FAQs and plan features lose their meaning during conversion</title><one_line_description>Incorrect 9 /month prices; missing answers and comparison values.</one_line_description></summary>
+<file_locations><![CDATA[- /Users/sacino/bulma-root/site/scripts/generate-agent-markdown.mjs:116 - mainHtmlToMarkdown, lines 116-153; tableHtmlToMarkdown, lines 41-56]]></file_locations>
+<issue_description>
+<description>A current hosted GET /pricing/ with Accept: text/markdown gives both Solo and Team as 9 /month instead of $49 and $99. The regex removes nested animated price markup without using its accessible label. It also deletes collapsed FAQ answers; SVG-only comparison values lose their Included/Not included labels and leave empty table cells. The mobile fallback includes only Solo. The homepage Markdown has FAQ questions without their answers. Existing HTTP assertions compare against the same incorrect generated file, so they pass. Recommendation: Use DOM-aware conversion and explicit accessible/static content for prices, collapsed disclosures and all plan feature values. Add semantic assertions for $49, $99, each plan inclusion and FAQ question/answer pairs.</description>
+<code_example><![CDATA[export function mainHtmlToMarkdown(mainHtml) {
+  let value = mainHtml;
+  for (const pattern of [
+    /<(script|style|template|noscript|nav|header|footer|aside)\b[^>]*>[\s\S]*?<\/\1>/gi,
+    /<([a-z][\w:-]*)\b(?=[^>]*\bdata-agent-ignore(?=\s|=|>))[^>]*>[\s\S]*?<\/\1>/gi,
+    /<([a-z][\w:-]*)\b[^>]*(?:\shidden(?:\s|=|>)|aria-hidden=["']true["']|style=["'][^"']*(?:display\s*:\s*none|visibility\s*:\s*hidden)[^"']*["'])[^>]*>[\s\S]*?<\/\1>/gi,
+  ]) value = removeElement(value, pattern);]]></code_example>
+<expected_vs_actual><![CDATA[Expected: Accurate prices, answers and comparison values.
+Actual: Incorrect 9 /month prices; missing answers and comparison values.]]></expected_vs_actual>
+</issue_description>
+</bug_1>
+<bug_2>
+<summary><title>[P1][Worker negotiation] A conditional Markdown request crashes the Worker</title><one_line_description>Worker exception and HTTP 500.</one_line_description></summary>
+<file_locations><![CDATA[- /Users/sacino/bulma-root/site/src/lib/agent-readable-http/shared.ts:37 - handleNegotiatedDocument, lines 37-53; markdownDocumentResponse in document-response.ts, lines 25-32]]></file_locations>
+<issue_description>
+<description>Fetch HTML / and its ETag, then request / with Accept: text/markdown and If-None-Match using that ETag. Staging returns HTTP 500 and Cloudflare error 1101. ASSETS returns HTML status 304; the Worker attempts to create a 304 Response with a Markdown body, which is invalid. Conditional HTML correctly returns an empty 304. Relatedly, a Markdown request to /pricing returns a 307 with the full 3843-byte document instead of preserving the empty redirect response. Recommendation: Make validators representation-specific; do not reuse an HTML 304 status for a Markdown body. Preserve redirect responses before fetching internal Markdown. Add conditional cross-representation and redirect-body HTTP tests.</description>
+<code_example><![CDATA[  const html = await input.fetchPublicAsset(input.request);
+  const selection = selectForRequest(input.request);
+  if (selection === null) return notAcceptableResponse(input.request);
+  if (selection === 'html') return htmlDocumentResponse(input.request, html);
+
+  const internalPath = html.status === 404
+    ? `${INTERNAL_MARKDOWN_PREFIX}404.md`
+    : routeToInternalMarkdownPath(url.pathname);
+  const internalUrl = new URL(internalPath, url);
+  const markdownAsset = await input.fetchInternalAsset(new Request(internalUrl, {
+    method: 'GET',
+  }));
+  if (!markdownAsset.ok) {
+    const body = markdownNotFound(url.origin);
+    return markdownDocumentResponse(input.request, body, 404, html.headers);
+  }
+  return markdownDocumentResponse(input.request, await markdownAsset.text(), html.status, html.headers);]]></code_example>
+<expected_vs_actual><![CDATA[Expected: Successful Markdown or correct representation-specific conditional response.
+Actual: Worker exception and HTTP 500.]]></expected_vs_actual>
+</issue_description>
+</bug_2>
+<bug_3>
+<summary><title>[P2][Agent content] Lender counts publish the animation start value</title><one_line_description>0 lenders.</one_line_description></summary>
+<file_locations><![CDATA[- /Users/sacino/bulma-root/site/src/components/elements/animated-counter.tsx:54 - AnimatedCounter, lines 54 and 116-129; generator mainHtmlToMarkdown; home-sections.tsx:283 and about-sections.tsx:85]]></file_locations>
+<issue_description>
+<description>Current homepage and About negotiated Markdown both say 0 Major Australian lenders covered. The real value is 36. The build converter reads prerendered HTML before the counter animation, and the target is not exposed as stable content for that converter. Recommendation: Expose the target value through a stable accessible or agent-content representation that the generator consumes while preserving the visual animation. Assert 36 in both generated routes.</description>
+<code_example><![CDATA[}: AnimatedCounterProps) {
+  const elementRef = useRef<HTMLSpanElement>(null)
+  const [displayValue, setDisplayValue] = useState(0)
+  const [hasAnimated, setHasAnimated] = useState(false)]]></code_example>
+<expected_vs_actual><![CDATA[Expected: 36 lenders in the agent representation.
+Actual: 0 lenders.]]></expected_vs_actual>
+</issue_description>
+</bug_3>
+<bug_4>
+<summary><title>[P2][Agent access] Browser Integrity Check blocks Python urllib</title><one_line_description>Python default HTTP client blocked only on staging.</one_line_description></summary>
+<file_locations><![CDATA[- /Users/sacino/bulma-root/site/test/agent-readiness.config.ts:18 - USER_TRIGGERED_AGENT_USER_AGENTS; live zone browser_check configuration]]></file_locations>
+<issue_description>
+<description>The live Cloudflare zone has browser_check=on. Python urllib receives 403 with error code 1010 on staging /, while the production GitHub Pages URL returns 200. Repeating the same Python-urllib/3.9 user agent through Node fetch reproduces the block, so this is not a Python TLS problem. The three named agents, requests and curl pass. Cloudflare documentation identifies error 1010 as client-signature blocking and directs owners to Browser Integrity Check. This is an operational cutover gap, not a Worker code exception. Evidence: documents/guides/parity/step8-refresh-20260905/user-agent-probes.json. Source: https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-1xxx-errors/error-1010/ Recommendation: Resolve the marketing-host Browser Integrity Check policy within the approved infrastructure scope, preserving unrelated hosts; record before-state and verify an expanded client matrix. Do not treat three named user agents as proof of general agent access.</description>
+<code_example><![CDATA[export const USER_TRIGGERED_AGENT_USER_AGENTS = ['ChatGPT-User', 'Claude-User', 'Perplexity-User'] as const]]></code_example>
+<expected_vs_actual><![CDATA[Expected: Public document accessible to ordinary HTTP clients.
+Actual: Python default HTTP client blocked only on staging.]]></expected_vs_actual>
+</issue_description>
+</bug_4>
+<bug_5>
+<summary><title>[P2][Worker headers] Early rejection responses omit security and noindex headers</title><one_line_description>Early 406/internal 404 omit the baseline.</one_line_description></summary>
+<file_locations><![CDATA[- /Users/sacino/bulma-root/site/src/lib/agent-readable-http/shared.ts:30 - handleNegotiatedDocument, lines 30-31; notAcceptableResponse in document-response.ts, lines 35-38]]></file_locations>
+<issue_description>
+<description>Live Accept: image/png on / returns 406, and /_agent-markdown/index.md returns 404, without X-Robots-Tag, CSP, nosniff, frame denial, Permissions-Policy or the required Referrer-Policy. Normal document 404s and redirects retain these headers. Worker-created responses bypass the asset header policy. This violates the explicit all-response staging contract, although the plain-text errors contain no private content. Recommendation: Apply the generated baseline and host-scoped noindex policy to Worker-created responses. Extend HTTP assertions to early rejection paths, including HEAD.</description>
+<code_example><![CDATA[  const url = new URL(input.request.url);
+  if (url.pathname.startsWith(INTERNAL_MARKDOWN_PREFIX)) {
+    return new Response('Not found\n', { status: 404 });
+  }]]></code_example>
+<expected_vs_actual><![CDATA[Expected: Consistent header baseline on all controlled responses.
+Actual: Early 406/internal 404 omit the baseline.]]></expected_vs_actual>
+</issue_description>
+</bug_5>
+<bug_6>
+<summary><title>[P3][Agent Markdown] Numeric HTML entities remain encoded in text</title><one_line_description>Raw numeric entity strings.</one_line_description></summary>
+<file_locations><![CDATA[- /Users/sacino/bulma-root/site/scripts/generate-agent-markdown.mjs:21 - decodeEntities, lines 21-23]]></file_locations>
+<issue_description>
+<description>The generated and hosted Markdown contains We&amp;#x27;re, you&amp;#x27;d and Liam O&amp;#x27;Connor. The decoder recognises decimal 39 but not hexadecimal 27 or general numeric references. Recommendation: Use a standards-aware entity decoder and verify decimal and hexadecimal references in generated content.</description>
+<code_example><![CDATA[function decodeEntities(value) {
+  return value.replace(/&nbsp;/gi, ' ').replace(/&amp;/gi, '&').replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>').replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'");
+}]]></code_example>
+<expected_vs_actual><![CDATA[Expected: Decoded apostrophes and readable text.
+Actual: Raw numeric entity strings.]]></expected_vs_actual>
+</issue_description>
+</bug_6>
+<bug_7>
+<summary><title>[P2][Release evidence] Lighthouse reruns can silently reuse an older release</title><one_line_description>Old reports can be reused under a new summary timestamp.</one_line_description></summary>
+<file_locations><![CDATA[- /Users/sacino/bulma-root/site/scripts/run-lighthouse-matrix.mjs:34 - readCompletedReport, lines 34-47; runLighthouse; report naming lines 109-118]]></file_locations>
+<issue_description>
+<description>Running the matrix into an existing output directory after a deployment reuses every JSON with the same Lighthouse version. Filenames contain route, host, mode and run, but no release identity; the summary receives a new generatedAt timestamp. That can present old measurements as a new verification. The current recorded matrix predates 79838f3 and is explicitly labelled historical in this refresh; this finding does not claim it was dishonestly refreshed. Recommendation: Key reports by release identity and validate requested URL, categories and configuration before resuming. Provide a fresh-run mode and record the measured commit/Worker version in the summary.</description>
+<code_example><![CDATA[/** Read a completed Lighthouse report so an interrupted matrix can resume safely. */
+function readCompletedReport(reportPath) {
+  try {
+    const report = JSON.parse(readFileSync(reportPath, 'utf8'));
+    return report.lighthouseVersion === '13.4.1' ? report : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Run Lighthouse in a unique Chrome profile and keep the raw JSON result. */
+function runLighthouse({ url, reportPath, extraArguments, categories }) {
+  const existingReport = readCompletedReport(reportPath);
+  if (existingReport) return existingReport;]]></code_example>
+<expected_vs_actual><![CDATA[Expected: A refreshed release measurement runs against the intended release.
+Actual: Old reports can be reused under a new summary timestamp.]]></expected_vs_actual>
+</issue_description>
+</bug_7>
+<bug_8>
+<summary><title>[P2][Referral analytics] Provider substring checks misclassify unrelated domains</title><one_line_description>Incorrect provider attribution is persisted.</one_line_description></summary>
+<file_locations><![CDATA[- /Users/sacino/bulma-root/site/public/scripts/referral-tracking.js:23 - isFacebookSource, isGoogleSource, isBingSource, isLinkedInSource, lines 23-59; persistence lines 157-185]]></file_locations>
+<issue_description>
+<description>A referrer such as https://notgoogle.com/path or https://google.com.evil.example/path is recorded as Google; notfacebook.com becomes Facebook. A focused VM reproduction confirmed these results. The incorrect first-touch value is persisted through set_once/register_once. This is inherited from production and is separate from migration parity. Recommendation: Match exact hostnames or subdomains at a dot boundary and explicitly handle approved regional Google domains. Add adversarial hostname cases.</description>
+<code_example><![CDATA[    // Function to check if the referrer is Google
+    function isGoogleSource() {
+        return (
+            referringDomain && referringDomain.includes('google.com')
+        );
+    }]]></code_example>
+<expected_vs_actual><![CDATA[Expected: Unrelated referral domains remain unrelated.
+Actual: Incorrect provider attribution is persisted.]]></expected_vs_actual>
+</issue_description>
+</bug_8>
+<bug_9>
+<summary><title>[P2][Supported lenders] Pointer highlighting uses stale positions after scrolling</title><one_line_description>Old lender remains highlighted.</one_line_description></summary>
+<file_locations><![CDATA[- /Users/sacino/bulma-root/site/src/components/elements/supported-lenders-field.tsx:74 - measureLenders, lines 74-84; applyPointerFrame, lines 98-124; resize invalidation, lines 202-210]]></file_locations>
+<issue_description>
+<description>At 1440x900, hover AMP Bank, scroll 120px without resizing, then move the pointer by 1px. The lender underneath becomes Teachers Mutual Bank but AMP Bank remains active. Cached viewport coordinates are invalidated on resize, not scroll. The worker reproduced this on a current routed page. This behaviour is inherited from the port source. Recommendation: Use list-local coordinates with the current list rect, or invalidate cached positions on scroll while visible and measure in the next scheduled frame. Add the scroll-without-resize regression.</description>
+<code_example><![CDATA[    // Cache viewport-space centres so pointer movement never reads layout in a tight loop.
+    const measureLenders = () => {
+      lenderMetrics = Array.from(lenderButtonRefs.current.entries()).map(([slug, element]) => {
+        const rect = element.getBoundingClientRect()
+
+        return {
+          slug,
+          element,
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        }
+      })
+
+      metricsAreStale = false
+    }]]></code_example>
+<expected_vs_actual><![CDATA[Expected: Highlight follows the lender under the pointer.
+Actual: Old lender remains highlighted.]]></expected_vs_actual>
+</issue_description>
+</bug_9>
+<bug_10>
+<summary><title>[P2][Mobile menu] Pending entrance frames reverse a rapid close</title><one_line_description>Close is visually reversed before abrupt removal.</one_line_description></summary>
+<file_locations><![CDATA[- /Users/sacino/bulma-root/site/src/components/sections/navbar-controller.tsx:63 - closeMobileMenu, lines 63-70; openMobileMenu, lines 73-91]]></file_locations>
+<issue_description>
+<description>At 390x900, open and immediately close the menu before the entrance frames finish. The pending inner RAF removes data-closed during the close, so opacity rises toward 1 before the 170ms timer abruptly hides the dialog. The worker reproduced the increasing opacity and open dialog. Entrance-frame cancellation currently occurs only on unmount. This is inherited from the port source. Recommendation: Cancel both entrance frames in the close path, clear their handles, and guard delayed callbacks against the current transition state. Add a rapid open-close browser regression.</description>
+<code_example><![CDATA[    const closeMobileMenu = () => {
+      if (!dialog.open || panel.hasAttribute('data-leave')) return
+
+      clearTransitionTimer()
+      panel.removeAttribute('data-enter')
+      panel.setAttribute('data-leave', '')
+      panel.setAttribute('data-closed', '')
+      transitionTimer = window.setTimeout(finishClose, 170)
+    }
+
+    const openMobileMenu = () => {
+      if (dialog.open) return
+
+      clearTransitionTimer()
+      panel.removeAttribute('data-leave')
+      panel.setAttribute('data-enter', '')
+      panel.setAttribute('data-closed', '')
+      dialog.showModal()
+      openButton.setAttribute('aria-expanded', 'true')
+
+      enterFrame = window.requestAnimationFrame(() => {
+        settleFrame = window.requestAnimationFrame(() => {
+          panel.removeAttribute('data-closed')
+          transitionTimer = window.setTimeout(() => {
+            panel.removeAttribute('data-enter')
+            transitionTimer = null
+          }, 280)
+        })
+      })]]></code_example>
+<expected_vs_actual><![CDATA[Expected: Continuous close animation.
+Actual: Close is visually reversed before abrupt removal.]]></expected_vs_actual>
+</issue_description>
+</bug_10>
+<bug_11>
+<summary><title>[P3][FAQ hue] FAQ section has no CSS mapping for its configured hue</title><one_line_description>Backdrop falls back to zero.</one_line_description></summary>
+<file_locations><![CDATA[- /Users/sacino/bulma-root/site/src/styles/global.css:3337 - section hue variables/selectors, lines 3337-3376; home-sections.tsx:420-427; use-hue-shift.ts:17-25]]></file_locations>
+<issue_description>
+<description>The homepage passes sectionHue=faqs and the hook activates a 1-degree FAQ hue. CSS has no corresponding variable or data-section-hue selector, so the backdrop uses the 0deg fallback. This is an inherited, small visual discrepancy, not a migration regression. Recommendation: Add the missing FAQ variable and selector if this intended hue is retained, and verify mapping parity and the resulting visual state under the project animation rules.</description>
+<code_example><![CDATA[:root {
+  --accent-hue-shift: 0deg;
+  --section-hue-hero: 0deg;
+  --section-hue-features: 3deg;
+  --section-hue-stats: 5deg;
+  --section-hue-testimonials: 2deg;
+  --section-hue-pricing: -2deg;
+  --section-hue-cta: 0deg;
+}
+]]></code_example>
+<expected_vs_actual><![CDATA[Expected: Configured FAQ hue used by its backdrop.
+Actual: Backdrop falls back to zero.]]></expected_vs_actual>
+</issue_description>
+</bug_11>
+<bug_12>
+<summary><title>[P2][Privacy content] Published policy still describes itself as an example</title><one_line_description>Published text says it is only an example.</one_line_description></summary>
+<file_locations><![CDATA[- /Users/sacino/bulma-root/site/src/components/pages/privacy-page.tsx:5 - Page, lines 5-12]]></file_locations>
+<issue_description>
+<description>The public route is titled Privacy Policy but its introduction explicitly states that it is a general example. This is inherited production copy and an editorial readiness gap. This audit makes no claim about legal compliance or the adequacy of individual clauses. Recommendation: Have the owner review and replace the example disclaimer with an approved policy for the actual service and data practices in a separate authorised content change.</description>
+<code_example><![CDATA[    <DocumentCentered id="document" headline="Privacy Policy" subheadline={<p>Last updated on January 20, 2026.</p>}>
+        <p>
+          Bulma Pty Ltd (&quot;<strong>Bulma</strong>&quot;, &quot;<strong>we</strong>&quot;, &quot;<strong>us</strong>
+          &quot;, or &quot;<strong>our</strong>&quot;) respects your privacy and is committed to protecting your
+          personal information. This Privacy Policy describes, in general terms, how we collect, use, store, and protect
+          information when you interact with our websites, products, or services (collectively, the &quot;
+          <strong>Services</strong>&quot;). This policy is provided for informational purposes and is intended to be a
+          general example only.]]></code_example>
+<expected_vs_actual><![CDATA[Expected: A definitive owner-approved published policy.
+Actual: Published text says it is only an example.]]></expected_vs_actual>
+</issue_description>
+</bug_12>
+</bug_report>

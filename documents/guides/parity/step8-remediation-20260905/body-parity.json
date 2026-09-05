@@ -1,0 +1,69 @@
+{
+  "results": [
+    {
+      "route": "/",
+      "status": 200,
+      "sha256": "7930684168316559cdbd478b6faf9e83d24a040696331ea3686539c9d1fcd3bc",
+      "noindex": "noindex",
+      "csp": true
+    },
+    {
+      "route": "/about/",
+      "status": 200,
+      "sha256": "3c87cd614d43a71dc2638b79a59bd45c6bb6f172a2567738aaf6265362f96c30",
+      "noindex": "noindex",
+      "csp": true
+    },
+    {
+      "route": "/pricing/",
+      "status": 200,
+      "sha256": "ef70f586ab2b36433ad45ac0b17c884ffe90979f32971da69996b07cf52ef769",
+      "noindex": "noindex",
+      "csp": true
+    },
+    {
+      "route": "/contact/",
+      "status": 200,
+      "sha256": "13765dbe05593a7ff0b5750e0ec8c2de36732acc46569b0e4ea27b72a8765859",
+      "noindex": "noindex",
+      "csp": true
+    },
+    {
+      "route": "/privacy-policy/",
+      "status": 200,
+      "sha256": "058a4c2c369e17b3d8a0389f1e0fecdfee43489ce00fa28944c58dc2d3a68929",
+      "noindex": "noindex",
+      "csp": true
+    },
+    {
+      "route": "/404.html",
+      "status": 200,
+      "sha256": "defde4eee071050986bd442660ad9578ea77350c8a0806e50a1e871f6a49c899",
+      "noindex": "noindex",
+      "csp": true
+    },
+    {
+      "route": "/robots.txt",
+      "status": 200,
+      "sha256": "19dc9c3aac3ed8b8bfc138850ba9557e9fbdde05f9c25aaa1f0a53144260356d",
+      "noindex": "noindex",
+      "csp": true
+    },
+    {
+      "route": "/sitemap.xml",
+      "status": 200,
+      "sha256": "4c7c49dafe83afede7fc6b1bd401c8d8b96f3229c5cd6583ace39c21ad973ddb",
+      "noindex": "noindex",
+      "csp": true
+    },
+    {
+      "route": "/llms.txt",
+      "status": 200,
+      "sha256": "1d2a41ea6742f031537b808a84a22b5d98db266458f1bc41bb77acd222a8c507",
+      "noindex": "noindex",
+      "csp": true
+    }
+  ],
+  "dnsUnchanged": true,
+  "dnsCount": 17
+}

@@ -1,0 +1,89 @@
+{
+  "origin": "https://staging.bulma.com.au",
+  "results": [
+    {
+      "viewport": "desktop",
+      "path": "/",
+      "dark": true,
+      "overflow": 0,
+      "cspViolations": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "/404.html",
+      "dark": true,
+      "overflow": 0,
+      "cspViolations": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "/about/",
+      "dark": true,
+      "overflow": 0,
+      "cspViolations": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "/contact/",
+      "dark": true,
+      "overflow": 0,
+      "cspViolations": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "/pricing/",
+      "dark": true,
+      "overflow": 0,
+      "cspViolations": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "/privacy-policy/",
+      "dark": true,
+      "overflow": 0,
+      "cspViolations": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/",
+      "dark": true,
+      "overflow": 0,
+      "cspViolations": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/404.html",
+      "dark": true,
+      "overflow": 0,
+      "cspViolations": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/about/",
+      "dark": true,
+      "overflow": 0,
+      "cspViolations": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/contact/",
+      "dark": true,
+      "overflow": 0,
+      "cspViolations": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/pricing/",
+      "dark": true,
+      "overflow": 0,
+      "cspViolations": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/privacy-policy/",
+      "dark": true,
+      "overflow": 0,
+      "cspViolations": []
+    }
+  ]
+}

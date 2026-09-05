@@ -1,0 +1,34 @@
+{
+  "sourceCommit": "c8f744a3a979d9950bbb057f821fce7a50e64efe",
+  "workerVersion": "c24a3454-11ed-4ffb-9a57-e7ffe73c419f",
+  "fixedAuditBugs": [
+    1,
+    2,
+    3,
+    6,
+    7,
+    12
+  ],
+  "deferredAuditBugs": [
+    4,
+    5,
+    8,
+    9,
+    10,
+    11
+  ],
+  "localAndHostedUnitTests": 57,
+  "localAndHostedBrowserTests": 78,
+  "viewportSpecificSkips": 6,
+  "httpContractCases": 18,
+  "extraConditionalAndContentProbes": "passed",
+  "browserErrorChecks": 12,
+  "analyticsLoads": 10,
+  "maximumVisualDifferencePercent": 0.8362,
+  "demoTests": 33,
+  "demoLintBuild": "passed",
+  "dnsUnchanged": true,
+  "productionCutover": false,
+  "lighthouseRerun": false,
+  "priorSpeedResult": "accepted by user"
+}

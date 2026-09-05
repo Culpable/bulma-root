@@ -1,0 +1,98 @@
+[
+  {
+    "origin": "https://staging.bulma.com.au",
+    "ua": "Python-urllib/3.9",
+    "status": 403,
+    "server": "cloudflare",
+    "cfRay": "a3627a304d906e81-PER",
+    "error": "<!doctype html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if I"
+  },
+  {
+    "origin": "https://staging.bulma.com.au",
+    "ua": "python-requests/2.32.3",
+    "status": 200,
+    "server": "cloudflare",
+    "cfRay": "a3627a306df36e81-PER",
+    "error": null
+  },
+  {
+    "origin": "https://staging.bulma.com.au",
+    "ua": "ChatGPT-User",
+    "status": 200,
+    "server": "cloudflare",
+    "cfRay": "a3627a308e7b6e81-PER",
+    "error": null
+  },
+  {
+    "origin": "https://staging.bulma.com.au",
+    "ua": "Claude-User",
+    "status": 200,
+    "server": "cloudflare",
+    "cfRay": "a3627a30aefc6e81-PER",
+    "error": null
+  },
+  {
+    "origin": "https://staging.bulma.com.au",
+    "ua": "Perplexity-User",
+    "status": 200,
+    "server": "cloudflare",
+    "cfRay": "a3627a30cf616e81-PER",
+    "error": null
+  },
+  {
+    "origin": "https://staging.bulma.com.au",
+    "ua": "curl/8.7.1",
+    "status": 200,
+    "server": "cloudflare",
+    "cfRay": "a3627a30efdc6e81-PER",
+    "error": null
+  },
+  {
+    "origin": "https://bulma.com.au",
+    "ua": "Python-urllib/3.9",
+    "status": 200,
+    "server": "GitHub.com",
+    "cfRay": null,
+    "error": null
+  },
+  {
+    "origin": "https://bulma.com.au",
+    "ua": "python-requests/2.32.3",
+    "status": 200,
+    "server": "GitHub.com",
+    "cfRay": null,
+    "error": null
+  },
+  {
+    "origin": "https://bulma.com.au",
+    "ua": "ChatGPT-User",
+    "status": 200,
+    "server": "GitHub.com",
+    "cfRay": null,
+    "error": null
+  },
+  {
+    "origin": "https://bulma.com.au",
+    "ua": "Claude-User",
+    "status": 200,
+    "server": "GitHub.com",
+    "cfRay": null,
+    "error": null
+  },
+  {
+    "origin": "https://bulma.com.au",
+    "ua": "Perplexity-User",
+    "status": 200,
+    "server": "GitHub.com",
+    "cfRay": null,
+    "error": null
+  },
+  {
+    "origin": "https://bulma.com.au",
+    "ua": "curl/8.7.1",
+    "status": 200,
+    "server": "GitHub.com",
+    "cfRay": null,
+    "error": null
+  }
+]
